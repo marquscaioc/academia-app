@@ -29,14 +29,24 @@ export default function OnboardingScreen() {
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const [error, setError] = useState("");
+
   const handleContinue = async () => {
     if (!selectedRole || !user) return;
+    setError("");
     setLoading(true);
-    const { error } = await supabase
+
+    const { error: updateError } = await supabase
       .from("profiles")
       .update({ role: selectedRole, onboarding_completed: true })
       .eq("id", user.id);
-    if (error) { setLoading(false); return; }
+
+    if (updateError) {
+      setError(updateError.message);
+      setLoading(false);
+      return;
+    }
+
     await refreshProfile();
     router.replace("/");
   };
@@ -55,6 +65,12 @@ export default function OnboardingScreen() {
             Escolha seu perfil para personalizar sua experiencia
           </Text>
         </View>
+
+        {error ? (
+          <View className="bg-danger-500/10 border border-danger-500/20 rounded-2xl p-4 mb-4">
+            <Text className="text-danger-500 text-center text-sm font-medium">{error}</Text>
+          </View>
+        ) : null}
 
         <View className="gap-4">
           {roles.map((role) => {
