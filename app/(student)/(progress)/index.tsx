@@ -9,12 +9,15 @@ import { Card } from "../../../components/ui/Card";
 import { SimpleLineChart } from "../../../components/progress/SimpleLineChart";
 import { AdherenceRing } from "../../../components/progress/AdherenceRing";
 import { PhotoComparison } from "../../../components/progress/PhotoComparison";
+import { CheckinScoreChart } from "../../../components/progress/CheckinScoreChart";
+import { useCheckinScoreHistory } from "../../../hooks/queries/useCheckinScoreHistory";
 
 export default function ProgressScreen() {
   const { user } = useAuth();
   const { data: measurements } = useBodyMeasurements(user?.id);
   const { data: photos } = useProgressPhotos(user?.id);
   const { data: adherence } = useAdherenceScore(user?.id);
+  const { data: checkinHistory } = useCheckinScoreHistory(user?.id);
 
   const latestWeight = measurements?.[0]?.weight_kg;
   const firstWeight = measurements?.[measurements.length - 1]?.weight_kg;
@@ -100,6 +103,16 @@ export default function ProgressScreen() {
         {waistData.length > 0 ? (
           <View className="mb-6">
             <SimpleLineChart data={waistData} title="Cintura" unit="cm" color="#67E8F9" />
+          </View>
+        ) : null}
+
+        {/* Check-in score chart */}
+        {checkinHistory && checkinHistory.length > 0 ? (
+          <View className="mb-6">
+            <Text className="text-xs font-bold text-text-muted mb-3 uppercase tracking-wider">Score de Check-in</Text>
+            <Card variant="outlined">
+              <CheckinScoreChart data={checkinHistory} />
+            </Card>
           </View>
         ) : null}
 

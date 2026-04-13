@@ -19,6 +19,7 @@ export default function CheckInResponseScreen() {
   const { user } = useAuth();
   const submitCheckIn = useSubmitCheckIn();
   const [answers, setAnswers] = useState<Record<string, string | number>>({});
+  const [justifications, setJustifications] = useState<Record<string, string>>({});
   const [currentIdx, setCurrentIdx] = useState(0);
 
   const { data: checkIn } = useQuery({
@@ -57,6 +58,7 @@ export default function CheckInResponseScreen() {
       question_id: qId,
       answer_text: typeof val === "string" ? val : undefined,
       answer_number: typeof val === "number" ? val : undefined,
+      justification: justifications[qId] || undefined,
     }));
     await submitCheckIn.mutateAsync({ check_in_id: checkInId, answers: formattedAnswers });
     router.back();
@@ -176,6 +178,30 @@ export default function CheckInResponseScreen() {
               ))}
             </View>
           ) : null}
+
+          {/* Justification for negative answers */}
+          {(() => {
+            const ans = answers[currentQ.id];
+            const needsJustification =
+              (currentQ.question_type === "scale" && typeof ans === "number" && ans <= 2) ||
+              (currentQ.question_type === "boolean" && ans === "Nao") ||
+              (currentQ.question_type === "number" && typeof ans === "number" && ans <= 2);
+            if (!needsJustification) return null;
+            return (
+              <View className="mt-4">
+                <Text className="text-xs font-bold text-warning-500 mb-2">Justifique sua resposta *</Text>
+                <TextInput
+                  className="bg-surface-card border-2 border-warning-500/30 rounded-2xl px-5 py-4 text-sm text-text-primary"
+                  placeholder="Explique o motivo..."
+                  placeholderTextColor="#6B6B73"
+                  value={justifications[currentQ.id] ?? ""}
+                  onChangeText={(v) => setJustifications({ ...justifications, [currentQ.id]: v })}
+                  multiline
+                  style={{ minHeight: 80, textAlignVertical: "top" }}
+                />
+              </View>
+            );
+          })()}
         </View>
 
         {/* Navigation */}

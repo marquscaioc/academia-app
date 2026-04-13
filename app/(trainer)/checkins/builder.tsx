@@ -17,6 +17,7 @@ interface DraftQuestion {
   type: "text" | "number" | "scale" | "choice" | "boolean";
   options: string;
   required: boolean;
+  weight: number;
 }
 
 const questionTypes = [
@@ -39,7 +40,7 @@ export default function CheckinBuilderScreen() {
   const [saving, setSaving] = useState(false);
 
   const addNewQuestion = () => {
-    setQuestions([...questions, { text: "", type: "text", options: "", required: true }]);
+    setQuestions([...questions, { text: "", type: "text", options: "", required: true, weight: 1 }]);
   };
 
   const updateQuestion = (idx: number, field: keyof DraftQuestion, value: unknown) => {
@@ -74,6 +75,7 @@ export default function CheckinBuilderScreen() {
           : undefined,
         is_required: q.required,
         sort_order: i,
+        weight: q.weight,
       });
     }
 
@@ -186,6 +188,22 @@ export default function CheckinBuilderScreen() {
                         }`}>
                           {t.icon} {t.label}
                         </Text>
+                      </Pressable>
+                    ))}
+                  </View>
+
+                  {/* Weight selector */}
+                  <View className="flex-row items-center gap-2 mb-3">
+                    <Text className="text-[10px] text-text-muted font-bold">Peso:</Text>
+                    {[1, 2, 3, 4, 5].map((w) => (
+                      <Pressable
+                        key={w}
+                        onPress={() => updateQuestion(idx, "weight", w)}
+                        className={`w-8 h-8 rounded-lg items-center justify-center ${
+                          q.weight === w ? "bg-violet-500" : "bg-surface-elevated"
+                        }`}
+                      >
+                        <Text className={`text-xs font-black ${q.weight === w ? "text-white" : "text-text-muted"}`}>{w}</Text>
                       </Pressable>
                     ))}
                   </View>

@@ -1,5 +1,6 @@
 import { Tabs } from "expo-router";
 import { Text, View } from "react-native";
+import { BrandingProvider, useBranding } from "../../lib/branding/BrandingProvider";
 
 function TabIcon({ name, focused }: { name: string; focused: boolean }) {
   const icons: Record<string, string> = {
@@ -22,12 +23,14 @@ function TabIcon({ name, focused }: { name: string; focused: boolean }) {
   );
 }
 
-export default function StudentLayout() {
+function StudentTabs() {
+  const { primaryColor } = useBranding();
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: "#781BB6",
+        tabBarActiveTintColor: primaryColor,
         tabBarInactiveTintColor: "#6E6382",
         tabBarStyle: {
           backgroundColor: "#14101B",
@@ -87,5 +90,13 @@ export default function StudentLayout() {
         }}
       />
     </Tabs>
+  );
+}
+
+export default function StudentLayout() {
+  return (
+    <BrandingProvider>
+      <StudentTabs />
+    </BrandingProvider>
   );
 }

@@ -11,6 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Link, router } from "expo-router";
 import { useAuth } from "../../../lib/auth/provider";
 import { useAcceptInvite } from "../../../hooks/mutations/useInviteMutations";
+import { useWorkoutPlans } from "../../../hooks/queries/useWorkouts";
 
 function StatCard({ value, label, color }: { value: string; label: string; color: string }) {
   return (
@@ -43,6 +44,12 @@ export default function StudentHomeScreen() {
   const firstName = profile?.full_name?.split(" ")[0] ?? "Aluno";
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Bom dia" : hour < 18 ? "Boa tarde" : "Boa noite";
+
+  const { data: workoutPlans } = useWorkoutPlans(user?.id);
+  const activePlan = workoutPlans?.[0];
+  const daysUntilExpiry = activePlan?.ends_at
+    ? Math.ceil((new Date(activePlan.ends_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+    : null;
 
   const handleAcceptInvite = async () => {
     if (!inviteCode.trim() || !user) return;
@@ -162,6 +169,21 @@ export default function StudentHomeScreen() {
             <View className="h-full bg-violet-500 rounded-full w-0" />
           </View>
         </View>
+
+        {/* Plan expiring banner */}
+        {daysUntilExpiry != null && daysUntilExpiry <= 7 && daysUntilExpiry > 0 ? (
+          <View className="bg-warning-500/10 border border-warning-500/30 rounded-2xl p-4 mb-4 flex-row items-center gap-3">
+            <Text className="text-2xl">⚠️</Text>
+            <View className="flex-1">
+              <Text className="text-sm font-bold text-warning-500">
+                Plano expira em {daysUntilExpiry} dia{daysUntilExpiry !== 1 ? "s" : ""}
+              </Text>
+              <Text className="text-xs text-text-muted mt-0.5">
+                Converse com seu personal para renovar.
+              </Text>
+            </View>
+          </View>
+        ) : null}
 
         {/* Stats */}
         <View className="flex-row gap-3 mb-6">

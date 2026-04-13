@@ -2,6 +2,8 @@ import { router } from "expo-router";
 import { useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Image } from "expo-image";
+import * as ImagePicker from "expo-image-picker";
 import { useAuth } from "../../../lib/auth/provider";
 import { supabase } from "../../../lib/supabase/client";
 
@@ -17,15 +19,39 @@ const colorPresets = [
 export default function BrandingScreen() {
   const { user } = useAuth();
   const [brandName, setBrandName] = useState("");
+  const [tagline, setTagline] = useState("");
   const [cref, setCref] = useState("");
+  const [logoUri, setLogoUri] = useState<string | null>(null);
   const [selectedPreset, setSelectedPreset] = useState(0);
   const [saving, setSaving] = useState(false);
+
+  const pickLogo = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+    if (!result.canceled) setLogoUri(result.assets[0].uri);
+  };
 
   const handleSave = async () => {
     if (!user) return;
     setSaving(true);
 
     const preset = colorPresets[selectedPreset];
+    let brandLogoUrl: string | undefined;
+
+    if (logoUri) {
+      const fileName = `${user.id}/${Date.now()}_logo.jpg`;
+      const response = await fetch(logoUri);
+      const blob = await response.blob();
+      const { error: upErr } = await supabase.storage.from("brand-assets").upload(fileName, blob, { contentType: "image/jpeg" });
+      if (!upErr) {
+        const { data: { publicUrl } } = supabase.storage.from("brand-assets").getPublicUrl(fileName);
+        brandLogoUrl = publicUrl;
+      }
+    }
 
     // Upsert trainer profile
     const { error } = await supabase
@@ -33,6 +59,8 @@ export default function BrandingScreen() {
       .upsert({
         id: user.id,
         brand_name: brandName.trim() || null,
+        brand_tagline: tagline.trim() || null,
+        brand_logo_url: brandLogoUrl ?? undefined,
         cref: cref.trim() || null,
         brand_primary_color: preset.primary,
         brand_secondary_color: preset.secondary,
@@ -56,18 +84,23 @@ export default function BrandingScreen() {
         <View className="bg-surface-card border border-violet-500/20 rounded-2xl p-5 mb-6">
           <Text className="text-xs text-violet-400 font-bold uppercase tracking-wider mb-2">Preview</Text>
           <View className="items-center py-6" style={{ backgroundColor: colorPresets[selectedPreset].primary + "10", borderRadius: 16 }}>
-            <View
-              className="w-16 h-16 rounded-2xl items-center justify-center mb-3"
-              style={{ backgroundColor: colorPresets[selectedPreset].primary }}
-            >
-              <Text className="text-2xl font-black text-white">
-                {(brandName || "A").charAt(0).toUpperCase()}
-              </Text>
-            </View>
+            {logoUri ? (
+              <Image source={{ uri: logoUri }} style={{ width: 64, height: 64, borderRadius: 16 }} contentFit="cover" className="mb-3" />
+            ) : (
+              <View
+                className="w-16 h-16 rounded-2xl items-center justify-center mb-3"
+                style={{ backgroundColor: colorPresets[selectedPreset].primary }}
+              >
+                <Text className="text-2xl font-black text-white">
+                  {(brandName || "A").charAt(0).toUpperCase()}
+                </Text>
+              </View>
+            )}
             <Text className="text-lg font-black text-text-primary">
               {brandName || "Seu Brand"}
             </Text>
-            {cref ? <Text className="text-xs text-text-muted mt-1">CREF: {cref}</Text> : null}
+            {tagline ? <Text className="text-xs text-text-muted mt-1">{tagline}</Text> : null}
+            {cref ? <Text className="text-xs text-text-muted mt-0.5">CREF: {cref}</Text> : null}
           </View>
         </View>
 
@@ -81,6 +114,34 @@ export default function BrandingScreen() {
               value={brandName}
               onChangeText={setBrandName}
             />
+          </View>
+
+          <View>
+            <Text className="text-xs font-bold text-text-muted mb-2 ml-1 tracking-wider uppercase">Tagline</Text>
+            <TextInput
+              className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary"
+              placeholder="Ex: Transformando vidas atraves do treino"
+              placeholderTextColor="#6B6B73"
+              value={tagline}
+              onChangeText={setTagline}
+            />
+          </View>
+
+          <View>
+            <Text className="text-xs font-bold text-text-muted mb-2 ml-1 tracking-wider uppercase">Logo</Text>
+            <Pressable onPress={pickLogo} className="bg-surface-card border border-dashed border-surface-border rounded-2xl py-6 items-center active:bg-surface-hover">
+              {logoUri ? (
+                <View className="items-center">
+                  <Image source={{ uri: logoUri }} style={{ width: 48, height: 48, borderRadius: 12 }} contentFit="cover" />
+                  <Text className="text-xs text-violet-400 font-bold mt-2">Trocar logo</Text>
+                </View>
+              ) : (
+                <View className="items-center">
+                  <Text className="text-2xl mb-1">🖼️</Text>
+                  <Text className="text-xs text-text-muted font-bold">Adicionar logo</Text>
+                </View>
+              )}
+            </Pressable>
           </View>
 
           <View>

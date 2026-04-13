@@ -2,6 +2,8 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link } from "expo-router";
 import { useAuth } from "../../lib/auth/provider";
+import { useStudentAdherenceList } from "../../hooks/queries/useStudentAdherence";
+import { StudentAdherenceRow } from "../../components/trainer/StudentAdherenceRow";
 
 function MetricCard({ value, label, icon, color }: { value: string; label: string; icon: string; color: string }) {
   return (
@@ -18,8 +20,9 @@ function MetricCard({ value, label, icon, color }: { value: string; label: strin
 }
 
 export default function TrainerDashboardScreen() {
-  const { profile, signOut } = useAuth();
+  const { user, profile, signOut } = useAuth();
   const firstName = profile?.full_name?.split(" ")[0] ?? "Trainer";
+  const { data: adherenceList } = useStudentAdherenceList(user?.id);
 
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
@@ -111,17 +114,32 @@ export default function TrainerDashboardScreen() {
           ))}
         </View>
 
-        {/* Quick stats placeholder */}
-        <View className="bg-surface-card border border-surface-border rounded-3xl p-6 mb-6">
+        {/* Student adherence alerts */}
+        <View className="mb-6">
           <Text className="text-xs text-text-muted uppercase tracking-wider font-bold mb-4">
-            Atividade recente
+            Adesao dos Alunos
           </Text>
-          <View className="items-center py-6">
-            <Text className="text-3xl mb-3">📈</Text>
-            <Text className="text-sm text-text-muted text-center">
-              Dados de atividade aparecerão aqui{"\n"}quando seus alunos comecarem a treinar.
-            </Text>
-          </View>
+          {adherenceList && adherenceList.length > 0 ? (
+            <View className="gap-2">
+              {adherenceList.map((s) => (
+                <StudentAdherenceRow
+                  key={s.studentId}
+                  name={s.name}
+                  avatarUrl={s.avatarUrl}
+                  workoutAdherence={s.workoutAdherence}
+                  checkinAdherence={s.checkinAdherence}
+                  overallAdherence={s.overallAdherence}
+                />
+              ))}
+            </View>
+          ) : (
+            <View className="bg-surface-card border border-surface-border rounded-3xl p-6 items-center">
+              <Text className="text-3xl mb-3">📈</Text>
+              <Text className="text-sm text-text-muted text-center">
+                Dados de adesao aparecerão aqui{"\n"}quando seus alunos comecarem a treinar.
+              </Text>
+            </View>
+          )}
         </View>
 
         {/* Sign out */}

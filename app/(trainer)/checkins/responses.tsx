@@ -10,12 +10,13 @@ interface CheckInWithDetails {
   id: string;
   user_id: string;
   status: string;
+  weighted_score: number | null;
   submitted_at: string | null;
   created_at: string;
   trainer_notes: string | null;
   template: { title: string } | null;
   student: { full_name: string; avatar_url: string | null } | null;
-  answers: { id: string; answer_text: string | null; answer_number: number | null; question: { question_text: string; question_type: string } | null }[];
+  answers: { id: string; answer_text: string | null; answer_number: number | null; justification: string | null; question: { question_text: string; question_type: string } | null }[];
 }
 
 export default function CheckInResponsesScreen() {
@@ -26,7 +27,7 @@ export default function CheckInResponsesScreen() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("check_ins")
-        .select("*, template:questionnaire_templates(title), student:profiles!user_id(full_name, avatar_url), answers:check_in_answers(*, question:questionnaire_questions(question_text, question_type))")
+        .select("*, weighted_score, template:questionnaire_templates(title), student:profiles!user_id(full_name, avatar_url), answers:check_in_answers(*, justification, question:questionnaire_questions(question_text, question_type))")
         .eq("trainer_id", user!.id)
         .order("created_at", { ascending: false })
         .limit(50);
@@ -81,8 +82,23 @@ export default function CheckInResponsesScreen() {
                       <Text className="text-sm font-bold text-text-primary">{item.student?.full_name}</Text>
                       <Text className="text-xs text-text-muted">{item.template?.title}</Text>
                     </View>
-                    <View className={`px-2 py-1 rounded-full ${st.bg}`}>
-                      <Text className={`text-[10px] font-bold ${st.text}`}>{st.label}</Text>
+                    <View className="flex-row items-center gap-2">
+                      {item.weighted_score != null ? (
+                        <View className={`px-2 py-1 rounded-full ${
+                          item.weighted_score >= 80 ? "bg-success-500/15" :
+                          item.weighted_score >= 50 ? "bg-warning-500/15" :
+                          "bg-danger-500/15"
+                        }`}>
+                          <Text className={`text-[10px] font-black ${
+                            item.weighted_score >= 80 ? "text-success-500" :
+                            item.weighted_score >= 50 ? "text-warning-500" :
+                            "text-danger-500"
+                          }`}>{Math.round(item.weighted_score)}%</Text>
+                        </View>
+                      ) : null}
+                      <View className={`px-2 py-1 rounded-full ${st.bg}`}>
+                        <Text className={`text-[10px] font-bold ${st.text}`}>{st.label}</Text>
+                      </View>
                     </View>
                   </View>
 
@@ -95,6 +111,11 @@ export default function CheckInResponsesScreen() {
                           <Text className="text-sm text-text-primary mt-0.5">
                             {a.answer_text ?? (a.answer_number != null ? String(a.answer_number) : "-")}
                           </Text>
+                          {a.justification ? (
+                            <Text className="text-xs text-text-muted mt-1 italic">
+                              Justificativa: {a.justification}
+                            </Text>
+                          ) : null}
                         </View>
                       ))}
                     </View>

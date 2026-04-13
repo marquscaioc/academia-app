@@ -15,6 +15,7 @@ interface AddQuestionInput {
   options?: string[];
   is_required?: boolean;
   sort_order: number;
+  weight?: number;
 }
 
 interface SubmitCheckInInput {
@@ -24,6 +25,7 @@ interface SubmitCheckInInput {
     answer_text?: string;
     answer_number?: number;
     answer_json?: unknown;
+    justification?: string;
   }[];
 }
 
