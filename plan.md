@@ -464,3 +464,240 @@ projeto-academia-app/
 | Features de comunidade únicas | 5+ além dos concorrentes |
 | DAU/MAU ratio (engajamento) | >40% |
 | Retenção D30 | >50% |
+
+---
+
+## WHATSAPP — Implementacao Completa de Ponta a Ponta
+
+### Referencia
+- **Repo oficial:** https://github.com/EvolutionAPI/evolution-api (7.8k stars)
+- **Versao:** v1.8.1 (file-based storage, sem MongoDB/Postgres)
+- **Docker image:** `atendai/evolution-api:v1.8.1`
+- **Docs:** https://doc.evolution-api.com
+- **Manager UI:** http://localhost:8080/manager
+
+### Arquitetura
+
+```
+┌─────────────────────┐     ┌──────────────────────┐     ┌─────────────────┐
+│  Frontend (Expo)    │────▶│  Evolution API        │────▶│  WhatsApp       │
+│  Tela WhatsApp      │     │  localhost:8080       │     │  Servers        │
+│  (trainer panel)    │◀────│  Docker container     │◀────│  (Web Protocol) │
+└─────────────────────┘     └──────────┬───────────┘     └─────────────────┘
+                                       │ webhooks
+                                       ▼
+                            ┌──────────────────────┐
+                            │  Supabase Edge Funcs  │
+                            │  - whatsapp-reminder  │
+                            │  - webhook handler    │
+                            │  - auto-checkin       │
+                            └──────────────────────┘
+```
+
+### Problemas Atuais (a corrigir)
+
+1. **Frontend usa formato v2** — v1.8 retorna `{instance: {instanceName, status, owner}}` nao `{name, connectionStatus}`
+2. **sendText formato errado** — v1.8 usa `{number, textMessage: {text}}` nao `{number, text}`
+3. **Sem client library** — chamadas hardcoded, sem tipagem, sem retry
+4. **Sem webhook handler** — nao recebe mensagens de volta dos alunos
+5. **Sem reconnect** — se desconectar, nao tenta reconectar
+6. **Edge Function formato errado** — mesmo problema do sendText
+7. **Sem integracao com auto-checkin** — nao envia WhatsApp junto do push
+8. **Config hardcoded** — URL e API key fixas no codigo
+
+---
+
+### Plano de Implementacao
+
+#### Fase W1 — Client Library + Config
+
+**Criar `lib/whatsapp/client.ts`** — Abstraction layer tipada sobre a Evolution API v1.8
+
+```typescript
+// Endpoints v1.8.x corretos:
+// POST /instance/create                    → criar instancia
+// GET  /instance/connect/{name}            → QR code (retorna {base64, code, count})
+// GET  /instance/connectionState/{name}    → {instance: {state: "open"|"close"|"connecting"}}
+// GET  /instance/fetchInstances            → [{instance: {instanceName, status, owner, profileName, profilePictureUrl}}]
+// DELETE /instance/logout/{name}           → desconectar
+// DELETE /instance/delete/{name}           → deletar
+// PUT  /instance/restart/{name}            → restart
+// POST /message/sendText/{name}            → {number, textMessage: {text}, options?: {delay, presence}}
+// POST /message/sendMedia/{name}           → {number, mediaMessage: {mediatype, caption, media}}
+// POST /webhook/set/{name}                 → configurar webhook
+```
+
+Metodos:
+- `createInstance(name)` → cria + retorna QR
+- `getConnectionState(name)` → status tipado
+- `getQrCode(name)` → base64 string
+- `getInstances()` → lista com info de perfil
+- `sendText(name, phone, text, options?)` → envia texto
+- `sendMedia(name, phone, mediaUrl, caption?, type?)` → envia imagem/video
+- `logout(name)` / `restart(name)` / `delete(name)`
+- `setWebhook(name, url, events[])` → configura webhook
+
+**Criar `lib/whatsapp/config.ts`** — Configuracao centralizada
+
+```typescript
+// Em dev: usa localhost
+// Em prod: usa env var EXPO_PUBLIC_EVOLUTION_URL
+export const EVOLUTION_CONFIG = {
+  url: process.env.EXPO_PUBLIC_EVOLUTION_URL ?? "http://localhost:8080",
+  apiKey: process.env.EXPO_PUBLIC_EVOLUTION_KEY ?? "teste123",
+  instance: "academia-app",
+};
+```
+
+**Arquivos:**
+- `lib/whatsapp/client.ts` — Client tipado (novo)
+- `lib/whatsapp/config.ts` — Config centralizada (novo)
+- `lib/whatsapp/types.ts` — Interfaces TS (novo)
+- `.env` — adicionar EXPO_PUBLIC_EVOLUTION_URL, EXPO_PUBLIC_EVOLUTION_KEY
+
+---
+
+#### Fase W2 — Rewrite Frontend WhatsApp Screen
+
+**Rewrite `app/(trainer)/whatsapp/index.tsx`** com:
+
+1. **Usar o client lib** em vez de fetch direto
+2. **Fix formato v1.8** — parsear resposta correta de fetchInstances e connectionState
+3. **QR code funcional** — usar base64 direto do /instance/connect
+4. **Auto-create instance** — se nao existe, cria automaticamente ao abrir a tela
+5. **Reconnect button** — se desconectar, botao PUT /instance/restart
+6. **Pairing code** — alternativa ao QR (digitar codigo de 8 digitos no celular)
+7. **Envio de teste corrigido** — usar `{textMessage: {text}}` com `options: {delay: 1200, presence: "composing"}`
+8. **Log de mensagens enviadas** — listar ultimas mensagens enviadas pelo sistema
+
+---
+
+#### Fase W3 — Edge Functions Corrigidas
+
+**Corrigir `supabase/functions/whatsapp-reminder/index.ts`:**
+- Usar formato v1.8: `{number, textMessage: {text}, options: {delay: 1200, presence: "composing"}}`
+- Adicionar retry (1x) se falhar
+- Logar status de envio no banco
+
+**Integrar com outros Edge Functions:**
+
+1. `auto-checkin/index.ts` — apos enviar push, tambem invocar whatsapp-reminder se aluno tem whatsapp_opt_in
+2. `plan-expiring/index.ts` — apos push, invocar whatsapp com template plan_expiring
+3. `smart-nudge/index.ts` — apos push, invocar whatsapp com template smart_nudge
+
+---
+
+#### Fase W4 — Webhook Handler (receber mensagens)
+
+**Criar `supabase/functions/whatsapp-webhook/index.ts`** — Edge Function que recebe webhooks da Evolution API
+
+Eventos tratados:
+- `messages.upsert` — aluno respondeu uma mensagem → salvar em chat do app
+- `connection.update` — status mudou → logar/notificar trainer
+- `qrcode.updated` — novo QR disponivel (util para notificar frontend via Realtime)
+
+**Configurar webhook na Evolution API:**
+```
+POST /webhook/set/academia-app
+{
+  "enabled": true,
+  "url": "https://yxsdspynguyaizwtcjfk.supabase.co/functions/v1/whatsapp-webhook",
+  "webhook_by_events": false,
+  "events": ["MESSAGES_UPSERT", "CONNECTION_UPDATE", "SEND_MESSAGE"]
+}
+```
+
+**Quando aluno responde via WhatsApp:**
+1. Webhook recebe mensagem
+2. Edge Function identifica o aluno pelo numero (profiles.whatsapp_number)
+3. Salva na tabela `messages` como se fosse mensagem do chat do app
+4. Notifica trainer via push
+
+---
+
+#### Fase W5 — Mensagens Ricas + Templates
+
+**Criar templates de mensagem com formatacao WhatsApp:**
+
+| Template | Tipo | Conteudo |
+|----------|------|----------|
+| `welcome` | texto | Boas-vindas ao novo aluno com link do app |
+| `checkin_reminder` | texto + botao | Lembrete de check-in pendente |
+| `daily_workout` | texto + imagem | Treino do dia com preview dos exercicios |
+| `plan_expiring` | texto | Aviso de plano vencendo |
+| `smart_nudge` | texto | Incentivo personalizado |
+| `workout_complete` | texto + imagem | Parabens pelo treino (compartilhavel) |
+| `pr_achieved` | texto | Novo recorde pessoal |
+
+**Usar sendMedia para mensagens com imagem:**
+- `POST /message/sendMedia/{instance}` com `{mediaMessage: {mediatype: "image", caption, media: url}}`
+
+---
+
+#### Fase W6 — Dashboard de Mensagens (Trainer)
+
+**Expandir tela WhatsApp com tabs:**
+
+1. **Conexao** (atual) — QR code, status, teste
+2. **Mensagens** — log de todas mensagens enviadas/recebidas, filtro por aluno
+3. **Templates** — visualizar/editar templates de mensagem
+4. **Configuracoes** — webhook URL, eventos, auto-reply, horario de envio
+
+**Criar:**
+- `app/(trainer)/whatsapp/messages.tsx` — historico de mensagens
+- `app/(trainer)/whatsapp/settings.tsx` — configuracoes avancadas
+- `app/(trainer)/whatsapp/_layout.tsx` — Stack com tabs internas
+
+---
+
+### Ordem de Implementacao
+
+| Fase | O que | Arquivos novos | Modifica |
+|------|-------|----------------|----------|
+| **W1** | Client lib + config | 3 | .env |
+| **W2** | Rewrite frontend | 0 (rewrite 1) | whatsapp/index.tsx |
+| **W3** | Fix Edge Functions | 0 | whatsapp-reminder, auto-checkin, plan-expiring, smart-nudge |
+| **W4** | Webhook handler | 1 | — |
+| **W5** | Mensagens ricas | 1 (templates util) | whatsapp-reminder |
+| **W6** | Dashboard mensagens | 3 (screens + layout) | whatsapp/index.tsx |
+
+### Docker Setup (Producao)
+
+```yaml
+# docker-compose.evolution.yml
+services:
+  evolution-api:
+    image: atendai/evolution-api:v1.8.1
+    ports:
+      - "8080:8080"
+    volumes:
+      - evolution_store:/evolution/store
+      - evolution_instances:/evolution/instances
+    environment:
+      SERVER_URL: http://localhost:8080
+      AUTHENTICATION_TYPE: apikey
+      AUTHENTICATION_API_KEY: ${EVOLUTION_API_KEY}
+      AUTHENTICATION_EXPOSE_IN_FETCH_INSTANCES: "true"
+      DATABASE_ENABLED: "false"
+      STORE_MESSAGES: "true"
+      STORE_CONTACTS: "true"
+      QRCODE_LIMIT: 6
+      LOG_LEVEL: WARN
+      CONFIG_SESSION_PHONE_CLIENT: AcademiaApp
+      CONFIG_SESSION_PHONE_NAME: Chrome
+volumes:
+  evolution_store:
+  evolution_instances:
+```
+
+### Verificacao End-to-End
+
+- [ ] Docker sobe Evolution API v1.8.1 sem erros
+- [ ] Tela WhatsApp mostra QR code funcional
+- [ ] Escanear QR conecta e mostra perfil + numero
+- [ ] Teste de envio entrega mensagem no celular
+- [ ] Edge Functions enviam via Evolution API com formato correto
+- [ ] auto-checkin envia WhatsApp junto do push
+- [ ] Webhook recebe resposta do aluno e salva no chat
+- [ ] Reconnect funciona apos desconexao
+- [ ] Mensagens com imagem (sendMedia) funcionam
