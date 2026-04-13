@@ -52,6 +52,7 @@ export default function TrainerLayout() {
           <Tabs.Screen name="checkins" options={{ href: null }} />
           <Tabs.Screen name="workout-builder" options={{ href: null }} />
           <Tabs.Screen name="diet-builder" options={{ href: null }} />
+          <Tabs.Screen name="whatsapp" options={{ href: null }} />
         </Tabs>
       </View>
     </View>
