@@ -188,7 +188,7 @@ export default function StudentHomeScreen() {
         {/* Stats */}
         <View className="flex-row gap-3 mb-6">
           <StatCard value="0" label="Treinos esta semana" color="text-violet-400" />
-          <StatCard value="0" label="Dias de streak" color="text-ice-400" />
+          <StatCard value={String(profile?.current_streak ?? 0)} label="Dias de streak" color="text-ice-400" />
         </View>
 
         {/* Quick Actions */}

@@ -21,7 +21,8 @@ import { Avatar } from "../../../components/ui/Avatar";
 
 export default function SocialFeedScreen() {
   const { user, profile } = useAuth();
-  const { data: posts, isLoading } = useFeedPosts("public");
+  const [feedMode, setFeedMode] = useState<"public" | "following">("public");
+  const { data: posts, isLoading } = useFeedPosts(feedMode, user?.id);
   const createPost = useCreatePost();
   const toggleReaction = useToggleReaction();
   const [newPostContent, setNewPostContent] = useState("");
@@ -74,14 +75,29 @@ export default function SocialFeedScreen() {
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
       {/* Header */}
-      <View className="px-6 pt-6 pb-3 flex-row items-center justify-between border-b border-surface-border">
-        <Text className="text-2xl font-black text-text-primary">Feed</Text>
-        <View className="flex-row gap-2">
-          <Pressable onPress={() => router.push("/groups")} className="bg-surface-card border border-surface-border px-3 py-1.5 rounded-lg">
-            <Text className="text-text-muted font-bold text-xs">👥 Grupos</Text>
+      <View className="px-6 pt-6 pb-3 border-b border-surface-border">
+        <View className="flex-row items-center justify-between mb-3">
+          <Text className="text-2xl font-black text-text-primary">Feed</Text>
+          <View className="flex-row gap-2">
+            <Pressable onPress={() => router.push("/groups")} className="bg-surface-card border border-surface-border px-3 py-1.5 rounded-lg">
+              <Text className="text-text-muted font-bold text-xs">👥 Grupos</Text>
+            </Pressable>
+            <Pressable onPress={() => router.push("/challenges")} className="bg-violet-500/10 px-3 py-1.5 rounded-lg">
+              <Text className="text-violet-400 font-bold text-xs">🏆 Desafios</Text>
+            </Pressable>
+          </View>
+        </View>
+        {/* Feed mode tabs */}
+        <View className="flex-row gap-4">
+          <Pressable onPress={() => setFeedMode("public")}>
+            <Text className={`text-sm font-bold pb-1 ${feedMode === "public" ? "text-violet-400 border-b-2 border-violet-500" : "text-text-muted"}`}>
+              Todos
+            </Text>
           </Pressable>
-          <Pressable onPress={() => router.push("/challenges")} className="bg-violet-500/10 px-3 py-1.5 rounded-lg">
-            <Text className="text-violet-400 font-bold text-xs">🏆 Desafios</Text>
+          <Pressable onPress={() => setFeedMode("following")}>
+            <Text className={`text-sm font-bold pb-1 ${feedMode === "following" ? "text-violet-400 border-b-2 border-violet-500" : "text-text-muted"}`}>
+              Seguindo
+            </Text>
           </Pressable>
         </View>
       </View>

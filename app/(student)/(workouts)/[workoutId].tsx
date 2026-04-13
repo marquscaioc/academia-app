@@ -114,8 +114,21 @@ export default function WorkoutExecutionScreen() {
       duration_seconds: durationSeconds,
     });
 
+    const totalVolume = sessionStore.sets.reduce((sum, s) => sum + (s.weightKg ?? 0) * (s.reps ?? 0), 0);
+    const mins = Math.floor(durationSeconds / 60);
+    const secs = durationSeconds % 60;
+
     sessionStore.endSession();
-    router.back();
+    router.replace({
+      pathname: "/(student)/(workouts)/session-complete",
+      params: {
+        workoutName: workout?.name ?? "Treino",
+        duration: `${mins}:${secs.toString().padStart(2, "0")}`,
+        volume: String(Math.round(totalVolume)),
+        exercises: String(exercises.length),
+        sets: String(sessionStore.sets.length),
+      },
+    } as never);
   };
 
   if (!sessionStore.isActive) {

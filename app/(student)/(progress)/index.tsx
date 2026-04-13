@@ -11,6 +11,7 @@ import { AdherenceRing } from "../../../components/progress/AdherenceRing";
 import { PhotoComparison } from "../../../components/progress/PhotoComparison";
 import { CheckinScoreChart } from "../../../components/progress/CheckinScoreChart";
 import { useCheckinScoreHistory } from "../../../hooks/queries/useCheckinScoreHistory";
+import { useUserAchievements } from "../../../hooks/queries/useFeed";
 
 export default function ProgressScreen() {
   const { user } = useAuth();
@@ -18,6 +19,7 @@ export default function ProgressScreen() {
   const { data: photos } = useProgressPhotos(user?.id);
   const { data: adherence } = useAdherenceScore(user?.id);
   const { data: checkinHistory } = useCheckinScoreHistory(user?.id);
+  const { data: achievements } = useUserAchievements(user?.id);
 
   const latestWeight = measurements?.[0]?.weight_kg;
   const firstWeight = measurements?.[measurements.length - 1]?.weight_kg;
@@ -103,6 +105,30 @@ export default function ProgressScreen() {
         {waistData.length > 0 ? (
           <View className="mb-6">
             <SimpleLineChart data={waistData} title="Cintura" unit="cm" color="#67E8F9" />
+          </View>
+        ) : null}
+
+        {/* Achievements */}
+        {achievements && achievements.length > 0 ? (
+          <View className="mb-6">
+            <View className="flex-row items-center justify-between mb-3">
+              <Text className="text-xs font-bold text-text-muted uppercase tracking-wider">Minhas Conquistas</Text>
+              <Link href="/(student)/(progress)/badges" asChild>
+                <Pressable>
+                  <Text className="text-violet-400 text-xs font-bold">Ver todas</Text>
+                </Pressable>
+              </Link>
+            </View>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} className="gap-3">
+              {achievements.slice(0, 5).map((a) => (
+                <View key={a.id} className="bg-violet-500/10 border border-violet-500/30 rounded-2xl px-4 py-3 items-center mr-3" style={{ minWidth: 80 }}>
+                  <Text className="text-2xl mb-1">🏆</Text>
+                  <Text className="text-[10px] font-bold text-text-primary text-center" numberOfLines={1}>
+                    {a.achievement?.name ?? "Conquista"}
+                  </Text>
+                </View>
+              ))}
+            </ScrollView>
           </View>
         ) : null}
 

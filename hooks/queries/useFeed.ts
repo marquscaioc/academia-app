@@ -24,10 +24,29 @@ export interface FeedComment {
   parent_comment_id: string | null;
 }
 
-export function useFeedPosts(mode: "public" | "following" = "public") {
+export function useFeedPosts(mode: "public" | "following" = "public", userId?: string) {
   return useQuery({
-    queryKey: ["feed", "posts", mode],
+    queryKey: ["feed", "posts", mode, userId],
     queryFn: async () => {
+      if (mode === "following" && userId) {
+        // Get followed user IDs
+        const { data: follows } = await supabase
+          .from("user_follows")
+          .select("following_id")
+          .eq("follower_id", userId);
+        const followedIds = follows?.map((f) => f.following_id) ?? [];
+        if (followedIds.length === 0) return [];
+
+        const { data, error } = await supabase
+          .from("feed_posts")
+          .select("*, author:profiles!author_id(full_name, avatar_url, display_name)")
+          .in("author_id", followedIds)
+          .order("created_at", { ascending: false })
+          .limit(50);
+        if (error) throw error;
+        return data as FeedPost[];
+      }
+
       const { data, error } = await supabase
         .from("feed_posts")
         .select("*, author:profiles!author_id(full_name, avatar_url, display_name)")

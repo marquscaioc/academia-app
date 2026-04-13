@@ -125,6 +125,27 @@ export default function EditProfileScreen() {
             </View>
           </View>
 
+          {/* Notification preferences */}
+          <View className="bg-surface-card border border-surface-border rounded-2xl p-4 mt-4">
+            <Text className="text-xs font-bold text-text-muted mb-3 uppercase tracking-wider">Notificacoes</Text>
+            <Pressable
+              onPress={async () => {
+                if (!user) return;
+                const newVal = !profile?.notify_follower_workouts;
+                await supabase.from("profiles").update({ notify_follower_workouts: newVal }).eq("id", user.id);
+                refreshProfile();
+              }}
+              className="flex-row items-center justify-between"
+            >
+              <Text className="text-sm text-text-secondary flex-1 mr-3">
+                Notificar quando quem sigo treinar
+              </Text>
+              <View className={`w-12 h-7 rounded-full p-0.5 ${profile?.notify_follower_workouts ? "bg-violet-500" : "bg-surface-border"}`}>
+                <View className={`w-6 h-6 bg-white rounded-full ${profile?.notify_follower_workouts ? "ml-auto" : ""}`} />
+              </View>
+            </Pressable>
+          </View>
+
           <Pressable
             onPress={handleSave}
             disabled={loading}

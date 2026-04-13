@@ -1,5 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "../../lib/supabase/client";
+import { checkAndAwardAchievements } from "./useCheckAndAwardAchievements";
+import { createAutoShoutout } from "../../lib/utils/autoShoutout";
 
 interface LogSetInput {
   workout_exercise_id?: string;
@@ -84,8 +86,30 @@ export function useFinishSession() {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: async (data) => {
       queryClient.invalidateQueries({ queryKey: ["workouts", "sessions"] });
+
+      const userId = data?.user_id;
+      if (userId) {
+        // Check and award achievements
+        checkAndAwardAchievements(userId).catch(() => {});
+
+        // Check for streak milestones and auto shoutout
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("current_streak, full_name")
+          .eq("id", userId)
+          .single();
+
+        if (profile?.current_streak && [7, 30, 60, 100].includes(profile.current_streak)) {
+          createAutoShoutout(userId, "streak_milestone", { days: profile.current_streak }).catch(() => {});
+        }
+
+        // Social notification for followers
+        supabase.functions.invoke("social-notification", {
+          body: { user_id: userId, user_name: profile?.full_name ?? "Alguem" },
+        }).catch(() => {});
+      }
     },
   });
 }
