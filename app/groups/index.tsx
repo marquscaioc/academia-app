@@ -85,7 +85,7 @@ export default function GroupsScreen() {
           </View>
           <Pressable
             onPress={() => setShowCreate(!showCreate)}
-            className="bg-lime-500 px-3 py-1.5 rounded-xl active:bg-lime-600"
+            className="bg-violet-400 px-3 py-1.5 rounded-xl active:bg-violet-500"
           >
             <Text className="text-dark-400 font-black text-xs">+ Criar</Text>
           </Pressable>
@@ -110,7 +110,7 @@ export default function GroupsScreen() {
             <Pressable
               onPress={() => createGroup.mutate()}
               disabled={!newName.trim() || createGroup.isPending}
-              className={`rounded-xl py-3 items-center ${newName.trim() ? "bg-lime-500" : "bg-surface-border"}`}
+              className={`rounded-xl py-3 items-center ${newName.trim() ? "bg-violet-400" : "bg-surface-border"}`}
             >
               {createGroup.isPending ? (
                 <ActivityIndicator color="#0A0A0B" size="small" />
@@ -123,7 +123,7 @@ export default function GroupsScreen() {
 
         {isLoading ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" color="#BBFF00" />
+            <ActivityIndicator size="large" color="#A855F7" />
           </View>
         ) : !groups?.length ? (
           <EmptyState
@@ -153,9 +153,9 @@ export default function GroupsScreen() {
                 ) : null}
                 <Pressable
                   onPress={() => joinGroup.mutate(item.id)}
-                  className="border border-lime-500/30 rounded-xl py-2.5 items-center active:bg-lime-500/10"
+                  className="border border-violet-400/30 rounded-xl py-2.5 items-center active:bg-violet-400/10"
                 >
-                  <Text className="text-lime-500 font-bold text-xs">Participar</Text>
+                  <Text className="text-violet-400 font-bold text-xs">Participar</Text>
                 </Pressable>
               </View>
             )}

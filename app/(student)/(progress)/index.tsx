@@ -86,13 +86,13 @@ export default function ProgressScreen() {
 
         {/* Weight chart */}
         <View className="mb-6">
-          <SimpleLineChart data={weightData} title="Peso" unit="kg" color="#BBFF00" />
+          <SimpleLineChart data={weightData} title="Peso" unit="kg" color="#A855F7" />
         </View>
 
         {/* Waist chart */}
         {waistData.length > 0 ? (
           <View className="mb-6">
-            <SimpleLineChart data={waistData} title="Cintura" unit="cm" color="#00E5FF" />
+            <SimpleLineChart data={waistData} title="Cintura" unit="cm" color="#67E8F9" />
           </View>
         ) : null}
 

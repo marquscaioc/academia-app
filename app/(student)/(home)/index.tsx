@@ -81,20 +81,20 @@ export default function StudentHomeScreen() {
             {!showInvite ? (
               <Pressable
                 onPress={() => setShowInvite(true)}
-                className="bg-surface-card border border-dashed border-lime-500/30 rounded-2xl p-4 flex-row items-center gap-3 active:bg-surface-hover"
+                className="bg-surface-card border border-dashed border-violet-400/30 rounded-2xl p-4 flex-row items-center gap-3 active:bg-surface-hover"
               >
-                <View className="w-10 h-10 bg-lime-500/10 rounded-xl items-center justify-center">
+                <View className="w-10 h-10 bg-violet-400/10 rounded-xl items-center justify-center">
                   <Text className="text-lg">🎟️</Text>
                 </View>
                 <View className="flex-1">
                   <Text className="text-sm font-bold text-text-primary">Tem um codigo de convite?</Text>
                   <Text className="text-xs text-text-muted mt-0.5">Conecte-se ao seu personal trainer</Text>
                 </View>
-                <Text className="text-lime-500 font-bold text-sm">Inserir</Text>
+                <Text className="text-violet-400 font-bold text-sm">Inserir</Text>
               </Pressable>
             ) : (
-              <View className="bg-surface-card border border-lime-500/30 rounded-2xl p-5">
-                <Text className="text-xs font-bold text-lime-500 mb-3 tracking-wider uppercase">
+              <View className="bg-surface-card border border-violet-400/30 rounded-2xl p-5">
+                <Text className="text-xs font-bold text-violet-400 mb-3 tracking-wider uppercase">
                   Codigo de convite
                 </Text>
                 {inviteError ? (
@@ -103,7 +103,7 @@ export default function StudentHomeScreen() {
                   </View>
                 ) : null}
                 <TextInput
-                  className="bg-dark-300 border-2 border-surface-border rounded-xl px-4 py-3 text-center text-2xl font-black text-lime-500 tracking-[6px]"
+                  className="bg-dark-300 border-2 border-surface-border rounded-xl px-4 py-3 text-center text-2xl font-black text-violet-400 tracking-[6px]"
                   placeholder="ABCDEF"
                   placeholderTextColor="#2A2A30"
                   value={inviteCode}
@@ -122,7 +122,7 @@ export default function StudentHomeScreen() {
                     onPress={handleAcceptInvite}
                     disabled={inviteCode.length < 6 || acceptInvite.isPending}
                     className={`flex-1 rounded-xl py-3 items-center ${
-                      inviteCode.length >= 6 ? "bg-lime-500" : "bg-surface-border"
+                      inviteCode.length >= 6 ? "bg-violet-400" : "bg-surface-border"
                     }`}
                   >
                     {acceptInvite.isPending ? (
@@ -149,24 +149,24 @@ export default function StudentHomeScreen() {
         {/* Today's workout */}
         <View className="bg-surface-card border border-surface-border rounded-3xl p-6 mb-6">
           <View className="flex-row items-center gap-3 mb-3">
-            <View className="w-10 h-10 bg-lime-500/20 rounded-xl items-center justify-center">
+            <View className="w-10 h-10 bg-violet-400/20 rounded-xl items-center justify-center">
               <Text className="text-lg">⚡</Text>
             </View>
-            <Text className="text-xs text-lime-500 font-bold uppercase tracking-wider">Treino de hoje</Text>
+            <Text className="text-xs text-violet-400 font-bold uppercase tracking-wider">Treino de hoje</Text>
           </View>
           <Text className="text-lg font-bold text-text-primary mb-1">Nenhum treino atribuido</Text>
           <Text className="text-sm text-text-muted leading-5">
             Peca ao seu personal para criar um plano de treino personalizado.
           </Text>
           <View className="h-1 bg-surface-border rounded-full mt-5">
-            <View className="h-full bg-lime-500 rounded-full w-0" />
+            <View className="h-full bg-violet-400 rounded-full w-0" />
           </View>
         </View>
 
         {/* Stats */}
         <View className="flex-row gap-3 mb-6">
-          <StatCard value="0" label="Treinos esta semana" color="text-lime-500" />
-          <StatCard value="0" label="Dias de streak" color="text-electric-400" />
+          <StatCard value="0" label="Treinos esta semana" color="text-violet-400" />
+          <StatCard value="0" label="Dias de streak" color="text-ice-400" />
         </View>
 
         {/* Quick Actions */}

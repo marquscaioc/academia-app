@@ -39,7 +39,7 @@ export default function StudentsScreen() {
         <View className="flex-row items-center justify-between mb-6">
           <Text className="text-2xl font-black text-text-primary">Alunos</Text>
           <Link href="/(trainer)/students/invite" asChild>
-            <Pressable className="bg-lime-500 px-4 py-2 rounded-xl active:bg-lime-600">
+            <Pressable className="bg-violet-400 px-4 py-2 rounded-xl active:bg-violet-500">
               <Text className="text-dark-400 font-black text-xs">+ Convidar</Text>
             </Pressable>
           </Link>
@@ -47,7 +47,7 @@ export default function StudentsScreen() {
 
         {students?.length ? (
           <View className="bg-surface-card border border-surface-border rounded-2xl p-4 mb-6 flex-row items-center gap-3">
-            <Text className="text-2xl font-black text-lime-500">{students.length}</Text>
+            <Text className="text-2xl font-black text-violet-400">{students.length}</Text>
             <Text className="text-xs text-text-muted uppercase tracking-wider font-bold">
               aluno{students.length !== 1 ? "s" : ""} ativo{students.length !== 1 ? "s" : ""}
             </Text>
@@ -56,7 +56,7 @@ export default function StudentsScreen() {
 
         {isLoading ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" color="#BBFF00" />
+            <ActivityIndicator size="large" color="#A855F7" />
           </View>
         ) : !students?.length ? (
           <EmptyState
@@ -85,8 +85,8 @@ export default function StudentsScreen() {
                     Desde {new Date(item.started_at).toLocaleDateString("pt-BR")}
                   </Text>
                 </View>
-                <View className="bg-lime-500/10 px-2 py-1 rounded-full">
-                  <Text className="text-[10px] font-bold text-lime-500">Ativo</Text>
+                <View className="bg-violet-400/10 px-2 py-1 rounded-full">
+                  <Text className="text-[10px] font-bold text-violet-400">Ativo</Text>
                 </View>
               </Pressable>
             )}

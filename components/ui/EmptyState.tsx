@@ -21,7 +21,7 @@ export function EmptyState({ icon, title, description, actionLabel, onAction }: 
       {actionLabel && onAction ? (
         <Pressable
           onPress={onAction}
-          className="bg-lime-500 rounded-xl px-6 py-3 mt-6 active:bg-lime-600"
+          className="bg-violet-400 rounded-xl px-6 py-3 mt-6 active:bg-violet-500"
         >
           <Text className="text-dark-400 font-black text-sm">{actionLabel}</Text>
         </Pressable>

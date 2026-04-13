@@ -132,10 +132,10 @@ export default function CheckinBuilderScreen() {
                   key={f.value}
                   onPress={() => setFrequency(f.value)}
                   className={`flex-1 py-2.5 rounded-xl border-2 items-center ${
-                    frequency === f.value ? "bg-lime-500/10 border-lime-500" : "bg-surface-card border-surface-border"
+                    frequency === f.value ? "bg-violet-400/10 border-violet-400" : "bg-surface-card border-surface-border"
                   }`}
                 >
-                  <Text className={`text-xs font-bold ${frequency === f.value ? "text-lime-500" : "text-text-muted"}`}>
+                  <Text className={`text-xs font-bold ${frequency === f.value ? "text-violet-400" : "text-text-muted"}`}>
                     {f.label}
                   </Text>
                 </Pressable>
@@ -149,8 +149,8 @@ export default function CheckinBuilderScreen() {
               <Text className="text-xs font-bold text-text-muted tracking-wider uppercase">
                 Perguntas ({questions.length})
               </Text>
-              <Pressable onPress={addNewQuestion} className="bg-lime-500/10 px-3 py-1.5 rounded-lg">
-                <Text className="text-lime-500 font-bold text-xs">+ Adicionar</Text>
+              <Pressable onPress={addNewQuestion} className="bg-violet-400/10 px-3 py-1.5 rounded-lg">
+                <Text className="text-violet-400 font-bold text-xs">+ Adicionar</Text>
               </Pressable>
             </View>
 
@@ -178,7 +178,7 @@ export default function CheckinBuilderScreen() {
                         key={t.value}
                         onPress={() => updateQuestion(idx, "type", t.value)}
                         className={`px-2.5 py-1.5 rounded-lg ${
-                          q.type === t.value ? "bg-lime-500" : "bg-surface-elevated"
+                          q.type === t.value ? "bg-violet-400" : "bg-surface-elevated"
                         }`}
                       >
                         <Text className={`text-[10px] font-bold ${
@@ -218,7 +218,7 @@ export default function CheckinBuilderScreen() {
             onPress={handleSave}
             disabled={saving || !title.trim() || questions.length === 0}
             className={`rounded-2xl items-center mt-4 mb-10 ${
-              title.trim() && questions.length > 0 ? "bg-lime-500 active:bg-lime-600" : "bg-surface-border"
+              title.trim() && questions.length > 0 ? "bg-violet-400 active:bg-violet-500" : "bg-surface-border"
             }`}
             style={{ paddingVertical: 18 }}
           >

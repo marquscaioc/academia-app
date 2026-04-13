@@ -62,7 +62,7 @@ export default function EditProfileScreen() {
         <View className="items-center mb-8">
           <Avatar uri={profile?.avatar_url} name={fullName} size="xl" />
           <Pressable className="mt-3">
-            <Text className="text-lime-500 font-bold text-sm">Trocar foto</Text>
+            <Text className="text-violet-400 font-bold text-sm">Trocar foto</Text>
           </Pressable>
         </View>
 
@@ -121,7 +121,7 @@ export default function EditProfileScreen() {
             </View>
             <View className="flex-row justify-between mt-3">
               <Text className="text-xs text-text-muted">Perfil</Text>
-              <Text className="text-xs text-lime-500 font-bold capitalize">{profile?.role}</Text>
+              <Text className="text-xs text-violet-400 font-bold capitalize">{profile?.role}</Text>
             </View>
           </View>
 
@@ -129,7 +129,7 @@ export default function EditProfileScreen() {
             onPress={handleSave}
             disabled={loading}
             className={`rounded-2xl items-center mt-4 mb-10 ${
-              loading ? "bg-lime-700" : "bg-lime-500 active:bg-lime-600"
+              loading ? "bg-violet-700" : "bg-violet-400 active:bg-violet-500"
             }`}
             style={{ paddingVertical: 18 }}
           >

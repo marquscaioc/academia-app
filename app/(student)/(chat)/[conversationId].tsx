@@ -45,14 +45,14 @@ export default function ChatScreen() {
       {/* Header */}
       <View className="flex-row items-center gap-3 px-4 py-3 border-b border-surface-border">
         <Pressable onPress={() => router.back()} className="px-2 py-1">
-          <Text className="text-lime-500 font-bold text-sm">← Voltar</Text>
+          <Text className="text-violet-400 font-bold text-sm">← Voltar</Text>
         </Pressable>
       </View>
 
       {/* Messages */}
       {isLoading ? (
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#BBFF00" />
+          <ActivityIndicator size="large" color="#A855F7" />
         </View>
       ) : (
         <FlatList

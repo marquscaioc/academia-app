@@ -28,7 +28,7 @@ export default function ExercisesScreen() {
         <View className="flex-row items-center justify-between mb-4">
           <Text className="text-2xl font-black text-text-primary">Exercicios</Text>
           <Link href="/(trainer)/exercises/create" asChild>
-            <Pressable className="bg-lime-500 px-4 py-2 rounded-xl active:bg-lime-600">
+            <Pressable className="bg-violet-400 px-4 py-2 rounded-xl active:bg-violet-500">
               <Text className="text-dark-400 font-black text-sm">+ Novo</Text>
             </Pressable>
           </Link>
@@ -54,7 +54,7 @@ export default function ExercisesScreen() {
               onPress={() => setSelectedMuscle(selectedMuscle === item.id ? undefined : item.id)}
               className={`px-3 py-1.5 rounded-full border ${
                 selectedMuscle === item.id
-                  ? "bg-lime-500 border-lime-500"
+                  ? "bg-violet-400 border-violet-400"
                   : "bg-surface-card border-surface-border"
               }`}
             >
@@ -69,7 +69,7 @@ export default function ExercisesScreen() {
 
         {isLoading ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" color="#BBFF00" />
+            <ActivityIndicator size="large" color="#A855F7" />
           </View>
         ) : !exercises?.length ? (
           <EmptyState

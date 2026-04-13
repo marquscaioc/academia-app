@@ -14,7 +14,7 @@ export function RestTimer() {
   const progress = seconds / targetSeconds;
 
   return (
-    <View className="absolute bottom-24 left-4 right-4 bg-lime-500 rounded-3xl p-6 shadow-lg">
+    <View className="absolute bottom-24 left-4 right-4 bg-violet-400 rounded-3xl p-6 shadow-lg">
       <View className="flex-row items-center justify-between">
         <View>
           <Text className="text-dark-400/60 text-xs font-black uppercase tracking-wider">Descanso</Text>

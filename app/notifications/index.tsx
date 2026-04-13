@@ -89,21 +89,21 @@ export default function NotificationsScreen() {
             </Pressable>
             <Text className="text-xl font-black text-text-primary">Notificacoes</Text>
             {unreadCount > 0 ? (
-              <View className="bg-lime-500 rounded-full px-2 py-0.5">
+              <View className="bg-violet-400 rounded-full px-2 py-0.5">
                 <Text className="text-dark-400 text-[10px] font-black">{unreadCount}</Text>
               </View>
             ) : null}
           </View>
           {unreadCount > 0 ? (
             <Pressable onPress={() => markAllRead.mutate()}>
-              <Text className="text-lime-500 text-xs font-bold">Marcar todas como lidas</Text>
+              <Text className="text-violet-400 text-xs font-bold">Marcar todas como lidas</Text>
             </Pressable>
           ) : null}
         </View>
 
         {isLoading ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" color="#BBFF00" />
+            <ActivityIndicator size="large" color="#A855F7" />
           </View>
         ) : !notifications?.length ? (
           <View className="flex-1 items-center justify-center">
@@ -129,7 +129,7 @@ export default function NotificationsScreen() {
                   <View className="flex-row items-center gap-2">
                     <Text className="text-sm font-bold text-text-primary flex-1">{item.title}</Text>
                     {!item.is_read ? (
-                      <View className="w-2 h-2 bg-lime-500 rounded-full" />
+                      <View className="w-2 h-2 bg-violet-400 rounded-full" />
                     ) : null}
                   </View>
                   {item.body ? (

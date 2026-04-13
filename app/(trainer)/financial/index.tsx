@@ -25,7 +25,7 @@ export default function FinancialScreen() {
         <View className="flex-row items-center justify-between mb-6">
           <Text className="text-2xl font-black text-text-primary">Financeiro</Text>
           <Link href="/(trainer)/financial/create-plan" asChild>
-            <Pressable className="bg-lime-500 px-4 py-2 rounded-xl active:bg-lime-600">
+            <Pressable className="bg-violet-400 px-4 py-2 rounded-xl active:bg-violet-500">
               <Text className="text-dark-400 font-black text-xs">+ Plano</Text>
             </Pressable>
           </Link>
@@ -35,13 +35,13 @@ export default function FinancialScreen() {
         <View className="flex-row gap-3 mb-6">
           <View className="flex-1 bg-surface-card border border-surface-border rounded-2xl p-5">
             <Text className="text-xs text-text-muted uppercase tracking-wider font-bold mb-2">MRR</Text>
-            <Text className="text-2xl font-black text-lime-500">
+            <Text className="text-2xl font-black text-violet-400">
               {statsLoading ? "..." : formatCurrency(stats?.mrr ?? 0)}
             </Text>
           </View>
           <View className="flex-1 bg-surface-card border border-surface-border rounded-2xl p-5">
             <Text className="text-xs text-text-muted uppercase tracking-wider font-bold mb-2">Alunos</Text>
-            <Text className="text-2xl font-black text-electric-400">
+            <Text className="text-2xl font-black text-ice-400">
               {statsLoading ? "..." : stats?.activeStudents}
             </Text>
           </View>
@@ -63,11 +63,11 @@ export default function FinancialScreen() {
               key={t}
               onPress={() => setTab(t)}
               className={`flex-1 py-3 items-center border-b-2 ${
-                tab === t ? "border-lime-500" : "border-transparent"
+                tab === t ? "border-violet-400" : "border-transparent"
               }`}
             >
               <Text className={`font-bold text-xs uppercase tracking-wider ${
-                tab === t ? "text-lime-500" : "text-text-muted"
+                tab === t ? "text-violet-400" : "text-text-muted"
               }`}>
                 {t === "overview" ? "Resumo" : t === "plans" ? "Planos" : "Pagamentos"}
               </Text>
@@ -103,13 +103,13 @@ export default function FinancialScreen() {
                 <Card key={plan.id} variant="outlined">
                   <View className="flex-row items-center justify-between mb-2">
                     <Text className="text-base font-bold text-text-primary">{plan.name}</Text>
-                    <View className={`px-2 py-1 rounded-full ${plan.is_active ? "bg-lime-500/10" : "bg-surface-elevated"}`}>
-                      <Text className={`text-[10px] font-bold ${plan.is_active ? "text-lime-500" : "text-text-muted"}`}>
+                    <View className={`px-2 py-1 rounded-full ${plan.is_active ? "bg-violet-400/10" : "bg-surface-elevated"}`}>
+                      <Text className={`text-[10px] font-bold ${plan.is_active ? "text-violet-400" : "text-text-muted"}`}>
                         {plan.is_active ? "Ativo" : "Inativo"}
                       </Text>
                     </View>
                   </View>
-                  <Text className="text-xl font-black text-lime-500">
+                  <Text className="text-xl font-black text-violet-400">
                     {formatCurrency(plan.price_cents)}
                     <Text className="text-xs text-text-muted font-normal">/{plan.billing_interval === "monthly" ? "mes" : plan.billing_interval}</Text>
                   </Text>

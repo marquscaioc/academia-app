@@ -31,7 +31,7 @@ export default function WorkoutHistoryScreen() {
 
         {isLoading ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" color="#BBFF00" />
+            <ActivityIndicator size="large" color="#A855F7" />
           </View>
         ) : !sessions?.length ? (
           <View className="flex-1 items-center justify-center">
@@ -62,7 +62,7 @@ export default function WorkoutHistoryScreen() {
                     {formatDuration(item.duration_seconds)}
                   </Text>
                   {item.overall_rpe ? (
-                    <Text className="text-xs text-lime-500 font-bold">RPE {item.overall_rpe}</Text>
+                    <Text className="text-xs text-violet-400 font-bold">RPE {item.overall_rpe}</Text>
                   ) : null}
                 </View>
               </View>

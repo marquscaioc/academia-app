@@ -38,8 +38,8 @@ export function ExerciseCard({
         <Text className="text-sm font-bold text-text-primary" numberOfLines={1}>{name}</Text>
         <View className="flex-row gap-2 mt-1.5">
           {muscleGroup ? (
-            <View className="bg-lime-500/10 px-2 py-0.5 rounded-full">
-              <Text className="text-[10px] font-bold text-lime-500">{muscleGroup}</Text>
+            <View className="bg-violet-400/10 px-2 py-0.5 rounded-full">
+              <Text className="text-[10px] font-bold text-violet-400">{muscleGroup}</Text>
             </View>
           ) : null}
           {equipment ? (

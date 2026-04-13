@@ -45,7 +45,7 @@ export default function LoginScreen() {
         <View className="flex-1 justify-center px-8 max-w-[440px] w-full self-center">
           {/* Brand */}
           <View className="mb-14 items-center">
-            <View className="w-16 h-16 bg-lime-500 rounded-2xl items-center justify-center mb-5 rotate-6">
+            <View className="w-16 h-16 bg-violet-400 rounded-2xl items-center justify-center mb-5 rotate-6">
               <Text className="text-dark-400 text-3xl font-black -rotate-6">A</Text>
             </View>
             <Text className="text-4xl font-black text-text-primary tracking-tight">
@@ -72,7 +72,7 @@ export default function LoginScreen() {
               <TextInput
                 className={`rounded-2xl px-5 py-4 text-base text-text-primary ${
                   focusedField === "email"
-                    ? "bg-surface-elevated border-2 border-lime-500/50"
+                    ? "bg-surface-elevated border-2 border-violet-400/50"
                     : "bg-surface-card border-2 border-surface-border"
                 }`}
                 placeholder="seu@email.com"
@@ -94,7 +94,7 @@ export default function LoginScreen() {
               <TextInput
                 className={`rounded-2xl px-5 py-4 text-base text-text-primary ${
                   focusedField === "password"
-                    ? "bg-surface-elevated border-2 border-lime-500/50"
+                    ? "bg-surface-elevated border-2 border-violet-400/50"
                     : "bg-surface-card border-2 border-surface-border"
                 }`}
                 placeholder="Sua senha"
@@ -121,7 +121,7 @@ export default function LoginScreen() {
               onPress={handleLogin}
               disabled={loading}
               className={`rounded-2xl py-4.5 items-center mt-2 ${
-                loading ? "bg-lime-700" : "bg-lime-500 active:bg-lime-600"
+                loading ? "bg-violet-700" : "bg-violet-400 active:bg-violet-500"
               }`}
               style={{ paddingVertical: 18 }}
             >
@@ -147,7 +147,7 @@ export default function LoginScreen() {
             <Text className="text-text-muted text-sm">Novo por aqui? </Text>
             <Link href="/(auth)/register" asChild>
               <Pressable>
-                <Text className="text-lime-500 font-bold text-sm">
+                <Text className="text-violet-400 font-bold text-sm">
                   Criar conta
                 </Text>
               </Pressable>

@@ -50,7 +50,7 @@ export default function RegisterScreen() {
   const inputClass = (field: string) =>
     `rounded-2xl px-5 py-4 text-base text-text-primary ${
       focusedField === field
-        ? "bg-surface-elevated border-2 border-lime-500/50"
+        ? "bg-surface-elevated border-2 border-violet-400/50"
         : "bg-surface-card border-2 border-surface-border"
     }`;
 
@@ -159,7 +159,7 @@ export default function RegisterScreen() {
               onPress={handleRegister}
               disabled={loading}
               className={`rounded-2xl items-center mt-3 ${
-                loading ? "bg-lime-700" : "bg-lime-500 active:bg-lime-600"
+                loading ? "bg-violet-700" : "bg-violet-400 active:bg-violet-500"
               }`}
               style={{ paddingVertical: 18 }}
             >
@@ -177,7 +177,7 @@ export default function RegisterScreen() {
             <Text className="text-text-muted text-sm">Ja tem uma conta? </Text>
             <Link href="/(auth)/login" asChild>
               <Pressable>
-                <Text className="text-lime-500 font-bold text-sm">Entrar</Text>
+                <Text className="text-violet-400 font-bold text-sm">Entrar</Text>
               </Pressable>
             </Link>
           </View>

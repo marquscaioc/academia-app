@@ -12,7 +12,7 @@ function TabIcon({ name, focused }: { name: string; focused: boolean }) {
   return (
     <View className="items-center">
       <Text style={{ fontSize: 20, opacity: focused ? 1 : 0.4 }}>{icons[name] ?? "●"}</Text>
-      {focused ? <View className="w-1.5 h-1.5 bg-lime-500 rounded-full mt-1" /> : null}
+      {focused ? <View className="w-1.5 h-1.5 bg-violet-400 rounded-full mt-1" /> : null}
     </View>
   );
 }
@@ -27,14 +27,14 @@ export default function TrainerLayout() {
         <Tabs
           screenOptions={{
             headerShown: false,
-            tabBarActiveTintColor: "#BBFF00",
-            tabBarInactiveTintColor: "#6B6B73",
+            tabBarActiveTintColor: "#A855F7",
+            tabBarInactiveTintColor: "#6E6580",
             tabBarStyle: isWeb
               ? { display: "none" as const }
               : {
-                  backgroundColor: "#111113",
+                  backgroundColor: "#130F18",
                   borderTopWidth: 1,
-                  borderTopColor: "#2A2A30",
+                  borderTopColor: "#2D2737",
                   paddingTop: 8,
                   height: 65,
                 },

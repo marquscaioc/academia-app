@@ -30,14 +30,14 @@ export default function InviteScreen() {
         <View className="flex-1 items-center justify-center">
           {inviteCode ? (
             <View className="items-center">
-              <View className="w-20 h-20 bg-lime-500/20 rounded-3xl items-center justify-center mb-6">
+              <View className="w-20 h-20 bg-violet-400/20 rounded-3xl items-center justify-center mb-6">
                 <Text className="text-4xl">🎟️</Text>
               </View>
               <Text className="text-sm text-text-muted mb-4">
                 Compartilhe este codigo com seu aluno:
               </Text>
-              <View className="bg-surface-card border-2 border-lime-500 rounded-3xl px-10 py-8 mb-6">
-                <Text className="text-5xl font-black text-lime-500 tracking-[8px] text-center">
+              <View className="bg-surface-card border-2 border-violet-400 rounded-3xl px-10 py-8 mb-6">
+                <Text className="text-5xl font-black text-violet-400 tracking-[8px] text-center">
                   {inviteCode}
                 </Text>
               </View>
@@ -69,7 +69,7 @@ export default function InviteScreen() {
                 onPress={handleGenerate}
                 disabled={createInvite.isPending}
                 className={`rounded-2xl px-8 items-center ${
-                  createInvite.isPending ? "bg-lime-700" : "bg-lime-500 active:bg-lime-600"
+                  createInvite.isPending ? "bg-violet-700" : "bg-violet-400 active:bg-violet-500"
                 }`}
                 style={{ paddingVertical: 18 }}
               >

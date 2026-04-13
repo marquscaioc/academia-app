@@ -6,7 +6,7 @@ import { useAuth } from "../../../lib/auth/provider";
 import { supabase } from "../../../lib/supabase/client";
 
 const colorPresets = [
-  { name: "Limao", primary: "#BBFF00", secondary: "#00E5FF" },
+  { name: "Limao", primary: "#A855F7", secondary: "#00E5FF" },
   { name: "Roxo", primary: "#8B5CF6", secondary: "#EC4899" },
   { name: "Azul", primary: "#3B82F6", secondary: "#06B6D4" },
   { name: "Laranja", primary: "#F97316", secondary: "#EAB308" },
@@ -53,8 +53,8 @@ export default function BrandingScreen() {
           <View className="w-16" />
         </View>
 
-        <View className="bg-surface-card border border-lime-500/20 rounded-2xl p-5 mb-6">
-          <Text className="text-xs text-lime-500 font-bold uppercase tracking-wider mb-2">Preview</Text>
+        <View className="bg-surface-card border border-violet-400/20 rounded-2xl p-5 mb-6">
+          <Text className="text-xs text-violet-400 font-bold uppercase tracking-wider mb-2">Preview</Text>
           <View className="items-center py-6" style={{ backgroundColor: colorPresets[selectedPreset].primary + "10", borderRadius: 16 }}>
             <View
               className="w-16 h-16 rounded-2xl items-center justify-center mb-3"
@@ -102,7 +102,7 @@ export default function BrandingScreen() {
                   key={idx}
                   onPress={() => setSelectedPreset(idx)}
                   className={`rounded-2xl p-3 items-center border-2 ${
-                    selectedPreset === idx ? "border-lime-500" : "border-surface-border"
+                    selectedPreset === idx ? "border-violet-400" : "border-surface-border"
                   }`}
                   style={{ width: "30%" }}
                 >
@@ -119,7 +119,7 @@ export default function BrandingScreen() {
           <Pressable
             onPress={handleSave}
             disabled={saving}
-            className={`rounded-2xl items-center mt-4 mb-10 ${saving ? "bg-lime-700" : "bg-lime-500 active:bg-lime-600"}`}
+            className={`rounded-2xl items-center mt-4 mb-10 ${saving ? "bg-violet-700" : "bg-violet-400 active:bg-violet-500"}`}
             style={{ paddingVertical: 18 }}
           >
             {saving ? (

@@ -27,7 +27,7 @@ export default function TrainerDashboardScreen() {
         {/* Header */}
         <View className="flex-row items-center justify-between mb-8">
           <View>
-            <Text className="text-xs text-lime-500 font-bold uppercase tracking-widest mb-1">
+            <Text className="text-xs text-violet-400 font-bold uppercase tracking-widest mb-1">
               Painel do Personal
             </Text>
             <Text className="text-3xl font-black text-text-primary tracking-tight">
@@ -43,7 +43,7 @@ export default function TrainerDashboardScreen() {
 
         {/* CTA: Criar plano */}
         <Link href="/(trainer)/workout-builder" asChild>
-          <Pressable className="bg-lime-500 rounded-2xl p-5 mb-6 flex-row items-center gap-4 active:bg-lime-600">
+          <Pressable className="bg-violet-400 rounded-2xl p-5 mb-6 flex-row items-center gap-4 active:bg-violet-500">
             <View className="w-12 h-12 bg-dark-400/20 rounded-xl items-center justify-center">
               <Text className="text-2xl">📝</Text>
             </View>
@@ -57,14 +57,14 @@ export default function TrainerDashboardScreen() {
 
         {/* Metrics */}
         <View className="flex-row gap-3 mb-6">
-          <MetricCard value="0" label="Alunos ativos" icon="👥" color="text-lime-500" />
-          <MetricCard value="0" label="Treinos criados" icon="🏋️" color="text-electric-400" />
+          <MetricCard value="0" label="Alunos ativos" icon="👥" color="text-violet-400" />
+          <MetricCard value="0" label="Treinos criados" icon="🏋️" color="text-ice-400" />
         </View>
 
         {/* Getting started */}
         <View className="bg-surface-card border border-surface-border rounded-3xl p-6 mb-6">
           <View className="flex-row items-center gap-3 mb-5">
-            <View className="w-10 h-10 bg-lime-500/20 rounded-xl items-center justify-center">
+            <View className="w-10 h-10 bg-violet-400/20 rounded-xl items-center justify-center">
               <Text className="text-lg">🚀</Text>
             </View>
             <Text className="text-lg font-black text-text-primary">
@@ -80,7 +80,7 @@ export default function TrainerDashboardScreen() {
           ].map((item) => (
             <View key={item.step} className="flex-row items-center gap-4 py-3 border-b border-surface-border last:border-0">
               <View className={`w-8 h-8 rounded-lg items-center justify-center ${
-                item.done ? "bg-lime-500" : "bg-surface-elevated"
+                item.done ? "bg-violet-400" : "bg-surface-elevated"
               }`}>
                 <Text className={`text-xs font-black ${
                   item.done ? "text-dark-400" : "text-text-muted"

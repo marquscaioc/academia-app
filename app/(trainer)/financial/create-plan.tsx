@@ -102,12 +102,12 @@ export default function CreatePlanScreen() {
                   onPress={() => setInterval(i.value)}
                   className={`flex-1 py-3 rounded-xl border-2 items-center ${
                     interval === i.value
-                      ? "bg-lime-500/10 border-lime-500"
+                      ? "bg-violet-400/10 border-violet-400"
                       : "bg-surface-card border-surface-border"
                   }`}
                 >
                   <Text className={`text-sm font-bold ${
-                    interval === i.value ? "text-lime-500" : "text-text-muted"
+                    interval === i.value ? "text-violet-400" : "text-text-muted"
                   }`}>
                     {i.label}
                   </Text>
@@ -120,7 +120,7 @@ export default function CreatePlanScreen() {
             onPress={handleCreate}
             disabled={createPlan.isPending}
             className={`rounded-2xl items-center mt-4 mb-10 ${
-              createPlan.isPending ? "bg-lime-700" : "bg-lime-500 active:bg-lime-600"
+              createPlan.isPending ? "bg-violet-700" : "bg-violet-400 active:bg-violet-500"
             }`}
             style={{ paddingVertical: 18 }}
           >

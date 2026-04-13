@@ -43,7 +43,7 @@ export default function ChatListScreen() {
 
         {isLoading ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" color="#BBFF00" />
+            <ActivityIndicator size="large" color="#A855F7" />
           </View>
         ) : !conversations?.length ? (
           <EmptyState
