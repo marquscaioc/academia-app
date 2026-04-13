@@ -6,13 +6,14 @@ import { useDietPlans, useMealLogs, useWaterLogs } from "../../../hooks/queries/
 import { useLogMeal, useLogWater } from "../../../hooks/mutations/useDietMutations";
 import { Card } from "../../../components/ui/Card";
 import { EmptyState } from "../../../components/ui/EmptyState";
+import { SubstitutionSheet } from "../../../components/diet/SubstitutionSheet";
 
 function getTodayDate() {
   return new Date().toISOString().split("T")[0];
 }
 
 export default function DietScreen() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const today = getTodayDate();
   const { data: plans } = useDietPlans(user?.id);
   const { data: mealLogs } = useMealLogs(user?.id, today);
@@ -20,11 +21,13 @@ export default function DietScreen() {
   const logMeal = useLogMeal();
   const logWater = useLogWater();
 
+  const [subSheet, setSubSheet] = useState<{ itemId: string; name: string; cal?: number; prot?: number } | null>(null);
+
   const activePlan = plans?.[0];
   const meals = activePlan?.meals ?? [];
   const loggedMealIds = new Set(mealLogs?.map((l) => l.meal_id) ?? []);
   const totalWaterMl = waterLogs?.reduce((sum, l) => sum + l.amount_ml, 0) ?? 0;
-  const waterGoalMl = 2500;
+  const waterGoalMl = profile?.water_goal_ml ?? 2500;
 
   const completedMeals = meals.filter((m) => loggedMealIds.has(m.id)).length;
   const totalMeals = meals.length;
@@ -158,13 +161,20 @@ export default function DietScreen() {
                   )}
                 </View>
                 {(meal.items ?? []).map((item) => (
-                  <View key={item.id} className="flex-row justify-between py-1">
+                  <View key={item.id} className="flex-row justify-between items-center py-1">
                     <Text className="text-sm text-text-secondary flex-1" numberOfLines={1}>
                       {item.food_name}
                     </Text>
-                    <Text className="text-xs text-text-muted ml-2">
-                      {item.quantity}{item.unit} {item.calories ? `· ${Math.round(item.calories)}kcal` : ""}
-                    </Text>
+                    <View className="flex-row items-center gap-2">
+                      <Text className="text-xs text-text-muted">
+                        {item.quantity}{item.unit} {item.calories ? `· ${Math.round(item.calories)}kcal` : ""}
+                      </Text>
+                      <Pressable
+                        onPress={() => setSubSheet({ itemId: item.id, name: item.food_name, cal: item.calories ?? undefined, prot: item.protein_g ?? undefined })}
+                      >
+                        <Text className="text-[10px] text-violet-400 font-bold">Trocar</Text>
+                      </Pressable>
+                    </View>
                   </View>
                 ))}
                 {meal.notes ? (
@@ -175,6 +185,17 @@ export default function DietScreen() {
           })}
         </View>
       </ScrollView>
+      <SubstitutionSheet
+        visible={!!subSheet}
+        mealItemId={subSheet?.itemId ?? null}
+        originalName={subSheet?.name ?? ""}
+        originalCalories={subSheet?.cal ?? undefined}
+        originalProtein={subSheet?.prot ?? undefined}
+        onSelect={(_subId, _foodName) => {
+          setSubSheet(null);
+        }}
+        onClose={() => setSubSheet(null)}
+      />
     </SafeAreaView>
   );
 }

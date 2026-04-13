@@ -83,6 +83,12 @@ export default function ProgressScreen() {
               <Text className="text-xs font-bold text-text-secondary">Tirar foto</Text>
             </Pressable>
           </Link>
+          <Link href="/(student)/(progress)/export-report" asChild>
+            <Pressable className="flex-1 bg-surface-card border border-surface-border rounded-2xl py-4 items-center active:bg-surface-hover">
+              <Text className="text-xl mb-1">📄</Text>
+              <Text className="text-xs font-bold text-text-secondary">Exportar PDF</Text>
+            </Pressable>
+          </Link>
         </View>
 
         {/* Weight chart */}

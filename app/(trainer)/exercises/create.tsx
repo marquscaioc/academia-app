@@ -93,6 +93,8 @@ export default function CreateExerciseScreen() {
       equipment_id: selectedEquipment ?? undefined,
       difficulty: difficulty as "beginner" | "intermediate" | "advanced",
       exercise_type: exerciseType as "strength" | "cardio" | "flexibility" | "calisthenics",
+      video_url: videoUrl,
+      thumbnail_url: thumbnailUrl,
       created_by: user.id,
     });
 

@@ -1,7 +1,8 @@
 import { Link } from "expo-router";
-import { ActivityIndicator, FlatList, Pressable, Text, View } from "react-native";
+import { useState } from "react";
+import { ActivityIndicator, FlatList, Modal, Pressable, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../../lib/auth/provider";
 import { supabase } from "../../../lib/supabase/client";
 import { Avatar } from "../../../components/ui/Avatar";
@@ -17,6 +18,23 @@ interface StudentRelation {
 
 export default function StudentsScreen() {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
+  const [waterModal, setWaterModal] = useState<{ studentId: string; name: string } | null>(null);
+  const [waterGoal, setWaterGoal] = useState("");
+
+  const updateWaterGoal = useMutation({
+    mutationFn: async ({ studentId, goalMl }: { studentId: string; goalMl: number }) => {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ water_goal_ml: goalMl })
+        .eq("id", studentId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      setWaterModal(null);
+      setWaterGoal("");
+    },
+  });
 
   const { data: students, isLoading } = useQuery({
     queryKey: ["trainer", "students", user?.id],
@@ -71,7 +89,13 @@ export default function StudentsScreen() {
             showsVerticalScrollIndicator={false}
             contentContainerClassName="gap-2"
             renderItem={({ item }) => (
-              <Pressable className="bg-surface-card border border-surface-border rounded-2xl p-4 flex-row items-center gap-4 active:bg-surface-hover">
+              <Pressable
+                onPress={() => {
+                  setWaterModal({ studentId: item.student_id, name: item.student?.full_name ?? "Aluno" });
+                  setWaterGoal("");
+                }}
+                className="bg-surface-card border border-surface-border rounded-2xl p-4 flex-row items-center gap-4 active:bg-surface-hover"
+              >
                 <Avatar
                   uri={item.student?.avatar_url}
                   name={item.student?.full_name}
@@ -93,6 +117,50 @@ export default function StudentsScreen() {
           />
         )}
       </View>
+
+      {/* Water goal modal */}
+      <Modal visible={!!waterModal} animationType="fade" transparent>
+        <View className="flex-1 items-center justify-center bg-black/60 px-6">
+          <View className="bg-dark-200 rounded-3xl p-6 w-full max-w-sm">
+            <Text className="text-lg font-black text-text-primary mb-1">Meta de Agua</Text>
+            <Text className="text-sm text-text-muted mb-5">{waterModal?.name}</Text>
+
+            <Text className="text-xs font-bold text-text-muted mb-2 ml-1 tracking-wider uppercase">
+              Meta diaria (ml)
+            </Text>
+            <TextInput
+              className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary mb-5"
+              placeholder="2500"
+              placeholderTextColor="#6E6382"
+              value={waterGoal}
+              onChangeText={setWaterGoal}
+              keyboardType="numeric"
+            />
+
+            <View className="flex-row gap-3">
+              <Pressable
+                onPress={() => setWaterModal(null)}
+                className="flex-1 bg-surface-elevated rounded-2xl py-3.5 items-center active:bg-surface-hover"
+              >
+                <Text className="text-text-secondary font-bold">Cancelar</Text>
+              </Pressable>
+              <Pressable
+                onPress={() => {
+                  if (waterModal && waterGoal) {
+                    updateWaterGoal.mutate({ studentId: waterModal.studentId, goalMl: parseInt(waterGoal) });
+                  }
+                }}
+                disabled={!waterGoal || updateWaterGoal.isPending}
+                className="flex-1 bg-violet-500 rounded-2xl py-3.5 items-center active:bg-violet-600"
+              >
+                <Text className="text-white font-bold">
+                  {updateWaterGoal.isPending ? "Salvando..." : "Salvar"}
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }

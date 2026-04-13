@@ -9,6 +9,8 @@ interface CreateExerciseInput {
   equipment_id?: string;
   difficulty?: "beginner" | "intermediate" | "advanced";
   exercise_type?: "strength" | "cardio" | "flexibility" | "calisthenics";
+  video_url?: string;
+  thumbnail_url?: string;
   created_by: string;
 }
 

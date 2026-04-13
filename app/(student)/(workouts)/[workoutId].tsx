@@ -11,6 +11,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ExerciseCard } from "../../../components/workout/ExerciseCard";
 import { RestTimer } from "../../../components/workout/RestTimer";
+import { VideoPlayerModal } from "../../../components/workout/VideoPlayerModal";
 import { useAuth } from "../../../lib/auth/provider";
 import { useWorkoutDetail, WorkoutExercise } from "../../../hooks/queries/useWorkouts";
 import {
@@ -20,6 +21,7 @@ import {
 } from "../../../hooks/mutations/useLogWorkout";
 import { useTimerStore } from "../../../stores/useTimerStore";
 import { useWorkoutSessionStore } from "../../../stores/useWorkoutSessionStore";
+import { useLastPerformance } from "../../../hooks/queries/useLastPerformance";
 
 export default function WorkoutExecutionScreen() {
   const { workoutId } = useLocalSearchParams<{ workoutId: string }>();
@@ -31,6 +33,8 @@ export default function WorkoutExecutionScreen() {
   const timerStore = useTimerStore();
   const sessionStore = useWorkoutSessionStore();
   const [activeExerciseIdx, setActiveExerciseIdx] = useState(0);
+  const [playingVideoUrl, setPlayingVideoUrl] = useState<string | null>(null);
+  const [customWeight, setCustomWeight] = useState("");
 
   if (isLoading || !workout) {
     return (
@@ -45,6 +49,7 @@ export default function WorkoutExecutionScreen() {
   const completedSets = currentExercise
     ? sessionStore.getCompletedSetsForExercise(currentExercise.exercise_id)
     : [];
+  const { data: lastPerf } = useLastPerformance(currentExercise?.exercise_id, user?.id);
 
   const handleStartWorkout = async () => {
     if (!user) return;
@@ -59,6 +64,10 @@ export default function WorkoutExecutionScreen() {
     if (!sessionStore.sessionId || !currentExercise) return;
 
     const setNumber = completedSets.length + 1;
+    const effectiveWeight = customWeight
+      ? parseFloat(customWeight)
+      : lastPerf?.suggestedWeight ?? currentExercise.target_weight_kg ?? undefined;
+
     await logSetMutation.mutateAsync({
       session_id: sessionStore.sessionId,
       exercise_id: currentExercise.exercise_id,
@@ -67,7 +76,7 @@ export default function WorkoutExecutionScreen() {
       reps: currentExercise.target_reps
         ? parseInt(currentExercise.target_reps)
         : undefined,
-      weight_kg: currentExercise.target_weight_kg ?? undefined,
+      weight_kg: effectiveWeight,
     });
 
     sessionStore.addSet({
@@ -77,7 +86,7 @@ export default function WorkoutExecutionScreen() {
       reps: currentExercise.target_reps
         ? parseInt(currentExercise.target_reps)
         : undefined,
-      weightKg: currentExercise.target_weight_kg ?? undefined,
+      weightKg: effectiveWeight,
       completed: true,
     });
 
@@ -89,6 +98,7 @@ export default function WorkoutExecutionScreen() {
   const handleNextExercise = () => {
     if (activeExerciseIdx < exercises.length - 1) {
       setActiveExerciseIdx(activeExerciseIdx + 1);
+      setCustomWeight("");
     }
   };
 
@@ -130,10 +140,12 @@ export default function WorkoutExecutionScreen() {
                 name={ex.exercise?.name ?? "Exercicio"}
                 muscleGroup={ex.exercise?.muscle_group?.name}
                 thumbnailUrl={ex.exercise?.thumbnail_url}
+                videoUrl={ex.exercise?.video_url}
                 targetSets={ex.target_sets}
                 targetReps={ex.target_reps}
                 targetWeightKg={ex.target_weight_kg}
                 restSeconds={ex.rest_seconds}
+                onPlayVideo={() => setPlayingVideoUrl(ex.exercise?.video_url ?? null)}
               />
             ))}
           </View>
@@ -152,6 +164,7 @@ export default function WorkoutExecutionScreen() {
             )}
           </Pressable>
         </ScrollView>
+        <VideoPlayerModal visible={!!playingVideoUrl} videoUrl={playingVideoUrl} onClose={() => setPlayingVideoUrl(null)} />
       </SafeAreaView>
     );
   }
@@ -167,6 +180,11 @@ export default function WorkoutExecutionScreen() {
             <Text className="text-xl font-bold text-text-primary">
               {currentExercise?.exercise?.name ?? "Exercicio"}
             </Text>
+            {currentExercise?.exercise?.video_url ? (
+              <Pressable onPress={() => setPlayingVideoUrl(currentExercise.exercise?.video_url ?? null)}>
+                <Text className="text-violet-400 text-xs font-bold mt-1">▶ Ver video</Text>
+              </Pressable>
+            ) : null}
           </View>
           <Pressable
             onPress={handleFinishWorkout}
@@ -198,6 +216,33 @@ export default function WorkoutExecutionScreen() {
                 </Text>
               </View>
             </View>
+
+            {/* Progressao de carga */}
+            {lastPerf?.lastWeight ? (
+              <View className="bg-violet-500/5 border border-violet-500/20 rounded-2xl p-4 mb-4">
+                <Text className="text-xs text-text-muted mb-1">Ultima vez</Text>
+                <Text className="text-sm font-bold text-text-primary">
+                  {lastPerf.lastWeight}kg x {lastPerf.lastReps} reps
+                </Text>
+                {lastPerf.targetRepsHit && lastPerf.suggestedWeight ? (
+                  <Text className="text-xs font-bold text-violet-400 mt-1">
+                    Sugestao: {lastPerf.suggestedWeight}kg (+2.5kg)
+                  </Text>
+                ) : null}
+                <View className="flex-row items-center gap-2 mt-3">
+                  <Text className="text-xs text-text-muted">Peso:</Text>
+                  <TextInput
+                    className="bg-surface-card border border-surface-border rounded-xl px-3 py-2 text-sm text-text-primary w-20 text-center"
+                    placeholderTextColor="#6E6382"
+                    placeholder={String(lastPerf.suggestedWeight ?? lastPerf.lastWeight)}
+                    value={customWeight}
+                    onChangeText={setCustomWeight}
+                    keyboardType="numeric"
+                  />
+                  <Text className="text-xs text-text-muted">kg</Text>
+                </View>
+              </View>
+            ) : null}
 
             <View className="gap-2 mb-6">
               {Array.from({
@@ -267,6 +312,7 @@ export default function WorkoutExecutionScreen() {
       </View>
 
       <RestTimer />
+      <VideoPlayerModal visible={!!playingVideoUrl} videoUrl={playingVideoUrl} onClose={() => setPlayingVideoUrl(null)} />
     </SafeAreaView>
   );
 }

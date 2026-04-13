@@ -19,6 +19,7 @@ interface Profile {
   avatar_url: string | null;
   bio: string | null;
   onboarding_completed: boolean;
+  water_goal_ml: number | null;
 }
 
 interface AuthContextType {
@@ -47,7 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const fetchProfile = async (userId: string) => {
     const { data } = await supabase
       .from("profiles")
-      .select("id, role, full_name, display_name, avatar_url, bio, onboarding_completed")
+      .select("id, role, full_name, display_name, avatar_url, bio, onboarding_completed, water_goal_ml")
       .eq("id", userId)
       .single();
     setProfile(data as Profile | null);
