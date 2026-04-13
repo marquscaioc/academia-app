@@ -9,7 +9,10 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import * as ImagePicker from "expo-image-picker";
+import { Image } from "expo-image";
 import { useAuth } from "../../../lib/auth/provider";
+import { supabase } from "../../../lib/supabase/client";
 import { useFeedPosts } from "../../../hooks/queries/useFeed";
 import { useCreatePost, useToggleReaction } from "../../../hooks/mutations/useSocialMutations";
 import { FeedPost } from "../../../components/social/FeedPost";
@@ -23,14 +26,43 @@ export default function SocialFeedScreen() {
   const toggleReaction = useToggleReaction();
   const [newPostContent, setNewPostContent] = useState("");
   const [showComposer, setShowComposer] = useState(false);
+  const [mediaUris, setMediaUris] = useState<string[]>([]);
+
+  const pickMedia = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsMultipleSelection: true,
+      selectionLimit: 4,
+      quality: 0.8,
+    });
+    if (!result.canceled) {
+      setMediaUris(result.assets.map((a) => a.uri));
+    }
+  };
 
   const handlePost = async () => {
-    if (!newPostContent.trim() || !user) return;
+    if ((!newPostContent.trim() && !mediaUris.length) || !user) return;
+
+    // Upload media if any
+    let uploadedUrls: string[] = [];
+    for (const uri of mediaUris) {
+      const fileName = `${user.id}/${Date.now()}_${Math.random().toString(36).slice(2)}.jpg`;
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      const { error } = await supabase.storage.from("feed-media").upload(fileName, blob, { contentType: "image/jpeg" });
+      if (!error) {
+        const { data: { publicUrl } } = supabase.storage.from("feed-media").getPublicUrl(fileName);
+        uploadedUrls.push(publicUrl);
+      }
+    }
+
     await createPost.mutateAsync({
       author_id: user.id,
-      content: newPostContent.trim(),
+      content: newPostContent.trim() || undefined,
+      media_urls: uploadedUrls.length ? uploadedUrls : undefined,
     });
     setNewPostContent("");
+    setMediaUris([]);
     setShowComposer(false);
   };
 
@@ -40,62 +72,82 @@ export default function SocialFeedScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-dark-400">
       {/* Header */}
-      <View className="px-6 pt-6 pb-3 flex-row items-center justify-between border-b border-gray-100">
-        <Text className="text-2xl font-bold text-gray-900">Feed</Text>
-        <Pressable
-          onPress={() => router.push("/challenges")}
-          className="bg-accent-50 px-3 py-1.5 rounded-lg"
-        >
-          <Text className="text-accent-700 font-semibold text-xs">🏆 Desafios</Text>
-        </Pressable>
+      <View className="px-6 pt-6 pb-3 flex-row items-center justify-between border-b border-surface-border">
+        <Text className="text-2xl font-black text-text-primary">Feed</Text>
+        <View className="flex-row gap-2">
+          <Pressable onPress={() => router.push("/groups")} className="bg-surface-card border border-surface-border px-3 py-1.5 rounded-lg">
+            <Text className="text-text-muted font-bold text-xs">👥 Grupos</Text>
+          </Pressable>
+          <Pressable onPress={() => router.push("/challenges")} className="bg-violet-400/10 px-3 py-1.5 rounded-lg">
+            <Text className="text-violet-400 font-bold text-xs">🏆 Desafios</Text>
+          </Pressable>
+        </View>
       </View>
 
       {/* Composer toggle */}
       <Pressable
         onPress={() => setShowComposer(!showComposer)}
-        className="px-6 py-3 flex-row items-center gap-3 border-b border-gray-100"
+        className="px-6 py-3 flex-row items-center gap-3 border-b border-surface-border"
       >
         <Avatar uri={profile?.avatar_url} name={profile?.full_name} size="sm" />
-        <Text className="text-sm text-gray-400 flex-1">
-          {showComposer ? "Publicar algo..." : "No que voce esta pensando?"}
-        </Text>
+        <Text className="text-sm text-text-muted flex-1">No que voce esta pensando?</Text>
       </Pressable>
 
       {/* Composer */}
       {showComposer ? (
-        <View className="px-6 py-3 border-b border-gray-100 bg-gray-50">
+        <View className="px-6 py-4 border-b border-surface-border bg-surface-card">
           <TextInput
-            className="text-base text-gray-900 min-h-[60px]"
+            className="text-base text-text-primary min-h-[60px]"
             placeholder="Compartilhe seu treino, progresso ou motivacao..."
-            placeholderTextColor="#9ca3af"
+            placeholderTextColor="#6E6580"
             value={newPostContent}
             onChangeText={setNewPostContent}
             multiline
             autoFocus
             style={{ textAlignVertical: "top" }}
           />
-          <View className="flex-row justify-end mt-2">
-            <Pressable
-              onPress={() => setShowComposer(false)}
-              className="px-4 py-2 mr-2"
-            >
-              <Text className="text-gray-500 text-sm">Cancelar</Text>
+
+          {/* Media preview */}
+          {mediaUris.length > 0 ? (
+            <View className="flex-row gap-2 mt-3">
+              {mediaUris.map((uri, i) => (
+                <View key={i} className="w-16 h-16 rounded-xl overflow-hidden">
+                  <Image source={{ uri }} style={{ width: "100%", height: "100%" }} contentFit="cover" />
+                </View>
+              ))}
+              <Pressable onPress={() => setMediaUris([])} className="w-16 h-16 bg-dark-300 rounded-xl items-center justify-center">
+                <Text className="text-danger-500 text-xs font-bold">✕</Text>
+              </Pressable>
+            </View>
+          ) : null}
+
+          <View className="flex-row items-center justify-between mt-3">
+            <Pressable onPress={pickMedia} className="flex-row items-center gap-2 bg-dark-300 px-3 py-2 rounded-lg">
+              <Text className="text-sm">📷</Text>
+              <Text className="text-text-muted text-xs font-bold">Foto</Text>
             </Pressable>
-            <Pressable
-              onPress={handlePost}
-              disabled={!newPostContent.trim() || createPost.isPending}
-              className={`px-5 py-2 rounded-lg ${
-                newPostContent.trim() ? "bg-primary-600" : "bg-gray-300"
-              }`}
-            >
-              {createPost.isPending ? (
-                <ActivityIndicator color="#fff" size="small" />
-              ) : (
-                <Text className="text-white font-semibold text-sm">Publicar</Text>
-              )}
-            </Pressable>
+            <View className="flex-row gap-2">
+              <Pressable onPress={() => { setShowComposer(false); setMediaUris([]); setNewPostContent(""); }} className="px-4 py-2">
+                <Text className="text-text-muted text-sm">Cancelar</Text>
+              </Pressable>
+              <Pressable
+                onPress={handlePost}
+                disabled={(!newPostContent.trim() && !mediaUris.length) || createPost.isPending}
+                className={`px-5 py-2 rounded-lg ${
+                  newPostContent.trim() || mediaUris.length ? "bg-violet-400" : "bg-surface-border"
+                }`}
+              >
+                {createPost.isPending ? (
+                  <ActivityIndicator color="#0B080F" size="small" />
+                ) : (
+                  <Text className={`font-black text-sm ${newPostContent.trim() || mediaUris.length ? "text-dark-400" : "text-text-muted"}`}>
+                    Publicar
+                  </Text>
+                )}
+              </Pressable>
+            </View>
           </View>
         </View>
       ) : null}
@@ -103,7 +155,7 @@ export default function SocialFeedScreen() {
       {/* Feed */}
       {isLoading ? (
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#6366f1" />
+          <ActivityIndicator size="large" color="#A855F7" />
         </View>
       ) : !posts?.length ? (
         <EmptyState
@@ -127,6 +179,7 @@ export default function SocialFeedScreen() {
               commentsCount={item.comments_count}
               createdAt={item.created_at}
               onLike={() => handleLike(item.id)}
+              onProfile={() => router.push(`/profile/${item.author_id}`)}
             />
           )}
         />

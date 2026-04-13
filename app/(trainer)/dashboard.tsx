@@ -55,6 +55,20 @@ export default function TrainerDashboardScreen() {
           </Pressable>
         </Link>
 
+        {/* CTA: Criar dieta */}
+        <Link href="/(trainer)/diet-builder" asChild>
+          <Pressable className="bg-surface-card border border-fuchsia-400/30 rounded-2xl p-5 mb-6 flex-row items-center gap-4 active:bg-surface-hover">
+            <View className="w-12 h-12 bg-fuchsia-400/20 rounded-xl items-center justify-center">
+              <Text className="text-2xl">🥗</Text>
+            </View>
+            <View className="flex-1">
+              <Text className="text-fuchsia-400 font-black text-base">Criar Plano Alimentar</Text>
+              <Text className="text-text-muted text-xs mt-0.5">Refeicoes, macros e metas para o aluno</Text>
+            </View>
+            <Text className="text-fuchsia-400 font-black text-lg">→</Text>
+          </Pressable>
+        </Link>
+
         {/* Metrics */}
         <View className="flex-row gap-3 mb-6">
           <MetricCard value="0" label="Alunos ativos" icon="👥" color="text-violet-400" />

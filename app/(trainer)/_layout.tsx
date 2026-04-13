@@ -51,6 +51,7 @@ export default function TrainerLayout() {
           <Tabs.Screen name="financial" options={{ title: "Financeiro", tabBarIcon: ({ focused }) => <TabIcon name="financial" focused={focused} /> }} />
           <Tabs.Screen name="checkins" options={{ href: null }} />
           <Tabs.Screen name="workout-builder" options={{ href: null }} />
+          <Tabs.Screen name="diet-builder" options={{ href: null }} />
         </Tabs>
       </View>
     </View>

@@ -8,6 +8,7 @@ import { useAdherenceScore } from "../../../hooks/queries/useCheckins";
 import { Card } from "../../../components/ui/Card";
 import { SimpleLineChart } from "../../../components/progress/SimpleLineChart";
 import { AdherenceRing } from "../../../components/progress/AdherenceRing";
+import { PhotoComparison } from "../../../components/progress/PhotoComparison";
 
 export default function ProgressScreen() {
   const { user } = useAuth();
@@ -121,6 +122,19 @@ export default function ProgressScreen() {
             </View>
           )}
         </View>
+
+        {/* Before/After comparison */}
+        {photos && photos.length >= 2 ? (
+          <View className="mb-6">
+            <Text className="text-xs font-bold text-text-muted mb-3 uppercase tracking-wider">Comparativo</Text>
+            <PhotoComparison
+              beforeUrl={photos[photos.length - 1].photo_url}
+              afterUrl={photos[0].photo_url}
+              beforeDate={new Date(photos[photos.length - 1].taken_at).toLocaleDateString("pt-BR")}
+              afterDate={new Date(photos[0].taken_at).toLocaleDateString("pt-BR")}
+            />
+          </View>
+        ) : null}
 
         {/* Progress photos */}
         <View className="mb-10">

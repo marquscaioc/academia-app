@@ -9,11 +9,11 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import * as ImagePicker from "expo-image-picker";
+import { Image } from "expo-image";
 import { useAuth } from "../../../lib/auth/provider";
-import {
-  useMuscleGroups,
-  useEquipment,
-} from "../../../hooks/queries/useExercises";
+import { supabase } from "../../../lib/supabase/client";
+import { useMuscleGroups, useEquipment } from "../../../hooks/queries/useExercises";
 import { useCreateExercise } from "../../../hooks/mutations/useExerciseMutations";
 
 export default function CreateExerciseScreen() {
@@ -25,24 +25,65 @@ export default function CreateExerciseScreen() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [instructions, setInstructions] = useState("");
-  const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<string | null>(
-    null,
-  );
-  const [selectedEquipment, setSelectedEquipment] = useState<string | null>(
-    null,
-  );
-  const [difficulty, setDifficulty] = useState<string>("intermediate");
-  const [exerciseType, setExerciseType] = useState<string>("strength");
+  const [selectedMuscleGroup, setSelectedMuscleGroup] = useState<string | null>(null);
+  const [selectedEquipment, setSelectedEquipment] = useState<string | null>(null);
+  const [difficulty, setDifficulty] = useState("intermediate");
+  const [exerciseType, setExerciseType] = useState("strength");
+  const [videoUri, setVideoUri] = useState<string | null>(null);
+  const [thumbUri, setThumbUri] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const pickVideo = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["videos"],
+      allowsEditing: true,
+      quality: 0.7,
+    });
+    if (!result.canceled) setVideoUri(result.assets[0].uri);
+  };
+
+  const pickThumbnail = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+    if (!result.canceled) setThumbUri(result.assets[0].uri);
+  };
 
   const handleCreate = async () => {
-    if (!name.trim()) {
-      setError("Informe o nome do exercicio");
-      return;
-    }
+    if (!name.trim()) { setError("Informe o nome do exercicio"); return; }
     if (!user) return;
 
     setError("");
+    setSaving(true);
+
+    let videoUrl: string | undefined;
+    let thumbnailUrl: string | undefined;
+
+    if (videoUri) {
+      const fileName = `${user.id}/${Date.now()}.mp4`;
+      const response = await fetch(videoUri);
+      const blob = await response.blob();
+      const { error: upErr } = await supabase.storage.from("exercise-videos").upload(fileName, blob, { contentType: "video/mp4" });
+      if (!upErr) {
+        const { data: { publicUrl } } = supabase.storage.from("exercise-videos").getPublicUrl(fileName);
+        videoUrl = publicUrl;
+      }
+    }
+
+    if (thumbUri) {
+      const fileName = `${user.id}/${Date.now()}_thumb.jpg`;
+      const response = await fetch(thumbUri);
+      const blob = await response.blob();
+      const { error: upErr } = await supabase.storage.from("exercise-videos").upload(fileName, blob, { contentType: "image/jpeg" });
+      if (!upErr) {
+        const { data: { publicUrl } } = supabase.storage.from("exercise-videos").getPublicUrl(fileName);
+        thumbnailUrl = publicUrl;
+      }
+    }
 
     await createExercise.mutateAsync({
       name: name.trim(),
@@ -51,14 +92,11 @@ export default function CreateExerciseScreen() {
       primary_muscle_group_id: selectedMuscleGroup ?? undefined,
       equipment_id: selectedEquipment ?? undefined,
       difficulty: difficulty as "beginner" | "intermediate" | "advanced",
-      exercise_type: exerciseType as
-        | "strength"
-        | "cardio"
-        | "flexibility"
-        | "calisthenics",
+      exercise_type: exerciseType as "strength" | "cardio" | "flexibility" | "calisthenics",
       created_by: user.id,
     });
 
+    setSaving(false);
     router.back();
   };
 
@@ -71,101 +109,112 @@ export default function CreateExerciseScreen() {
   const types = [
     { value: "strength", label: "Forca" },
     { value: "cardio", label: "Cardio" },
-    { value: "flexibility", label: "Flexibilidade" },
-    { value: "calisthenics", label: "Calistenia" },
+    { value: "flexibility", label: "Flex." },
+    { value: "calisthenics", label: "Calist." },
   ];
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1 px-6 pt-6" keyboardShouldPersistTaps="handled">
         <View className="flex-row items-center justify-between mb-6">
           <Pressable onPress={() => router.back()}>
-            <Text className="text-primary-600 font-medium">Cancelar</Text>
+            <Text className="text-text-muted font-medium text-sm">← Cancelar</Text>
           </Pressable>
-          <Text className="text-lg font-bold text-gray-900">
-            Novo Exercicio
-          </Text>
+          <Text className="text-lg font-black text-text-primary">Novo Exercicio</Text>
           <View className="w-16" />
         </View>
 
         {error ? (
-          <View className="bg-danger-500/10 rounded-xl p-4 mb-4">
-            <Text className="text-danger-600 text-center">{error}</Text>
+          <View className="bg-danger-500/10 border border-danger-500/20 rounded-2xl p-4 mb-4">
+            <Text className="text-danger-500 text-center text-sm font-medium">{error}</Text>
           </View>
         ) : null}
 
         <View className="gap-5">
+          {/* Name */}
           <View>
-            <Text className="text-sm font-medium text-gray-700 mb-1 ml-1">
-              Nome *
-            </Text>
+            <Text className="text-xs font-bold text-text-muted mb-2 ml-1 tracking-wider uppercase">Nome *</Text>
             <TextInput
-              className="border border-gray-300 rounded-xl px-4 py-3.5 text-base text-gray-900 bg-gray-50"
+              className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary"
               placeholder="Ex: Supino reto com barra"
-              placeholderTextColor="#9ca3af"
+              placeholderTextColor="#6E6580"
               value={name}
               onChangeText={setName}
             />
           </View>
 
+          {/* Video + Thumbnail */}
           <View>
-            <Text className="text-sm font-medium text-gray-700 mb-1 ml-1">
-              Descricao
-            </Text>
+            <Text className="text-xs font-bold text-text-muted mb-2 ml-1 tracking-wider uppercase">Midia</Text>
+            <View className="flex-row gap-3">
+              <Pressable onPress={pickVideo} className="flex-1 bg-surface-card border border-dashed border-surface-border rounded-2xl py-6 items-center active:bg-surface-hover">
+                {videoUri ? (
+                  <View className="items-center">
+                    <Text className="text-2xl mb-1">🎬</Text>
+                    <Text className="text-xs text-violet-400 font-bold">Video selecionado</Text>
+                    <Text className="text-[10px] text-text-muted mt-1">Toque para trocar</Text>
+                  </View>
+                ) : (
+                  <View className="items-center">
+                    <Text className="text-2xl mb-1">📹</Text>
+                    <Text className="text-xs text-text-muted font-bold">Adicionar video</Text>
+                  </View>
+                )}
+              </Pressable>
+              <Pressable onPress={pickThumbnail} className="flex-1 bg-surface-card border border-dashed border-surface-border rounded-2xl py-6 items-center active:bg-surface-hover overflow-hidden">
+                {thumbUri ? (
+                  <Image source={{ uri: thumbUri }} style={{ width: "100%", height: "100%", position: "absolute", borderRadius: 16 }} contentFit="cover" />
+                ) : (
+                  <View className="items-center">
+                    <Text className="text-2xl mb-1">🖼️</Text>
+                    <Text className="text-xs text-text-muted font-bold">Thumbnail</Text>
+                  </View>
+                )}
+              </Pressable>
+            </View>
+          </View>
+
+          {/* Description */}
+          <View>
+            <Text className="text-xs font-bold text-text-muted mb-2 ml-1 tracking-wider uppercase">Descricao</Text>
             <TextInput
-              className="border border-gray-300 rounded-xl px-4 py-3.5 text-base text-gray-900 bg-gray-50"
-              placeholder="Descricao breve do exercicio"
-              placeholderTextColor="#9ca3af"
+              className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary"
+              placeholder="Descricao breve"
+              placeholderTextColor="#6E6580"
               value={description}
               onChangeText={setDescription}
               multiline
-              numberOfLines={3}
               style={{ minHeight: 80, textAlignVertical: "top" }}
             />
           </View>
 
+          {/* Instructions */}
           <View>
-            <Text className="text-sm font-medium text-gray-700 mb-1 ml-1">
-              Instrucoes
-            </Text>
+            <Text className="text-xs font-bold text-text-muted mb-2 ml-1 tracking-wider uppercase">Instrucoes</Text>
             <TextInput
-              className="border border-gray-300 rounded-xl px-4 py-3.5 text-base text-gray-900 bg-gray-50"
+              className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary"
               placeholder="Passo a passo da execucao"
-              placeholderTextColor="#9ca3af"
+              placeholderTextColor="#6E6580"
               value={instructions}
               onChangeText={setInstructions}
               multiline
-              numberOfLines={4}
               style={{ minHeight: 100, textAlignVertical: "top" }}
             />
           </View>
 
+          {/* Muscle Group */}
           <View>
-            <Text className="text-sm font-medium text-gray-700 mb-2 ml-1">
-              Grupo Muscular
-            </Text>
+            <Text className="text-xs font-bold text-text-muted mb-2 ml-1 tracking-wider uppercase">Grupo Muscular</Text>
             <View className="flex-row flex-wrap gap-2">
               {muscleGroups?.map((mg) => (
                 <Pressable
                   key={mg.id}
-                  onPress={() =>
-                    setSelectedMuscleGroup(
-                      selectedMuscleGroup === mg.id ? null : mg.id,
-                    )
-                  }
-                  className={`px-3 py-2 rounded-lg border ${
-                    selectedMuscleGroup === mg.id
-                      ? "bg-primary-600 border-primary-600"
-                      : "bg-white border-gray-300"
+                  onPress={() => setSelectedMuscleGroup(selectedMuscleGroup === mg.id ? null : mg.id)}
+                  className={`px-3 py-2 rounded-xl ${
+                    selectedMuscleGroup === mg.id ? "bg-violet-400" : "bg-surface-card border border-surface-border"
                   }`}
                 >
-                  <Text
-                    className={`text-sm font-medium ${
-                      selectedMuscleGroup === mg.id
-                        ? "text-white"
-                        : "text-gray-700"
-                    }`}
-                  >
+                  <Text className={`text-xs font-bold ${selectedMuscleGroup === mg.id ? "text-dark-400" : "text-text-muted"}`}>
                     {mg.name}
                   </Text>
                 </Pressable>
@@ -173,32 +222,19 @@ export default function CreateExerciseScreen() {
             </View>
           </View>
 
+          {/* Equipment */}
           <View>
-            <Text className="text-sm font-medium text-gray-700 mb-2 ml-1">
-              Equipamento
-            </Text>
+            <Text className="text-xs font-bold text-text-muted mb-2 ml-1 tracking-wider uppercase">Equipamento</Text>
             <View className="flex-row flex-wrap gap-2">
               {equipmentList?.map((eq) => (
                 <Pressable
                   key={eq.id}
-                  onPress={() =>
-                    setSelectedEquipment(
-                      selectedEquipment === eq.id ? null : eq.id,
-                    )
-                  }
-                  className={`px-3 py-2 rounded-lg border ${
-                    selectedEquipment === eq.id
-                      ? "bg-primary-600 border-primary-600"
-                      : "bg-white border-gray-300"
+                  onPress={() => setSelectedEquipment(selectedEquipment === eq.id ? null : eq.id)}
+                  className={`px-3 py-2 rounded-xl ${
+                    selectedEquipment === eq.id ? "bg-violet-400" : "bg-surface-card border border-surface-border"
                   }`}
                 >
-                  <Text
-                    className={`text-sm font-medium ${
-                      selectedEquipment === eq.id
-                        ? "text-white"
-                        : "text-gray-700"
-                    }`}
-                  >
+                  <Text className={`text-xs font-bold ${selectedEquipment === eq.id ? "text-dark-400" : "text-text-muted"}`}>
                     {eq.name}
                   </Text>
                 </Pressable>
@@ -206,71 +242,41 @@ export default function CreateExerciseScreen() {
             </View>
           </View>
 
+          {/* Difficulty */}
           <View>
-            <Text className="text-sm font-medium text-gray-700 mb-2 ml-1">
-              Dificuldade
-            </Text>
+            <Text className="text-xs font-bold text-text-muted mb-2 ml-1 tracking-wider uppercase">Dificuldade</Text>
             <View className="flex-row gap-2">
               {difficulties.map((d) => (
-                <Pressable
-                  key={d.value}
-                  onPress={() => setDifficulty(d.value)}
-                  className={`flex-1 py-2.5 rounded-lg border items-center ${
-                    difficulty === d.value
-                      ? "bg-primary-600 border-primary-600"
-                      : "bg-white border-gray-300"
-                  }`}
-                >
-                  <Text
-                    className={`text-sm font-medium ${
-                      difficulty === d.value ? "text-white" : "text-gray-700"
-                    }`}
-                  >
-                    {d.label}
-                  </Text>
+                <Pressable key={d.value} onPress={() => setDifficulty(d.value)}
+                  className={`flex-1 py-2.5 rounded-xl items-center ${difficulty === d.value ? "bg-violet-400" : "bg-surface-card border border-surface-border"}`}>
+                  <Text className={`text-xs font-bold ${difficulty === d.value ? "text-dark-400" : "text-text-muted"}`}>{d.label}</Text>
                 </Pressable>
               ))}
             </View>
           </View>
 
+          {/* Type */}
           <View>
-            <Text className="text-sm font-medium text-gray-700 mb-2 ml-1">
-              Tipo
-            </Text>
-            <View className="flex-row flex-wrap gap-2">
+            <Text className="text-xs font-bold text-text-muted mb-2 ml-1 tracking-wider uppercase">Tipo</Text>
+            <View className="flex-row gap-2">
               {types.map((t) => (
-                <Pressable
-                  key={t.value}
-                  onPress={() => setExerciseType(t.value)}
-                  className={`px-4 py-2.5 rounded-lg border ${
-                    exerciseType === t.value
-                      ? "bg-primary-600 border-primary-600"
-                      : "bg-white border-gray-300"
-                  }`}
-                >
-                  <Text
-                    className={`text-sm font-medium ${
-                      exerciseType === t.value ? "text-white" : "text-gray-700"
-                    }`}
-                  >
-                    {t.label}
-                  </Text>
+                <Pressable key={t.value} onPress={() => setExerciseType(t.value)}
+                  className={`flex-1 py-2.5 rounded-xl items-center ${exerciseType === t.value ? "bg-violet-400" : "bg-surface-card border border-surface-border"}`}>
+                  <Text className={`text-xs font-bold ${exerciseType === t.value ? "text-dark-400" : "text-text-muted"}`}>{t.label}</Text>
                 </Pressable>
               ))}
             </View>
           </View>
 
+          {/* Save */}
           <Pressable
             onPress={handleCreate}
-            disabled={createExercise.isPending}
-            className="bg-primary-600 rounded-xl py-4 items-center mt-4 mb-10 active:bg-primary-700"
+            disabled={saving}
+            className={`rounded-2xl items-center mt-4 mb-10 ${saving ? "bg-violet-700" : "bg-violet-400 active:bg-violet-500"}`}
+            style={{ paddingVertical: 18 }}
           >
-            {createExercise.isPending ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text className="text-white font-bold text-base">
-                Criar Exercicio
-              </Text>
+            {saving ? <ActivityIndicator color="#0B080F" /> : (
+              <Text className="text-dark-400 font-black text-base tracking-wide uppercase">Criar Exercicio</Text>
             )}
           </Pressable>
         </View>
