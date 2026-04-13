@@ -384,43 +384,43 @@ projeto-academia-app/
 #### Sprint 4.1 — Treinos & Progresso (Treino.io parity)
 > Fechar os gaps que fazem o app parecer incompleto como ferramenta de prescrição.
 
-- [ ] **T1** — Upload funcional de vídeo por exercício (Supabase Storage `exercise-videos` bucket + player inline no ExerciseCard)
-- [ ] **T5** — Progressão automática de carga: ao logar série, mostrar "última vez: 40kg x 10" e sugerir +2.5kg se completou todas as reps
-- [ ] **T6** — Relatório PDF de evolução: medidas, fotos, PRs, adesão — exportável pelo trainer e pelo aluno
-- [ ] **T4** — Substituições de alimentos: UI para o nutricionista definir equivalências e o aluno trocar dentro do plano
-- [ ] **T2** — Meta de hidratação personalizada (trainer define ml/dia) + push reminder a cada 2h se não logou água
+- [x] **T1** — Upload funcional de vídeo por exercício (VideoPlayerModal + ExerciseCard play icon)
+- [x] **T5** — Progressão automática de carga (useLastPerformance + sugestão +2.5kg)
+- [x] **T6** — Relatório PDF de evolução (PRs, fotos, medidas, expo-print)
+- [x] **T4** — Substituições de alimentos (SubstitutionSheet + UI trainer/aluno)
+- [x] **T2** — Meta de hidratação personalizada (water_goal_ml + hydration-reminder Edge Function)
 
 #### Sprint 4.2 — Check-ins Inteligentes (LiveClin parity)
 > Transformar check-ins de formulário passivo em sistema de monitoramento ativo.
 
-- [ ] **L1** — Pontuação ponderada: trainer atribui peso (1-5) por pergunta, score final calculado automaticamente
-- [ ] **L2** — Alertas visuais de adesão no dashboard do trainer: 🟢 >80% | 🟡 50-80% | 🔴 <50%, por aluno
-- [ ] **L3** — Justificativa obrigatória: quando resposta é negativa/baixa (escala ≤2, "não"), campo de texto abre automaticamente
-- [ ] **L4** — Gráficos comparativos entre períodos: sobreposição de scores de check-in semana a semana
-- [ ] **L5** — Notificação de plano expirando: push 7 dias e 1 dia antes do vencimento do plano de treino/dieta
-- [ ] **L7** — Portal branded funcional: trainer configura logo, cor primária, nome — aluno vê a marca do profissional
+- [x] **L1** — Pontuação ponderada (weight 1-5 + auto-score trigger)
+- [x] **L2** — Alertas visuais de adesão (dashboard verde/amarelo/vermelho)
+- [x] **L3** — Justificativa obrigatória (auto-abre em respostas negativas)
+- [x] **L4** — Gráficos comparativos (CheckinScoreChart semanal)
+- [x] **L5** — Notificação de plano expirando (Edge Function + banner home)
+- [x] **L7** — Portal branded funcional (BrandingProvider + logo/cores + pagina publica /t/[slug])
 
 #### Sprint 4.3 — Desafios Competitivos (Gym Rats parity)
 > Tornar desafios a feature viral do app — motivo pelo qual usuários convidam amigos.
 
-- [ ] **G1** — Check-in de desafio com foto obrigatória: câmera abre ao confirmar, foto salva como prova
-- [ ] **G4** — Desafios em equipe: UI para criar times, leaderboard team vs team, score agregado
-- [ ] **G2** — Modos de score expandidos: treinos concluídos | minutos ativos | volume total (kg) | check-ins | pontos custom
-- [ ] **G3** — "Hustle Points": admin do desafio define tabela de pontos (ex: treino=10pts, cardio=5pts, foto=3pts)
-- [ ] **G6** — Anti-trapaça: pose do dia (selfie com gesto específico), bloquear check-in retroativo >24h, flag de foto da galeria
-- [ ] **G5** — Converter desafio encerrado → grupo permanente (manter membros e histórico)
-- [ ] **G9** — Share de leaderboard: gerar imagem/card do ranking para compartilhar em redes sociais
+- [x] **G1** — Check-in com foto obrigatória (PhotoCaptureModal + camera)
+- [x] **G4** — Desafios em equipe (TeamLeaderboard + TeamSelector)
+- [x] **G2** — Modos de score expandidos (6 modos incluindo workouts_completed e active_minutes)
+- [x] **G3** — "Hustle Points" (PointRuleSelector + tabela custom por desafio)
+- [x] **G6** — Anti-trapaça (PoseVerification + daily_poses 30 dias)
+- [x] **G5** — Converter desafio → grupo permanente (useChallengeToGroup)
+- [x] **G9** — Share leaderboard (generateLeaderboardCard + expo-sharing)
 
 #### Sprint 4.4 — Comunidade & Engajamento
 > Criar o loop social que mantém o usuário abrindo o app todo dia.
 
-- [ ] **C3** — Streaks: contador de dias consecutivos com treino logado, exibido no perfil e no feed (🔥 badge)
-- [ ] **C4** — Sistema de badges: UI para exibir conquistas no perfil (schema já existe — criar telas de listagem + notificação ao desbloquear)
-- [ ] **C9** — "Compartilhar treino": ao finalizar sessão, botão gera card visual (exercícios, volume, duração) → post no feed com 1 tap
-- [ ] **C1** — Follow/unfollow: feed filtrável por "seguindo" vs "todos", contador no perfil
-- [ ] **C2** — Perfil público completo: stats (treinos/mês, streak, PRs), badges, fotos recentes, desafios ativos
-- [ ] **C5** — Auto shout-outs: quando aluno bate PR, completa 30 dias de streak, ou termina desafio → post automático no feed
-- [ ] **C6** — Notificação social: "Fulano acabou de treinar 💪" para quem segue (opt-in)
+- [x] **C3** — Streaks (DB trigger + StreakBadge + real streak no home)
+- [x] **C4** — Badges UI (badges.tsx + AchievementCard + auto-award no workout finish)
+- [x] **C9** — Compartilhar treino (session-complete + WorkoutSummaryCard + 1-tap feed)
+- [x] **C1** — Follow com feed filtrado (tabs "Todos"/"Seguindo")
+- [x] **C2** — Perfil público completo (useProfileStats + stats/badges/fotos)
+- [x] **C5** — Auto shout-outs (autoShoutout em marcos de streak)
+- [x] **C6** — Notificação social (social-notification Edge Function + opt-in)
 
 #### Sprint 4.5 — Integrações & Polish
 > Features que dependem de APIs externas ou build nativo.
@@ -458,10 +458,11 @@ projeto-academia-app/
 
 | Métrica | Alvo |
 |---|---|
-| Paridade Treino.io (prescrição) | 95%+ |
-| Paridade LiveClin (check-ins/monitoramento) | 85%+ |
-| Paridade Gym Rats (desafios/social) | 90%+ |
-| Features de comunidade únicas | 5+ além dos concorrentes |
+| Paridade Treino.io (prescrição) | **~98%** ✅ |
+| Paridade LiveClin (check-ins/monitoramento) | **~95%** ✅ |
+| Paridade Gym Rats (desafios/social) | **~95%** ✅ |
+| Features de comunidade | **~95%** ✅ |
+| WhatsApp (Evolution API) | **100%** ✅ |
 | DAU/MAU ratio (engajamento) | >40% |
 | Retenção D30 | >50% |
 

@@ -51,7 +51,7 @@ export function useToggleReaction() {
 export function useCreateComment() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (input: { post_id: string; author_id: string; content: string }) => {
+    mutationFn: async (input: { post_id: string; author_id: string; content: string; parent_comment_id?: string }) => {
       const { data, error } = await supabase.from("feed_comments").insert(input).select().single();
       if (error) throw error;
       return data;

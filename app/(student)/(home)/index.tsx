@@ -12,6 +12,7 @@ import { Link, router } from "expo-router";
 import { useAuth } from "../../../lib/auth/provider";
 import { useAcceptInvite } from "../../../hooks/mutations/useInviteMutations";
 import { useWorkoutPlans } from "../../../hooks/queries/useWorkouts";
+import { useUnreadCount } from "../../../hooks/queries/useUnreadNotifications";
 
 function StatCard({ value, label, color }: { value: string; label: string; color: string }) {
   return (
@@ -46,6 +47,7 @@ export default function StudentHomeScreen() {
   const greeting = hour < 12 ? "Bom dia" : hour < 18 ? "Boa tarde" : "Boa noite";
 
   const { data: workoutPlans } = useWorkoutPlans(user?.id);
+  const { data: unreadCount } = useUnreadCount(user?.id);
   const activePlan = workoutPlans?.[0];
   const daysUntilExpiry = activePlan?.ends_at
     ? Math.ceil((new Date(activePlan.ends_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
@@ -75,11 +77,23 @@ export default function StudentHomeScreen() {
             <Text className="text-sm text-text-muted font-medium">{greeting},</Text>
             <Text className="text-3xl font-black text-text-primary tracking-tight">{firstName}</Text>
           </View>
-          <Link href="/profile/edit" asChild>
-            <Pressable className="w-10 h-10 bg-surface-card border border-surface-border rounded-xl items-center justify-center">
-              <Text className="text-sm">⚙️</Text>
-            </Pressable>
-          </Link>
+          <View className="flex-row gap-2">
+            <Link href="/notifications" asChild>
+              <Pressable className="w-10 h-10 bg-surface-card border border-surface-border rounded-xl items-center justify-center">
+                <Text className="text-sm">🔔</Text>
+                {(unreadCount ?? 0) > 0 ? (
+                  <View className="absolute -top-1 -right-1 bg-danger-500 rounded-full min-w-[18px] h-[18px] items-center justify-center px-1">
+                    <Text className="text-white text-[9px] font-black">{unreadCount! > 99 ? "99+" : unreadCount}</Text>
+                  </View>
+                ) : null}
+              </Pressable>
+            </Link>
+            <Link href="/profile/edit" asChild>
+              <Pressable className="w-10 h-10 bg-surface-card border border-surface-border rounded-xl items-center justify-center">
+                <Text className="text-sm">⚙️</Text>
+              </Pressable>
+            </Link>
+          </View>
         </View>
 
         {/* Invite code section */}
