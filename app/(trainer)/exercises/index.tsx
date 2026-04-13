@@ -4,6 +4,7 @@ import {
   ActivityIndicator,
   FlatList,
   Pressable,
+  ScrollView,
   Text,
   TextInput,
   View,
@@ -12,6 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { ExerciseCard } from "../../../components/workout/ExerciseCard";
 import { EmptyState } from "../../../components/ui/EmptyState";
 import { useExercises, useMuscleGroups } from "../../../hooks/queries/useExercises";
+import { translateExerciseName } from "../../../lib/utils/exerciseTranslations";
 
 export default function ExercisesScreen() {
   const [search, setSearch] = useState("");
@@ -25,6 +27,7 @@ export default function ExercisesScreen() {
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
       <View className="flex-1 px-6 pt-6">
+        {/* Header */}
         <View className="flex-row items-center justify-between mb-4">
           <Text className="text-2xl font-black text-text-primary">Exercicios</Text>
           <Link href="/(trainer)/exercises/create" asChild>
@@ -34,39 +37,60 @@ export default function ExercisesScreen() {
           </Link>
         </View>
 
+        {/* Search */}
         <TextInput
           className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-3.5 text-base text-text-primary mb-4"
           placeholder="Buscar exercicio..."
-          placeholderTextColor="#6B6B73"
+          placeholderTextColor="#6E6580"
           value={search}
           onChangeText={setSearch}
         />
 
-        <FlatList
-          data={muscleGroups}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          keyExtractor={(item) => item.id}
-          className="mb-4 max-h-10"
-          contentContainerClassName="gap-2"
-          renderItem={({ item }) => (
+        {/* Muscle group filters - fixed height ScrollView */}
+        <View style={{ height: 36, marginBottom: 12 }}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ gap: 8, alignItems: "center" }}
+          >
             <Pressable
-              onPress={() => setSelectedMuscle(selectedMuscle === item.id ? undefined : item.id)}
+              onPress={() => setSelectedMuscle(undefined)}
               className={`px-3 py-1.5 rounded-full border ${
-                selectedMuscle === item.id
-                  ? "bg-violet-400 border-violet-400"
-                  : "bg-surface-card border-surface-border"
+                !selectedMuscle ? "bg-violet-400 border-violet-400" : "bg-surface-card border-surface-border"
               }`}
             >
-              <Text className={`text-xs font-bold ${
-                selectedMuscle === item.id ? "text-dark-400" : "text-text-muted"
-              }`}>
-                {item.name}
+              <Text className={`text-xs font-bold ${!selectedMuscle ? "text-dark-400" : "text-text-muted"}`}>
+                Todos
               </Text>
             </Pressable>
-          )}
-        />
+            {muscleGroups?.map((mg) => (
+              <Pressable
+                key={mg.id}
+                onPress={() => setSelectedMuscle(selectedMuscle === mg.id ? undefined : mg.id)}
+                className={`px-3 py-1.5 rounded-full border ${
+                  selectedMuscle === mg.id
+                    ? "bg-violet-400 border-violet-400"
+                    : "bg-surface-card border-surface-border"
+                }`}
+              >
+                <Text className={`text-xs font-bold ${
+                  selectedMuscle === mg.id ? "text-dark-400" : "text-text-muted"
+                }`}>
+                  {mg.name}
+                </Text>
+              </Pressable>
+            ))}
+          </ScrollView>
+        </View>
 
+        {/* Count */}
+        {exercises?.length ? (
+          <Text className="text-xs text-text-muted mb-2">
+            {exercises.length} exercicio{exercises.length !== 1 ? "s" : ""}
+          </Text>
+        ) : null}
+
+        {/* Exercises list */}
         {isLoading ? (
           <View className="flex-1 items-center justify-center">
             <ActivityIndicator size="large" color="#A855F7" />
@@ -82,10 +106,10 @@ export default function ExercisesScreen() {
             data={exercises}
             keyExtractor={(item) => item.id}
             showsVerticalScrollIndicator={false}
-            contentContainerClassName="gap-3 pb-4"
+            contentContainerStyle={{ gap: 10, paddingBottom: 20 }}
             renderItem={({ item }) => (
               <ExerciseCard
-                name={item.name}
+                name={translateExerciseName(item.name)}
                 muscleGroup={item.muscle_group?.name}
                 equipment={item.equipment?.name}
                 thumbnailUrl={item.thumbnail_url}
