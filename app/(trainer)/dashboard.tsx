@@ -43,15 +43,15 @@ export default function TrainerDashboardScreen() {
 
         {/* CTA: Criar plano */}
         <Link href="/(trainer)/workout-builder" asChild>
-          <Pressable className="bg-violet-400 rounded-2xl p-5 mb-6 flex-row items-center gap-4 active:bg-violet-500">
+          <Pressable className="bg-violet-500 rounded-2xl p-5 mb-6 flex-row items-center gap-4 active:bg-violet-600">
             <View className="w-12 h-12 bg-dark-400/20 rounded-xl items-center justify-center">
               <Text className="text-2xl">📝</Text>
             </View>
             <View className="flex-1">
-              <Text className="text-dark-400 font-black text-base">Criar Plano de Treino</Text>
-              <Text className="text-dark-400/70 text-xs mt-0.5">Selecione aluno, exercicios e configure</Text>
+              <Text className="text-white font-black text-base">Criar Plano de Treino</Text>
+              <Text className="text-white/70 text-xs mt-0.5">Selecione aluno, exercicios e configure</Text>
             </View>
-            <Text className="text-dark-400 font-black text-lg">→</Text>
+            <Text className="text-white font-black text-lg">→</Text>
           </Pressable>
         </Link>
 
@@ -78,7 +78,7 @@ export default function TrainerDashboardScreen() {
         {/* Getting started */}
         <View className="bg-surface-card border border-surface-border rounded-3xl p-6 mb-6">
           <View className="flex-row items-center gap-3 mb-5">
-            <View className="w-10 h-10 bg-violet-400/20 rounded-xl items-center justify-center">
+            <View className="w-10 h-10 bg-violet-500/20 rounded-xl items-center justify-center">
               <Text className="text-lg">🚀</Text>
             </View>
             <Text className="text-lg font-black text-text-primary">
@@ -94,10 +94,10 @@ export default function TrainerDashboardScreen() {
           ].map((item) => (
             <View key={item.step} className="flex-row items-center gap-4 py-3 border-b border-surface-border last:border-0">
               <View className={`w-8 h-8 rounded-lg items-center justify-center ${
-                item.done ? "bg-violet-400" : "bg-surface-elevated"
+                item.done ? "bg-violet-500" : "bg-surface-elevated"
               }`}>
                 <Text className={`text-xs font-black ${
-                  item.done ? "text-dark-400" : "text-text-muted"
+                  item.done ? "text-white" : "text-text-muted"
                 }`}>
                   {item.step}
                 </Text>

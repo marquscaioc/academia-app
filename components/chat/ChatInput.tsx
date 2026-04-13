@@ -31,10 +31,10 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
         onPress={handleSend}
         disabled={!text.trim() || disabled}
         className={`w-11 h-11 rounded-xl items-center justify-center ${
-          text.trim() ? "bg-violet-400 active:bg-violet-500" : "bg-surface-border"
+          text.trim() ? "bg-violet-500 active:bg-violet-600" : "bg-surface-border"
         }`}
       >
-        <Text className={`text-lg ${text.trim() ? "text-dark-400" : "text-text-muted"}`}>↑</Text>
+        <Text className={`text-lg ${text.trim() ? "text-white" : "text-text-muted"}`}>↑</Text>
       </Pressable>
     </View>
   );

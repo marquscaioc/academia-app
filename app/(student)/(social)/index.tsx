@@ -80,7 +80,7 @@ export default function SocialFeedScreen() {
           <Pressable onPress={() => router.push("/groups")} className="bg-surface-card border border-surface-border px-3 py-1.5 rounded-lg">
             <Text className="text-text-muted font-bold text-xs">👥 Grupos</Text>
           </Pressable>
-          <Pressable onPress={() => router.push("/challenges")} className="bg-violet-400/10 px-3 py-1.5 rounded-lg">
+          <Pressable onPress={() => router.push("/challenges")} className="bg-violet-500/10 px-3 py-1.5 rounded-lg">
             <Text className="text-violet-400 font-bold text-xs">🏆 Desafios</Text>
           </Pressable>
         </View>
@@ -136,13 +136,13 @@ export default function SocialFeedScreen() {
                 onPress={handlePost}
                 disabled={(!newPostContent.trim() && !mediaUris.length) || createPost.isPending}
                 className={`px-5 py-2 rounded-lg ${
-                  newPostContent.trim() || mediaUris.length ? "bg-violet-400" : "bg-surface-border"
+                  newPostContent.trim() || mediaUris.length ? "bg-violet-500" : "bg-surface-border"
                 }`}
               >
                 {createPost.isPending ? (
                   <ActivityIndicator color="#0B080F" size="small" />
                 ) : (
-                  <Text className={`font-black text-sm ${newPostContent.trim() || mediaUris.length ? "text-dark-400" : "text-text-muted"}`}>
+                  <Text className={`font-black text-sm ${newPostContent.trim() || mediaUris.length ? "text-white" : "text-text-muted"}`}>
                     Publicar
                   </Text>
                 )}
@@ -155,7 +155,7 @@ export default function SocialFeedScreen() {
       {/* Feed */}
       {isLoading ? (
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#A855F7" />
+          <ActivityIndicator size="large" color="#781BB6" />
         </View>
       ) : !posts?.length ? (
         <EmptyState

@@ -11,7 +11,7 @@ export default function Index() {
         <View className="w-16 h-16 bg-violet-400 rounded-2xl items-center justify-center mb-5 rotate-6">
           <Text className="text-dark-400 text-3xl font-black -rotate-6">A</Text>
         </View>
-        <ActivityIndicator size="large" color="#A855F7" />
+        <ActivityIndicator size="large" color="#781BB6" />
       </View>
     );
   }

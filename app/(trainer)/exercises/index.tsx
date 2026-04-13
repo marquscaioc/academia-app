@@ -31,8 +31,8 @@ export default function ExercisesScreen() {
         <View className="flex-row items-center justify-between mb-4">
           <Text className="text-2xl font-black text-text-primary">Exercicios</Text>
           <Link href="/(trainer)/exercises/create" asChild>
-            <Pressable className="bg-violet-400 px-4 py-2 rounded-xl active:bg-violet-500">
-              <Text className="text-dark-400 font-black text-sm">+ Novo</Text>
+            <Pressable className="bg-violet-500 px-4 py-2 rounded-xl active:bg-violet-600">
+              <Text className="text-white font-black text-sm">+ Novo</Text>
             </Pressable>
           </Link>
         </View>
@@ -56,10 +56,10 @@ export default function ExercisesScreen() {
             <Pressable
               onPress={() => setSelectedMuscle(undefined)}
               className={`px-3 py-1.5 rounded-full border ${
-                !selectedMuscle ? "bg-violet-400 border-violet-400" : "bg-surface-card border-surface-border"
+                !selectedMuscle ? "bg-violet-500 border-violet-500" : "bg-surface-card border-surface-border"
               }`}
             >
-              <Text className={`text-xs font-bold ${!selectedMuscle ? "text-dark-400" : "text-text-muted"}`}>
+              <Text className={`text-xs font-bold ${!selectedMuscle ? "text-white" : "text-text-muted"}`}>
                 Todos
               </Text>
             </Pressable>
@@ -69,12 +69,12 @@ export default function ExercisesScreen() {
                 onPress={() => setSelectedMuscle(selectedMuscle === mg.id ? undefined : mg.id)}
                 className={`px-3 py-1.5 rounded-full border ${
                   selectedMuscle === mg.id
-                    ? "bg-violet-400 border-violet-400"
+                    ? "bg-violet-500 border-violet-500"
                     : "bg-surface-card border-surface-border"
                 }`}
               >
                 <Text className={`text-xs font-bold ${
-                  selectedMuscle === mg.id ? "text-dark-400" : "text-text-muted"
+                  selectedMuscle === mg.id ? "text-white" : "text-text-muted"
                 }`}>
                   {mg.name}
                 </Text>
@@ -93,7 +93,7 @@ export default function ExercisesScreen() {
         {/* Exercises list */}
         {isLoading ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" color="#A855F7" />
+            <ActivityIndicator size="large" color="#781BB6" />
           </View>
         ) : !exercises?.length ? (
           <EmptyState

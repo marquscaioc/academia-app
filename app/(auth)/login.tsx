@@ -45,8 +45,8 @@ export default function LoginScreen() {
         <View className="flex-1 justify-center px-8 max-w-[440px] w-full self-center">
           {/* Brand */}
           <View className="mb-14 items-center">
-            <View className="w-16 h-16 bg-violet-400 rounded-2xl items-center justify-center mb-5 rotate-6">
-              <Text className="text-dark-400 text-3xl font-black -rotate-6">A</Text>
+            <View className="w-16 h-16 bg-violet-500 rounded-2xl items-center justify-center mb-5 rotate-6">
+              <Text className="text-white text-3xl font-black -rotate-6">A</Text>
             </View>
             <Text className="text-4xl font-black text-text-primary tracking-tight">
               ACADEMIA
@@ -72,7 +72,7 @@ export default function LoginScreen() {
               <TextInput
                 className={`rounded-2xl px-5 py-4 text-base text-text-primary ${
                   focusedField === "email"
-                    ? "bg-surface-elevated border-2 border-violet-400/50"
+                    ? "bg-surface-elevated border-2 border-violet-500/50"
                     : "bg-surface-card border-2 border-surface-border"
                 }`}
                 placeholder="seu@email.com"
@@ -94,7 +94,7 @@ export default function LoginScreen() {
               <TextInput
                 className={`rounded-2xl px-5 py-4 text-base text-text-primary ${
                   focusedField === "password"
-                    ? "bg-surface-elevated border-2 border-violet-400/50"
+                    ? "bg-surface-elevated border-2 border-violet-500/50"
                     : "bg-surface-card border-2 border-surface-border"
                 }`}
                 placeholder="Sua senha"
@@ -121,14 +121,14 @@ export default function LoginScreen() {
               onPress={handleLogin}
               disabled={loading}
               className={`rounded-2xl py-4.5 items-center mt-2 ${
-                loading ? "bg-violet-700" : "bg-violet-400 active:bg-violet-500"
+                loading ? "bg-violet-700" : "bg-violet-500 active:bg-violet-600"
               }`}
               style={{ paddingVertical: 18 }}
             >
               {loading ? (
-                <ActivityIndicator color="#0A0A0B" />
+                <ActivityIndicator color="#FFFFFF" />
               ) : (
-                <Text className="text-dark-400 font-black text-base tracking-wide uppercase">
+                <Text className="text-white font-black text-base tracking-wide uppercase">
                   Entrar
                 </Text>
               )}
@@ -147,7 +147,7 @@ export default function LoginScreen() {
             <Text className="text-text-muted text-sm">Novo por aqui? </Text>
             <Link href="/(auth)/register" asChild>
               <Pressable>
-                <Text className="text-violet-400 font-bold text-sm">
+                <Text className="text-violet-300 font-bold text-sm">
                   Criar conta
                 </Text>
               </Pressable>

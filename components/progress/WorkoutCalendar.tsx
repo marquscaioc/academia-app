@@ -92,15 +92,15 @@ export function WorkoutCalendar({ trainedDates }: WorkoutCalendarProps) {
               <View
                 className={`w-9 h-9 rounded-xl items-center justify-center ${
                   isTrained
-                    ? "bg-violet-400"
+                    ? "bg-violet-500"
                     : isToday
-                      ? "border-2 border-violet-400/40"
+                      ? "border-2 border-violet-500/40"
                       : ""
                 }`}
               >
                 <Text
                   className={`text-xs font-bold ${
-                    isTrained ? "text-dark-400" : isToday ? "text-violet-400" : "text-text-secondary"
+                    isTrained ? "text-white" : isToday ? "text-violet-400" : "text-text-secondary"
                   }`}
                 >
                   {day}

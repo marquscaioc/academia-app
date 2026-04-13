@@ -34,8 +34,8 @@ export default function WorkoutExecutionScreen() {
 
   if (isLoading || !workout) {
     return (
-      <SafeAreaView className="flex-1 bg-white items-center justify-center">
-        <ActivityIndicator size="large" color="#6366f1" />
+      <SafeAreaView className="flex-1 bg-dark-400 items-center justify-center">
+        <ActivityIndicator size="large" color="#781BB6" />
       </SafeAreaView>
     );
   }
@@ -110,17 +110,17 @@ export default function WorkoutExecutionScreen() {
 
   if (!sessionStore.isActive) {
     return (
-      <SafeAreaView className="flex-1 bg-white">
+      <SafeAreaView className="flex-1 bg-dark-400">
         <ScrollView className="flex-1 px-6 pt-6">
           <Pressable onPress={() => router.back()} className="mb-4">
-            <Text className="text-primary-600 font-medium">Voltar</Text>
+            <Text className="text-violet-400 font-medium">Voltar</Text>
           </Pressable>
 
-          <Text className="text-2xl font-bold text-gray-900 mb-2">
+          <Text className="text-2xl font-bold text-text-primary mb-2">
             {workout.name}
           </Text>
           {workout.notes ? (
-            <Text className="text-sm text-gray-500 mb-6">{workout.notes}</Text>
+            <Text className="text-sm text-text-muted mb-6">{workout.notes}</Text>
           ) : null}
 
           <View className="gap-3 mb-8">
@@ -141,7 +141,7 @@ export default function WorkoutExecutionScreen() {
           <Pressable
             onPress={handleStartWorkout}
             disabled={startSessionMutation.isPending}
-            className="bg-primary-600 rounded-xl py-4 items-center mb-10 active:bg-primary-700"
+            className="bg-violet-500 rounded-xl py-4 items-center mb-10 active:bg-violet-600"
           >
             {startSessionMutation.isPending ? (
               <ActivityIndicator color="#fff" />
@@ -157,14 +157,14 @@ export default function WorkoutExecutionScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-dark-400">
       <View className="flex-1 px-6 pt-6">
         <View className="flex-row items-center justify-between mb-6">
           <View>
-            <Text className="text-xs text-gray-500 uppercase">
+            <Text className="text-xs text-text-muted uppercase">
               Exercicio {activeExerciseIdx + 1}/{exercises.length}
             </Text>
-            <Text className="text-xl font-bold text-gray-900">
+            <Text className="text-xl font-bold text-text-primary">
               {currentExercise?.exercise?.name ?? "Exercicio"}
             </Text>
           </View>
@@ -180,10 +180,10 @@ export default function WorkoutExecutionScreen() {
 
         {currentExercise ? (
           <View className="flex-1">
-            <View className="bg-gray-50 rounded-2xl p-5 mb-4">
+            <View className="bg-surface-card rounded-2xl p-5 mb-4">
               <View className="flex-row justify-between mb-3">
-                <Text className="text-sm text-gray-500">Meta</Text>
-                <Text className="text-sm font-semibold text-gray-900">
+                <Text className="text-sm text-text-muted">Meta</Text>
+                <Text className="text-sm font-semibold text-text-primary">
                   {currentExercise.target_sets} x{" "}
                   {currentExercise.target_reps ?? "10-12"}
                   {currentExercise.target_weight_kg
@@ -192,8 +192,8 @@ export default function WorkoutExecutionScreen() {
                 </Text>
               </View>
               <View className="flex-row justify-between">
-                <Text className="text-sm text-gray-500">Concluidas</Text>
-                <Text className="text-sm font-bold text-primary-600">
+                <Text className="text-sm text-text-muted">Concluidas</Text>
+                <Text className="text-sm font-bold text-violet-400">
                   {completedSets.length} / {currentExercise.target_sets ?? 3}
                 </Text>
               </View>
@@ -212,13 +212,13 @@ export default function WorkoutExecutionScreen() {
                       isCompleted
                         ? "bg-success-500/10"
                         : isCurrent
-                          ? "bg-primary-50 border-2 border-primary-200"
-                          : "bg-gray-50"
+                          ? "bg-violet-500/10 border-2 border-violet-500/30"
+                          : "bg-surface-card"
                     }`}
                   >
                     <Text
                       className={`font-semibold ${
-                        isCompleted ? "text-success-600" : "text-gray-700"
+                        isCompleted ? "text-success-600" : "text-text-secondary"
                       }`}
                     >
                       Serie {idx + 1}
@@ -238,7 +238,7 @@ export default function WorkoutExecutionScreen() {
                 <Pressable
                   onPress={handleLogSet}
                   disabled={logSetMutation.isPending}
-                  className="bg-primary-600 rounded-xl py-4 items-center active:bg-primary-700"
+                  className="bg-violet-500 rounded-xl py-4 items-center active:bg-violet-600"
                 >
                   <Text className="text-white font-bold text-base">
                     Completar Serie {completedSets.length + 1}
@@ -250,8 +250,8 @@ export default function WorkoutExecutionScreen() {
                   disabled={activeExerciseIdx >= exercises.length - 1}
                   className={`rounded-xl py-4 items-center ${
                     activeExerciseIdx >= exercises.length - 1
-                      ? "bg-gray-300"
-                      : "bg-accent-500 active:bg-accent-600"
+                      ? "bg-surface-border"
+                      : "bg-violet-500 active:bg-violet-600"
                   }`}
                 >
                   <Text className="text-white font-bold text-base">

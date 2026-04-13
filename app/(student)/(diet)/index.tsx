@@ -52,9 +52,9 @@ export default function DietScreen() {
 
   if (!activePlan) {
     return (
-      <SafeAreaView className="flex-1 bg-white">
+      <SafeAreaView className="flex-1 bg-dark-400">
         <View className="px-6 pt-6">
-          <Text className="text-2xl font-bold text-gray-900 mb-6">Dieta</Text>
+          <Text className="text-2xl font-black text-text-primary mb-6">Dieta</Text>
         </View>
         <EmptyState
           icon="🥗"
@@ -66,39 +66,39 @@ export default function DietScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1 px-6 pt-6">
-        <Text className="text-2xl font-bold text-gray-900 mb-1">Dieta</Text>
-        <Text className="text-sm text-gray-500 mb-6">{activePlan.name}</Text>
+        <Text className="text-2xl font-black text-text-primary mb-1">Dieta</Text>
+        <Text className="text-sm text-text-muted mb-6">{activePlan.name}</Text>
 
         {/* Macro summary */}
         <View className="flex-row gap-2 mb-6">
           <Card className="flex-1 items-center py-3 px-2">
-            <Text className="text-lg font-bold text-gray-900">{Math.round(totalCal)}</Text>
-            <Text className="text-[10px] text-gray-500">kcal</Text>
+            <Text className="text-lg font-bold text-text-primary">{Math.round(totalCal)}</Text>
+            <Text className="text-[10px] text-text-muted">kcal</Text>
           </Card>
           <Card className="flex-1 items-center py-3 px-2">
-            <Text className="text-lg font-bold text-primary-600">{Math.round(totalProt)}g</Text>
-            <Text className="text-[10px] text-gray-500">Proteina</Text>
+            <Text className="text-lg font-bold text-violet-400">{Math.round(totalProt)}g</Text>
+            <Text className="text-[10px] text-text-muted">Proteina</Text>
           </Card>
           <Card className="flex-1 items-center py-3 px-2">
-            <Text className="text-lg font-bold text-accent-600">{Math.round(totalCarb)}g</Text>
-            <Text className="text-[10px] text-gray-500">Carbos</Text>
+            <Text className="text-lg font-bold text-ice-400">{Math.round(totalCarb)}g</Text>
+            <Text className="text-[10px] text-text-muted">Carbos</Text>
           </Card>
           <Card className="flex-1 items-center py-3 px-2">
-            <Text className="text-lg font-bold text-warning-600">{Math.round(totalFat)}g</Text>
-            <Text className="text-[10px] text-gray-500">Gordura</Text>
+            <Text className="text-lg font-bold text-warning-500">{Math.round(totalFat)}g</Text>
+            <Text className="text-[10px] text-text-muted">Gordura</Text>
           </Card>
         </View>
 
         {/* Adherence + water */}
         <View className="flex-row gap-4 mb-6">
           <Card variant="outlined" className="flex-1">
-            <Text className="text-xs text-gray-500 mb-1">Refeicoes</Text>
-            <Text className="text-xl font-bold text-gray-900">
+            <Text className="text-xs text-text-muted mb-1">Refeicoes</Text>
+            <Text className="text-xl font-bold text-text-primary">
               {completedMeals}/{totalMeals}
             </Text>
-            <View className="h-1.5 bg-gray-200 rounded-full mt-2 overflow-hidden">
+            <View className="h-1.5 bg-surface-border rounded-full mt-2 overflow-hidden">
               <View
                 className="h-full bg-success-500 rounded-full"
                 style={{ width: `${totalMeals ? (completedMeals / totalMeals) * 100 : 0}%` }}
@@ -106,11 +106,11 @@ export default function DietScreen() {
             </View>
           </Card>
           <Card variant="outlined" className="flex-1">
-            <Text className="text-xs text-gray-500 mb-1">Agua</Text>
-            <Text className="text-xl font-bold text-gray-900">
+            <Text className="text-xs text-text-muted mb-1">Agua</Text>
+            <Text className="text-xl font-bold text-text-primary">
               {(totalWaterMl / 1000).toFixed(1)}L
             </Text>
-            <View className="h-1.5 bg-gray-200 rounded-full mt-2 overflow-hidden">
+            <View className="h-1.5 bg-surface-border rounded-full mt-2 overflow-hidden">
               <View
                 className="h-full bg-blue-500 rounded-full"
                 style={{ width: `${Math.min((totalWaterMl / waterGoalMl) * 100, 100)}%` }}
@@ -122,14 +122,14 @@ export default function DietScreen() {
         {/* Water button */}
         <Pressable
           onPress={handleLogWater}
-          className="bg-blue-50 rounded-xl py-3 items-center mb-6 active:bg-blue-100 flex-row justify-center gap-2"
+          className="bg-blue-500/10 rounded-xl py-3 items-center mb-6 active:bg-blue-500/20 flex-row justify-center gap-2"
         >
           <Text className="text-lg">💧</Text>
-          <Text className="text-blue-700 font-semibold text-sm">+ 250ml de agua</Text>
+          <Text className="text-blue-400 font-semibold text-sm">+ 250ml de agua</Text>
         </Pressable>
 
         {/* Meals */}
-        <Text className="text-lg font-bold text-gray-900 mb-3">Refeicoes do dia</Text>
+        <Text className="text-lg font-bold text-text-primary mb-3">Refeicoes do dia</Text>
         <View className="gap-3 mb-10">
           {meals.map((meal) => {
             const isLogged = loggedMealIds.has(meal.id);
@@ -139,14 +139,14 @@ export default function DietScreen() {
                 onPress={() => handleLogMeal(meal.id)}
                 disabled={isLogged}
                 className={`border rounded-2xl p-4 ${
-                  isLogged ? "bg-success-500/5 border-success-500/30" : "bg-white border-gray-200 active:bg-gray-50"
+                  isLogged ? "bg-success-500/5 border-success-500/30" : "bg-surface-card border-surface-border active:bg-surface-hover"
                 }`}
               >
                 <View className="flex-row items-center justify-between mb-2">
                   <View className="flex-row items-center gap-2">
-                    <Text className="text-base font-semibold text-gray-900">{meal.name}</Text>
+                    <Text className="text-base font-semibold text-text-primary">{meal.name}</Text>
                     {meal.target_time ? (
-                      <Text className="text-xs text-gray-400">{meal.target_time.substring(0, 5)}</Text>
+                      <Text className="text-xs text-text-muted">{meal.target_time.substring(0, 5)}</Text>
                     ) : null}
                   </View>
                   {isLogged ? (
@@ -154,21 +154,21 @@ export default function DietScreen() {
                       <Text className="text-white text-xs">✓</Text>
                     </View>
                   ) : (
-                    <View className="border border-gray-300 rounded-full w-6 h-6" />
+                    <View className="border border-surface-border rounded-full w-6 h-6" />
                   )}
                 </View>
                 {(meal.items ?? []).map((item) => (
                   <View key={item.id} className="flex-row justify-between py-1">
-                    <Text className="text-sm text-gray-600 flex-1" numberOfLines={1}>
+                    <Text className="text-sm text-text-secondary flex-1" numberOfLines={1}>
                       {item.food_name}
                     </Text>
-                    <Text className="text-xs text-gray-400 ml-2">
+                    <Text className="text-xs text-text-muted ml-2">
                       {item.quantity}{item.unit} {item.calories ? `· ${Math.round(item.calories)}kcal` : ""}
                     </Text>
                   </View>
                 ))}
                 {meal.notes ? (
-                  <Text className="text-xs text-gray-400 mt-1 italic">{meal.notes}</Text>
+                  <Text className="text-xs text-text-muted mt-1 italic">{meal.notes}</Text>
                 ) : null}
               </Pressable>
             );

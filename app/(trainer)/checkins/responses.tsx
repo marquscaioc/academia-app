@@ -38,7 +38,7 @@ export default function CheckInResponsesScreen() {
 
   const statusColors: Record<string, { bg: string; text: string; label: string }> = {
     pending: { bg: "bg-warning-500/10", text: "text-warning-500", label: "Pendente" },
-    submitted: { bg: "bg-violet-400/10", text: "text-violet-400", label: "Respondido" },
+    submitted: { bg: "bg-violet-500/10", text: "text-violet-400", label: "Respondido" },
     reviewed: { bg: "bg-success-500/10", text: "text-success-500", label: "Revisado" },
   };
 
@@ -55,7 +55,7 @@ export default function CheckInResponsesScreen() {
 
         {isLoading ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" color="#A855F7" />
+            <ActivityIndicator size="large" color="#781BB6" />
           </View>
         ) : !checkIns?.length ? (
           <View className="flex-1 items-center justify-center px-8">

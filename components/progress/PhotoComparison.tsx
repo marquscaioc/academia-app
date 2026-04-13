@@ -41,17 +41,17 @@ export function PhotoComparison({ beforeUrl, afterUrl, beforeDate, afterDate }: 
       <View className="flex-row">
         <Pressable
           onPress={() => setShowAfter(false)}
-          className={`flex-1 py-3 items-center ${!showAfter ? "bg-violet-400" : "bg-surface-elevated"}`}
+          className={`flex-1 py-3 items-center ${!showAfter ? "bg-violet-500" : "bg-surface-elevated"}`}
         >
-          <Text className={`text-xs font-black ${!showAfter ? "text-dark-400" : "text-text-muted"}`}>
+          <Text className={`text-xs font-black ${!showAfter ? "text-white" : "text-text-muted"}`}>
             ANTES
           </Text>
         </Pressable>
         <Pressable
           onPress={() => setShowAfter(true)}
-          className={`flex-1 py-3 items-center ${showAfter ? "bg-violet-400" : "bg-surface-elevated"}`}
+          className={`flex-1 py-3 items-center ${showAfter ? "bg-violet-500" : "bg-surface-elevated"}`}
         >
-          <Text className={`text-xs font-black ${showAfter ? "text-dark-400" : "text-text-muted"}`}>
+          <Text className={`text-xs font-black ${showAfter ? "text-white" : "text-text-muted"}`}>
             DEPOIS
           </Text>
         </Pressable>

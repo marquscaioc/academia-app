@@ -132,7 +132,7 @@ export default function CheckinBuilderScreen() {
                   key={f.value}
                   onPress={() => setFrequency(f.value)}
                   className={`flex-1 py-2.5 rounded-xl border-2 items-center ${
-                    frequency === f.value ? "bg-violet-400/10 border-violet-400" : "bg-surface-card border-surface-border"
+                    frequency === f.value ? "bg-violet-500/10 border-violet-500" : "bg-surface-card border-surface-border"
                   }`}
                 >
                   <Text className={`text-xs font-bold ${frequency === f.value ? "text-violet-400" : "text-text-muted"}`}>
@@ -149,7 +149,7 @@ export default function CheckinBuilderScreen() {
               <Text className="text-xs font-bold text-text-muted tracking-wider uppercase">
                 Perguntas ({questions.length})
               </Text>
-              <Pressable onPress={addNewQuestion} className="bg-violet-400/10 px-3 py-1.5 rounded-lg">
+              <Pressable onPress={addNewQuestion} className="bg-violet-500/10 px-3 py-1.5 rounded-lg">
                 <Text className="text-violet-400 font-bold text-xs">+ Adicionar</Text>
               </Pressable>
             </View>
@@ -178,11 +178,11 @@ export default function CheckinBuilderScreen() {
                         key={t.value}
                         onPress={() => updateQuestion(idx, "type", t.value)}
                         className={`px-2.5 py-1.5 rounded-lg ${
-                          q.type === t.value ? "bg-violet-400" : "bg-surface-elevated"
+                          q.type === t.value ? "bg-violet-500" : "bg-surface-elevated"
                         }`}
                       >
                         <Text className={`text-[10px] font-bold ${
-                          q.type === t.value ? "text-dark-400" : "text-text-muted"
+                          q.type === t.value ? "text-white" : "text-text-muted"
                         }`}>
                           {t.icon} {t.label}
                         </Text>
@@ -218,15 +218,15 @@ export default function CheckinBuilderScreen() {
             onPress={handleSave}
             disabled={saving || !title.trim() || questions.length === 0}
             className={`rounded-2xl items-center mt-4 mb-10 ${
-              title.trim() && questions.length > 0 ? "bg-violet-400 active:bg-violet-500" : "bg-surface-border"
+              title.trim() && questions.length > 0 ? "bg-violet-500 active:bg-violet-600" : "bg-surface-border"
             }`}
             style={{ paddingVertical: 18 }}
           >
             {saving ? (
-              <ActivityIndicator color="#0A0A0B" />
+              <ActivityIndicator color="#FFFFFF" />
             ) : (
               <Text className={`font-black text-base tracking-wide uppercase ${
-                title.trim() && questions.length > 0 ? "text-dark-400" : "text-text-muted"
+                title.trim() && questions.length > 0 ? "text-white" : "text-text-muted"
               }`}>
                 Salvar Questionario
               </Text>

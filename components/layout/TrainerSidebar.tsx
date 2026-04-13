@@ -24,8 +24,8 @@ export function TrainerSidebar() {
     <View className="w-64 bg-dark-200 border-r border-surface-border pt-8 px-4">
       {/* Brand */}
       <View className="flex-row items-center gap-3 px-3 mb-10">
-        <View className="w-10 h-10 bg-violet-400 rounded-xl items-center justify-center rotate-3">
-          <Text className="text-dark-400 text-lg font-black -rotate-3">A</Text>
+        <View className="w-10 h-10 bg-violet-500 rounded-xl items-center justify-center rotate-3">
+          <Text className="text-white text-lg font-black -rotate-3">A</Text>
         </View>
         <View>
           <Text className="text-base font-black text-text-primary">ACADEMIA</Text>
@@ -42,7 +42,7 @@ export function TrainerSidebar() {
               key={item.href}
               onPress={() => router.push(item.href as never)}
               className={`flex-row items-center gap-3 px-4 py-3 rounded-xl ${
-                isActive ? "bg-violet-400/10" : "active:bg-surface-hover"
+                isActive ? "bg-violet-500/10" : "active:bg-surface-hover"
               }`}
             >
               <Text style={{ fontSize: 18, opacity: isActive ? 1 : 0.5 }}>{item.icon}</Text>
@@ -50,7 +50,7 @@ export function TrainerSidebar() {
                 {item.label}
               </Text>
               {isActive ? (
-                <View className="ml-auto w-1.5 h-1.5 bg-violet-400 rounded-full" />
+                <View className="ml-auto w-1.5 h-1.5 bg-violet-500 rounded-full" />
               ) : null}
             </Pressable>
           );

@@ -40,11 +40,11 @@ export function MessageBubble({
         <View
           className={`rounded-2xl px-4 py-3 ${
             isOwn
-              ? "bg-violet-400 rounded-br-md"
+              ? "bg-violet-500 rounded-br-md"
               : "bg-surface-elevated rounded-bl-md"
           }`}
         >
-          <Text className={`text-sm leading-5 ${isOwn ? "text-dark-400" : "text-text-primary"}`}>
+          <Text className={`text-sm leading-5 ${isOwn ? "text-white" : "text-text-primary"}`}>
             {content}
           </Text>
         </View>

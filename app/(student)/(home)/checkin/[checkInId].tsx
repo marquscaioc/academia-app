@@ -65,7 +65,7 @@ export default function CheckInResponseScreen() {
   if (!checkIn || !currentQ) {
     return (
       <SafeAreaView className="flex-1 bg-dark-400 items-center justify-center">
-        <ActivityIndicator size="large" color="#A855F7" />
+        <ActivityIndicator size="large" color="#781BB6" />
       </SafeAreaView>
     );
   }
@@ -86,7 +86,7 @@ export default function CheckInResponseScreen() {
         {/* Progress bar */}
         <View className="h-1.5 bg-surface-border rounded-full mb-8">
           <View
-            className="h-full bg-violet-400 rounded-full"
+            className="h-full bg-violet-500 rounded-full"
             style={{ width: `${((currentIdx + 1) / totalQ) * 100}%` }}
           />
         </View>
@@ -128,11 +128,11 @@ export default function CheckInResponseScreen() {
                   key={n}
                   onPress={() => setAnswers({ ...answers, [currentQ.id]: n })}
                   className={`w-14 h-14 rounded-xl items-center justify-center ${
-                    answers[currentQ.id] === n ? "bg-violet-400" : "bg-surface-card border border-surface-border"
+                    answers[currentQ.id] === n ? "bg-violet-500" : "bg-surface-card border border-surface-border"
                   }`}
                 >
                   <Text className={`text-lg font-black ${
-                    answers[currentQ.id] === n ? "text-dark-400" : "text-text-primary"
+                    answers[currentQ.id] === n ? "text-white" : "text-text-primary"
                   }`}>
                     {n}
                   </Text>
@@ -146,11 +146,11 @@ export default function CheckInResponseScreen() {
                   key={opt}
                   onPress={() => setAnswers({ ...answers, [currentQ.id]: opt })}
                   className={`flex-1 py-6 rounded-2xl items-center ${
-                    answers[currentQ.id] === opt ? "bg-violet-400" : "bg-surface-card border border-surface-border"
+                    answers[currentQ.id] === opt ? "bg-violet-500" : "bg-surface-card border border-surface-border"
                   }`}
                 >
                   <Text className={`text-lg font-black ${
-                    answers[currentQ.id] === opt ? "text-dark-400" : "text-text-primary"
+                    answers[currentQ.id] === opt ? "text-white" : "text-text-primary"
                   }`}>
                     {opt}
                   </Text>
@@ -164,11 +164,11 @@ export default function CheckInResponseScreen() {
                   key={opt}
                   onPress={() => setAnswers({ ...answers, [currentQ.id]: opt })}
                   className={`py-4 px-5 rounded-2xl ${
-                    answers[currentQ.id] === opt ? "bg-violet-400" : "bg-surface-card border border-surface-border"
+                    answers[currentQ.id] === opt ? "bg-violet-500" : "bg-surface-card border border-surface-border"
                   }`}
                 >
                   <Text className={`text-sm font-bold ${
-                    answers[currentQ.id] === opt ? "text-dark-400" : "text-text-primary"
+                    answers[currentQ.id] === opt ? "text-white" : "text-text-primary"
                   }`}>
                     {opt}
                   </Text>
@@ -192,13 +192,13 @@ export default function CheckInResponseScreen() {
             onPress={handleNext}
             disabled={submitCheckIn.isPending}
             className={`flex-1 rounded-2xl py-4 items-center ${
-              submitCheckIn.isPending ? "bg-violet-700" : "bg-violet-400 active:bg-violet-500"
+              submitCheckIn.isPending ? "bg-violet-700" : "bg-violet-500 active:bg-violet-600"
             }`}
           >
             {submitCheckIn.isPending ? (
               <ActivityIndicator color="#0A0A0B" />
             ) : (
-              <Text className="text-dark-400 font-black text-sm uppercase">
+              <Text className="text-white font-black text-sm uppercase">
                 {isLast ? "Enviar" : "Proximo"}
               </Text>
             )}

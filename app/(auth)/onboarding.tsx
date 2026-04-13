@@ -55,7 +55,7 @@ export default function OnboardingScreen() {
     <SafeAreaView className="flex-1 bg-dark-400">
       <View className="flex-1 justify-center px-8 max-w-[500px] w-full self-center">
         <View className="mb-10">
-          <Text className="text-xs font-bold text-violet-400 tracking-widest uppercase mb-3">
+          <Text className="text-xs font-bold text-violet-500 tracking-widest uppercase mb-3">
             Passo final
           </Text>
           <Text className="text-3xl font-black text-text-primary tracking-tight">
@@ -81,19 +81,19 @@ export default function OnboardingScreen() {
                 onPress={() => setSelectedRole(role.value)}
                 className={`rounded-3xl p-6 border-2 ${
                   isSelected
-                    ? "bg-surface-elevated border-violet-400"
+                    ? "bg-surface-elevated border-violet-500"
                     : "bg-surface-card border-surface-border active:border-surface-hover"
                 }`}
               >
                 <View className="flex-row items-center gap-4 mb-4">
                   <View className={`w-14 h-14 rounded-2xl items-center justify-center ${
-                    isSelected ? "bg-violet-400/20" : "bg-surface-elevated"
+                    isSelected ? "bg-violet-500/20" : "bg-surface-elevated"
                   }`}>
                     <Text className="text-2xl">{role.icon}</Text>
                   </View>
                   <View className="flex-1">
                     <Text className={`text-xl font-black ${
-                      isSelected ? "text-violet-400" : "text-text-primary"
+                      isSelected ? "text-violet-300" : "text-text-primary"
                     }`}>
                       {role.label}
                     </Text>
@@ -102,10 +102,10 @@ export default function OnboardingScreen() {
                     </Text>
                   </View>
                   <View className={`w-6 h-6 rounded-full border-2 items-center justify-center ${
-                    isSelected ? "border-violet-400 bg-violet-400" : "border-surface-border"
+                    isSelected ? "border-violet-500 bg-violet-500" : "border-surface-border"
                   }`}>
                     {isSelected ? (
-                      <Text className="text-dark-400 text-xs font-black">✓</Text>
+                      <Text className="text-white text-xs font-black">✓</Text>
                     ) : null}
                   </View>
                 </View>
@@ -113,10 +113,10 @@ export default function OnboardingScreen() {
                 <View className="flex-row flex-wrap gap-2">
                   {role.features.map((f) => (
                     <View key={f} className={`px-3 py-1.5 rounded-full ${
-                      isSelected ? "bg-violet-400/10" : "bg-dark-300"
+                      isSelected ? "bg-violet-500/10" : "bg-dark-300"
                     }`}>
                       <Text className={`text-xs font-medium ${
-                        isSelected ? "text-violet-400" : "text-text-muted"
+                        isSelected ? "text-violet-300" : "text-text-muted"
                       }`}>
                         {f}
                       </Text>
@@ -132,15 +132,15 @@ export default function OnboardingScreen() {
           onPress={handleContinue}
           disabled={!selectedRole || loading}
           className={`rounded-2xl items-center mt-8 ${
-            selectedRole ? "bg-violet-400 active:bg-violet-500" : "bg-surface-border"
+            selectedRole ? "bg-violet-500 active:bg-violet-600" : "bg-surface-border"
           }`}
           style={{ paddingVertical: 18 }}
         >
           {loading ? (
-            <ActivityIndicator color="#0A0A0B" />
+            <ActivityIndicator color="#FFFFFF" />
           ) : (
             <Text className={`font-black text-base tracking-wide uppercase ${
-              selectedRole ? "text-dark-400" : "text-text-muted"
+              selectedRole ? "text-white" : "text-text-muted"
             }`}>
               Continuar
             </Text>

@@ -137,7 +137,7 @@ export default function WorkoutBuilderScreen() {
         {(["select-student", "plan-info", "add-exercises", "review"] as Step[]).map((s, i) => (
           <View key={s} className={`flex-1 h-1 rounded-full ${
             (["select-student", "plan-info", "add-exercises", "review"] as Step[]).indexOf(step) >= i
-              ? "bg-violet-400" : "bg-surface-border"
+              ? "bg-violet-500" : "bg-surface-border"
           }`} />
         ))}
       </View>
@@ -216,10 +216,10 @@ export default function WorkoutBuilderScreen() {
           <Pressable
             onPress={() => planName.trim() && setStep("add-exercises")}
             disabled={!planName.trim()}
-            className={`rounded-2xl items-center mt-8 ${planName.trim() ? "bg-violet-400 active:bg-violet-500" : "bg-surface-border"}`}
+            className={`rounded-2xl items-center mt-8 ${planName.trim() ? "bg-violet-500 active:bg-violet-600" : "bg-surface-border"}`}
             style={{ paddingVertical: 18 }}
           >
-            <Text className={`font-black text-base tracking-wide uppercase ${planName.trim() ? "text-dark-400" : "text-text-muted"}`}>
+            <Text className={`font-black text-base tracking-wide uppercase ${planName.trim() ? "text-white" : "text-text-muted"}`}>
               Proximo: Exercicios
             </Text>
           </Pressable>
@@ -322,10 +322,10 @@ export default function WorkoutBuilderScreen() {
             <Pressable
               onPress={() => exercises.length > 0 && setStep("review")}
               disabled={exercises.length === 0}
-              className={`rounded-2xl items-center ${exercises.length > 0 ? "bg-violet-400 active:bg-violet-500" : "bg-surface-border"}`}
+              className={`rounded-2xl items-center ${exercises.length > 0 ? "bg-violet-500 active:bg-violet-600" : "bg-surface-border"}`}
               style={{ paddingVertical: 16 }}
             >
-              <Text className={`font-black text-sm tracking-wide uppercase ${exercises.length > 0 ? "text-dark-400" : "text-text-muted"}`}>
+              <Text className={`font-black text-sm tracking-wide uppercase ${exercises.length > 0 ? "text-white" : "text-text-muted"}`}>
                 Revisar ({exercises.length} exercicios)
               </Text>
             </Pressable>
@@ -336,7 +336,7 @@ export default function WorkoutBuilderScreen() {
       {/* Step: Review */}
       {step === "review" ? (
         <ScrollView className="flex-1 px-6 py-6">
-          <View className="bg-surface-card border border-violet-400/20 rounded-2xl p-5 mb-4">
+          <View className="bg-surface-card border border-violet-500/20 rounded-2xl p-5 mb-4">
             <Text className="text-xs text-violet-400 font-bold uppercase tracking-wider mb-2">Plano</Text>
             <Text className="text-xl font-black text-text-primary">{planName}</Text>
             <Text className="text-xs text-text-muted mt-1">Para: {selectedStudentName}</Text>
@@ -372,12 +372,12 @@ export default function WorkoutBuilderScreen() {
             <Pressable
               onPress={handleSave}
               disabled={saving}
-              className={`flex-1 rounded-2xl py-4 items-center ${saving ? "bg-violet-700" : "bg-violet-400 active:bg-violet-500"}`}
+              className={`flex-1 rounded-2xl py-4 items-center ${saving ? "bg-violet-700" : "bg-violet-500 active:bg-violet-600"}`}
             >
               {saving ? (
-                <ActivityIndicator color="#0A0A0B" />
+                <ActivityIndicator color="#FFFFFF" />
               ) : (
-                <Text className="text-dark-400 font-black text-sm uppercase">Salvar Plano</Text>
+                <Text className="text-white font-black text-sm uppercase">Salvar Plano</Text>
               )}
             </Pressable>
           </View>

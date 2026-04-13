@@ -81,9 +81,9 @@ export default function StudentHomeScreen() {
             {!showInvite ? (
               <Pressable
                 onPress={() => setShowInvite(true)}
-                className="bg-surface-card border border-dashed border-violet-400/30 rounded-2xl p-4 flex-row items-center gap-3 active:bg-surface-hover"
+                className="bg-surface-card border border-dashed border-violet-500/30 rounded-2xl p-4 flex-row items-center gap-3 active:bg-surface-hover"
               >
-                <View className="w-10 h-10 bg-violet-400/10 rounded-xl items-center justify-center">
+                <View className="w-10 h-10 bg-violet-500/10 rounded-xl items-center justify-center">
                   <Text className="text-lg">🎟️</Text>
                 </View>
                 <View className="flex-1">
@@ -93,7 +93,7 @@ export default function StudentHomeScreen() {
                 <Text className="text-violet-400 font-bold text-sm">Inserir</Text>
               </Pressable>
             ) : (
-              <View className="bg-surface-card border border-violet-400/30 rounded-2xl p-5">
+              <View className="bg-surface-card border border-violet-500/30 rounded-2xl p-5">
                 <Text className="text-xs font-bold text-violet-400 mb-3 tracking-wider uppercase">
                   Codigo de convite
                 </Text>
@@ -122,13 +122,13 @@ export default function StudentHomeScreen() {
                     onPress={handleAcceptInvite}
                     disabled={inviteCode.length < 6 || acceptInvite.isPending}
                     className={`flex-1 rounded-xl py-3 items-center ${
-                      inviteCode.length >= 6 ? "bg-violet-400" : "bg-surface-border"
+                      inviteCode.length >= 6 ? "bg-violet-500" : "bg-surface-border"
                     }`}
                   >
                     {acceptInvite.isPending ? (
                       <ActivityIndicator color="#0A0A0B" size="small" />
                     ) : (
-                      <Text className={`font-black text-sm ${inviteCode.length >= 6 ? "text-dark-400" : "text-text-muted"}`}>
+                      <Text className={`font-black text-sm ${inviteCode.length >= 6 ? "text-white" : "text-text-muted"}`}>
                         Conectar
                       </Text>
                     )}
@@ -149,7 +149,7 @@ export default function StudentHomeScreen() {
         {/* Today's workout */}
         <View className="bg-surface-card border border-surface-border rounded-3xl p-6 mb-6">
           <View className="flex-row items-center gap-3 mb-3">
-            <View className="w-10 h-10 bg-violet-400/20 rounded-xl items-center justify-center">
+            <View className="w-10 h-10 bg-violet-500/20 rounded-xl items-center justify-center">
               <Text className="text-lg">⚡</Text>
             </View>
             <Text className="text-xs text-violet-400 font-bold uppercase tracking-wider">Treino de hoje</Text>
@@ -159,7 +159,7 @@ export default function StudentHomeScreen() {
             Peca ao seu personal para criar um plano de treino personalizado.
           </Text>
           <View className="h-1 bg-surface-border rounded-full mt-5">
-            <View className="h-full bg-violet-400 rounded-full w-0" />
+            <View className="h-full bg-violet-500 rounded-full w-0" />
           </View>
         </View>
 

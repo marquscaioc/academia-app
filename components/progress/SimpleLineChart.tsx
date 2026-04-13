@@ -16,7 +16,7 @@ interface SimpleLineChartProps {
 export function SimpleLineChart({
   data,
   height = 160,
-  color = "#A855F7",
+  color = "#781BB6",
   unit = "",
   title,
 }: SimpleLineChartProps) {

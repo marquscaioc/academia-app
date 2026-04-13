@@ -44,7 +44,7 @@ export default function WorkoutsScreen() {
         {/* Workouts list */}
         {isLoading ? (
           <View className="items-center py-10">
-            <ActivityIndicator size="large" color="#A855F7" />
+            <ActivityIndicator size="large" color="#781BB6" />
           </View>
         ) : !allWorkouts.length ? (
           <View className="bg-surface-card border border-surface-border rounded-2xl p-8 items-center">
@@ -64,7 +64,7 @@ export default function WorkoutsScreen() {
                 <Pressable className="bg-surface-card border border-surface-border rounded-2xl p-5 active:bg-surface-hover">
                   <View className="flex-row items-center justify-between mb-2">
                     <Text className="text-base font-bold text-text-primary">{w.name}</Text>
-                    <View className="bg-violet-400/10 px-2 py-1 rounded-full">
+                    <View className="bg-violet-500/10 px-2 py-1 rounded-full">
                       <Text className="text-[10px] font-bold text-violet-400">
                         {w.exercises?.length ?? 0} exercicios
                       </Text>

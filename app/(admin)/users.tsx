@@ -55,10 +55,10 @@ export default function AdminUsersScreen() {
               key={f.value}
               onPress={() => setRoleFilter(f.value)}
               className={`px-3 py-1.5 rounded-full ${
-                roleFilter === f.value ? "bg-violet-400" : "bg-surface-card border border-surface-border"
+                roleFilter === f.value ? "bg-violet-500" : "bg-surface-card border border-surface-border"
               }`}
             >
-              <Text className={`text-xs font-bold ${roleFilter === f.value ? "text-dark-400" : "text-text-muted"}`}>
+              <Text className={`text-xs font-bold ${roleFilter === f.value ? "text-white" : "text-text-muted"}`}>
                 {f.label}
               </Text>
             </Pressable>
@@ -67,7 +67,7 @@ export default function AdminUsersScreen() {
 
         {isLoading ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" color="#A855F7" />
+            <ActivityIndicator size="large" color="#781BB6" />
           </View>
         ) : (
           <FlatList
@@ -86,7 +86,7 @@ export default function AdminUsersScreen() {
                 </View>
                 <View className={`px-2 py-1 rounded-full ${
                   item.role === "trainer" ? "bg-ice-400/10" :
-                  item.role === "admin" ? "bg-danger-500/10" : "bg-violet-400/10"
+                  item.role === "admin" ? "bg-danger-500/10" : "bg-violet-500/10"
                 }`}>
                   <Text className={`text-[10px] font-bold capitalize ${
                     item.role === "trainer" ? "text-ice-400" :

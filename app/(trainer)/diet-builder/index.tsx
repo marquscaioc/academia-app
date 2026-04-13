@@ -173,7 +173,7 @@ export default function DietBuilderScreen() {
       <View className="flex-row px-6 py-3 gap-2">
         {(["student", "macros", "meals", "review"] as Step[]).map((s, i) => (
           <View key={s} className={`flex-1 h-1 rounded-full ${
-            (["student", "macros", "meals", "review"] as Step[]).indexOf(step) >= i ? "bg-violet-400" : "bg-surface-border"
+            (["student", "macros", "meals", "review"] as Step[]).indexOf(step) >= i ? "bg-violet-500" : "bg-surface-border"
           }`} />
         ))}
       </View>
@@ -235,10 +235,10 @@ export default function DietBuilderScreen() {
             <Pressable
               onPress={() => planName.trim() && setStep("meals")}
               disabled={!planName.trim()}
-              className={`rounded-2xl items-center mt-6 ${planName.trim() ? "bg-violet-400 active:bg-violet-500" : "bg-surface-border"}`}
+              className={`rounded-2xl items-center mt-6 ${planName.trim() ? "bg-violet-500 active:bg-violet-600" : "bg-surface-border"}`}
               style={{ paddingVertical: 18 }}
             >
-              <Text className={`font-black text-base tracking-wide uppercase ${planName.trim() ? "text-dark-400" : "text-text-muted"}`}>Proximo: Refeicoes</Text>
+              <Text className={`font-black text-base tracking-wide uppercase ${planName.trim() ? "text-white" : "text-text-muted"}`}>Proximo: Refeicoes</Text>
             </Pressable>
           </View>
         </ScrollView>
@@ -321,7 +321,7 @@ export default function DietBuilderScreen() {
               </View>
             ))}
 
-            <Pressable onPress={addNewMeal} className="border border-dashed border-violet-400/30 rounded-2xl py-4 items-center">
+            <Pressable onPress={addNewMeal} className="border border-dashed border-violet-500/30 rounded-2xl py-4 items-center">
               <Text className="text-violet-400 font-bold text-sm">+ Nova refeicao</Text>
             </Pressable>
 
@@ -335,10 +335,10 @@ export default function DietBuilderScreen() {
 
             <Pressable
               onPress={() => setStep("review")}
-              className="bg-violet-400 rounded-2xl items-center active:bg-violet-500 mb-6"
+              className="bg-violet-500 rounded-2xl items-center active:bg-violet-600 mb-6"
               style={{ paddingVertical: 18 }}
             >
-              <Text className="text-dark-400 font-black text-base tracking-wide uppercase">Revisar Plano</Text>
+              <Text className="text-white font-black text-base tracking-wide uppercase">Revisar Plano</Text>
             </Pressable>
           </View>
         </ScrollView>
@@ -347,7 +347,7 @@ export default function DietBuilderScreen() {
       {/* Step: Review */}
       {step === "review" ? (
         <ScrollView className="flex-1 px-6 py-6">
-          <View className="bg-surface-card border border-violet-400/20 rounded-2xl p-5 mb-4">
+          <View className="bg-surface-card border border-violet-500/20 rounded-2xl p-5 mb-4">
             <Text className="text-xs text-violet-400 font-bold uppercase tracking-wider mb-2">Plano Alimentar</Text>
             <Text className="text-xl font-black text-text-primary">{planName}</Text>
             <Text className="text-xs text-text-muted mt-1">Para: {studentName}</Text>
@@ -384,9 +384,9 @@ export default function DietBuilderScreen() {
             <Pressable
               onPress={handleSave}
               disabled={saving}
-              className={`flex-1 rounded-2xl py-4 items-center ${saving ? "bg-violet-700" : "bg-violet-400 active:bg-violet-500"}`}
+              className={`flex-1 rounded-2xl py-4 items-center ${saving ? "bg-violet-700" : "bg-violet-500 active:bg-violet-600"}`}
             >
-              {saving ? <ActivityIndicator color="#0B080F" /> : <Text className="text-dark-400 font-black text-sm uppercase">Salvar Plano</Text>}
+              {saving ? <ActivityIndicator color="#FFFFFF" /> : <Text className="text-white font-black text-sm uppercase">Salvar Plano</Text>}
             </Pressable>
           </View>
         </ScrollView>

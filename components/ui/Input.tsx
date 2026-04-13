@@ -18,19 +18,19 @@ export function Input({
   const borderColor = error
     ? "border-danger-500"
     : focused
-      ? "border-primary-500"
-      : "border-gray-300";
+      ? "border-violet-500"
+      : "border-surface-border";
 
   return (
     <View>
       {label ? (
-        <Text className="text-sm font-medium text-gray-700 mb-1 ml-1">
+        <Text className="text-xs font-bold text-text-muted mb-2 ml-1 tracking-wider uppercase">
           {label}
         </Text>
       ) : null}
       <TextInput
-        className={`border ${borderColor} rounded-xl px-4 py-3.5 text-base text-gray-900 bg-gray-50`}
-        placeholderTextColor="#9ca3af"
+        className={`border-2 ${borderColor} rounded-2xl px-5 py-4 text-base text-text-primary bg-surface-card`}
+        placeholderTextColor="#6E6382"
         onFocus={(e) => {
           setFocused(true);
           props.onFocus?.(e);
@@ -42,9 +42,9 @@ export function Input({
         {...props}
       />
       {error ? (
-        <Text className="text-xs text-danger-500 mt-1 ml-1">{error}</Text>
+        <Text className="text-xs text-danger-500 mt-1.5 ml-1">{error}</Text>
       ) : helperText ? (
-        <Text className="text-xs text-gray-400 mt-1 ml-1">{helperText}</Text>
+        <Text className="text-xs text-text-muted mt-1.5 ml-1">{helperText}</Text>
       ) : null}
     </View>
   );

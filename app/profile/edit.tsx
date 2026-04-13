@@ -129,14 +129,14 @@ export default function EditProfileScreen() {
             onPress={handleSave}
             disabled={loading}
             className={`rounded-2xl items-center mt-4 mb-10 ${
-              loading ? "bg-violet-700" : "bg-violet-400 active:bg-violet-500"
+              loading ? "bg-violet-700" : "bg-violet-500 active:bg-violet-600"
             }`}
             style={{ paddingVertical: 18 }}
           >
             {loading ? (
-              <ActivityIndicator color="#0A0A0B" />
+              <ActivityIndicator color="#FFFFFF" />
             ) : (
-              <Text className="text-dark-400 font-black text-base tracking-wide uppercase">
+              <Text className="text-white font-black text-base tracking-wide uppercase">
                 Salvar
               </Text>
             )}

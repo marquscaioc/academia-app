@@ -102,7 +102,7 @@ export default function CreatePlanScreen() {
                   onPress={() => setInterval(i.value)}
                   className={`flex-1 py-3 rounded-xl border-2 items-center ${
                     interval === i.value
-                      ? "bg-violet-400/10 border-violet-400"
+                      ? "bg-violet-500/10 border-violet-500"
                       : "bg-surface-card border-surface-border"
                   }`}
                 >
@@ -120,14 +120,14 @@ export default function CreatePlanScreen() {
             onPress={handleCreate}
             disabled={createPlan.isPending}
             className={`rounded-2xl items-center mt-4 mb-10 ${
-              createPlan.isPending ? "bg-violet-700" : "bg-violet-400 active:bg-violet-500"
+              createPlan.isPending ? "bg-violet-700" : "bg-violet-500 active:bg-violet-600"
             }`}
             style={{ paddingVertical: 18 }}
           >
             {createPlan.isPending ? (
-              <ActivityIndicator color="#0A0A0B" />
+              <ActivityIndicator color="#FFFFFF" />
             ) : (
-              <Text className="text-dark-400 font-black text-base tracking-wide uppercase">
+              <Text className="text-white font-black text-base tracking-wide uppercase">
                 Criar Plano
               </Text>
             )}

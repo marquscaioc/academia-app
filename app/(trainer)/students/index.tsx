@@ -39,8 +39,8 @@ export default function StudentsScreen() {
         <View className="flex-row items-center justify-between mb-6">
           <Text className="text-2xl font-black text-text-primary">Alunos</Text>
           <Link href="/(trainer)/students/invite" asChild>
-            <Pressable className="bg-violet-400 px-4 py-2 rounded-xl active:bg-violet-500">
-              <Text className="text-dark-400 font-black text-xs">+ Convidar</Text>
+            <Pressable className="bg-violet-500 px-4 py-2 rounded-xl active:bg-violet-600">
+              <Text className="text-white font-black text-xs">+ Convidar</Text>
             </Pressable>
           </Link>
         </View>
@@ -56,7 +56,7 @@ export default function StudentsScreen() {
 
         {isLoading ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" color="#A855F7" />
+            <ActivityIndicator size="large" color="#781BB6" />
           </View>
         ) : !students?.length ? (
           <EmptyState
@@ -85,7 +85,7 @@ export default function StudentsScreen() {
                     Desde {new Date(item.started_at).toLocaleDateString("pt-BR")}
                   </Text>
                 </View>
-                <View className="bg-violet-400/10 px-2 py-1 rounded-full">
+                <View className="bg-violet-500/10 px-2 py-1 rounded-full">
                   <Text className="text-[10px] font-bold text-violet-400">Ativo</Text>
                 </View>
               </Pressable>

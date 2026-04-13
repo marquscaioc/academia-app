@@ -104,7 +104,7 @@ export default function AddMeasurementScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-dark-400">
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
@@ -115,34 +115,34 @@ export default function AddMeasurementScreen() {
         >
           <View className="flex-row items-center justify-between mb-6">
             <Pressable onPress={() => router.back()}>
-              <Text className="text-primary-600 font-medium">Cancelar</Text>
+              <Text className="text-violet-400 font-medium">Cancelar</Text>
             </Pressable>
-            <Text className="text-lg font-bold text-gray-900">
+            <Text className="text-lg font-bold text-text-primary">
               Registrar Medidas
             </Text>
             <View className="w-16" />
           </View>
 
-          <Text className="text-sm text-gray-500 mb-6">
+          <Text className="text-sm text-text-muted mb-6">
             Preencha apenas as medidas que deseja registrar.
           </Text>
 
           <View className="gap-4">
             {fields.map((field) => (
               <View key={field.key} className="flex-row items-center gap-3">
-                <Text className="flex-1 text-sm text-gray-700">
+                <Text className="flex-1 text-sm text-text-secondary">
                   {field.label}
                 </Text>
                 <View className="flex-row items-center">
                   <TextInput
-                    className="border border-gray-300 rounded-lg px-3 py-2 text-base text-gray-900 bg-gray-50 w-24 text-right"
+                    className="border border-surface-border rounded-lg px-3 py-2 text-base text-text-primary bg-surface-card w-24 text-right"
                     placeholder={field.placeholder}
-                    placeholderTextColor="#d1d5db"
+                    placeholderTextColor="#6E6580"
                     value={values[field.key] ?? ""}
                     onChangeText={(v) => updateValue(field.key, v)}
                     keyboardType="decimal-pad"
                   />
-                  <Text className="text-sm text-gray-500 ml-2 w-6">
+                  <Text className="text-sm text-text-muted ml-2 w-6">
                     {field.unit}
                   </Text>
                 </View>
@@ -150,13 +150,13 @@ export default function AddMeasurementScreen() {
             ))}
 
             <View className="mt-2">
-              <Text className="text-sm font-medium text-gray-700 mb-1">
+              <Text className="text-sm font-medium text-text-secondary mb-1">
                 Observacoes
               </Text>
               <TextInput
-                className="border border-gray-300 rounded-xl px-4 py-3 text-base text-gray-900 bg-gray-50"
+                className="border border-surface-border rounded-xl px-4 py-3 text-base text-text-primary bg-surface-card"
                 placeholder="Notas opcionais..."
-                placeholderTextColor="#9ca3af"
+                placeholderTextColor="#6E6580"
                 value={notes}
                 onChangeText={setNotes}
                 multiline
@@ -167,7 +167,7 @@ export default function AddMeasurementScreen() {
             <Pressable
               onPress={handleSave}
               disabled={addMeasurement.isPending}
-              className="bg-primary-600 rounded-xl py-4 items-center mt-4 mb-10 active:bg-primary-700"
+              className="bg-violet-500 rounded-xl py-4 items-center mt-4 mb-10 active:bg-violet-600"
             >
               {addMeasurement.isPending ? (
                 <ActivityIndicator color="#fff" />

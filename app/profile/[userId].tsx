@@ -29,7 +29,7 @@ export default function PublicProfileScreen() {
   if (isLoading || !profile) {
     return (
       <SafeAreaView className="flex-1 bg-dark-400 items-center justify-center">
-        <ActivityIndicator size="large" color="#A855F7" />
+        <ActivityIndicator size="large" color="#781BB6" />
       </SafeAreaView>
     );
   }
@@ -76,11 +76,11 @@ export default function PublicProfileScreen() {
                 onPress={handleToggleFollow}
                 disabled={followUser.isPending || unfollowUser.isPending}
                 className={`mt-6 px-8 rounded-2xl ${
-                  isFollowing ? "border border-surface-border" : "bg-violet-400 active:bg-violet-500"
+                  isFollowing ? "border border-surface-border" : "bg-violet-500 active:bg-violet-600"
                 }`}
                 style={{ paddingVertical: 14 }}
               >
-                <Text className={`font-black text-sm ${isFollowing ? "text-text-secondary" : "text-dark-400"}`}>
+                <Text className={`font-black text-sm ${isFollowing ? "text-text-secondary" : "text-white"}`}>
                   {isFollowing ? "Seguindo" : "Seguir"}
                 </Text>
               </Pressable>

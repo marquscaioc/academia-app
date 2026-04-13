@@ -89,8 +89,8 @@ export default function NotificationsScreen() {
             </Pressable>
             <Text className="text-xl font-black text-text-primary">Notificacoes</Text>
             {unreadCount > 0 ? (
-              <View className="bg-violet-400 rounded-full px-2 py-0.5">
-                <Text className="text-dark-400 text-[10px] font-black">{unreadCount}</Text>
+              <View className="bg-violet-500 rounded-full px-2 py-0.5">
+                <Text className="text-white text-[10px] font-black">{unreadCount}</Text>
               </View>
             ) : null}
           </View>
@@ -103,7 +103,7 @@ export default function NotificationsScreen() {
 
         {isLoading ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" color="#A855F7" />
+            <ActivityIndicator size="large" color="#781BB6" />
           </View>
         ) : !notifications?.length ? (
           <View className="flex-1 items-center justify-center">
@@ -129,7 +129,7 @@ export default function NotificationsScreen() {
                   <View className="flex-row items-center gap-2">
                     <Text className="text-sm font-bold text-text-primary flex-1">{item.title}</Text>
                     {!item.is_read ? (
-                      <View className="w-2 h-2 bg-violet-400 rounded-full" />
+                      <View className="w-2 h-2 bg-violet-500 rounded-full" />
                     ) : null}
                   </View>
                   {item.body ? (

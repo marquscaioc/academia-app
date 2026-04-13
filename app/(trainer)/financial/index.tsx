@@ -25,8 +25,8 @@ export default function FinancialScreen() {
         <View className="flex-row items-center justify-between mb-6">
           <Text className="text-2xl font-black text-text-primary">Financeiro</Text>
           <Link href="/(trainer)/financial/create-plan" asChild>
-            <Pressable className="bg-violet-400 px-4 py-2 rounded-xl active:bg-violet-500">
-              <Text className="text-dark-400 font-black text-xs">+ Plano</Text>
+            <Pressable className="bg-violet-500 px-4 py-2 rounded-xl active:bg-violet-600">
+              <Text className="text-white font-black text-xs">+ Plano</Text>
             </Pressable>
           </Link>
         </View>
@@ -63,7 +63,7 @@ export default function FinancialScreen() {
               key={t}
               onPress={() => setTab(t)}
               className={`flex-1 py-3 items-center border-b-2 ${
-                tab === t ? "border-violet-400" : "border-transparent"
+                tab === t ? "border-violet-500" : "border-transparent"
               }`}
             >
               <Text className={`font-bold text-xs uppercase tracking-wider ${
@@ -103,7 +103,7 @@ export default function FinancialScreen() {
                 <Card key={plan.id} variant="outlined">
                   <View className="flex-row items-center justify-between mb-2">
                     <Text className="text-base font-bold text-text-primary">{plan.name}</Text>
-                    <View className={`px-2 py-1 rounded-full ${plan.is_active ? "bg-violet-400/10" : "bg-surface-elevated"}`}>
+                    <View className={`px-2 py-1 rounded-full ${plan.is_active ? "bg-violet-500/10" : "bg-surface-elevated"}`}>
                       <Text className={`text-[10px] font-bold ${plan.is_active ? "text-violet-400" : "text-text-muted"}`}>
                         {plan.is_active ? "Ativo" : "Inativo"}
                       </Text>

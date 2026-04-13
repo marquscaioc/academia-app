@@ -211,10 +211,10 @@ export default function CreateExerciseScreen() {
                   key={mg.id}
                   onPress={() => setSelectedMuscleGroup(selectedMuscleGroup === mg.id ? null : mg.id)}
                   className={`px-3 py-2 rounded-xl ${
-                    selectedMuscleGroup === mg.id ? "bg-violet-400" : "bg-surface-card border border-surface-border"
+                    selectedMuscleGroup === mg.id ? "bg-violet-500" : "bg-surface-card border border-surface-border"
                   }`}
                 >
-                  <Text className={`text-xs font-bold ${selectedMuscleGroup === mg.id ? "text-dark-400" : "text-text-muted"}`}>
+                  <Text className={`text-xs font-bold ${selectedMuscleGroup === mg.id ? "text-white" : "text-text-muted"}`}>
                     {mg.name}
                   </Text>
                 </Pressable>
@@ -231,10 +231,10 @@ export default function CreateExerciseScreen() {
                   key={eq.id}
                   onPress={() => setSelectedEquipment(selectedEquipment === eq.id ? null : eq.id)}
                   className={`px-3 py-2 rounded-xl ${
-                    selectedEquipment === eq.id ? "bg-violet-400" : "bg-surface-card border border-surface-border"
+                    selectedEquipment === eq.id ? "bg-violet-500" : "bg-surface-card border border-surface-border"
                   }`}
                 >
-                  <Text className={`text-xs font-bold ${selectedEquipment === eq.id ? "text-dark-400" : "text-text-muted"}`}>
+                  <Text className={`text-xs font-bold ${selectedEquipment === eq.id ? "text-white" : "text-text-muted"}`}>
                     {eq.name}
                   </Text>
                 </Pressable>
@@ -248,8 +248,8 @@ export default function CreateExerciseScreen() {
             <View className="flex-row gap-2">
               {difficulties.map((d) => (
                 <Pressable key={d.value} onPress={() => setDifficulty(d.value)}
-                  className={`flex-1 py-2.5 rounded-xl items-center ${difficulty === d.value ? "bg-violet-400" : "bg-surface-card border border-surface-border"}`}>
-                  <Text className={`text-xs font-bold ${difficulty === d.value ? "text-dark-400" : "text-text-muted"}`}>{d.label}</Text>
+                  className={`flex-1 py-2.5 rounded-xl items-center ${difficulty === d.value ? "bg-violet-500" : "bg-surface-card border border-surface-border"}`}>
+                  <Text className={`text-xs font-bold ${difficulty === d.value ? "text-white" : "text-text-muted"}`}>{d.label}</Text>
                 </Pressable>
               ))}
             </View>
@@ -261,8 +261,8 @@ export default function CreateExerciseScreen() {
             <View className="flex-row gap-2">
               {types.map((t) => (
                 <Pressable key={t.value} onPress={() => setExerciseType(t.value)}
-                  className={`flex-1 py-2.5 rounded-xl items-center ${exerciseType === t.value ? "bg-violet-400" : "bg-surface-card border border-surface-border"}`}>
-                  <Text className={`text-xs font-bold ${exerciseType === t.value ? "text-dark-400" : "text-text-muted"}`}>{t.label}</Text>
+                  className={`flex-1 py-2.5 rounded-xl items-center ${exerciseType === t.value ? "bg-violet-500" : "bg-surface-card border border-surface-border"}`}>
+                  <Text className={`text-xs font-bold ${exerciseType === t.value ? "text-white" : "text-text-muted"}`}>{t.label}</Text>
                 </Pressable>
               ))}
             </View>
@@ -272,11 +272,11 @@ export default function CreateExerciseScreen() {
           <Pressable
             onPress={handleCreate}
             disabled={saving}
-            className={`rounded-2xl items-center mt-4 mb-10 ${saving ? "bg-violet-700" : "bg-violet-400 active:bg-violet-500"}`}
+            className={`rounded-2xl items-center mt-4 mb-10 ${saving ? "bg-violet-700" : "bg-violet-500 active:bg-violet-600"}`}
             style={{ paddingVertical: 18 }}
           >
-            {saving ? <ActivityIndicator color="#0B080F" /> : (
-              <Text className="text-dark-400 font-black text-base tracking-wide uppercase">Criar Exercicio</Text>
+            {saving ? <ActivityIndicator color="#FFFFFF" /> : (
+              <Text className="text-white font-black text-base tracking-wide uppercase">Criar Exercicio</Text>
             )}
           </Pressable>
         </View>

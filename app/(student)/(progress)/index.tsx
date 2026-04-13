@@ -87,7 +87,7 @@ export default function ProgressScreen() {
 
         {/* Weight chart */}
         <View className="mb-6">
-          <SimpleLineChart data={weightData} title="Peso" unit="kg" color="#A855F7" />
+          <SimpleLineChart data={weightData} title="Peso" unit="kg" color="#781BB6" />
         </View>
 
         {/* Waist chart */}

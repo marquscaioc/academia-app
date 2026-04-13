@@ -11,7 +11,7 @@ interface EmptyStateProps {
 export function EmptyState({ icon, title, description, actionLabel, onAction }: EmptyStateProps) {
   return (
     <View className="flex-1 items-center justify-center px-8">
-      <View className="w-20 h-20 bg-surface-card border border-surface-border rounded-3xl items-center justify-center mb-5">
+      <View className="w-20 h-20 bg-surface-elevated border border-surface-border rounded-3xl items-center justify-center mb-5">
         <Text className="text-3xl">{icon}</Text>
       </View>
       <Text className="text-lg font-bold text-text-primary text-center">{title}</Text>
@@ -21,9 +21,9 @@ export function EmptyState({ icon, title, description, actionLabel, onAction }: 
       {actionLabel && onAction ? (
         <Pressable
           onPress={onAction}
-          className="bg-violet-400 rounded-xl px-6 py-3 mt-6 active:bg-violet-500"
+          className="bg-violet-500 rounded-2xl px-6 py-3.5 mt-6 active:bg-violet-600"
         >
-          <Text className="text-dark-400 font-black text-sm">{actionLabel}</Text>
+          <Text className="text-white font-black text-sm tracking-wide">{actionLabel}</Text>
         </Pressable>
       ) : null}
     </View>
