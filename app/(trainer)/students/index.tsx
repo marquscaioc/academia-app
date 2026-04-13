@@ -1,4 +1,4 @@
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { useState } from "react";
 import { ActivityIndicator, FlatList, Modal, Pressable, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -90,7 +90,8 @@ export default function StudentsScreen() {
             contentContainerClassName="gap-2"
             renderItem={({ item }) => (
               <Pressable
-                onPress={() => {
+                onPress={() => router.push(`/(trainer)/students/${item.student_id}` as never)}
+                onLongPress={() => {
                   setWaterModal({ studentId: item.student_id, name: item.student?.full_name ?? "Aluno" });
                   setWaterGoal("");
                 }}

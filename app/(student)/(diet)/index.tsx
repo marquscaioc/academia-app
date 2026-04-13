@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { router } from "expo-router";
 import { useAuth } from "../../../lib/auth/provider";
 import { useDietPlans, useMealLogs, useWaterLogs } from "../../../hooks/queries/useDiet";
 import { useLogMeal, useLogWater } from "../../../hooks/mutations/useDietMutations";
@@ -129,6 +130,15 @@ export default function DietScreen() {
         >
           <Text className="text-lg">💧</Text>
           <Text className="text-blue-400 font-semibold text-sm">+ 250ml de agua</Text>
+        </Pressable>
+
+        {/* Recipes link */}
+        <Pressable
+          onPress={() => router.push("/(student)/(diet)/recipes" as never)}
+          className="bg-violet-500/10 border border-violet-500/20 rounded-xl py-3 items-center mb-6 active:bg-violet-500/20 flex-row justify-center gap-2"
+        >
+          <Text className="text-lg">🍽️</Text>
+          <Text className="text-violet-400 font-semibold text-sm">Receitas Fitness</Text>
         </Pressable>
 
         {/* Meals */}

@@ -125,6 +125,36 @@ export default function EditProfileScreen() {
             </View>
           </View>
 
+          {/* WhatsApp */}
+          <View className="bg-surface-card border border-surface-border rounded-2xl p-4 mt-4">
+            <Text className="text-xs font-bold text-text-muted mb-3 uppercase tracking-wider">WhatsApp</Text>
+            <TextInput
+              className="bg-dark-300 border border-surface-border rounded-xl px-4 py-3 text-sm text-text-primary mb-3"
+              placeholder="55 11 99999-9999"
+              placeholderTextColor="#6E6382"
+              keyboardType="phone-pad"
+              onEndEditing={(e) => {
+                if (user && e.nativeEvent.text.trim()) {
+                  supabase.from("profiles").update({ whatsapp_number: e.nativeEvent.text.trim() }).eq("id", user.id);
+                }
+              }}
+            />
+            <Pressable
+              onPress={async () => {
+                if (!user) return;
+                const { data: p } = await supabase.from("profiles").select("whatsapp_opt_in").eq("id", user.id).single();
+                await supabase.from("profiles").update({ whatsapp_opt_in: !(p?.whatsapp_opt_in) }).eq("id", user.id);
+                refreshProfile();
+              }}
+              className="flex-row items-center justify-between"
+            >
+              <Text className="text-sm text-text-secondary">Receber lembretes via WhatsApp</Text>
+              <View className={`w-12 h-7 rounded-full p-0.5 ${false ? "bg-violet-500" : "bg-surface-border"}`}>
+                <View className="w-6 h-6 bg-white rounded-full" />
+              </View>
+            </Pressable>
+          </View>
+
           {/* Notification preferences */}
           <View className="bg-surface-card border border-surface-border rounded-2xl p-4 mt-4">
             <Text className="text-xs font-bold text-text-muted mb-3 uppercase tracking-wider">Notificacoes</Text>
