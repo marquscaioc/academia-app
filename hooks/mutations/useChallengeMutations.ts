@@ -5,11 +5,13 @@ interface CreateChallengeInput {
   created_by: string;
   title: string;
   description?: string;
-  scoring_mode: "days_active" | "check_in_count" | "total_volume" | "custom_points";
+  scoring_mode: string;
   starts_at: string;
   ends_at: string;
   is_public?: boolean;
   require_photo_proof?: boolean;
+  team_mode?: boolean;
+  pose_verification?: boolean;
 }
 
 export function useCreateChallenge() {

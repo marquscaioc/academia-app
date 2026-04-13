@@ -23,7 +23,9 @@ const scoringLabels: Record<string, string> = {
   days_active: "Dias ativos",
   check_in_count: "Check-ins",
   total_volume: "Volume total",
-  custom_points: "Pontos",
+  custom_points: "Pontos custom",
+  workouts_completed: "Treinos completos",
+  active_minutes: "Minutos ativos",
 };
 
 export function ChallengeCard({

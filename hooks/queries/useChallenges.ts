@@ -7,13 +7,15 @@ export interface Challenge {
   title: string;
   description: string | null;
   image_url: string | null;
-  scoring_mode: "days_active" | "check_in_count" | "total_volume" | "custom_points";
+  scoring_mode: string;
   scoring_config: Record<string, unknown>;
   starts_at: string;
   ends_at: string;
   is_public: boolean;
   max_participants: number | null;
   require_photo_proof: boolean;
+  team_mode: boolean;
+  pose_verification: boolean;
   status: "upcoming" | "active" | "ended";
   created_at: string;
   participant_count?: number;

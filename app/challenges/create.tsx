@@ -8,8 +8,10 @@ import { useCreateChallenge } from "../../hooks/mutations/useChallengeMutations"
 const scoringModes = [
   { value: "days_active", label: "Dias ativos", desc: "1 ponto por dia que treinar" },
   { value: "check_in_count", label: "Check-ins", desc: "1 ponto por check-in" },
-  { value: "total_volume", label: "Volume total", desc: "Pontos pelo volume de treino" },
-  { value: "custom_points", label: "Pontos livres", desc: "Pontuacao manual" },
+  { value: "total_volume", label: "Volume total", desc: "Pontos pelo volume de treino (kg)" },
+  { value: "workouts_completed", label: "Treinos completos", desc: "1 ponto por treino finalizado" },
+  { value: "active_minutes", label: "Minutos ativos", desc: "Pontos por minuto de atividade" },
+  { value: "custom_points", label: "Hustle Points", desc: "Tabela de pontos customizada" },
 ] as const;
 
 export default function CreateChallengeScreen() {
@@ -20,6 +22,8 @@ export default function CreateChallengeScreen() {
   const [scoringMode, setScoringMode] = useState<string>("days_active");
   const [durationDays, setDurationDays] = useState("30");
   const [requirePhoto, setRequirePhoto] = useState(true);
+  const [teamMode, setTeamMode] = useState(false);
+  const [poseVerification, setPoseVerification] = useState(false);
   const [error, setError] = useState("");
 
   const handleCreate = async () => {
@@ -38,10 +42,12 @@ export default function CreateChallengeScreen() {
       created_by: user.id,
       title: title.trim(),
       description: description.trim() || undefined,
-      scoring_mode: scoringMode as "days_active" | "check_in_count" | "total_volume" | "custom_points",
+      scoring_mode: scoringMode as any,
       starts_at: startsAt.toISOString(),
       ends_at: endsAt.toISOString(),
       require_photo_proof: requirePhoto,
+      team_mode: teamMode,
+      pose_verification: poseVerification,
     });
 
     router.back();
@@ -131,6 +137,32 @@ export default function CreateChallengeScreen() {
             </View>
             <View className={`w-12 h-7 rounded-full p-0.5 ${requirePhoto ? "bg-primary-600" : "bg-gray-300"}`}>
               <View className={`w-6 h-6 bg-white rounded-full shadow-sm ${requirePhoto ? "ml-auto" : ""}`} />
+            </View>
+          </Pressable>
+
+          <Pressable
+            onPress={() => setTeamMode(!teamMode)}
+            className="flex-row items-center justify-between py-3"
+          >
+            <View>
+              <Text className="text-sm font-medium text-gray-700">Modo equipe</Text>
+              <Text className="text-xs text-gray-400">Participantes formam times</Text>
+            </View>
+            <View className={`w-12 h-7 rounded-full p-0.5 ${teamMode ? "bg-primary-600" : "bg-gray-300"}`}>
+              <View className={`w-6 h-6 bg-white rounded-full shadow-sm ${teamMode ? "ml-auto" : ""}`} />
+            </View>
+          </Pressable>
+
+          <Pressable
+            onPress={() => setPoseVerification(!poseVerification)}
+            className="flex-row items-center justify-between py-3"
+          >
+            <View>
+              <Text className="text-sm font-medium text-gray-700">Anti-trapaca (pose)</Text>
+              <Text className="text-xs text-gray-400">Pose do dia obrigatoria na foto</Text>
+            </View>
+            <View className={`w-12 h-7 rounded-full p-0.5 ${poseVerification ? "bg-primary-600" : "bg-gray-300"}`}>
+              <View className={`w-6 h-6 bg-white rounded-full shadow-sm ${poseVerification ? "ml-auto" : ""}`} />
             </View>
           </Pressable>
 
