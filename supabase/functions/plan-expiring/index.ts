@@ -56,6 +56,11 @@ Deno.serve(async (_req) => {
           is_pushed: true,
         });
 
+        // WhatsApp
+        await supabase.functions.invoke("whatsapp-reminder", {
+          body: { user_id: plan.student_id, template: "plan_expiring", params: { planName: plan.name } },
+        });
+
         sentCount++;
       }
 

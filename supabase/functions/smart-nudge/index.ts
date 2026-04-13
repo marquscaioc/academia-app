@@ -62,6 +62,11 @@ Deno.serve(async (_req) => {
         is_pushed: true,
       });
 
+      // WhatsApp
+      await supabase.functions.invoke("whatsapp-reminder", {
+        body: { user_id: student.id, template: "smart_nudge", params: { message: msg.body(student.full_name?.split(" ")[0] ?? "Atleta") } },
+      });
+
       sentCount++;
     }
 

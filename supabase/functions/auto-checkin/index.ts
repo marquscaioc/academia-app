@@ -68,6 +68,14 @@ Deno.serve(async () => {
         },
       });
 
+      // Send WhatsApp reminder (if opted in)
+      await supabase.functions.invoke("whatsapp-reminder", {
+        body: {
+          user_id: student.student_id,
+          template: "checkin_reminder",
+        },
+      });
+
       sent++;
     }
   }

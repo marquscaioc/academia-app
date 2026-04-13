@@ -49,12 +49,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchProfile = async (userId: string) => {
-    const { data } = await supabase
+    // Try full select first, fallback to basic if new columns don't exist yet
+    const { data, error } = await supabase
       .from("profiles")
       .select("id, role, full_name, display_name, avatar_url, bio, onboarding_completed, water_goal_ml, current_streak, longest_streak, notify_follower_workouts")
       .eq("id", userId)
       .single();
-    setProfile(data as Profile | null);
+
+    if (!error && data) {
+      setProfile(data as Profile);
+      return;
+    }
+
+    // Fallback: columns may not exist yet (migrations not applied)
+    const { data: fallback } = await supabase
+      .from("profiles")
+      .select("id, role, full_name, display_name, avatar_url, bio, onboarding_completed")
+      .eq("id", userId)
+      .single();
+
+    setProfile(fallback ? {
+      ...fallback,
+      water_goal_ml: null,
+      current_streak: 0,
+      longest_streak: 0,
+      notify_follower_workouts: false,
+    } as Profile : null);
   };
 
   useEffect(() => {

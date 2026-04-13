@@ -1,34 +1,17 @@
-version: "3.8"
-
 services:
-  evolution-db:
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_USER: evolution
-      POSTGRES_PASSWORD: evolution123
-      POSTGRES_DB: evolution
-    volumes:
-      - evolution_pgdata:/var/lib/postgresql/data
-    ports:
-      - "5433:5432"
-
   evolution-api:
-    image: atendai/evolution-api
-    depends_on:
-      - evolution-db
+    image: atendai/evolution-api:v1.8.1
     ports:
       - "8080:8080"
+    volumes:
+      - evolution_store:/evolution/store
     environment:
-      # Auth
       AUTHENTICATION_API_KEY: teste123
       AUTHENTICATION_EXPOSE_IN_FETCH_INSTANCES: "true"
-      # Database
-      DATABASE_PROVIDER: postgresql
-      DATABASE_CONNECTION_URI: postgresql://evolution:evolution123@evolution-db:5432/evolution
-      # Server
+      DATABASE_ENABLED: "false"
       SERVER_URL: http://localhost:8080
-      # Log
+      QRCODE_LIMIT: 6
       LOG_LEVEL: WARN
 
 volumes:
-  evolution_pgdata:
+  evolution_store:

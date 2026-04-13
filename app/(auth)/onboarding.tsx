@@ -47,7 +47,13 @@ export default function OnboardingScreen() {
       return;
     }
 
+    // Create trainer_profiles record if trainer
+    if (selectedRole === "trainer") {
+      await supabase.from("trainer_profiles").upsert({ id: user.id });
+    }
+
     await refreshProfile();
+    setLoading(false);
     router.replace("/");
   };
 
