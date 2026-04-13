@@ -47,35 +47,35 @@ export function ChallengeCard({
   return (
     <Pressable
       onPress={onPress}
-      className="bg-white border border-gray-200 rounded-2xl p-5 active:bg-gray-50"
+      className="bg-surface-card border border-surface-border rounded-2xl p-5 active:bg-surface-hover"
     >
       <View className="flex-row items-center justify-between mb-2">
-        <Text className="text-lg font-bold text-gray-900 flex-1 mr-2" numberOfLines={1}>
+        <Text className="text-lg font-bold text-text-primary flex-1 mr-2" numberOfLines={1}>
           {title}
         </Text>
         <Badge label={statusInfo.label} variant={statusInfo.variant} />
       </View>
 
       {description ? (
-        <Text className="text-sm text-gray-500 mb-3" numberOfLines={2}>
+        <Text className="text-sm text-text-muted mb-3" numberOfLines={2}>
           {description}
         </Text>
       ) : null}
 
       <View className="flex-row flex-wrap gap-3">
-        <Text className="text-xs text-gray-400">
+        <Text className="text-xs text-text-muted">
           {formatDate(startsAt)} - {formatDate(endsAt)}
         </Text>
-        <Text className="text-xs text-gray-400">
+        <Text className="text-xs text-violet-400 font-bold">
           {scoringLabels[scoringMode] ?? scoringMode}
         </Text>
         {requirePhoto ? (
-          <Text className="text-xs text-gray-400">📷 Foto obrigatoria</Text>
+          <Text className="text-xs text-text-muted">📷 Foto obrigatoria</Text>
         ) : null}
       </View>
 
       {creatorName ? (
-        <Text className="text-xs text-gray-400 mt-2">por {creatorName}</Text>
+        <Text className="text-xs text-text-muted mt-2">por {creatorName}</Text>
       ) : null}
     </Pressable>
   );

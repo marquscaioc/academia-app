@@ -51,19 +51,19 @@ export function FeedPost({
   reactions,
 }: FeedPostProps) {
   return (
-    <View className="bg-white border-b border-gray-100 px-6 py-5">
+    <View className="bg-surface-card border-b border-surface-border px-6 py-5">
       {/* Header */}
       <Pressable onPress={onProfile} className="flex-row items-center gap-3 mb-3">
         <Avatar uri={authorAvatar} name={authorName} size="md" />
         <View className="flex-1">
-          <Text className="text-sm font-semibold text-gray-900">{authorName}</Text>
-          <Text className="text-xs text-gray-400">{timeAgo(createdAt)}</Text>
+          <Text className="text-sm font-bold text-text-primary">{authorName}</Text>
+          <Text className="text-xs text-text-muted">{timeAgo(createdAt)}</Text>
         </View>
       </Pressable>
 
       {/* Content */}
       {content ? (
-        <Text className="text-sm text-gray-800 leading-5 mb-3">{content}</Text>
+        <Text className="text-sm text-text-secondary leading-5 mb-3">{content}</Text>
       ) : null}
 
       {/* Media */}
@@ -93,7 +93,7 @@ export function FeedPost({
           <Pressable
             key={r.type}
             onPress={r.onPress}
-            className={`px-3 py-1.5 rounded-full ${r.active ? "bg-primary-100" : "bg-gray-50"}`}
+            className={`px-3 py-1.5 rounded-full ${r.active ? "bg-violet-500/15" : "bg-surface-elevated"}`}
           >
             <Text className="text-sm">{reactionEmojis[r.type] ?? "👍"}</Text>
           </Pressable>
@@ -103,10 +103,10 @@ export function FeedPost({
       {/* Stats */}
       <View className="flex-row items-center gap-4">
         {likesCount > 0 ? (
-          <Text className="text-xs text-gray-400">{likesCount} reacoes</Text>
+          <Text className="text-xs text-text-muted">{likesCount} reacoes</Text>
         ) : null}
         <Pressable onPress={onComment}>
-          <Text className="text-xs text-gray-400">
+          <Text className="text-xs text-text-muted">
             {commentsCount > 0 ? `${commentsCount} comentarios` : "Comentar"}
           </Text>
         </Pressable>

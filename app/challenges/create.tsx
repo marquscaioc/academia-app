@@ -54,40 +54,40 @@ export default function CreateChallengeScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1 px-6 pt-6" keyboardShouldPersistTaps="handled">
         <View className="flex-row items-center justify-between mb-6">
           <Pressable onPress={() => router.back()}>
-            <Text className="text-primary-600 font-medium">Cancelar</Text>
+            <Text className="text-text-muted font-medium text-sm">← Cancelar</Text>
           </Pressable>
-          <Text className="text-lg font-bold text-gray-900">Novo Desafio</Text>
+          <Text className="text-lg font-black text-text-primary">Novo Desafio</Text>
           <View className="w-16" />
         </View>
 
         {error ? (
-          <View className="bg-danger-500/10 rounded-xl p-4 mb-4">
-            <Text className="text-danger-600 text-center">{error}</Text>
+          <View className="bg-danger-500/10 border border-danger-500/20 rounded-2xl p-4 mb-4">
+            <Text className="text-danger-500 text-center text-sm font-medium">{error}</Text>
           </View>
         ) : null}
 
         <View className="gap-5">
           <View>
-            <Text className="text-sm font-medium text-gray-700 mb-1 ml-1">Titulo *</Text>
+            <Text className="text-xs font-bold text-text-muted mb-2 ml-1 tracking-wider uppercase">Titulo *</Text>
             <TextInput
-              className="border border-gray-300 rounded-xl px-4 py-3.5 text-base text-gray-900 bg-gray-50"
+              className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary"
               placeholder="Ex: Desafio 30 dias"
-              placeholderTextColor="#9ca3af"
+              placeholderTextColor="#6E6382"
               value={title}
               onChangeText={setTitle}
             />
           </View>
 
           <View>
-            <Text className="text-sm font-medium text-gray-700 mb-1 ml-1">Descricao</Text>
+            <Text className="text-xs font-bold text-text-muted mb-2 ml-1 tracking-wider uppercase">Descricao</Text>
             <TextInput
-              className="border border-gray-300 rounded-xl px-4 py-3.5 text-base text-gray-900 bg-gray-50"
+              className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary"
               placeholder="Regras e detalhes do desafio"
-              placeholderTextColor="#9ca3af"
+              placeholderTextColor="#6E6382"
               value={description}
               onChangeText={setDescription}
               multiline
@@ -96,11 +96,11 @@ export default function CreateChallengeScreen() {
           </View>
 
           <View>
-            <Text className="text-sm font-medium text-gray-700 mb-1 ml-1">Duracao (dias)</Text>
+            <Text className="text-xs font-bold text-text-muted mb-2 ml-1 tracking-wider uppercase">Duracao (dias)</Text>
             <TextInput
-              className="border border-gray-300 rounded-xl px-4 py-3.5 text-base text-gray-900 bg-gray-50"
+              className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary"
               placeholder="30"
-              placeholderTextColor="#9ca3af"
+              placeholderTextColor="#6E6382"
               value={durationDays}
               onChangeText={setDurationDays}
               keyboardType="number-pad"
@@ -108,73 +108,58 @@ export default function CreateChallengeScreen() {
           </View>
 
           <View>
-            <Text className="text-sm font-medium text-gray-700 mb-2 ml-1">Modo de pontuacao</Text>
+            <Text className="text-xs font-bold text-text-muted mb-2 ml-1 tracking-wider uppercase">Modo de pontuacao</Text>
             <View className="gap-2">
               {scoringModes.map((m) => (
                 <Pressable
                   key={m.value}
                   onPress={() => setScoringMode(m.value)}
-                  className={`border rounded-xl p-4 ${
-                    scoringMode === m.value ? "border-primary-600 bg-primary-50" : "border-gray-200"
+                  className={`border-2 rounded-2xl p-4 ${
+                    scoringMode === m.value ? "border-violet-500 bg-violet-500/10" : "border-surface-border bg-surface-card"
                   }`}
                 >
-                  <Text className={`text-sm font-semibold ${scoringMode === m.value ? "text-primary-700" : "text-gray-900"}`}>
+                  <Text className={`text-sm font-bold ${scoringMode === m.value ? "text-violet-400" : "text-text-primary"}`}>
                     {m.label}
                   </Text>
-                  <Text className="text-xs text-gray-500 mt-0.5">{m.desc}</Text>
+                  <Text className="text-xs text-text-muted mt-0.5">{m.desc}</Text>
                 </Pressable>
               ))}
             </View>
           </View>
 
-          <Pressable
-            onPress={() => setRequirePhoto(!requirePhoto)}
-            className="flex-row items-center justify-between py-3"
-          >
-            <View>
-              <Text className="text-sm font-medium text-gray-700">Foto obrigatoria</Text>
-              <Text className="text-xs text-gray-400">Participantes devem enviar foto no check-in</Text>
-            </View>
-            <View className={`w-12 h-7 rounded-full p-0.5 ${requirePhoto ? "bg-primary-600" : "bg-gray-300"}`}>
-              <View className={`w-6 h-6 bg-white rounded-full shadow-sm ${requirePhoto ? "ml-auto" : ""}`} />
-            </View>
-          </Pressable>
-
-          <Pressable
-            onPress={() => setTeamMode(!teamMode)}
-            className="flex-row items-center justify-between py-3"
-          >
-            <View>
-              <Text className="text-sm font-medium text-gray-700">Modo equipe</Text>
-              <Text className="text-xs text-gray-400">Participantes formam times</Text>
-            </View>
-            <View className={`w-12 h-7 rounded-full p-0.5 ${teamMode ? "bg-primary-600" : "bg-gray-300"}`}>
-              <View className={`w-6 h-6 bg-white rounded-full shadow-sm ${teamMode ? "ml-auto" : ""}`} />
-            </View>
-          </Pressable>
-
-          <Pressable
-            onPress={() => setPoseVerification(!poseVerification)}
-            className="flex-row items-center justify-between py-3"
-          >
-            <View>
-              <Text className="text-sm font-medium text-gray-700">Anti-trapaca (pose)</Text>
-              <Text className="text-xs text-gray-400">Pose do dia obrigatoria na foto</Text>
-            </View>
-            <View className={`w-12 h-7 rounded-full p-0.5 ${poseVerification ? "bg-primary-600" : "bg-gray-300"}`}>
-              <View className={`w-6 h-6 bg-white rounded-full shadow-sm ${poseVerification ? "ml-auto" : ""}`} />
-            </View>
-          </Pressable>
+          {/* Toggles */}
+          {[
+            { label: "Foto obrigatoria", desc: "Participantes devem enviar foto no check-in", value: requirePhoto, onToggle: () => setRequirePhoto(!requirePhoto) },
+            { label: "Modo equipe", desc: "Participantes formam times", value: teamMode, onToggle: () => setTeamMode(!teamMode) },
+            { label: "Anti-trapaca (pose)", desc: "Pose do dia obrigatoria na foto", value: poseVerification, onToggle: () => setPoseVerification(!poseVerification) },
+          ].map((toggle) => (
+            <Pressable
+              key={toggle.label}
+              onPress={toggle.onToggle}
+              className="flex-row items-center justify-between py-3"
+            >
+              <View className="flex-1 mr-4">
+                <Text className="text-sm font-bold text-text-primary">{toggle.label}</Text>
+                <Text className="text-xs text-text-muted mt-0.5">{toggle.desc}</Text>
+              </View>
+              <View className={`w-12 h-7 rounded-full p-0.5 ${toggle.value ? "bg-violet-500" : "bg-surface-border"}`}>
+                <View className={`w-6 h-6 bg-white rounded-full ${toggle.value ? "ml-auto" : ""}`} />
+              </View>
+            </Pressable>
+          ))}
 
           <Pressable
             onPress={handleCreate}
             disabled={createChallenge.isPending}
-            className="bg-primary-600 rounded-xl py-4 items-center mt-2 mb-10 active:bg-primary-700"
+            className={`rounded-2xl items-center mt-4 mb-10 ${
+              createChallenge.isPending ? "bg-violet-700" : "bg-violet-500 active:bg-violet-600"
+            }`}
+            style={{ paddingVertical: 18 }}
           >
             {createChallenge.isPending ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color="#FFFFFF" />
             ) : (
-              <Text className="text-white font-bold text-base">Criar Desafio</Text>
+              <Text className="text-white font-black text-base tracking-wide uppercase">Criar Desafio</Text>
             )}
           </Pressable>
         </View>

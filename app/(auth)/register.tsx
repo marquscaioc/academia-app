@@ -39,12 +39,13 @@ export default function RegisterScreen() {
     setError("");
     setLoading(true);
     const { error: signUpError } = await signUp(email, password, fullName);
+    setLoading(false);
     if (signUpError) {
       setError("Erro ao criar conta. Tente novamente.");
-      setLoading(false);
       return;
     }
-    router.replace("/(auth)/onboarding");
+    // Small delay for trigger to create profile, then navigate
+    setTimeout(() => router.replace("/(auth)/onboarding"), 500);
   };
 
   const inputClass = (field: string) =>
