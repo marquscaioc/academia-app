@@ -11,6 +11,7 @@ import { useJoinChallenge, useSubmitChallengeEntry } from "../../hooks/mutations
 import { useCreateTeam, useJoinTeam } from "../../hooks/mutations/useTeamMutations";
 import { useConvertToGroup } from "../../hooks/mutations/useChallengeToGroup";
 import { LeaderboardRow } from "../../components/social/LeaderboardRow";
+import { EntryComments } from "../../components/challenges/EntryComments";
 import { TeamLeaderboard } from "../../components/challenges/TeamLeaderboard";
 import { TeamSelector } from "../../components/challenges/TeamSelector";
 import { PhotoCaptureModal } from "../../components/challenges/PhotoCaptureModal";
@@ -309,6 +310,7 @@ export default function ChallengeDetailScreen() {
                   <Text className="text-xs text-text-muted mt-2">
                     {new Date(entry.created_at).toLocaleString("pt-BR")}
                   </Text>
+                  <EntryComments entryId={entry.id} />
                 </Card>
               ))}
             </View>

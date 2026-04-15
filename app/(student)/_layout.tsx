@@ -10,6 +10,7 @@ function TabIcon({ name, focused }: { name: string; focused: boolean }) {
     progress: "📊",
     social: "👥",
     chat: "💬",
+    courses: "🎓",
   };
   return (
     <View className="items-center">
@@ -87,6 +88,13 @@ function StudentTabs() {
         options={{
           title: "Chat",
           tabBarIcon: ({ focused }) => <TabIcon name="chat" focused={focused} />,
+        }}
+      />
+      <Tabs.Screen
+        name="(courses)"
+        options={{
+          title: "Aulas",
+          tabBarIcon: ({ focused }) => <TabIcon name="courses" focused={focused} />,
         }}
       />
     </Tabs>

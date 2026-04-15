@@ -16,6 +16,7 @@ const items: SidebarItem[] = [
   { href: "/(trainer)/checkins/builder", icon: "📋", label: "Check-ins", match: "checkins" },
   { href: "/(trainer)/checkins/branding", icon: "🎨", label: "Branding", match: "branding" },
   { href: "/(trainer)/whatsapp", icon: "💬", label: "WhatsApp", match: "whatsapp" },
+  { href: "/(trainer)/courses", icon: "🎓", label: "Aulas", match: "courses" },
 ];
 
 export function TrainerSidebar() {
