@@ -43,10 +43,29 @@ export interface ChallengeEntry {
   profile?: { full_name: string; avatar_url: string | null };
 }
 
-export function useChallenges(filter?: "active" | "upcoming" | "ended" | "mine") {
+export function useChallenges(opts: {
+  filter?: "active" | "upcoming" | "ended" | "mine";
+  userId?: string;
+  role?: "student" | "trainer" | "admin" | null;
+}) {
+  const { filter, userId, role } = opts;
   return useQuery({
-    queryKey: ["challenges", "list", filter],
+    queryKey: ["challenges", "list", filter, userId, role],
     queryFn: async () => {
+      // Resolve tenant scope
+      let trainerScopeIds: string[] = [];
+      if (role === "student" && userId) {
+        const { data: links, error: linkErr } = await supabase
+          .from("trainer_students")
+          .select("trainer_id")
+          .eq("student_id", userId)
+          .eq("status", "active");
+        if (linkErr) throw linkErr;
+        trainerScopeIds = (links ?? []).map((l) => l.trainer_id as string);
+      } else if (role === "trainer" && userId) {
+        trainerScopeIds = [userId];
+      }
+
       let query = supabase
         .from("challenges")
         .select("*, creator:profiles!created_by(full_name, avatar_url)")
@@ -56,10 +75,23 @@ export function useChallenges(filter?: "active" | "upcoming" | "ended" | "mine")
       else if (filter === "upcoming") query = query.eq("status", "upcoming");
       else if (filter === "ended") query = query.eq("status", "ended");
 
+      // Tenant filter: global (trainer_id is null) OR scoped to linked trainers OR own
+      if (role === "trainer" && userId) {
+        query = query.or(`trainer_id.is.null,trainer_id.eq.${userId},created_by.eq.${userId}`);
+      } else if (role === "student" && userId) {
+        const trainerInList = trainerScopeIds.length
+          ? `,trainer_id.in.(${trainerScopeIds.join(",")})`
+          : "";
+        query = query.or(`trainer_id.is.null${trainerInList}`);
+      } else {
+        query = query.is("trainer_id", null);
+      }
+
       const { data, error } = await query;
       if (error) throw error;
       return data as Challenge[];
     },
+    enabled: role === undefined || !!userId,
   });
 }
 

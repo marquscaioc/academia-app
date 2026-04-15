@@ -33,7 +33,7 @@ interface SelectedExercise {
 type Step = "select-student" | "plan-info" | "add-exercises" | "review";
 
 export default function WorkoutBuilderScreen() {
-  const { user } = useAuth();
+  const { user, role } = useAuth();
   const [step, setStep] = useState<Step>("select-student");
   const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
   const [selectedStudentName, setSelectedStudentName] = useState("");
@@ -62,7 +62,7 @@ export default function WorkoutBuilderScreen() {
     enabled: !!user,
   });
 
-  const { data: exerciseList } = useExercises({ search: searchExercise || undefined });
+  const { data: exerciseList } = useExercises({ search: searchExercise || undefined, userId: user?.id, role });
   const { data: muscleGroups } = useMuscleGroups();
 
   const addExerciseToList = (ex: { id: string; name: string }) => {

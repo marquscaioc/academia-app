@@ -14,13 +14,17 @@ import { ExerciseCard } from "../../../components/workout/ExerciseCard";
 import { EmptyState } from "../../../components/ui/EmptyState";
 import { useExercises, useMuscleGroups } from "../../../hooks/queries/useExercises";
 import { translateExerciseName } from "../../../lib/utils/exerciseTranslations";
+import { useAuth } from "../../../lib/auth/provider";
 
 export default function ExercisesScreen() {
+  const { user, role } = useAuth();
   const [search, setSearch] = useState("");
   const [selectedMuscle, setSelectedMuscle] = useState<string | undefined>();
   const { data: exercises, isLoading } = useExercises({
     search: search || undefined,
     muscleGroupId: selectedMuscle,
+    userId: user?.id,
+    role,
   });
   const { data: muscleGroups } = useMuscleGroups();
 

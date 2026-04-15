@@ -29,28 +29,60 @@ export interface RecipeIngredient {
   sort_order: number;
 }
 
-export function useRecipes(filters?: { tags?: string[]; search?: string }) {
+export function useRecipes(opts: {
+  tags?: string[];
+  search?: string;
+  userId?: string;
+  role?: "student" | "trainer" | "admin" | null;
+}) {
+  const { tags, search, userId, role } = opts;
   return useQuery({
-    queryKey: ["recipes", filters],
+    queryKey: ["recipes", tags, search, userId, role],
     queryFn: async () => {
+      // Resolve trainer scope
+      let trainerScopeIds: string[] = [];
+      if (role === "student" && userId) {
+        const { data: links, error: linkErr } = await supabase
+          .from("trainer_students")
+          .select("trainer_id")
+          .eq("student_id", userId)
+          .eq("status", "active");
+        if (linkErr) throw linkErr;
+        trainerScopeIds = (links ?? []).map((l) => l.trainer_id as string);
+      } else if (role === "trainer" && userId) {
+        trainerScopeIds = [userId];
+      }
+
       let query = supabase
         .from("recipes")
         .select("*")
-        .eq("is_public", true)
         .order("created_at", { ascending: false })
         .limit(50);
 
-      if (filters?.tags?.length) {
-        query = query.overlaps("tags", filters.tags);
+      // Tenant filter: global OR scoped
+      if (role === "trainer" && userId) {
+        query = query.or(`trainer_id.is.null,trainer_id.eq.${userId},created_by.eq.${userId}`);
+      } else if (role === "student" && userId) {
+        const trainerInList = trainerScopeIds.length
+          ? `,trainer_id.in.(${trainerScopeIds.join(",")})`
+          : "";
+        query = query.or(`trainer_id.is.null${trainerInList}`).eq("is_public", true);
+      } else {
+        query = query.is("trainer_id", null).eq("is_public", true);
       }
-      if (filters?.search) {
-        query = query.ilike("name", `%${filters.search}%`);
+
+      if (tags?.length) {
+        query = query.overlaps("tags", tags);
+      }
+      if (search) {
+        query = query.ilike("name", `%${search}%`);
       }
 
       const { data, error } = await query;
       if (error) throw error;
       return (data ?? []) as Recipe[];
     },
+    enabled: role === undefined || !!userId,
   });
 }
 

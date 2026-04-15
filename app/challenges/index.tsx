@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useChallenges } from "../../hooks/queries/useChallenges";
 import { ChallengeCard } from "../../components/social/ChallengeCard";
 import { EmptyState } from "../../components/ui/EmptyState";
+import { useAuth } from "../../lib/auth/provider";
 
 type Filter = "active" | "upcoming" | "ended";
 
@@ -15,8 +16,9 @@ const filters: { value: Filter; label: string }[] = [
 ];
 
 export default function ChallengesScreen() {
+  const { user, role } = useAuth();
   const [filter, setFilter] = useState<Filter>("active");
-  const { data: challenges, isLoading } = useChallenges(filter);
+  const { data: challenges, isLoading } = useChallenges({ filter, userId: user?.id, role });
 
   return (
     <SafeAreaView className="flex-1 bg-white">

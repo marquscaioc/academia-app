@@ -15,13 +15,15 @@ const tagFilters = [
 ];
 
 export default function RecipesScreen() {
-  const { user } = useAuth();
+  const { user, role } = useAuth();
   const [search, setSearch] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   const { data: recipes, isLoading } = useRecipes({
     tags: selectedTags.length ? selectedTags : undefined,
     search: search.trim() || undefined,
+    userId: user?.id,
+    role,
   });
   const { data: favorites } = useRecipeFavorites(user?.id);
 

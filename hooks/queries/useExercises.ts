@@ -39,10 +39,25 @@ function normalize(s: string): string {
 export function useExercises(filters?: {
   muscleGroupId?: string;
   search?: string;
+  userId?: string;
+  role?: "student" | "trainer" | "admin" | null;
 }) {
   return useQuery({
-    queryKey: ["exercises", "list", filters?.muscleGroupId],
+    queryKey: ["exercises", "list", filters?.muscleGroupId, filters?.userId, filters?.role],
     queryFn: async () => {
+      // Resolve trainer scope for defense-in-depth
+      let trainerScopeIds: string[] = [];
+      if (filters?.role === "student" && filters?.userId) {
+        const { data: links } = await supabase
+          .from("trainer_students")
+          .select("trainer_id")
+          .eq("student_id", filters.userId)
+          .eq("status", "active");
+        trainerScopeIds = (links ?? []).map((l) => l.trainer_id as string);
+      } else if (filters?.role === "trainer" && filters?.userId) {
+        trainerScopeIds = [filters.userId];
+      }
+
       let query = supabase
         .from("exercises")
         .select(
@@ -53,6 +68,18 @@ export function useExercises(filters?: {
 
       if (filters?.muscleGroupId) {
         query = query.eq("primary_muscle_group_id", filters.muscleGroupId);
+      }
+
+      // Tenant filter: global exercises OR created by self/linked-trainers
+      if (filters?.role === "trainer" && filters?.userId) {
+        query = query.or(`is_global.eq.true,created_by.eq.${filters.userId}`);
+      } else if (filters?.role === "student" && filters?.userId) {
+        const createdByIn = trainerScopeIds.length
+          ? `,created_by.in.(${trainerScopeIds.join(",")})`
+          : "";
+        query = query.or(`is_global.eq.true${createdByIn}`);
+      } else {
+        query = query.eq("is_global", true);
       }
 
       const { data, error } = await query;

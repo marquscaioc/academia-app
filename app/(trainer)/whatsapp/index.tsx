@@ -10,13 +10,17 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { EVOLUTION_CONFIG } from "../../../lib/whatsapp/config";
 import * as evo from "../../../lib/whatsapp/client";
 import type { ConnectionState } from "../../../lib/whatsapp/types";
-
-const INSTANCE = EVOLUTION_CONFIG.instance;
+import { useAuth } from "../../../lib/auth/provider";
+import { useTrainerWhatsAppInstance } from "../../../hooks/queries/useTrainerWhatsAppInstance";
+import { useSetWhatsAppInstance } from "../../../hooks/mutations/useSetWhatsAppInstance";
 
 export default function WhatsAppScreen() {
+  const { user } = useAuth();
+  const { data: inst } = useTrainerWhatsAppInstance(user?.id);
+  const INSTANCE = inst?.name ?? "";
+  const setInstance = useSetWhatsAppInstance();
   const [state, setState] = useState<ConnectionState | "unknown" | "no_instance">("unknown");
   const [qrBase64, setQrBase64] = useState<string | null>(null);
   const [profileName, setProfileName] = useState<string | null>(null);
@@ -31,6 +35,7 @@ export default function WhatsAppScreen() {
   const [sendResult, setSendResult] = useState<"success" | "error" | null>(null);
 
   const fetchState = useCallback(async () => {
+    if (!INSTANCE) return;
     try {
       setError(null);
       const instance = await evo.getInstance(INSTANCE);
@@ -46,41 +51,54 @@ export default function WhatsAppScreen() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [INSTANCE]);
 
   const fetchQr = useCallback(async () => {
+    if (!INSTANCE) return;
     const qr = await evo.getQrCode(INSTANCE);
     if (qr?.base64) setQrBase64(qr.base64);
-  }, []);
+  }, [INSTANCE]);
 
   const handleCreate = async () => {
+    if (!INSTANCE || !user) return;
     setLoading(true);
     try {
       const res = await evo.createInstance(INSTANCE);
       if (res.qrcode?.base64) setQrBase64(res.qrcode.base64);
       setState("close");
+      // Persist instance name on first-time provision
+      if (inst && !inst.isConfigured) {
+        await setInstance.mutateAsync({ trainerId: user.id, instanceName: INSTANCE });
+      }
     } catch { setError("Erro ao criar instancia."); }
     finally { setLoading(false); }
   };
 
   const handleLogout = async () => {
+    if (!INSTANCE) return;
     try { await evo.logoutInstance(INSTANCE); } catch { /* */ }
     setState("close"); setProfileName(null); setProfilePic(null); setOwnerPhone(null); setQrBase64(null);
   };
 
   const handleReconnect = async () => {
+    if (!INSTANCE) return;
     try { await evo.restartInstance(INSTANCE); setState("connecting"); } catch { /* */ }
   };
 
   const handleSendTest = async () => {
-    if (!testNumber.trim()) return;
+    if (!INSTANCE || !testNumber.trim()) return;
     setSending(true); setSendResult(null);
     try { await evo.sendText(INSTANCE, testNumber, testMessage); setSendResult("success"); }
     catch { setSendResult("error"); }
     finally { setSending(false); }
   };
 
-  useEffect(() => { fetchState(); const i = setInterval(fetchState, 5000); return () => clearInterval(i); }, [fetchState]);
+  useEffect(() => {
+    if (!INSTANCE) return;
+    fetchState();
+    const i = setInterval(fetchState, 5000);
+    return () => clearInterval(i);
+  }, [fetchState, INSTANCE]);
 
   useEffect(() => {
     if (state === "close" || state === "connecting") {

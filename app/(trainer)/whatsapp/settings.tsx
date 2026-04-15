@@ -5,16 +5,19 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { EVOLUTION_CONFIG } from "../../../lib/whatsapp/config";
 import * as evo from "../../../lib/whatsapp/client";
 import { MESSAGE_TEMPLATES } from "../../../lib/whatsapp/templates";
-
-const INSTANCE = EVOLUTION_CONFIG.instance;
+import { useAuth } from "../../../lib/auth/provider";
+import { useTrainerWhatsAppInstance } from "../../../hooks/queries/useTrainerWhatsAppInstance";
 
 export default function WhatsAppSettingsScreen() {
+  const { user } = useAuth();
+  const { data: inst } = useTrainerWhatsAppInstance(user?.id);
+  const INSTANCE = inst?.name ?? "";
   const [webhookUrl, setWebhookUrl] = useState("");
   const [webhookSaved, setWebhookSaved] = useState(false);
   const [webhookError, setWebhookError] = useState<string | null>(null);
 
   const handleSaveWebhook = async () => {
-    if (!webhookUrl.trim()) return;
+    if (!INSTANCE || !webhookUrl.trim()) return;
     setWebhookError(null);
     try {
       await evo.setWebhook(INSTANCE, webhookUrl.trim(), [
@@ -97,9 +100,15 @@ export default function WhatsAppSettingsScreen() {
               <Text className="text-xs text-text-secondary">{EVOLUTION_CONFIG.url}</Text>
             </View>
             <View className="flex-row justify-between">
-              <Text className="text-xs text-text-muted">Instancia</Text>
-              <Text className="text-xs text-text-secondary">{EVOLUTION_CONFIG.instance}</Text>
+              <Text className="text-xs text-text-muted">Instância</Text>
+              <Text className="text-xs text-text-secondary">{INSTANCE || "—"}</Text>
             </View>
+            {inst && !inst.isConfigured ? (
+              <View className="flex-row justify-between">
+                <Text className="text-xs text-text-muted">Status</Text>
+                <Text className="text-xs text-warning-500">Não provisionada</Text>
+              </View>
+            ) : null}
             <View className="flex-row justify-between">
               <Text className="text-xs text-text-muted">Versao</Text>
               <Text className="text-xs text-text-secondary">v1.8.1</Text>
