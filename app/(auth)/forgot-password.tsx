@@ -23,7 +23,13 @@ export default function ForgotPasswordScreen() {
   const handleReset = async () => {
     if (!email) { setError("Informe seu email"); return; }
     setError(""); setLoading(true);
-    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email);
+    const redirectTo =
+      typeof window !== "undefined"
+        ? `${window.location.origin}/reset-password`
+        : undefined;
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo,
+    });
     setLoading(false);
     if (resetError) { setError("Erro ao enviar email. Tente novamente."); return; }
     setSent(true);

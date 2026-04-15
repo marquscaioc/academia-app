@@ -3,8 +3,20 @@ import { ActivityIndicator, Text, View } from "react-native";
 import { useAuth } from "../lib/auth/provider";
 import { Logo } from "../components/ui";
 
+function isRecoveryLink(): boolean {
+  if (typeof window === "undefined") return false;
+  const hash = window.location.hash ?? "";
+  return hash.includes("type=recovery");
+}
+
 export default function Index() {
   const { session, profile, isLoading } = useAuth();
+
+  // If user landed via a password-recovery email, route to the reset flow
+  // before any normal session-based redirect kicks in.
+  if (isRecoveryLink()) {
+    return <Redirect href="/(auth)/reset-password" />;
+  }
 
   if (isLoading) {
     return (
