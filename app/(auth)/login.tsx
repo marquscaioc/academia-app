@@ -182,26 +182,30 @@ export default function LoginScreen() {
             </Pressable>
           </Animated.View>
 
-          {/* Divider */}
-          <Animated.View entering={FadeIn.delay(360)} className="flex-row items-center my-8">
-            <View className="flex-1 h-px bg-surface-border" />
+          {/* Divider + Register link — centered block */}
+          <Animated.View entering={FadeIn.delay(360)} className="items-center mt-8">
+            <View className="flex-row items-center w-full mb-6">
+              <View className="flex-1 h-px bg-surface-border" />
+              <Text
+                className="text-text-muted text-[10px] mx-4 uppercase"
+                style={{ fontFamily: "DMSans_700Bold", letterSpacing: 2 }}
+              >
+                ou
+              </Text>
+              <View className="flex-1 h-px bg-surface-border" />
+            </View>
             <Text
-              className="text-text-muted text-[10px] mx-4 uppercase"
-              style={{ fontFamily: "DMSans_700Bold", letterSpacing: 2 }}
+              className="text-text-muted text-sm text-center"
+              style={{ fontFamily: "DMSans_400Regular" }}
             >
-              ou
-            </Text>
-            <View className="flex-1 h-px bg-surface-border" />
-          </Animated.View>
-
-          {/* Register link */}
-          <Animated.View entering={FadeIn.delay(400)} className="flex-row justify-center">
-            <Text className="text-text-muted text-sm" style={{ fontFamily: "DMSans_400Regular" }}>
-              Novo por aqui?{" "}
+              Novo por aqui?
             </Text>
             <Link href="/(auth)/register" asChild>
-              <Pressable>
-                <Text className="text-fuchsia-400 text-sm" style={{ fontFamily: "DMSans_700Bold" }}>
+              <Pressable className="mt-2 py-1">
+                <Text
+                  className="text-fuchsia-400 text-sm text-center"
+                  style={{ fontFamily: "DMSans_700Bold" }}
+                >
                   Criar conta →
                 </Text>
               </Pressable>

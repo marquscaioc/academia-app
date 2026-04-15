@@ -1,7 +1,7 @@
 import { Image } from "expo-image";
 import { Text, View } from "react-native";
 
-const LOGO_SRC = require("../../assets/logotreino.png");
+const LOGO_SRC = require("../../assets/logosemfundo.png");
 
 type Size = "xs" | "sm" | "md" | "lg" | "xl";
 
