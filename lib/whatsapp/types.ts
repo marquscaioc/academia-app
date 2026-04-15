@@ -1,17 +1,20 @@
-// Evolution API v1.8.x type definitions
+// Evolution API v2.x type definitions
 
 export type ConnectionState = "open" | "close" | "connecting";
 
+// v2 returns a flat object directly in fetchInstances
 export interface EvolutionInstance {
-  instance: {
-    instanceName: string;
-    instanceId?: string;
-    owner?: string;
-    profileName?: string;
-    profilePictureUrl?: string;
-    profileStatus?: string;
-    status: ConnectionState;
-  };
+  id: string;
+  name: string;
+  connectionStatus: ConnectionState;
+  ownerJid: string | null;
+  profileName: string | null;
+  profilePicUrl: string | null;
+  integration: string;
+  number: string | null;
+  token: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface QrCodeResponse {
@@ -34,35 +37,27 @@ export interface CreateInstanceResponse {
     instanceId: string;
     status: string;
   };
-  hash: { apikey: string } | string;
+  hash: string;
   qrcode?: QrCodeResponse;
 }
 
+// v2 inline format (no nested textMessage/mediaMessage)
 export interface SendTextInput {
   number: string;
-  textMessage: {
-    text: string;
-  };
-  options?: {
-    delay?: number;
-    presence?: "composing" | "recording" | "available";
-    linkPreview?: boolean;
-  };
+  text: string;
+  delay?: number;
+  presence?: "composing" | "recording" | "available";
+  linkPreview?: boolean;
 }
 
 export interface SendMediaInput {
   number: string;
-  mediaMessage: {
-    mediatype: "image" | "video" | "document" | "audio";
-    mimetype?: string;
-    caption?: string;
-    fileName?: string;
-    media: string; // URL or base64
-  };
-  options?: {
-    delay?: number;
-    presence?: "composing";
-  };
+  mediatype: "image" | "video" | "document" | "audio";
+  mimetype?: string;
+  caption?: string;
+  fileName?: string;
+  media: string; // URL or base64
+  delay?: number;
 }
 
 export interface SendMessageResponse {
@@ -79,8 +74,8 @@ export interface SendMessageResponse {
 export interface WebhookConfig {
   enabled: boolean;
   url: string;
-  webhook_by_events: boolean;
-  webhook_base64?: boolean;
+  webhookByEvents?: boolean;
+  webhookBase64?: boolean;
   events: string[];
 }
 

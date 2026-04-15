@@ -35,13 +35,13 @@ export default function WhatsAppScreen() {
       setError(null);
       const instance = await evo.getInstance(INSTANCE);
       if (!instance) { setState("no_instance"); return; }
-      const s = instance.instance.status ?? "close";
-      setState(s);
-      setProfileName(instance.instance.profileName ?? null);
-      setProfilePic(instance.instance.profilePictureUrl ?? null);
-      setOwnerPhone(instance.instance.owner?.split("@")[0] ?? null);
-    } catch {
-      setError("Evolution API nao acessivel. Verifique se o Docker esta rodando.");
+      setState(instance.connectionStatus ?? "close");
+      setProfileName(instance.profileName ?? null);
+      setProfilePic(instance.profilePicUrl ?? null);
+      setOwnerPhone(instance.ownerJid?.split("@")[0] ?? instance.number ?? null);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Erro desconhecido";
+      setError(`Evolution API nao acessivel: ${msg}`);
       setState("unknown");
     } finally {
       setLoading(false);

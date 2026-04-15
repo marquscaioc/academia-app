@@ -41,12 +41,12 @@ export async function createInstance(instanceName: string): Promise<CreateInstan
       instanceName,
       qrcode: true,
       integration: "WHATSAPP-BAILEYS",
-      reject_call: false,
-      groups_ignore: true,
-      always_online: true,
-      read_messages: false,
-      read_status: false,
-      sync_full_history: false,
+      rejectCall: false,
+      groupsIgnore: true,
+      alwaysOnline: true,
+      readMessages: false,
+      readStatus: false,
+      syncFullHistory: false,
     }),
   });
 }
@@ -73,11 +73,11 @@ export async function getInstances(): Promise<EvolutionInstance[]> {
 
 export async function getInstance(instanceName: string): Promise<EvolutionInstance | null> {
   const instances = await getInstances();
-  return instances.find((i) => i.instance.instanceName === instanceName) ?? null;
+  return instances.find((i) => i.name === instanceName) ?? null;
 }
 
 export async function restartInstance(instanceName: string): Promise<void> {
-  await request(`/instance/restart/${instanceName}`, { method: "PUT" });
+  await request(`/instance/restart/${instanceName}`, { method: "POST" });
 }
 
 export async function logoutInstance(instanceName: string): Promise<void> {
@@ -89,7 +89,7 @@ export async function deleteInstance(instanceName: string): Promise<void> {
 }
 
 // ==========================================
-// Messaging
+// Messaging (v2 flat format)
 // ==========================================
 
 export function formatPhone(phone: string): string {
@@ -102,15 +102,13 @@ export async function sendText(
   instanceName: string,
   phone: string,
   text: string,
-  options?: { delay?: number; presence?: "composing" },
+  options?: { delay?: number },
 ): Promise<SendMessageResponse> {
   const input: SendTextInput = {
     number: formatPhone(phone),
-    textMessage: { text },
-    options: {
-      delay: options?.delay ?? 1200,
-      presence: options?.presence ?? "composing",
-    },
+    text,
+    delay: options?.delay ?? 1200,
+    presence: "composing",
   };
   return request(`/message/sendText/${instanceName}`, {
     method: "POST",
@@ -126,12 +124,10 @@ export async function sendMedia(
 ): Promise<SendMessageResponse> {
   const input: SendMediaInput = {
     number: formatPhone(phone),
-    mediaMessage: {
-      mediatype: options?.mediatype ?? "image",
-      caption: options?.caption,
-      media: mediaUrl,
-    },
-    options: { delay: 1200, presence: "composing" },
+    mediatype: options?.mediatype ?? "image",
+    caption: options?.caption,
+    media: mediaUrl,
+    delay: 1200,
   };
   return request(`/message/sendMedia/${instanceName}`, {
     method: "POST",
@@ -140,7 +136,7 @@ export async function sendMedia(
 }
 
 // ==========================================
-// Webhooks
+// Webhooks (v2 format)
 // ==========================================
 
 export async function setWebhook(
@@ -152,16 +148,17 @@ export async function setWebhook(
     "SEND_MESSAGE",
   ],
 ): Promise<void> {
-  const config: WebhookConfig = {
-    enabled: true,
-    url: webhookUrl,
-    webhook_by_events: false,
-    webhook_base64: true,
-    events,
-  };
   await request(`/webhook/set/${instanceName}`, {
     method: "POST",
-    body: JSON.stringify(config),
+    body: JSON.stringify({
+      webhook: {
+        enabled: true,
+        url: webhookUrl,
+        webhookByEvents: false,
+        webhookBase64: true,
+        events,
+      },
+    }),
   });
 }
 
