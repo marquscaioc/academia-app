@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { supabase } from "../../lib/supabase/client";
+import { Logo } from "../../components/ui";
 
 export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState("");
@@ -57,14 +58,41 @@ export default function ForgotPasswordScreen() {
     <SafeAreaView className="flex-1 bg-dark-400">
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} className="flex-1">
         <View className="flex-1 justify-center px-8 max-w-[440px] w-full self-center">
-          <Link href="/(auth)/login" asChild>
-            <Pressable className="mb-8">
-              <Text className="text-text-muted text-sm font-medium">← Voltar</Text>
-            </Pressable>
-          </Link>
+          <View className="flex-row items-center justify-between mb-10">
+            <Link href="/(auth)/login" asChild>
+              <Pressable className="flex-row items-center gap-2">
+                <Text className="text-text-muted text-lg">←</Text>
+                <Text
+                  className="text-text-muted text-[11px]"
+                  style={{ fontFamily: "DMSans_700Bold", letterSpacing: 2 }}
+                >
+                  VOLTAR
+                </Text>
+              </Pressable>
+            </Link>
+            <Logo size="sm" />
+          </View>
           <View className="mb-10">
-            <Text className="text-3xl font-black text-text-primary tracking-tight">Recuperar senha</Text>
-            <Text className="text-sm text-text-muted mt-2">Informe seu email para receber o link de recuperacao</Text>
+            <Text
+              className="text-text-muted"
+              style={{ fontFamily: "InstrumentSerif_400Regular_Italic", fontSize: 26, letterSpacing: -0.5 }}
+            >
+              Recuperar
+            </Text>
+            <Text
+              className="text-text-primary mt-1"
+              style={{
+                fontFamily: "ArchivoBlack_400Regular",
+                fontSize: 40,
+                lineHeight: 40,
+                letterSpacing: -2,
+              }}
+            >
+              SENHA.
+            </Text>
+            <Text className="text-sm text-text-muted mt-3" style={{ fontFamily: "DMSans_400Regular" }}>
+              Informe seu email para receber o link de recuperação.
+            </Text>
           </View>
           {error ? (
             <View className="bg-danger-500/10 border border-danger-500/20 rounded-2xl p-4 mb-5">

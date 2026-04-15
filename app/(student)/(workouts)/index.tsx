@@ -7,7 +7,7 @@ import Animated, { FadeInDown, FadeIn } from "react-native-reanimated";
 import { useAuth } from "../../../lib/auth/provider";
 import { useWorkoutPlans, useWorkoutSessions } from "../../../hooks/queries/useWorkouts";
 import { WorkoutCalendar } from "../../../components/progress/WorkoutCalendar";
-import { BigStat, DisplayHeading, SectionLabel } from "../../../components/ui";
+import { BigStat, DisplayHeading, Logo, SectionLabel } from "../../../components/ui";
 
 export default function WorkoutsScreen() {
   const { user } = useAuth();
@@ -51,13 +51,13 @@ export default function WorkoutsScreen() {
         {/* Masthead */}
         <Animated.View entering={FadeIn.duration(400)} className="flex-row items-center justify-between mb-6">
           <View className="flex-row items-center gap-3">
+            <Logo size="sm" />
             <Text
               className="text-[10px] text-fuchsia-400"
               style={{ fontFamily: "DMSans_700Bold", letterSpacing: 3 }}
             >
               VOL. 01 · TRAINING
             </Text>
-            <View className="w-8 h-px bg-fuchsia-400/40" />
           </View>
           <Link href="/(student)/(workouts)/history" asChild>
             <Pressable className="bg-surface-card border border-surface-border px-3 py-1.5 rounded-lg">

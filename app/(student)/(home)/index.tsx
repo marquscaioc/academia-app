@@ -15,7 +15,7 @@ import { useAuth } from "../../../lib/auth/provider";
 import { useAcceptInvite } from "../../../hooks/mutations/useInviteMutations";
 import { useWorkoutPlans } from "../../../hooks/queries/useWorkouts";
 import { useUnreadCount } from "../../../hooks/queries/useUnreadNotifications";
-import { BigStat, DisplayHeading, GradientCard, SectionLabel } from "../../../components/ui";
+import { BigStat, DisplayHeading, GradientCard, Logo, SectionLabel } from "../../../components/ui";
 
 function QuickAction({ icon, label, href, index }: { icon: string; label: string; href: string; index: number }) {
   return (
@@ -89,13 +89,21 @@ export default function StudentHomeScreen() {
         {/* Masthead — magazine-style */}
         <Animated.View entering={FadeIn.duration(500)} className="flex-row items-center justify-between mb-8">
           <View className="flex-row items-center gap-3">
-            <Text
-              className="text-[10px] text-fuchsia-400"
-              style={{ fontFamily: "DMSans_700Bold", letterSpacing: 3 }}
-            >
-              ED. {edition}
-            </Text>
-            <View className="w-8 h-px bg-fuchsia-400/40" />
+            <Logo size="sm" />
+            <View>
+              <Text
+                className="text-[10px] text-fuchsia-400"
+                style={{ fontFamily: "DMSans_700Bold", letterSpacing: 3 }}
+              >
+                ED. {edition}
+              </Text>
+              <Text
+                className="text-[9px] text-text-muted mt-0.5"
+                style={{ fontFamily: "DMSans_700Bold", letterSpacing: 2 }}
+              >
+                ROYAL AMETHYST
+              </Text>
+            </View>
           </View>
           <View className="flex-row gap-2">
             <Link href="/notifications" asChild>

@@ -10,3 +10,4 @@ export { DisplayHeading } from "./DisplayHeading";
 export { GradientCard } from "./GradientCard";
 export { SectionLabel } from "./SectionLabel";
 export { DividerRule } from "./DividerRule";
+export { Logo } from "./Logo";

@@ -2,8 +2,11 @@ import { router } from "expo-router";
 import { useState } from "react";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
+import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import { supabase } from "../../lib/supabase/client";
 import { useAuth } from "../../lib/auth/provider";
+import { Logo } from "../../components/ui";
 
 type Role = "student" | "trainer";
 
@@ -59,18 +62,45 @@ export default function OnboardingScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
+      <LinearGradient
+        colors={["rgba(120,27,182,0.28)", "transparent"]}
+        start={{ x: 0.2, y: 0 }}
+        end={{ x: 0.8, y: 1 }}
+        style={{ position: "absolute", top: 0, left: 0, right: 0, height: 420 }}
+        pointerEvents="none"
+      />
       <View className="flex-1 justify-center px-8 max-w-[500px] w-full self-center">
-        <View className="mb-10">
-          <Text className="text-xs font-bold text-violet-500 tracking-widest uppercase mb-3">
-            Passo final
+        <Animated.View entering={FadeIn.duration(400)} className="items-center mb-6">
+          <Logo size="lg" />
+        </Animated.View>
+        <Animated.View entering={FadeInDown.delay(80).springify()} className="mb-10">
+          <Text
+            className="text-fuchsia-400 mb-3"
+            style={{ fontFamily: "DMSans_700Bold", fontSize: 10, letterSpacing: 3 }}
+          >
+            PASSO FINAL · ONBOARDING
           </Text>
-          <Text className="text-3xl font-black text-text-primary tracking-tight">
-            Como voce vai{"\n"}usar o app?
+          <Text
+            className="text-text-muted"
+            style={{ fontFamily: "InstrumentSerif_400Regular_Italic", fontSize: 26, letterSpacing: -0.5 }}
+          >
+            Como você vai
           </Text>
-          <Text className="text-sm text-text-muted mt-3">
-            Escolha seu perfil para personalizar sua experiencia
+          <Text
+            className="text-text-primary mt-1"
+            style={{
+              fontFamily: "ArchivoBlack_400Regular",
+              fontSize: 40,
+              lineHeight: 40,
+              letterSpacing: -2,
+            }}
+          >
+            USAR O APP?
           </Text>
-        </View>
+          <Text className="text-sm text-text-muted mt-4" style={{ fontFamily: "DMSans_400Regular" }}>
+            Escolha seu perfil para personalizar a experiência.
+          </Text>
+        </Animated.View>
 
         {error ? (
           <View className="bg-danger-500/10 border border-danger-500/20 rounded-2xl p-4 mb-4">
@@ -137,19 +167,35 @@ export default function OnboardingScreen() {
         <Pressable
           onPress={handleContinue}
           disabled={!selectedRole || loading}
-          className={`rounded-2xl items-center mt-8 ${
-            selectedRole ? "bg-violet-500 active:bg-violet-600" : "bg-surface-border"
-          }`}
-          style={{ paddingVertical: 18 }}
+          className="rounded-2xl overflow-hidden mt-8"
         >
-          {loading ? (
-            <ActivityIndicator color="#FFFFFF" />
+          {selectedRole ? (
+            <LinearGradient
+              colors={loading ? ["#50107D", "#86169E"] : ["#781BB6", "#C636E0"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={{ paddingVertical: 18, alignItems: "center" }}
+            >
+              {loading ? (
+                <ActivityIndicator color="#FFFFFF" />
+              ) : (
+                <Text
+                  className="text-white text-base"
+                  style={{ fontFamily: "DMSans_700Bold", letterSpacing: 2 }}
+                >
+                  CONTINUAR →
+                </Text>
+              )}
+            </LinearGradient>
           ) : (
-            <Text className={`font-black text-base tracking-wide uppercase ${
-              selectedRole ? "text-white" : "text-text-muted"
-            }`}>
-              Continuar
-            </Text>
+            <View className="bg-surface-border items-center" style={{ paddingVertical: 18 }}>
+              <Text
+                className="text-text-muted text-base"
+                style={{ fontFamily: "DMSans_700Bold", letterSpacing: 2 }}
+              >
+                SELECIONE UM PERFIL
+              </Text>
+            </View>
           )}
         </Pressable>
       </View>

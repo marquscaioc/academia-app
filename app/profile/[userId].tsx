@@ -8,7 +8,7 @@ import { useUserProfile, useIsFollowing, useUserAchievements } from "../../hooks
 import { useFollowUser, useUnfollowUser } from "../../hooks/mutations/useSocialMutations";
 import { Avatar } from "../../components/ui/Avatar";
 import { LoadingScreen } from "../../components/ui/LoadingScreen";
-import { BigStat, DisplayHeading, SectionLabel } from "../../components/ui";
+import { BigStat, DisplayHeading, Logo, SectionLabel } from "../../components/ui";
 
 export default function PublicProfileScreen() {
   const { userId } = useLocalSearchParams<{ userId: string }>();
@@ -61,9 +61,12 @@ export default function PublicProfileScreen() {
                 VOLTAR
               </Text>
             </Pressable>
-            <Text className="text-[10px] text-fuchsia-400" style={{ fontFamily: "DMSans_700Bold", letterSpacing: 3 }}>
-              PERFIL · {profile.role?.toUpperCase() ?? "ALUNO"}
-            </Text>
+            <View className="flex-row items-center gap-2.5">
+              <Logo size="sm" />
+              <Text className="text-[10px] text-fuchsia-400" style={{ fontFamily: "DMSans_700Bold", letterSpacing: 3 }}>
+                PERFIL · {profile.role?.toUpperCase() ?? "ALUNO"}
+              </Text>
+            </View>
           </Animated.View>
 
           {/* Portrait — asymmetric editorial layout */}
