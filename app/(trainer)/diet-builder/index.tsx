@@ -114,6 +114,13 @@ export default function DietBuilderScreen() {
     { cal: 0, prot: 0, carb: 0, fat: 0 },
   );
 
+  // Parse number with bounds validation (non-negative, undefined if invalid/empty)
+  const parseNonNegative = (v: string, max = 10000): number | undefined => {
+    const n = parseFloat(v);
+    if (isNaN(n) || n < 0 || n > max) return undefined;
+    return n;
+  };
+
   const handleSave = async () => {
     if (!user || !studentId || !planName.trim()) return;
     setSaving(true);
@@ -122,10 +129,10 @@ export default function DietBuilderScreen() {
       trainer_id: user.id,
       student_id: studentId,
       name: planName.trim(),
-      target_calories: parseInt(targetCal) || undefined,
-      target_protein_g: parseFloat(targetProt) || undefined,
-      target_carbs_g: parseFloat(targetCarb) || undefined,
-      target_fat_g: parseFloat(targetFat) || undefined,
+      target_calories: parseNonNegative(targetCal, 20000),
+      target_protein_g: parseNonNegative(targetProt, 1000),
+      target_carbs_g: parseNonNegative(targetCarb, 1000),
+      target_fat_g: parseNonNegative(targetFat, 1000),
     });
 
     for (let mi = 0; mi < meals.length; mi++) {
@@ -143,12 +150,12 @@ export default function DietBuilderScreen() {
         await addMealItem.mutateAsync({
           meal_id: mealData.id,
           food_name: item.food_name.trim(),
-          quantity: parseFloat(item.quantity) || undefined,
+          quantity: parseNonNegative(item.quantity, 10000),
           unit: item.unit || "g",
-          calories: parseFloat(item.calories) || undefined,
-          protein_g: parseFloat(item.protein_g) || undefined,
-          carbs_g: parseFloat(item.carbs_g) || undefined,
-          fat_g: parseFloat(item.fat_g) || undefined,
+          calories: parseNonNegative(item.calories, 10000),
+          protein_g: parseNonNegative(item.protein_g, 1000),
+          carbs_g: parseNonNegative(item.carbs_g, 1000),
+          fat_g: parseNonNegative(item.fat_g, 1000),
           sort_order: ii,
         });
       }

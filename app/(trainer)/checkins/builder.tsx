@@ -107,7 +107,7 @@ export default function CheckinBuilderScreen() {
             <TextInput
               className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary"
               placeholder="Ex: Check-in semanal"
-              placeholderTextColor="#6B6B73"
+              placeholderTextColor="#6E6580"
               value={title}
               onChangeText={setTitle}
             />
@@ -118,7 +118,7 @@ export default function CheckinBuilderScreen() {
             <TextInput
               className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary"
               placeholder="Instrucoes para o aluno"
-              placeholderTextColor="#6B6B73"
+              placeholderTextColor="#6E6580"
               value={description}
               onChangeText={setDescription}
               multiline
@@ -169,7 +169,7 @@ export default function CheckinBuilderScreen() {
                   <TextInput
                     className="bg-dark-300 border border-surface-border rounded-xl px-4 py-3 text-sm text-text-primary mb-3"
                     placeholder="Texto da pergunta"
-                    placeholderTextColor="#6B6B73"
+                    placeholderTextColor="#6E6580"
                     value={q.text}
                     onChangeText={(v) => updateQuestion(idx, "text", v)}
                   />
@@ -212,7 +212,7 @@ export default function CheckinBuilderScreen() {
                     <TextInput
                       className="bg-dark-300 border border-surface-border rounded-xl px-4 py-2.5 text-xs text-text-primary"
                       placeholder="Opcoes separadas por virgula: Otimo, Bom, Regular, Ruim"
-                      placeholderTextColor="#6B6B73"
+                      placeholderTextColor="#6E6580"
                       value={q.options}
                       onChangeText={(v) => updateQuestion(idx, "options", v)}
                     />

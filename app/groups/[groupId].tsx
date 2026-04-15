@@ -117,7 +117,7 @@ export default function GroupDetailScreen() {
               <TextInput
                 className="flex-1 bg-surface-card border border-surface-border rounded-xl px-4 py-2.5 text-sm text-text-primary"
                 placeholder="Escrever no grupo..."
-                placeholderTextColor="#6E6382"
+                placeholderTextColor="#6E6580"
                 value={newPost}
                 onChangeText={setNewPost}
               />

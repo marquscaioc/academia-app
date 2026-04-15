@@ -102,7 +102,7 @@ export default function PublicProfileScreen() {
                 Conquistas
               </Text>
               <View className="flex-row flex-wrap gap-3">
-                {achievements.map((a: any) => (
+                {achievements.map((a: { id: string; achievement?: { icon?: string; name?: string } }) => (
                   <View
                     key={a.id}
                     className="bg-surface-card border border-surface-border rounded-2xl p-4 items-center"

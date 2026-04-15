@@ -96,14 +96,14 @@ export default function GroupsScreen() {
             <TextInput
               className="bg-dark-300 border border-surface-border rounded-xl px-4 py-3 text-sm text-text-primary mb-3"
               placeholder="Nome do grupo"
-              placeholderTextColor="#6B6B73"
+              placeholderTextColor="#6E6580"
               value={newName}
               onChangeText={setNewName}
             />
             <TextInput
               className="bg-dark-300 border border-surface-border rounded-xl px-4 py-3 text-sm text-text-primary mb-3"
               placeholder="Descricao (opcional)"
-              placeholderTextColor="#6B6B73"
+              placeholderTextColor="#6E6580"
               value={newDesc}
               onChangeText={setNewDesc}
             />

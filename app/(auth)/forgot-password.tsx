@@ -79,7 +79,7 @@ export default function ForgotPasswordScreen() {
                   focused ? "bg-surface-elevated border-2 border-violet-500/50" : "bg-surface-card border-2 border-surface-border"
                 }`}
                 placeholder="seu@email.com"
-                placeholderTextColor="#6B6B73"
+                placeholderTextColor="#6E6580"
                 value={email}
                 onChangeText={setEmail}
                 onFocus={() => setFocused(true)}

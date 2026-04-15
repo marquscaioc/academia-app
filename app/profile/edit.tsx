@@ -82,7 +82,7 @@ export default function EditProfileScreen() {
               value={fullName}
               onChangeText={setFullName}
               placeholder="Seu nome"
-              placeholderTextColor="#6B6B73"
+              placeholderTextColor="#6E6580"
             />
           </View>
 
@@ -95,7 +95,7 @@ export default function EditProfileScreen() {
               value={displayName}
               onChangeText={setDisplayName}
               placeholder="Como quer ser chamado"
-              placeholderTextColor="#6B6B73"
+              placeholderTextColor="#6E6580"
             />
           </View>
 
@@ -108,7 +108,7 @@ export default function EditProfileScreen() {
               value={bio}
               onChangeText={setBio}
               placeholder="Conte um pouco sobre voce"
-              placeholderTextColor="#6B6B73"
+              placeholderTextColor="#6E6580"
               multiline
               style={{ minHeight: 100, textAlignVertical: "top" }}
             />
@@ -131,19 +131,31 @@ export default function EditProfileScreen() {
             <TextInput
               className="bg-dark-300 border border-surface-border rounded-xl px-4 py-3 text-sm text-text-primary mb-3"
               placeholder="55 11 99999-9999"
-              placeholderTextColor="#6E6382"
+              placeholderTextColor="#6E6580"
               keyboardType="phone-pad"
-              onEndEditing={(e) => {
-                if (user && e.nativeEvent.text.trim()) {
-                  supabase.from("profiles").update({ whatsapp_number: e.nativeEvent.text.trim() }).eq("id", user.id);
-                }
+              onEndEditing={async (e) => {
+                if (!user || !e.nativeEvent.text.trim()) return;
+                const { error: waErr } = await supabase
+                  .from("profiles")
+                  .update({ whatsapp_number: e.nativeEvent.text.trim() })
+                  .eq("id", user.id);
+                if (waErr) setError("Erro ao salvar WhatsApp");
               }}
             />
             <Pressable
               onPress={async () => {
                 if (!user) return;
-                const { data: p } = await supabase.from("profiles").select("whatsapp_opt_in").eq("id", user.id).single();
-                await supabase.from("profiles").update({ whatsapp_opt_in: !(p?.whatsapp_opt_in) }).eq("id", user.id);
+                const { data: p, error: fetchErr } = await supabase
+                  .from("profiles")
+                  .select("whatsapp_opt_in")
+                  .eq("id", user.id)
+                  .maybeSingle();
+                if (fetchErr || !p) { setError("Erro ao atualizar preferencia"); return; }
+                const { error: updErr } = await supabase
+                  .from("profiles")
+                  .update({ whatsapp_opt_in: !p.whatsapp_opt_in })
+                  .eq("id", user.id);
+                if (updErr) { setError("Erro ao atualizar preferencia"); return; }
                 refreshProfile();
               }}
               className="flex-row items-center justify-between"
@@ -162,7 +174,11 @@ export default function EditProfileScreen() {
               onPress={async () => {
                 if (!user) return;
                 const newVal = !profile?.notify_follower_workouts;
-                await supabase.from("profiles").update({ notify_follower_workouts: newVal }).eq("id", user.id);
+                const { error: updErr } = await supabase
+                  .from("profiles")
+                  .update({ notify_follower_workouts: newVal })
+                  .eq("id", user.id);
+                if (updErr) { setError("Erro ao atualizar notificacao"); return; }
                 refreshProfile();
               }}
               className="flex-row items-center justify-between"

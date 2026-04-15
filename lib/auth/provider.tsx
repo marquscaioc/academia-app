@@ -78,14 +78,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
+    // Safety timeout: never stay loading forever
+    const timeout = setTimeout(() => {
+      setIsLoading(false);
+    }, 5000);
+
     supabase.auth.getSession().then(({ data: { session: s } }) => {
       setSession(s);
       if (s?.user) {
-        fetchProfile(s.user.id).finally(() => setIsLoading(false));
+        fetchProfile(s.user.id).finally(() => {
+          clearTimeout(timeout);
+          setIsLoading(false);
+        });
       } else {
+        clearTimeout(timeout);
         setIsLoading(false);
       }
     }).catch(() => {
+      clearTimeout(timeout);
       setIsLoading(false);
     });
 

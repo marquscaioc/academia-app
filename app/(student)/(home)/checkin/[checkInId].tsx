@@ -108,7 +108,7 @@ export default function CheckInResponseScreen() {
             <TextInput
               className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary"
               placeholder="Sua resposta..."
-              placeholderTextColor="#6B6B73"
+              placeholderTextColor="#6E6580"
               value={String(answers[currentQ.id] ?? "")}
               onChangeText={(v) => setAnswers({ ...answers, [currentQ.id]: v })}
               multiline
@@ -118,7 +118,7 @@ export default function CheckInResponseScreen() {
             <TextInput
               className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-3xl text-violet-400 font-black text-center"
               placeholder="0"
-              placeholderTextColor="#6B6B73"
+              placeholderTextColor="#6E6580"
               value={String(answers[currentQ.id] ?? "")}
               onChangeText={(v) => setAnswers({ ...answers, [currentQ.id]: parseFloat(v) || 0 })}
               keyboardType="decimal-pad"
@@ -193,7 +193,7 @@ export default function CheckInResponseScreen() {
                 <TextInput
                   className="bg-surface-card border-2 border-warning-500/30 rounded-2xl px-5 py-4 text-sm text-text-primary"
                   placeholder="Explique o motivo..."
-                  placeholderTextColor="#6B6B73"
+                  placeholderTextColor="#6E6580"
                   value={justifications[currentQ.id] ?? ""}
                   onChangeText={(v) => setJustifications({ ...justifications, [currentQ.id]: v })}
                   multiline

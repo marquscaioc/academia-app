@@ -46,7 +46,7 @@ export default function RecipesScreen() {
           <TextInput
             className="bg-surface-card border border-surface-border rounded-2xl px-4 py-3 text-sm text-text-primary mb-3"
             placeholder="Buscar receita..."
-            placeholderTextColor="#6E6382"
+            placeholderTextColor="#6E6580"
             value={search}
             onChangeText={setSearch}
           />

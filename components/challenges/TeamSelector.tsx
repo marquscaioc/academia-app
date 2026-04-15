@@ -31,7 +31,7 @@ export function TeamSelector({ visible, teams, onJoinTeam, onCreateTeam, onClose
               <TextInput
                 className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary"
                 placeholder="Nome da equipe"
-                placeholderTextColor="#6E6382"
+                placeholderTextColor="#6E6580"
                 value={newTeamName}
                 onChangeText={setNewTeamName}
               />

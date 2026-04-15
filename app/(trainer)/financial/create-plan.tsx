@@ -62,7 +62,7 @@ export default function CreatePlanScreen() {
             <TextInput
               className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary"
               placeholder="Ex: Treino + Dieta Mensal"
-              placeholderTextColor="#6B6B73"
+              placeholderTextColor="#6E6580"
               value={name}
               onChangeText={setName}
             />
@@ -73,7 +73,7 @@ export default function CreatePlanScreen() {
             <TextInput
               className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary"
               placeholder="O que esta incluso no plano"
-              placeholderTextColor="#6B6B73"
+              placeholderTextColor="#6E6580"
               value={description}
               onChangeText={setDescription}
               multiline
@@ -86,7 +86,7 @@ export default function CreatePlanScreen() {
             <TextInput
               className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary"
               placeholder="199,90"
-              placeholderTextColor="#6B6B73"
+              placeholderTextColor="#6E6580"
               value={price}
               onChangeText={setPrice}
               keyboardType="decimal-pad"

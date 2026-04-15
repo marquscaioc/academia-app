@@ -132,7 +132,7 @@ export default function StudentsScreen() {
             <TextInput
               className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary mb-5"
               placeholder="2500"
-              placeholderTextColor="#6E6382"
+              placeholderTextColor="#6E6580"
               value={waterGoal}
               onChangeText={setWaterGoal}
               keyboardType="numeric"

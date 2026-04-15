@@ -176,11 +176,11 @@ export default function WhatsAppScreen() {
               <View className="gap-4">
                 <View>
                   <Text className="text-xs font-bold text-text-muted mb-2 ml-1 tracking-wider uppercase">Numero (com DDD)</Text>
-                  <TextInput className="bg-dark-300 border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary" placeholder="11 99999-9999" placeholderTextColor="#6E6382" value={testNumber} onChangeText={(v) => { setTestNumber(v); setSendResult(null); }} keyboardType="phone-pad" />
+                  <TextInput className="bg-dark-300 border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary" placeholder="11 99999-9999" placeholderTextColor="#6E6580" value={testNumber} onChangeText={(v) => { setTestNumber(v); setSendResult(null); }} keyboardType="phone-pad" />
                 </View>
                 <View>
                   <Text className="text-xs font-bold text-text-muted mb-2 ml-1 tracking-wider uppercase">Mensagem</Text>
-                  <TextInput className="bg-dark-300 border-2 border-surface-border rounded-2xl px-5 py-4 text-sm text-text-primary" placeholder="Mensagem de teste..." placeholderTextColor="#6E6382" value={testMessage} onChangeText={setTestMessage} multiline style={{ minHeight: 80, textAlignVertical: "top" }} />
+                  <TextInput className="bg-dark-300 border-2 border-surface-border rounded-2xl px-5 py-4 text-sm text-text-primary" placeholder="Mensagem de teste..." placeholderTextColor="#6E6580" value={testMessage} onChangeText={setTestMessage} multiline style={{ minHeight: 80, textAlignVertical: "top" }} />
                 </View>
                 <Pressable onPress={handleSendTest} disabled={sending || !testNumber.trim()} className={`rounded-2xl py-4 items-center ${testNumber.trim() ? "bg-violet-500 active:bg-violet-600" : "bg-surface-border"}`}>
                   {sending ? <ActivityIndicator color="#fff" /> : <Text className={`font-black text-base ${testNumber.trim() ? "text-white" : "text-text-muted"}`}>Enviar Teste</Text>}

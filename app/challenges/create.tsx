@@ -76,7 +76,7 @@ export default function CreateChallengeScreen() {
             <TextInput
               className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary"
               placeholder="Ex: Desafio 30 dias"
-              placeholderTextColor="#6E6382"
+              placeholderTextColor="#6E6580"
               value={title}
               onChangeText={setTitle}
             />
@@ -87,7 +87,7 @@ export default function CreateChallengeScreen() {
             <TextInput
               className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary"
               placeholder="Regras e detalhes do desafio"
-              placeholderTextColor="#6E6382"
+              placeholderTextColor="#6E6580"
               value={description}
               onChangeText={setDescription}
               multiline
@@ -100,7 +100,7 @@ export default function CreateChallengeScreen() {
             <TextInput
               className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary"
               placeholder="30"
-              placeholderTextColor="#6E6382"
+              placeholderTextColor="#6E6580"
               value={durationDays}
               onChangeText={setDurationDays}
               keyboardType="number-pad"

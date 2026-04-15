@@ -110,7 +110,7 @@ export default function BrandingScreen() {
             <TextInput
               className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary"
               placeholder="Ex: Fitness Pro, Coach Silva..."
-              placeholderTextColor="#6B6B73"
+              placeholderTextColor="#6E6580"
               value={brandName}
               onChangeText={setBrandName}
             />
@@ -121,7 +121,7 @@ export default function BrandingScreen() {
             <TextInput
               className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary"
               placeholder="Ex: Transformando vidas atraves do treino"
-              placeholderTextColor="#6B6B73"
+              placeholderTextColor="#6E6580"
               value={tagline}
               onChangeText={setTagline}
             />
@@ -149,7 +149,7 @@ export default function BrandingScreen() {
             <TextInput
               className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary"
               placeholder="000000-G/SP"
-              placeholderTextColor="#6B6B73"
+              placeholderTextColor="#6E6580"
               value={cref}
               onChangeText={setCref}
             />

@@ -44,7 +44,7 @@ export default function AdminUsersScreen() {
         <TextInput
           className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-3 text-sm text-text-primary mb-4"
           placeholder="Buscar por nome..."
-          placeholderTextColor="#6B6B73"
+          placeholderTextColor="#6E6580"
           value={search}
           onChangeText={setSearch}
         />

@@ -64,7 +64,7 @@ export default function ChatScreen() {
           onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: false })}
           renderItem={({ item, index }) => {
             const isOwn = item.sender_id === user?.id;
-            const prevMsg = index > 0 ? messages![index - 1] : null;
+            const prevMsg = index > 0 && messages ? messages[index - 1] : null;
             const showSender = !isOwn && (!prevMsg || prevMsg.sender_id !== item.sender_id);
 
             return (

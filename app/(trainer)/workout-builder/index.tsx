@@ -184,7 +184,7 @@ export default function WorkoutBuilderScreen() {
               <TextInput
                 className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary"
                 placeholder="Ex: Hipertrofia - Março 2026"
-                placeholderTextColor="#6B6B73"
+                placeholderTextColor="#6E6580"
                 value={planName}
                 onChangeText={setPlanName}
               />
@@ -194,7 +194,7 @@ export default function WorkoutBuilderScreen() {
               <TextInput
                 className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary"
                 placeholder="Observacoes do plano"
-                placeholderTextColor="#6B6B73"
+                placeholderTextColor="#6E6580"
                 value={planDescription}
                 onChangeText={setPlanDescription}
                 multiline
@@ -206,7 +206,7 @@ export default function WorkoutBuilderScreen() {
               <TextInput
                 className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary"
                 placeholder="Treino A"
-                placeholderTextColor="#6B6B73"
+                placeholderTextColor="#6E6580"
                 value={workoutName}
                 onChangeText={setWorkoutName}
               />
@@ -233,7 +233,7 @@ export default function WorkoutBuilderScreen() {
             <TextInput
               className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-3 text-sm text-text-primary"
               placeholder="Buscar exercicio para adicionar..."
-              placeholderTextColor="#6B6B73"
+              placeholderTextColor="#6E6580"
               value={searchExercise}
               onChangeText={setSearchExercise}
             />
@@ -299,7 +299,7 @@ export default function WorkoutBuilderScreen() {
                           onChangeText={(v) => updateExercise(idx, "weight", v)}
                           keyboardType="decimal-pad"
                           placeholder="-"
-                          placeholderTextColor="#6B6B73"
+                          placeholderTextColor="#6E6580"
                         />
                       </View>
                       <View className="flex-1">

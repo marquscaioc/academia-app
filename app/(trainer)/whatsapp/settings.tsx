@@ -54,7 +54,7 @@ export default function WhatsAppSettingsScreen() {
           <TextInput
             className="bg-dark-300 border-2 border-surface-border rounded-2xl px-5 py-4 text-sm text-text-primary mb-3"
             placeholder="https://sua-url.com/functions/v1/whatsapp-webhook"
-            placeholderTextColor="#6E6382"
+            placeholderTextColor="#6E6580"
             value={webhookUrl}
             onChangeText={(v) => { setWebhookUrl(v); setWebhookSaved(false); }}
             autoCapitalize="none"

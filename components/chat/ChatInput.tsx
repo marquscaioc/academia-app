@@ -21,7 +21,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
       <TextInput
         className="flex-1 bg-surface-card border border-surface-border rounded-2xl px-4 py-3 text-sm text-text-primary max-h-24"
         placeholder="Mensagem..."
-        placeholderTextColor="#6B6B73"
+        placeholderTextColor="#6E6580"
         value={text}
         onChangeText={setText}
         multiline

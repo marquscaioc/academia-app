@@ -76,7 +76,7 @@ export default function LoginScreen() {
                     : "bg-surface-card border-2 border-surface-border"
                 }`}
                 placeholder="seu@email.com"
-                placeholderTextColor="#6B6B73"
+                placeholderTextColor="#6E6580"
                 value={email}
                 onChangeText={setEmail}
                 onFocus={() => setFocusedField("email")}
@@ -98,7 +98,7 @@ export default function LoginScreen() {
                     : "bg-surface-card border-2 border-surface-border"
                 }`}
                 placeholder="Sua senha"
-                placeholderTextColor="#6B6B73"
+                placeholderTextColor="#6E6580"
                 value={password}
                 onChangeText={setPassword}
                 onFocus={() => setFocusedField("password")}

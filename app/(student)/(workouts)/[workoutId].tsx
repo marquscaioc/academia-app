@@ -246,7 +246,7 @@ export default function WorkoutExecutionScreen() {
                   <Text className="text-xs text-text-muted">Peso:</Text>
                   <TextInput
                     className="bg-surface-card border border-surface-border rounded-xl px-3 py-2 text-sm text-text-primary w-20 text-center"
-                    placeholderTextColor="#6E6382"
+                    placeholderTextColor="#6E6580"
                     placeholder={String(lastPerf.suggestedWeight ?? lastPerf.lastWeight)}
                     value={customWeight}
                     onChangeText={setCustomWeight}

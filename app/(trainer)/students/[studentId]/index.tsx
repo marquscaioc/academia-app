@@ -65,7 +65,7 @@ export default function StudentDetailScreen() {
               <TextInput
                 className="bg-surface-card border border-surface-border rounded-xl px-4 py-3 text-sm text-text-primary"
                 placeholder="Escrever nota sobre o aluno..."
-                placeholderTextColor="#6E6382"
+                placeholderTextColor="#6E6580"
                 value={noteText}
                 onChangeText={setNoteText}
                 multiline

@@ -86,7 +86,7 @@ export function CommentThread({ comments, postId, currentUserId, onReply, isPend
                 <TextInput
                   className="flex-1 bg-surface-card border border-surface-border rounded-xl px-3 py-2 text-xs text-text-primary"
                   placeholder={`Responder ${comment.author?.full_name?.split(" ")[0]}...`}
-                  placeholderTextColor="#6E6382"
+                  placeholderTextColor="#6E6580"
                   value={replyText}
                   onChangeText={setReplyText}
                   autoFocus
@@ -109,7 +109,7 @@ export function CommentThread({ comments, postId, currentUserId, onReply, isPend
         <TextInput
           className="flex-1 bg-surface-card border border-surface-border rounded-xl px-3 py-2.5 text-xs text-text-primary"
           placeholder="Comentar..."
-          placeholderTextColor="#6E6382"
+          placeholderTextColor="#6E6580"
           value={replyingTo ? "" : replyText}
           onChangeText={(v) => { setReplyingTo(null); setReplyText(v); }}
         />

@@ -39,13 +39,13 @@ export default function RegisterScreen() {
     setError("");
     setLoading(true);
     const { error: signUpError } = await signUp(email, password, fullName);
-    setLoading(false);
     if (signUpError) {
+      setLoading(false);
       setError("Erro ao criar conta. Tente novamente.");
       return;
     }
-    // Small delay for trigger to create profile, then navigate
-    setTimeout(() => router.replace("/(auth)/onboarding"), 500);
+    // Let onAuthStateChange handle profile fetch; index.tsx will route to onboarding
+    router.replace("/");
   };
 
   const inputClass = (field: string) =>
@@ -95,7 +95,7 @@ export default function RegisterScreen() {
               <TextInput
                 className={inputClass("name")}
                 placeholder="Seu nome"
-                placeholderTextColor="#6B6B73"
+                placeholderTextColor="#6E6580"
                 value={fullName}
                 onChangeText={setFullName}
                 onFocus={() => setFocusedField("name")}
@@ -111,7 +111,7 @@ export default function RegisterScreen() {
               <TextInput
                 className={inputClass("email")}
                 placeholder="seu@email.com"
-                placeholderTextColor="#6B6B73"
+                placeholderTextColor="#6E6580"
                 value={email}
                 onChangeText={setEmail}
                 onFocus={() => setFocusedField("email")}
@@ -129,7 +129,7 @@ export default function RegisterScreen() {
               <TextInput
                 className={inputClass("password")}
                 placeholder="Minimo 6 caracteres"
-                placeholderTextColor="#6B6B73"
+                placeholderTextColor="#6E6580"
                 value={password}
                 onChangeText={setPassword}
                 onFocus={() => setFocusedField("password")}
@@ -146,7 +146,7 @@ export default function RegisterScreen() {
               <TextInput
                 className={inputClass("confirm")}
                 placeholder="Repita a senha"
-                placeholderTextColor="#6B6B73"
+                placeholderTextColor="#6E6580"
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
                 onFocus={() => setFocusedField("confirm")}
