@@ -84,7 +84,7 @@ export default function OnboardingScreen() {
             className="text-text-muted"
             style={{ fontFamily: "InstrumentSerif_400Regular_Italic", fontSize: 26, letterSpacing: -0.5 }}
           >
-            Como você vai
+            Escolha
           </Text>
           <Text
             className="text-text-primary mt-1"
@@ -95,10 +95,10 @@ export default function OnboardingScreen() {
               letterSpacing: -2,
             }}
           >
-            USAR O APP?
+            UM PERFIL.
           </Text>
-          <Text className="text-sm text-text-muted mt-4" style={{ fontFamily: "DMSans_400Regular" }}>
-            Escolha seu perfil para personalizar a experiência.
+          <Text className="text-sm text-text-muted mt-4 leading-6" style={{ fontFamily: "DMSans_400Regular" }}>
+            Você é <Text style={{ fontFamily: "DMSans_700Bold" }} className="text-text-primary">aluno</Text> ou <Text style={{ fontFamily: "DMSans_700Bold" }} className="text-text-primary">personal</Text> — não os dois. Essa decisão define toda a experiência no app.
           </Text>
         </Animated.View>
 
@@ -108,58 +108,82 @@ export default function OnboardingScreen() {
           </View>
         ) : null}
 
-        <View className="gap-4">
-          {roles.map((role) => {
+        <View>
+          {roles.map((role, idx) => {
             const isSelected = selectedRole === role.value;
+            const otherSelected = selectedRole !== null && !isSelected;
             return (
-              <Pressable
-                key={role.value}
-                onPress={() => setSelectedRole(role.value)}
-                className={`rounded-3xl p-6 border-2 ${
-                  isSelected
-                    ? "bg-surface-elevated border-violet-500"
-                    : "bg-surface-card border-surface-border active:border-surface-hover"
-                }`}
-              >
-                <View className="flex-row items-center gap-4 mb-4">
-                  <View className={`w-14 h-14 rounded-2xl items-center justify-center ${
-                    isSelected ? "bg-violet-500/20" : "bg-surface-elevated"
-                  }`}>
-                    <Text className="text-2xl">{role.icon}</Text>
-                  </View>
-                  <View className="flex-1">
-                    <Text className={`text-xl font-black ${
-                      isSelected ? "text-violet-300" : "text-text-primary"
+              <View key={role.value}>
+                <Pressable
+                  onPress={() => setSelectedRole(role.value)}
+                  className={`rounded-3xl p-6 border-2 ${
+                    isSelected
+                      ? "bg-surface-elevated border-violet-500"
+                      : otherSelected
+                        ? "bg-surface-card border-surface-border opacity-40"
+                        : "bg-surface-card border-surface-border active:border-surface-hover"
+                  }`}
+                >
+                  <View className="flex-row items-center gap-4 mb-4">
+                    <View className={`w-14 h-14 rounded-2xl items-center justify-center ${
+                      isSelected ? "bg-violet-500/20" : "bg-surface-elevated"
                     }`}>
-                      {role.label}
-                    </Text>
-                    <Text className="text-xs text-text-muted mt-0.5">
-                      {role.description}
-                    </Text>
-                  </View>
-                  <View className={`w-6 h-6 rounded-full border-2 items-center justify-center ${
-                    isSelected ? "border-violet-500 bg-violet-500" : "border-surface-border"
-                  }`}>
-                    {isSelected ? (
-                      <Text className="text-white text-xs font-black">✓</Text>
-                    ) : null}
-                  </View>
-                </View>
-
-                <View className="flex-row flex-wrap gap-2">
-                  {role.features.map((f) => (
-                    <View key={f} className={`px-3 py-1.5 rounded-full ${
-                      isSelected ? "bg-violet-500/10" : "bg-dark-300"
-                    }`}>
-                      <Text className={`text-xs font-medium ${
-                        isSelected ? "text-violet-300" : "text-text-muted"
-                      }`}>
-                        {f}
+                      <Text className="text-2xl">{role.icon}</Text>
+                    </View>
+                    <View className="flex-1">
+                      <Text
+                        className={isSelected ? "text-violet-300" : "text-text-primary"}
+                        style={{ fontFamily: "ArchivoBlack_400Regular", fontSize: 20, letterSpacing: -0.5 }}
+                      >
+                        {role.label.toUpperCase()}
+                      </Text>
+                      <Text
+                        className="text-xs text-text-muted mt-1"
+                        style={{ fontFamily: "DMSans_400Regular" }}
+                      >
+                        {role.description}
                       </Text>
                     </View>
-                  ))}
-                </View>
-              </Pressable>
+                    <View className={`w-6 h-6 rounded-full border-2 items-center justify-center ${
+                      isSelected ? "border-violet-500 bg-violet-500" : "border-surface-border"
+                    }`}>
+                      {isSelected ? (
+                        <Text className="text-white text-xs" style={{ fontFamily: "DMSans_700Bold" }}>✓</Text>
+                      ) : null}
+                    </View>
+                  </View>
+
+                  <View className="flex-row flex-wrap gap-2">
+                    {role.features.map((f) => (
+                      <View key={f} className={`px-3 py-1.5 rounded-full ${
+                        isSelected ? "bg-violet-500/10" : "bg-dark-300"
+                      }`}>
+                        <Text
+                          className={isSelected ? "text-violet-300" : "text-text-muted"}
+                          style={{ fontFamily: "DMSans_500Medium", fontSize: 11 }}
+                        >
+                          {f}
+                        </Text>
+                      </View>
+                    ))}
+                  </View>
+                </Pressable>
+
+                {idx === 0 ? (
+                  <View className="flex-row items-center my-4">
+                    <View className="flex-1 h-px bg-surface-border" />
+                    <View className="mx-4 w-10 h-10 rounded-full bg-dark-300 border-2 border-surface-border items-center justify-center">
+                      <Text
+                        className="text-text-muted"
+                        style={{ fontFamily: "ArchivoBlack_400Regular", fontSize: 12, letterSpacing: 1 }}
+                      >
+                        OU
+                      </Text>
+                    </View>
+                    <View className="flex-1 h-px bg-surface-border" />
+                  </View>
+                ) : null}
+              </View>
             );
           })}
         </View>
