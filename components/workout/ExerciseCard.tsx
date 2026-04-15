@@ -1,5 +1,5 @@
-import { Image } from "expo-image";
 import { Pressable, Text, View } from "react-native";
+import { ExerciseAnimation } from "./ExerciseAnimation";
 
 interface ExerciseCardProps {
   name: string;
@@ -13,34 +13,58 @@ interface ExerciseCardProps {
   restSeconds?: number;
   onPress?: () => void;
   onPlayVideo?: () => void;
+  animateImages?: boolean;
 }
 
 export function ExerciseCard({
-  name, muscleGroup, equipment, thumbnailUrl, videoUrl,
-  targetSets, targetReps, targetWeightKg, restSeconds, onPress, onPlayVideo,
+  name,
+  muscleGroup,
+  equipment,
+  thumbnailUrl,
+  videoUrl,
+  targetSets,
+  targetReps,
+  targetWeightKg,
+  restSeconds,
+  onPress,
+  onPlayVideo,
+  animateImages = true,
 }: ExerciseCardProps) {
+  // If videoUrl is an image (free-exercise-db secondary frame), use as animation
+  // If videoUrl is an actual .mp4, use as video
+  const isVideoMp4 = videoUrl?.endsWith(".mp4") || videoUrl?.endsWith(".mov");
+  const secondFrame = isVideoMp4 ? null : videoUrl;
+
   return (
     <Pressable
       onPress={onPress}
       className="bg-surface-card border border-surface-border rounded-2xl p-4 flex-row gap-4 active:bg-surface-hover"
     >
-      <Pressable onPress={videoUrl && onPlayVideo ? onPlayVideo : undefined} disabled={!videoUrl || !onPlayVideo}>
+      <Pressable
+        onPress={isVideoMp4 && onPlayVideo ? onPlayVideo : undefined}
+        disabled={!isVideoMp4 || !onPlayVideo}
+      >
         {thumbnailUrl ? (
           <View>
-            <Image
-              source={{ uri: thumbnailUrl }}
-              style={{ width: 56, height: 56, borderRadius: 14 }}
-              contentFit="cover"
+            <ExerciseAnimation
+              thumbnailUrl={thumbnailUrl}
+              secondFrameUrl={secondFrame}
+              size={56}
+              borderRadius={14}
+              autoPlay={animateImages}
             />
-            {videoUrl ? (
-              <View className="absolute inset-0 items-center justify-center bg-black/40" style={{ borderRadius: 14 }}>
+            {isVideoMp4 ? (
+              <View
+                className="absolute inset-0 items-center justify-center bg-black/40"
+                style={{ borderRadius: 14 }}
+              >
                 <Text className="text-white text-lg">▶</Text>
               </View>
             ) : null}
           </View>
         ) : (
           <View className="w-14 h-14 bg-surface-elevated rounded-xl items-center justify-center">
-            {videoUrl ? <Text className="text-xl">▶️</Text> : <Text className="text-xl">🏋️</Text>}
+            {isVideoMp4 ? <Text className="text-xl">▶️</Text> : <Text className="text-xl">🏋️</Text>}
           </View>
         )}
       </Pressable>

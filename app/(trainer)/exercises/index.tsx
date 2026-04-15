@@ -113,6 +113,7 @@ export default function ExercisesScreen() {
                 muscleGroup={item.muscle_group?.name}
                 equipment={item.equipment?.name}
                 thumbnailUrl={item.thumbnail_url}
+                videoUrl={item.video_url}
               />
             )}
           />
