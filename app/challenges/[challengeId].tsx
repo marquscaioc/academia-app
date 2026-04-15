@@ -18,6 +18,7 @@ import { PhotoCaptureModal } from "../../components/challenges/PhotoCaptureModal
 import { PointRuleSelector } from "../../components/challenges/PointRuleSelector";
 import { Badge } from "../../components/ui/Badge";
 import { Card } from "../../components/ui/Card";
+import { LoadingScreen } from "../../components/ui/LoadingScreen";
 import { shareLeaderboardCard } from "../../lib/utils/generateLeaderboardCard";
 import { supabase } from "../../lib/supabase/client";
 import { useState } from "react";
@@ -46,11 +47,7 @@ export default function ChallengeDetailScreen() {
   const [showPointSelector, setShowPointSelector] = useState(false);
 
   if (isLoading || !challenge) {
-    return (
-      <SafeAreaView className="flex-1 bg-dark-400 items-center justify-center">
-        <ActivityIndicator size="large" color="#781BB6" />
-      </SafeAreaView>
-    );
+    return <LoadingScreen />;
   }
 
   const isJoined = !!participation;

@@ -22,6 +22,7 @@ import {
 import { useTimerStore } from "../../../stores/useTimerStore";
 import { useWorkoutSessionStore } from "../../../stores/useWorkoutSessionStore";
 import { useLastPerformance } from "../../../hooks/queries/useLastPerformance";
+import { LoadingScreen } from "../../../components/ui/LoadingScreen";
 
 export default function WorkoutExecutionScreen() {
   const { workoutId } = useLocalSearchParams<{ workoutId: string }>();
@@ -37,11 +38,7 @@ export default function WorkoutExecutionScreen() {
   const [customWeight, setCustomWeight] = useState("");
 
   if (isLoading || !workout) {
-    return (
-      <SafeAreaView className="flex-1 bg-dark-400 items-center justify-center">
-        <ActivityIndicator size="large" color="#781BB6" />
-      </SafeAreaView>
-    );
+    return <LoadingScreen />;
   }
 
   const exercises = workout.exercises ?? [];

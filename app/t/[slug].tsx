@@ -1,9 +1,10 @@
 import { useLocalSearchParams } from "expo-router";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "../../lib/supabase/client";
+import { LoadingScreen } from "../../components/ui/LoadingScreen";
 
 export default function TrainerPublicPage() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
@@ -25,11 +26,7 @@ export default function TrainerPublicPage() {
   });
 
   if (isLoading) {
-    return (
-      <SafeAreaView className="flex-1 bg-dark-400 items-center justify-center">
-        <ActivityIndicator size="large" color="#781BB6" />
-      </SafeAreaView>
-    );
+    return <LoadingScreen />;
   }
 
   if (!trainer) {

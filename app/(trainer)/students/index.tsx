@@ -43,26 +43,28 @@ export default function StudentsScreen() {
     },
   });
 
-  const { data: students, isLoading } = useQuery({
-    queryKey: ["trainer", "students", user?.id, filter],
+  const { data: allStudents, isLoading } = useQuery({
+    queryKey: ["trainer", "students", user?.id],
     queryFn: async () => {
-      let query = supabase
+      const { data, error } = await supabase
         .from("trainer_students")
         .select("*, student:profiles!student_id(full_name, avatar_url)")
         .eq("trainer_id", user!.id)
         .order("started_at", { ascending: false });
-      if (filter === "active") query = query.eq("status", "active");
-      else if (filter === "paused") query = query.in("status", ["paused", "cancelled"]);
-
-      const { data, error } = await query;
       if (error) throw error;
       return data as StudentRelation[];
     },
     enabled: !!user,
   });
 
-  const activeCount = students?.filter((s) => s.status === "active").length ?? 0;
-  const pausedCount = students?.filter((s) => s.status !== "active").length ?? 0;
+  const activeCount = allStudents?.filter((s) => s.status === "active").length ?? 0;
+  const pausedCount = allStudents?.filter((s) => s.status !== "active").length ?? 0;
+
+  const students = allStudents?.filter((s) => {
+    if (filter === "active") return s.status === "active";
+    if (filter === "paused") return s.status === "paused" || s.status === "cancelled";
+    return true;
+  });
 
   const handleReactivate = (studentId: string) => {
     if (!user) return;

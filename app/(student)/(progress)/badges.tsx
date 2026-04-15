@@ -1,11 +1,12 @@
 import { router } from "expo-router";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../../../lib/auth/provider";
 import { supabase } from "../../../lib/supabase/client";
 import { useUserAchievements } from "../../../hooks/queries/useFeed";
 import { AchievementCard } from "../../../components/achievements/AchievementCard";
+import { LoadingScreen } from "../../../components/ui/LoadingScreen";
 
 const badgeIcons: Record<string, string> = {
   first_workout: "🎯",
@@ -39,11 +40,7 @@ export default function BadgesScreen() {
   const earnedIds = new Set(userAchievements?.map((a) => a.achievement?.id ?? a.achievement_id) ?? []);
 
   if (isLoading) {
-    return (
-      <SafeAreaView className="flex-1 bg-dark-400 items-center justify-center">
-        <ActivityIndicator size="large" color="#781BB6" />
-      </SafeAreaView>
-    );
+    return <LoadingScreen />;
   }
 
   return (

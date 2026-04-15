@@ -1,11 +1,12 @@
 import { useLocalSearchParams, router } from "expo-router";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../../../lib/auth/provider";
 import { useRecipeDetail, useRecipeFavorites } from "../../../../hooks/queries/useRecipes";
 import { useToggleFavorite } from "../../../../hooks/mutations/useRecipeMutations";
 import { Card } from "../../../../components/ui/Card";
+import { LoadingScreen } from "../../../../components/ui/LoadingScreen";
 
 export default function RecipeDetailScreen() {
   const { recipeId } = useLocalSearchParams<{ recipeId: string }>();
@@ -15,11 +16,7 @@ export default function RecipeDetailScreen() {
   const toggleFavorite = useToggleFavorite();
 
   if (isLoading || !recipe) {
-    return (
-      <SafeAreaView className="flex-1 bg-dark-400 items-center justify-center">
-        <ActivityIndicator size="large" color="#781BB6" />
-      </SafeAreaView>
-    );
+    return <LoadingScreen />;
   }
 
   const isFav = favorites?.has(recipe.id);

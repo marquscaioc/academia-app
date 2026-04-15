@@ -36,8 +36,21 @@ export function useCourses(opts: { studentId?: string; trainerId?: string }) {
         .select("*, trainer:profiles!trainer_id(full_name, avatar_url), lessons(id, title, sort_order, duration_seconds, thumbnail_url, is_free)")
         .order("created_at", { ascending: false });
 
-      if (opts.trainerId) query = query.eq("trainer_id", opts.trainerId);
-      else query = query.eq("is_published", true);
+      if (opts.trainerId) {
+        query = query.eq("trainer_id", opts.trainerId);
+      } else if (opts.studentId) {
+        const { data: links, error: linkErr } = await supabase
+          .from("trainer_students")
+          .select("trainer_id")
+          .eq("student_id", opts.studentId)
+          .eq("status", "active");
+        if (linkErr) throw linkErr;
+        const trainerIds = links?.map((l) => l.trainer_id) ?? [];
+        if (trainerIds.length === 0) return [] as Course[];
+        query = query.eq("is_published", true).in("trainer_id", trainerIds);
+      } else {
+        query = query.eq("is_published", true);
+      }
 
       const { data, error } = await query;
       if (error) throw error;

@@ -62,7 +62,8 @@ export async function getQrCode(instanceName: string): Promise<QrCodeResponse | 
   try {
     const data = await request<QrCodeResponse>(`/instance/connect/${instanceName}`);
     return data.base64 ? data : null;
-  } catch {
+  } catch (e) {
+    console.error(`[whatsapp] getQrCode failed for "${instanceName}":`, e);
     return null;
   }
 }
@@ -165,7 +166,8 @@ export async function setWebhook(
 export async function getWebhook(instanceName: string): Promise<WebhookConfig | null> {
   try {
     return await request<WebhookConfig>(`/webhook/find/${instanceName}`);
-  } catch {
+  } catch (e) {
+    console.error(`[whatsapp] getWebhook failed for "${instanceName}":`, e);
     return null;
   }
 }

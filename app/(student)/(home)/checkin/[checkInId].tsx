@@ -13,6 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../../../../lib/auth/provider";
 import { supabase } from "../../../../lib/supabase/client";
 import { useSubmitCheckIn } from "../../../../hooks/mutations/useCheckinMutations";
+import { LoadingScreen } from "../../../../components/ui/LoadingScreen";
 
 export default function CheckInResponseScreen() {
   const { checkInId } = useLocalSearchParams<{ checkInId: string }>();
@@ -65,11 +66,7 @@ export default function CheckInResponseScreen() {
   };
 
   if (!checkIn || !currentQ) {
-    return (
-      <SafeAreaView className="flex-1 bg-dark-400 items-center justify-center">
-        <ActivityIndicator size="large" color="#781BB6" />
-      </SafeAreaView>
-    );
+    return <LoadingScreen />;
   }
 
   return (

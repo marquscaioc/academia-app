@@ -1,9 +1,10 @@
 import { router, useLocalSearchParams } from "expo-router";
-import { ActivityIndicator, Pressable, ScrollView, Text, View, Platform } from "react-native";
+import { Pressable, ScrollView, Text, View, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../../lib/auth/provider";
 import { useCourseDetail } from "../../../hooks/queries/useCourses";
 import { useMarkLessonComplete } from "../../../hooks/mutations/useCourseMutations";
+import { LoadingScreen } from "../../../components/ui/LoadingScreen";
 import { useState } from "react";
 
 export default function StudentCourseDetailScreen() {
@@ -14,11 +15,7 @@ export default function StudentCourseDetailScreen() {
   const [activeLessonIdx, setActiveLessonIdx] = useState<number | null>(null);
 
   if (isLoading || !course) {
-    return (
-      <SafeAreaView className="flex-1 bg-dark-400 items-center justify-center">
-        <ActivityIndicator size="large" color="#781BB6" />
-      </SafeAreaView>
-    );
+    return <LoadingScreen />;
   }
 
   const completedCount = course.lessons?.filter((l) => l.progress?.completed).length ?? 0;

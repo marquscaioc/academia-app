@@ -1,12 +1,13 @@
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Alert, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
 import { useAuth } from "../../../lib/auth/provider";
 import { supabase } from "../../../lib/supabase/client";
 import { useCourseDetail } from "../../../hooks/queries/useCourses";
 import { useAddLesson } from "../../../hooks/mutations/useCourseMutations";
+import { LoadingScreen } from "../../../components/ui/LoadingScreen";
 
 export default function CourseDetailScreen() {
   const { courseId } = useLocalSearchParams<{ courseId: string }>();
@@ -37,10 +38,13 @@ export default function CourseDetailScreen() {
       const response = await fetch(videoUri);
       const blob = await response.blob();
       const { error: upErr } = await supabase.storage.from("exercise-videos").upload(fileName, blob, { contentType: "video/mp4" });
-      if (!upErr) {
-        const { data: { publicUrl } } = supabase.storage.from("exercise-videos").getPublicUrl(fileName);
-        videoUrl = publicUrl;
+      if (upErr) {
+        setUploading(false);
+        Alert.alert("Erro no upload", upErr.message || "Não foi possível enviar o vídeo. Tente novamente.");
+        return;
       }
+      const { data: { publicUrl } } = supabase.storage.from("exercise-videos").getPublicUrl(fileName);
+      videoUrl = publicUrl;
     }
 
     await addLesson.mutateAsync({
@@ -57,11 +61,7 @@ export default function CourseDetailScreen() {
   };
 
   if (isLoading || !course) {
-    return (
-      <SafeAreaView className="flex-1 bg-dark-400 items-center justify-center">
-        <ActivityIndicator size="large" color="#781BB6" />
-      </SafeAreaView>
-    );
+    return <LoadingScreen />;
   }
 
   return (
