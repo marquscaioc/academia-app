@@ -91,7 +91,21 @@ export function useSubmitChallengeEntry() {
         p_challenge_id: input.challenge_id,
         p_user_id: input.user_id,
         p_points: input.points ?? 1,
-      }).then(() => {});
+      });
+
+      // Se o participante esta numa equipe, incrementa tambem o score do time
+      const { data: participant } = await supabase
+        .from("challenge_participants")
+        .select("team_id")
+        .eq("challenge_id", input.challenge_id)
+        .eq("user_id", input.user_id)
+        .maybeSingle();
+      if (participant?.team_id) {
+        await supabase.rpc("increment_team_score", {
+          p_team_id: participant.team_id,
+          p_points: input.points ?? 1,
+        });
+      }
 
       return data;
     },
@@ -99,6 +113,7 @@ export function useSubmitChallengeEntry() {
       queryClient.invalidateQueries({ queryKey: ["challenges", "entries", vars.challenge_id] });
       queryClient.invalidateQueries({ queryKey: ["challenges", "leaderboard", vars.challenge_id] });
       queryClient.invalidateQueries({ queryKey: ["challenges", "my-participation", vars.challenge_id] });
+      queryClient.invalidateQueries({ queryKey: ["challenges", "teams", vars.challenge_id] });
     },
   });
 }
