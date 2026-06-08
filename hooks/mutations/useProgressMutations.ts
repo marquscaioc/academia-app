@@ -82,9 +82,7 @@ export async function uploadProgressPhoto(
 
   if (error) throw error;
 
-  const {
-    data: { publicUrl },
-  } = supabase.storage.from("progress-photos").getPublicUrl(fileName);
-
-  return publicUrl;
+  // Bucket privado: gravamos o PATH e resolvemos signed URL na leitura
+  // (ver lib/supabase/media.ts). getPublicUrl nao funciona aqui.
+  return fileName;
 }

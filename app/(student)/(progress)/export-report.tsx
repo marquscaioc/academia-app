@@ -1,9 +1,10 @@
 import { router } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../../lib/auth/provider";
 import { useBodyMeasurements, useProgressPhotos } from "../../../hooks/queries/useProgress";
+import { getSignedUrls } from "../../../lib/supabase/media";
 import { usePersonalRecords } from "../../../hooks/queries/usePersonalRecords";
 import { useAdherenceScore } from "../../../hooks/queries/useCheckins";
 import { useWorkoutSessions } from "../../../hooks/queries/useWorkouts";
@@ -39,6 +40,11 @@ export default function ExportReportScreen() {
   const handleExport = async () => {
     setExporting(true);
     try {
+      // progress-photos e bucket privado: assina os paths antes de embutir no PDF
+      const signedPhotos = await getSignedUrls(
+        "progress-photos",
+        filteredPhotos.map((p) => p.photo_url),
+      );
       const data: ProgressReportData = {
         studentName: profile?.full_name ?? "Aluno",
         trainerName: "Personal Trainer",
@@ -64,7 +70,7 @@ export default function ExportReportScreen() {
           date: new Date(pr.achieved_at).toLocaleDateString("pt-BR"),
         })),
         photos: filteredPhotos.map((p) => ({
-          url: p.photo_url,
+          url: signedPhotos[p.photo_url] ?? p.photo_url,
           date: new Date(p.taken_at).toLocaleDateString("pt-BR"),
           pose: p.pose ?? "frente",
         })),
@@ -73,9 +79,10 @@ export default function ExportReportScreen() {
       };
       await exportProgressReport(data);
     } catch (e) {
-      // silent
+      Alert.alert("Erro ao exportar", "Nao foi possivel gerar o relatorio. Tente novamente.");
+    } finally {
+      setExporting(false);
     }
-    setExporting(false);
   };
 
   const periods: { value: Period; label: string }[] = [

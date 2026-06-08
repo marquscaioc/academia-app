@@ -12,11 +12,13 @@ import { PhotoComparison } from "../../../components/progress/PhotoComparison";
 import { CheckinScoreChart } from "../../../components/progress/CheckinScoreChart";
 import { useCheckinScoreHistory } from "../../../hooks/queries/useCheckinScoreHistory";
 import { useUserAchievements } from "../../../hooks/queries/useFeed";
+import { useSignedUrls } from "../../../lib/supabase/media";
 
 export default function ProgressScreen() {
   const { user } = useAuth();
   const { data: measurements } = useBodyMeasurements(user?.id);
   const { data: photos } = useProgressPhotos(user?.id);
+  const photoSigned = useSignedUrls("progress-photos", (photos ?? []).map((p) => p.photo_url));
   const { data: adherence } = useAdherenceScore(user?.id);
   const { data: checkinHistory } = useCheckinScoreHistory(user?.id);
   const { data: achievements } = useUserAchievements(user?.id);
@@ -173,8 +175,8 @@ export default function ProgressScreen() {
           <View className="mb-6">
             <Text className="text-xs font-bold text-text-muted mb-3 uppercase tracking-wider">Comparativo</Text>
             <PhotoComparison
-              beforeUrl={photos[photos.length - 1].photo_url}
-              afterUrl={photos[0].photo_url}
+              beforeUrl={photoSigned[photos[photos.length - 1].photo_url] ?? ""}
+              afterUrl={photoSigned[photos[0].photo_url] ?? ""}
               beforeDate={new Date(photos[photos.length - 1].taken_at).toLocaleDateString("pt-BR")}
               afterDate={new Date(photos[0].taken_at).toLocaleDateString("pt-BR")}
             />
@@ -193,7 +195,7 @@ export default function ProgressScreen() {
               {photos.slice(0, 6).map((photo) => (
                 <View key={photo.id} className="w-[31%] aspect-[3/4]">
                   <Image
-                    source={{ uri: photo.photo_url }}
+                    source={{ uri: photoSigned[photo.photo_url] ?? "" }}
                     style={{ width: "100%", height: "100%", borderRadius: 12 }}
                     contentFit="cover"
                   />

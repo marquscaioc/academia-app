@@ -8,19 +8,6 @@ import { useUserAchievements } from "../../../hooks/queries/useFeed";
 import { AchievementCard } from "../../../components/achievements/AchievementCard";
 import { LoadingScreen } from "../../../components/ui/LoadingScreen";
 
-const badgeIcons: Record<string, string> = {
-  first_workout: "🎯",
-  workouts_10: "💪",
-  workouts_50: "🏆",
-  workouts_100: "👑",
-  streak_7: "🔥",
-  streak_30: "🔥",
-  challenge_win: "🥇",
-  posts_10: "💬",
-  photos_10: "📸",
-  checkin_perfect: "✅",
-};
-
 export default function BadgesScreen() {
   const { user } = useAuth();
   const { data: userAchievements } = useUserAchievements(user?.id);
@@ -31,7 +18,7 @@ export default function BadgesScreen() {
       const { data, error } = await supabase
         .from("achievement_definitions")
         .select("*")
-        .order("threshold");
+        .order("sort_order");
       if (error) throw error;
       return data;
     },
@@ -65,7 +52,7 @@ export default function BadgesScreen() {
               <AchievementCard
                 name={a.name}
                 description={a.description ?? ""}
-                icon={badgeIcons[a.criteria_type] ?? "⭐"}
+                icon={a.icon ?? "⭐"}
                 earned={earnedIds.has(a.id)}
               />
             </View>
