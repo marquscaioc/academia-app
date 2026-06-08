@@ -14,6 +14,7 @@ import {
 } from "@expo-google-fonts/nunito";
 import { AuthProvider } from "../lib/auth/provider";
 import { LoadingScreen } from "../components/ui/LoadingScreen";
+import { useNotificationObserver } from "../lib/notifications/useNotificationObserver";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -33,6 +34,8 @@ export default function RootLayout() {
     Nunito_700Bold,
     Nunito_900Black,
   });
+
+  useNotificationObserver();
 
   if (!fontsLoaded) {
     return (
