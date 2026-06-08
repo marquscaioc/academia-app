@@ -71,9 +71,28 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ sent: false, reason: "unknown_template" }), { headers: { "Content-Type": "application/json" } });
     }
 
+    // T0-17: usa a instancia WhatsApp do TRAINER do aluno (nao um env global),
+    // para o lembrete sair pelo numero do profissional correto (multi-tenant).
+    let instance = evoInstance;
+    const { data: link } = await supabase
+      .from("trainer_students")
+      .select("trainer_id")
+      .eq("student_id", payload.user_id)
+      .eq("status", "active")
+      .limit(1)
+      .maybeSingle();
+    if (link?.trainer_id) {
+      const { data: tp } = await supabase
+        .from("trainer_profiles")
+        .select("whatsapp_instance_name")
+        .eq("id", link.trainer_id)
+        .maybeSingle();
+      if (tp?.whatsapp_instance_name) instance = tp.whatsapp_instance_name;
+    }
+
     // Send with 1 retry
-    let sent = await sendText(evoUrl, evoKey, evoInstance, phone, text);
-    if (!sent) sent = await sendText(evoUrl, evoKey, evoInstance, phone, text);
+    let sent = await sendText(evoUrl, evoKey, instance, phone, text);
+    if (!sent) sent = await sendText(evoUrl, evoKey, instance, phone, text);
 
     await supabase.from("notifications").insert({
       user_id: payload.user_id,
