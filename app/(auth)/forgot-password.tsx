@@ -70,7 +70,7 @@ export default function ForgotPasswordScreen() {
                 <Text className="text-text-muted text-lg">←</Text>
                 <Text
                   className="text-text-muted text-[11px]"
-                  style={{ fontFamily: "DMSans_700Bold", letterSpacing: 2 }}
+                  style={{ fontFamily: "Nunito_700Bold", letterSpacing: 2 }}
                 >
                   VOLTAR
                 </Text>
@@ -81,14 +81,14 @@ export default function ForgotPasswordScreen() {
           <View className="mb-10">
             <Text
               className="text-text-muted"
-              style={{ fontFamily: "InstrumentSerif_400Regular_Italic", fontSize: 26, letterSpacing: -0.5 }}
+              style={{ fontFamily: "Nunito_400Regular_Italic", fontSize: 26, letterSpacing: -0.5 }}
             >
               Recuperar
             </Text>
             <Text
               className="text-text-primary mt-1"
               style={{
-                fontFamily: "ArchivoBlack_400Regular",
+                fontFamily: "Nunito_900Black",
                 fontSize: 40,
                 lineHeight: 40,
                 letterSpacing: -2,
@@ -96,7 +96,7 @@ export default function ForgotPasswordScreen() {
             >
               SENHA.
             </Text>
-            <Text className="text-sm text-text-muted mt-3" style={{ fontFamily: "DMSans_400Regular" }}>
+            <Text className="text-sm text-text-muted mt-3" style={{ fontFamily: "Nunito_400Regular" }}>
               Informe seu email para receber o link de recuperação.
             </Text>
           </View>

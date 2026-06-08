@@ -46,7 +46,7 @@ export default function WorkoutExecutionScreen() {
   const completedSets = currentExercise
     ? sessionStore.getCompletedSetsForExercise(currentExercise.exercise_id)
     : [];
-  const { data: lastPerf } = useLastPerformance(currentExercise?.exercise_id, user?.id);
+  const { data: lastPerf } = useLastPerformance(currentExercise?.exercise_id, user?.id, currentExercise?.target_reps);
 
   const handleStartWorkout = async () => {
     if (!user) return;

@@ -8,16 +8,16 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        // Editorial display — italic-friendly serif for magazine-style headers
-        serif: ["InstrumentSerif_400Regular"],
-        "serif-italic": ["InstrumentSerif_400Regular_Italic"],
-        // Brutalist numerals — massive stats, counts, reps
-        display: ["ArchivoBlack_400Regular"],
-        // Body — refined UI text
-        sans: ["DMSans_400Regular"],
-        medium: ["DMSans_500Medium"],
-        semibold: ["DMSans_600SemiBold"],
-        bold: ["DMSans_700Bold"],
+        // Nunito em todo o app (pesos preservam a hierarquia anterior)
+        serif: ["Nunito_400Regular"],
+        "serif-italic": ["Nunito_400Regular_Italic"],
+        // Numerais/stats massivos
+        display: ["Nunito_900Black"],
+        // Corpo / UI
+        sans: ["Nunito_400Regular"],
+        medium: ["Nunito_500Medium"],
+        semibold: ["Nunito_600SemiBold"],
+        bold: ["Nunito_700Bold"],
       },
       colors: {
         // Royal Amethyst — primary #781BB6

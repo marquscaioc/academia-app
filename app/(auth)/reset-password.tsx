@@ -88,13 +88,13 @@ export default function ResetPasswordScreen() {
             </View>
             <Text
               className="text-text-primary text-center"
-              style={{ fontFamily: "ArchivoBlack_400Regular", fontSize: 32, letterSpacing: -1.5 }}
+              style={{ fontFamily: "Nunito_900Black", fontSize: 32, letterSpacing: -1.5 }}
             >
               SENHA{"\n"}ATUALIZADA.
             </Text>
             <Text
               className="text-text-muted text-sm text-center mt-4"
-              style={{ fontFamily: "DMSans_400Regular" }}
+              style={{ fontFamily: "Nunito_400Regular" }}
             >
               Redirecionando para o login...
             </Text>
@@ -125,14 +125,14 @@ export default function ResetPasswordScreen() {
           <Animated.View entering={FadeInDown.delay(80).springify()} className="mb-8">
             <Text
               className="text-text-muted"
-              style={{ fontFamily: "InstrumentSerif_400Regular_Italic", fontSize: 26, letterSpacing: -0.5 }}
+              style={{ fontFamily: "Nunito_400Regular_Italic", fontSize: 26, letterSpacing: -0.5 }}
             >
               Defina sua
             </Text>
             <Text
               className="text-text-primary mt-1"
               style={{
-                fontFamily: "ArchivoBlack_400Regular",
+                fontFamily: "Nunito_900Black",
                 fontSize: 40,
                 lineHeight: 40,
                 letterSpacing: -2,
@@ -142,7 +142,7 @@ export default function ResetPasswordScreen() {
             </Text>
             <Text
               className="text-fuchsia-400 mt-3"
-              style={{ fontFamily: "DMSans_700Bold", fontSize: 10, letterSpacing: 3 }}
+              style={{ fontFamily: "Nunito_700Bold", fontSize: 10, letterSpacing: 3 }}
             >
               RECUPERAÇÃO DE ACESSO
             </Text>
@@ -150,7 +150,7 @@ export default function ResetPasswordScreen() {
 
           {!sessionReady ? (
             <View className="bg-warning-500/10 border border-warning-500/20 rounded-2xl p-4 mb-5">
-              <Text className="text-warning-500 text-sm text-center" style={{ fontFamily: "DMSans_500Medium" }}>
+              <Text className="text-warning-500 text-sm text-center" style={{ fontFamily: "Nunito_500Medium" }}>
                 Validando link de recuperação...
               </Text>
             </View>
@@ -161,7 +161,7 @@ export default function ResetPasswordScreen() {
               entering={FadeIn.duration(200)}
               className="bg-danger-500/10 border border-danger-500/20 rounded-2xl p-4 mb-5"
             >
-              <Text className="text-danger-500 text-center text-sm" style={{ fontFamily: "DMSans_500Medium" }}>
+              <Text className="text-danger-500 text-center text-sm" style={{ fontFamily: "Nunito_500Medium" }}>
                 {error}
               </Text>
             </Animated.View>
@@ -171,7 +171,7 @@ export default function ResetPasswordScreen() {
             <View>
               <Text
                 className="text-[10px] text-text-muted mb-2 ml-1 uppercase"
-                style={{ fontFamily: "DMSans_700Bold", letterSpacing: 2 }}
+                style={{ fontFamily: "Nunito_700Bold", letterSpacing: 2 }}
               >
                 Nova senha
               </Text>
@@ -181,7 +181,7 @@ export default function ResetPasswordScreen() {
                     ? "bg-surface-elevated border-2 border-violet-500/50"
                     : "bg-surface-card border-2 border-surface-border"
                 }`}
-                style={{ fontFamily: "DMSans_500Medium" }}
+                style={{ fontFamily: "Nunito_500Medium" }}
                 placeholder="Mínimo 6 caracteres"
                 placeholderTextColor="#6E6580"
                 value={password}
@@ -196,7 +196,7 @@ export default function ResetPasswordScreen() {
             <View>
               <Text
                 className="text-[10px] text-text-muted mb-2 ml-1 uppercase"
-                style={{ fontFamily: "DMSans_700Bold", letterSpacing: 2 }}
+                style={{ fontFamily: "Nunito_700Bold", letterSpacing: 2 }}
               >
                 Confirmar senha
               </Text>
@@ -206,7 +206,7 @@ export default function ResetPasswordScreen() {
                     ? "bg-surface-elevated border-2 border-violet-500/50"
                     : "bg-surface-card border-2 border-surface-border"
                 }`}
-                style={{ fontFamily: "DMSans_500Medium" }}
+                style={{ fontFamily: "Nunito_500Medium" }}
                 placeholder="Repita a senha"
                 placeholderTextColor="#6E6580"
                 value={confirmPassword}
@@ -234,7 +234,7 @@ export default function ResetPasswordScreen() {
                 ) : (
                   <Text
                     className="text-white text-base"
-                    style={{ fontFamily: "DMSans_700Bold", letterSpacing: 2 }}
+                    style={{ fontFamily: "Nunito_700Bold", letterSpacing: 2 }}
                   >
                     ATUALIZAR SENHA
                   </Text>

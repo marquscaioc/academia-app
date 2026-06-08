@@ -58,7 +58,7 @@ export default function StudentsScreen() {
   });
 
   const activeCount = allStudents?.filter((s) => s.status === "active").length ?? 0;
-  const pausedCount = allStudents?.filter((s) => s.status !== "active").length ?? 0;
+  const pausedCount = allStudents?.filter((s) => s.status === "paused" || s.status === "cancelled").length ?? 0;
 
   const students = allStudents?.filter((s) => {
     if (filter === "active") return s.status === "active";

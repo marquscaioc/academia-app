@@ -9,6 +9,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import * as ImagePicker from "expo-image-picker";
 import { useAuth } from "../../lib/auth/provider";
 import { supabase } from "../../lib/supabase/client";
 import { Avatar } from "../../components/ui/Avatar";
@@ -18,7 +19,9 @@ export default function EditProfileScreen() {
   const [fullName, setFullName] = useState(profile?.full_name ?? "");
   const [displayName, setDisplayName] = useState(profile?.display_name ?? "");
   const [bio, setBio] = useState(profile?.bio ?? "");
+  const [whatsapp, setWhatsapp] = useState(profile?.whatsapp_number ?? "");
   const [loading, setLoading] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [error, setError] = useState("");
 
   const handleSave = async () => {
@@ -34,6 +37,7 @@ export default function EditProfileScreen() {
         full_name: fullName.trim(),
         display_name: displayName.trim() || null,
         bio: bio.trim() || null,
+        whatsapp_number: whatsapp.trim() || null,
       })
       .eq("id", user.id);
 
@@ -45,6 +49,41 @@ export default function EditProfileScreen() {
 
     await refreshProfile();
     router.back();
+  };
+
+  const pickAvatar = async () => {
+    if (!user) return;
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.7,
+    });
+    if (result.canceled) return;
+
+    setError("");
+    setUploadingAvatar(true);
+    try {
+      const uri = result.assets[0].uri;
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      const path = `${user.id}/${Date.now()}.jpg`;
+      const { error: upErr } = await supabase.storage
+        .from("avatars")
+        .upload(path, blob, { contentType: "image/jpeg", upsert: true });
+      if (upErr) throw upErr;
+      const { data: { publicUrl } } = supabase.storage.from("avatars").getPublicUrl(path);
+      const { error: updErr } = await supabase
+        .from("profiles")
+        .update({ avatar_url: publicUrl })
+        .eq("id", user.id);
+      if (updErr) throw updErr;
+      await refreshProfile();
+    } catch (e) {
+      setError("Erro ao trocar foto. Tente novamente.");
+    } finally {
+      setUploadingAvatar(false);
+    }
   };
 
   return (
@@ -61,8 +100,12 @@ export default function EditProfileScreen() {
         {/* Avatar */}
         <View className="items-center mb-8">
           <Avatar uri={profile?.avatar_url} name={fullName} size="xl" />
-          <Pressable className="mt-3">
-            <Text className="text-violet-400 font-bold text-sm">Trocar foto</Text>
+          <Pressable className="mt-3" onPress={pickAvatar} disabled={uploadingAvatar}>
+            {uploadingAvatar ? (
+              <ActivityIndicator color="#a78bfa" />
+            ) : (
+              <Text className="text-violet-400 font-bold text-sm">Trocar foto</Text>
+            )}
           </Pressable>
         </View>
 
@@ -133,14 +176,8 @@ export default function EditProfileScreen() {
               placeholder="55 11 99999-9999"
               placeholderTextColor="#6E6580"
               keyboardType="phone-pad"
-              onEndEditing={async (e) => {
-                if (!user || !e.nativeEvent.text.trim()) return;
-                const { error: waErr } = await supabase
-                  .from("profiles")
-                  .update({ whatsapp_number: e.nativeEvent.text.trim() })
-                  .eq("id", user.id);
-                if (waErr) setError("Erro ao salvar WhatsApp");
-              }}
+              value={whatsapp}
+              onChangeText={setWhatsapp}
             />
             <Pressable
               onPress={async () => {
@@ -161,8 +198,8 @@ export default function EditProfileScreen() {
               className="flex-row items-center justify-between"
             >
               <Text className="text-sm text-text-secondary">Receber lembretes via WhatsApp</Text>
-              <View className={`w-12 h-7 rounded-full p-0.5 ${false ? "bg-violet-500" : "bg-surface-border"}`}>
-                <View className="w-6 h-6 bg-white rounded-full" />
+              <View className={`w-12 h-7 rounded-full p-0.5 ${profile?.whatsapp_opt_in ? "bg-violet-500" : "bg-surface-border"}`}>
+                <View className={`w-6 h-6 bg-white rounded-full ${profile?.whatsapp_opt_in ? "ml-auto" : ""}`} />
               </View>
             </Pressable>
           </View>

@@ -67,7 +67,7 @@ export default function LoginScreen() {
             <Text
               className="text-text-primary"
               style={{
-                fontFamily: "ArchivoBlack_400Regular",
+                fontFamily: "Nunito_900Black",
                 fontSize: 44,
                 lineHeight: 44,
                 letterSpacing: -2,
@@ -77,7 +77,7 @@ export default function LoginScreen() {
             </Text>
             <Text
               className="text-fuchsia-400 mt-3"
-              style={{ fontFamily: "DMSans_700Bold", fontSize: 10, letterSpacing: 3 }}
+              style={{ fontFamily: "Nunito_700Bold", fontSize: 10, letterSpacing: 3 }}
             >
               ROYAL AMETHYST · EST. 2026
             </Text>
@@ -89,7 +89,7 @@ export default function LoginScreen() {
               entering={FadeIn.duration(200)}
               className="bg-danger-500/10 border border-danger-500/20 rounded-2xl p-4 mb-5"
             >
-              <Text className="text-danger-500 text-center text-sm" style={{ fontFamily: "DMSans_500Medium" }}>
+              <Text className="text-danger-500 text-center text-sm" style={{ fontFamily: "Nunito_500Medium" }}>
                 {error}
               </Text>
             </Animated.View>
@@ -100,7 +100,7 @@ export default function LoginScreen() {
             <View>
               <Text
                 className="text-[10px] text-text-muted mb-2 ml-1 uppercase"
-                style={{ fontFamily: "DMSans_700Bold", letterSpacing: 2 }}
+                style={{ fontFamily: "Nunito_700Bold", letterSpacing: 2 }}
               >
                 Email
               </Text>
@@ -110,7 +110,7 @@ export default function LoginScreen() {
                     ? "bg-surface-elevated border-2 border-violet-500/50"
                     : "bg-surface-card border-2 border-surface-border"
                 }`}
-                style={{ fontFamily: "DMSans_500Medium" }}
+                style={{ fontFamily: "Nunito_500Medium" }}
                 placeholder="seu@email.com"
                 placeholderTextColor="#6E6580"
                 value={email}
@@ -126,7 +126,7 @@ export default function LoginScreen() {
             <View>
               <Text
                 className="text-[10px] text-text-muted mb-2 ml-1 uppercase"
-                style={{ fontFamily: "DMSans_700Bold", letterSpacing: 2 }}
+                style={{ fontFamily: "Nunito_700Bold", letterSpacing: 2 }}
               >
                 Senha
               </Text>
@@ -136,7 +136,7 @@ export default function LoginScreen() {
                     ? "bg-surface-elevated border-2 border-violet-500/50"
                     : "bg-surface-card border-2 border-surface-border"
                 }`}
-                style={{ fontFamily: "DMSans_500Medium" }}
+                style={{ fontFamily: "Nunito_500Medium" }}
                 placeholder="Sua senha"
                 placeholderTextColor="#6E6580"
                 value={password}
@@ -150,7 +150,7 @@ export default function LoginScreen() {
 
             <Link href="/(auth)/forgot-password" asChild>
               <Pressable className="self-end py-1">
-                <Text className="text-text-muted text-xs" style={{ fontFamily: "DMSans_500Medium" }}>
+                <Text className="text-text-muted text-xs" style={{ fontFamily: "Nunito_500Medium" }}>
                   Esqueceu a senha?
                 </Text>
               </Pressable>
@@ -173,7 +173,7 @@ export default function LoginScreen() {
                 ) : (
                   <Text
                     className="text-white text-base"
-                    style={{ fontFamily: "DMSans_700Bold", letterSpacing: 2 }}
+                    style={{ fontFamily: "Nunito_700Bold", letterSpacing: 2 }}
                   >
                     ENTRAR
                   </Text>
@@ -188,7 +188,7 @@ export default function LoginScreen() {
               <View className="flex-1 h-px bg-surface-border" />
               <Text
                 className="text-text-muted text-[10px] mx-4 uppercase"
-                style={{ fontFamily: "DMSans_700Bold", letterSpacing: 2 }}
+                style={{ fontFamily: "Nunito_700Bold", letterSpacing: 2 }}
               >
                 ou
               </Text>
@@ -196,7 +196,7 @@ export default function LoginScreen() {
             </View>
             <Text
               className="text-text-muted text-sm text-center"
-              style={{ fontFamily: "DMSans_400Regular" }}
+              style={{ fontFamily: "Nunito_400Regular" }}
             >
               Novo por aqui?
             </Text>
@@ -204,7 +204,7 @@ export default function LoginScreen() {
               <Pressable className="mt-2 py-1">
                 <Text
                   className="text-fuchsia-400 text-sm text-center"
-                  style={{ fontFamily: "DMSans_700Bold" }}
+                  style={{ fontFamily: "Nunito_700Bold" }}
                 >
                   Criar conta →
                 </Text>

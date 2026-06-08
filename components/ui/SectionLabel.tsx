@@ -17,7 +17,7 @@ export function SectionLabel({ children, tone = "muted", withRule = false, class
     return (
       <Text
         className={`text-[10px] uppercase ${TONE_MAP[tone]} ${className ?? ""}`}
-        style={[{ fontFamily: "DMSans_700Bold", letterSpacing: 3 }, style]}
+        style={[{ fontFamily: "Nunito_700Bold", letterSpacing: 3 }, style]}
         {...rest}
       >
         {children}
@@ -28,7 +28,7 @@ export function SectionLabel({ children, tone = "muted", withRule = false, class
     <View className="flex-row items-center gap-3">
       <Text
         className={`text-[10px] uppercase ${TONE_MAP[tone]}`}
-        style={{ fontFamily: "DMSans_700Bold", letterSpacing: 3 }}
+        style={{ fontFamily: "Nunito_700Bold", letterSpacing: 3 }}
       >
         {children}
       </Text>
