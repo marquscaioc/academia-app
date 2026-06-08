@@ -1,7 +1,9 @@
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link } from "expo-router";
+import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../../lib/auth/provider";
+import { supabase } from "../../lib/supabase/client";
 import { useStudentAdherenceList } from "../../hooks/queries/useStudentAdherence";
 import { StudentAdherenceRow } from "../../components/trainer/StudentAdherenceRow";
 
@@ -23,6 +25,28 @@ export default function TrainerDashboardScreen() {
   const { user, profile, signOut } = useAuth();
   const firstName = profile?.full_name?.split(" ")[0] ?? "Trainer";
   const { data: adherenceList } = useStudentAdherenceList(user?.id);
+
+  const { data: counts } = useQuery({
+    queryKey: ["trainer", "dashboard-counts", user?.id],
+    queryFn: async () => {
+      const [students, plans] = await Promise.all([
+        supabase
+          .from("trainer_students")
+          .select("*", { count: "exact", head: true })
+          .eq("trainer_id", user!.id)
+          .eq("status", "active"),
+        supabase
+          .from("workout_plans")
+          .select("*", { count: "exact", head: true })
+          .eq("trainer_id", user!.id),
+      ]);
+      return {
+        activeStudents: students.count ?? 0,
+        workoutPlans: plans.count ?? 0,
+      };
+    },
+    enabled: !!user,
+  });
 
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
@@ -74,8 +98,8 @@ export default function TrainerDashboardScreen() {
 
         {/* Metrics */}
         <View className="flex-row gap-3 mb-6">
-          <MetricCard value="0" label="Alunos ativos" icon="👥" color="text-violet-400" />
-          <MetricCard value="0" label="Treinos criados" icon="🏋️" color="text-ice-400" />
+          <MetricCard value={String(counts?.activeStudents ?? 0)} label="Alunos ativos" icon="👥" color="text-violet-400" />
+          <MetricCard value={String(counts?.workoutPlans ?? 0)} label="Treinos criados" icon="🏋️" color="text-ice-400" />
         </View>
 
         {/* Getting started */}
