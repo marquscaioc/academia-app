@@ -109,7 +109,16 @@ export function useChallengeDetail(challengeId: string) {
         .eq("id", challengeId)
         .single();
       if (error) throw error;
-      return data as Challenge;
+      // Deriva o status das DATAS para bater com a lista (sem cron que transicione
+      // o campo status); evita detalhe mostrar "upcoming/active" desatualizado.
+      const now = Date.now();
+      const derivedStatus =
+        new Date(data.starts_at).getTime() > now
+          ? "upcoming"
+          : new Date(data.ends_at).getTime() < now
+            ? "ended"
+            : "active";
+      return { ...data, status: derivedStatus } as Challenge;
     },
     enabled: !!challengeId,
   });
