@@ -29,14 +29,18 @@ export default function CreatePlanScreen() {
     if (isNaN(priceCents) || priceCents <= 0) { setError("Valor invalido"); return; }
 
     setError("");
-    await createPlan.mutateAsync({
-      trainer_id: user.id,
-      name: name.trim(),
-      description: description.trim() || undefined,
-      price_cents: priceCents,
-      billing_interval: interval,
-    });
-    router.back();
+    try {
+      await createPlan.mutateAsync({
+        trainer_id: user.id,
+        name: name.trim(),
+        description: description.trim() || undefined,
+        price_cents: priceCents,
+        billing_interval: interval,
+      });
+      router.back();
+    } catch (e) {
+      setError("Nao foi possivel criar o plano. Tente novamente.");
+    }
   };
 
   return (

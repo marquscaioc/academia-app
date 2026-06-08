@@ -2,6 +2,7 @@ import { router } from "expo-router";
 import { useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   Pressable,
   ScrollView,
@@ -86,35 +87,39 @@ export default function WorkoutBuilderScreen() {
   const handleSave = async () => {
     if (!user || !selectedStudentId || !planName.trim() || exercises.length === 0) return;
     setSaving(true);
-
-    const plan = await createPlan.mutateAsync({
-      trainer_id: user.id,
-      student_id: selectedStudentId,
-      name: planName.trim(),
-      description: planDescription.trim() || undefined,
-    });
-
-    const workout = await addWorkout.mutateAsync({
-      plan_id: plan.id,
-      name: workoutName.trim() || "Treino A",
-      sort_order: 0,
-    });
-
-    for (let i = 0; i < exercises.length; i++) {
-      const ex = exercises[i];
-      await addExercise.mutateAsync({
-        workout_id: workout.id,
-        exercise_id: ex.exercise_id,
-        sort_order: i,
-        target_sets: ex.sets,
-        target_reps: ex.reps,
-        target_weight_kg: ex.weight ? parseFloat(ex.weight) : undefined,
-        rest_seconds: ex.rest,
+    try {
+      const plan = await createPlan.mutateAsync({
+        trainer_id: user.id,
+        student_id: selectedStudentId,
+        name: planName.trim(),
+        description: planDescription.trim() || undefined,
       });
-    }
 
-    setSaving(false);
-    router.back();
+      const workout = await addWorkout.mutateAsync({
+        plan_id: plan.id,
+        name: workoutName.trim() || "Treino A",
+        sort_order: 0,
+      });
+
+      for (let i = 0; i < exercises.length; i++) {
+        const ex = exercises[i];
+        await addExercise.mutateAsync({
+          workout_id: workout.id,
+          exercise_id: ex.exercise_id,
+          sort_order: i,
+          target_sets: ex.sets,
+          target_reps: ex.reps,
+          target_weight_kg: ex.weight ? parseFloat(ex.weight) : undefined,
+          rest_seconds: ex.rest,
+        });
+      }
+
+      router.back();
+    } catch (e) {
+      Alert.alert("Erro", "Nao foi possivel salvar o plano. Tente novamente.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
