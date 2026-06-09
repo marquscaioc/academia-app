@@ -7,6 +7,7 @@ import { useChallengeDetail, useLeaderboard, useChallengeEntries, useMyParticipa
 import { useChallengePointRules } from "../../hooks/queries/useChallengePointRules";
 import { useChallengeTeams } from "../../hooks/queries/useChallengeTeams";
 import { useDailyPose } from "../../hooks/queries/useDailyPose";
+import { useMostImproved } from "../../hooks/queries/useMostImproved";
 import { useJoinChallenge, useSubmitChallengeEntry } from "../../hooks/mutations/useChallengeMutations";
 import { useCreateTeam, useJoinTeam } from "../../hooks/mutations/useTeamMutations";
 import { useConvertToGroup } from "../../hooks/mutations/useChallengeToGroup";
@@ -16,6 +17,8 @@ import { TeamLeaderboard } from "../../components/challenges/TeamLeaderboard";
 import { TeamSelector } from "../../components/challenges/TeamSelector";
 import { PhotoCaptureModal } from "../../components/challenges/PhotoCaptureModal";
 import { PointRuleSelector } from "../../components/challenges/PointRuleSelector";
+import { MostImprovedLeaderboard } from "../../components/challenges/MostImprovedLeaderboard";
+import { BulkCheckinModal } from "../../components/challenges/BulkCheckinModal";
 import { Badge } from "../../components/ui/Badge";
 import { Card } from "../../components/ui/Card";
 import { LoadingScreen } from "../../components/ui/LoadingScreen";
@@ -34,14 +37,16 @@ export default function ChallengeDetailScreen() {
   const { data: pointRules } = useChallengePointRules(challengeId ?? "");
   const { data: teams } = useChallengeTeams(challenge?.team_mode ? challengeId : undefined);
   const { data: dailyPose } = useDailyPose();
+  const { data: improved } = useMostImproved(challengeId ?? "");
   const joinChallenge = useJoinChallenge();
   const submitEntry = useSubmitChallengeEntry();
   const createTeam = useCreateTeam();
   const joinTeam = useJoinTeam();
   const convertToGroup = useConvertToGroup();
 
-  const [tab, setTab] = useState<"leaderboard" | "feed">("leaderboard");
+  const [tab, setTab] = useState<"leaderboard" | "feed" | "improved">("leaderboard");
   const [showCamera, setShowCamera] = useState(false);
+  const [showBulk, setShowBulk] = useState(false);
   const [showTeamSelector, setShowTeamSelector] = useState(false);
   const [selectedRule, setSelectedRule] = useState<PointRule | null>(null);
   const [showPointSelector, setShowPointSelector] = useState(false);
@@ -147,6 +152,19 @@ export default function ChallengeDetailScreen() {
     convertToGroup.mutate({ challengeId: challenge.id, userId: user.id });
   };
 
+  const handleBulkSubmit = (selectedRules: PointRule[]) => {
+    if (!user) return;
+    setShowBulk(false);
+    for (const rule of selectedRules) {
+      submitEntry.mutate({
+        challenge_id: challenge.id,
+        user_id: user.id,
+        caption: rule.label,
+        points: rule.points,
+      });
+    }
+  };
+
   const formatDate = (d: string) =>
     new Date(d).toLocaleDateString("pt-BR", { day: "2-digit", month: "long" });
 
@@ -221,6 +239,16 @@ export default function ChallengeDetailScreen() {
             </Pressable>
           ) : null}
 
+          {/* Registro em lote (so quando ha Hustle Points) */}
+          {isJoined && isActive && hasCustomPoints ? (
+            <Pressable
+              onPress={() => setShowBulk(true)}
+              className="bg-surface-card border border-violet-500/30 rounded-2xl py-3 items-center mb-4 active:bg-surface-hover"
+            >
+              <Text className="text-violet-400 font-bold text-sm">Registrar várias atividades</Text>
+            </Pressable>
+          ) : null}
+
           {/* Convert to group (ended + creator) */}
           {isEnded && isCreator ? (
             <Pressable
@@ -259,6 +287,14 @@ export default function ChallengeDetailScreen() {
                 Atividade
               </Text>
             </Pressable>
+            <Pressable
+              onPress={() => setTab("improved")}
+              className={`flex-1 py-3 items-center border-b-2 ${tab === "improved" ? "border-violet-500" : "border-transparent"}`}
+            >
+              <Text className={`font-bold text-sm ${tab === "improved" ? "text-violet-400" : "text-text-muted"}`}>
+                Evolução
+              </Text>
+            </Pressable>
           </View>
         </View>
 
@@ -284,6 +320,8 @@ export default function ChallengeDetailScreen() {
             ) : (
               <Text className="text-sm text-text-muted text-center py-8">Nenhum participante ainda.</Text>
             )
+          ) : tab === "improved" ? (
+            <MostImprovedLeaderboard entries={improved ?? []} />
           ) : entries?.length ? (
             <View className="gap-3">
               {entries.map((entry) => (
@@ -357,6 +395,13 @@ export default function ChallengeDetailScreen() {
           </Pressable>
         </View>
       ) : null}
+
+      <BulkCheckinModal
+        visible={showBulk}
+        rules={pointRules ?? []}
+        onSubmit={handleBulkSubmit}
+        onClose={() => setShowBulk(false)}
+      />
     </SafeAreaView>
   );
 }
