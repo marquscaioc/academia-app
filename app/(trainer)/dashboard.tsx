@@ -112,6 +112,7 @@ export default function TrainerDashboardScreen() {
               { href: "/(trainer)/whatsapp", icon: "💬", label: "WhatsApp" },
               { href: "/(trainer)/courses", icon: "🎓", label: "Aulas" },
               { href: "/(trainer)/checkins/branding", icon: "🎨", label: "Branding" },
+              { href: "/(trainer)/diet-builder/substitutions", icon: "🔄", label: "Substituições" },
             ].map((t) => (
               <Link key={t.href} href={t.href as never} asChild>
                 <Pressable className="bg-surface-card border border-surface-border rounded-2xl px-4 py-3 flex-row items-center gap-2 active:bg-surface-hover">
