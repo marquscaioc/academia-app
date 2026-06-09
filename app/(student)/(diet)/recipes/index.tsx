@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../../../lib/auth/provider";
 import { useRecipes, useRecipeFavorites } from "../../../../hooks/queries/useRecipes";
 import { RecipeCard } from "../../../../components/diet/RecipeCard";
+import { font } from "../../../../lib/design/tokens";
 
 const tagFilters = [
   { value: "low_carb", label: "Low Carb" },
@@ -39,16 +40,17 @@ export default function RecipesScreen() {
         <View className="px-6 pt-6 pb-3">
           <View className="flex-row items-center justify-between mb-4">
             <Pressable onPress={() => router.back()}>
-              <Text className="text-violet-400 font-medium">← Voltar</Text>
+              <Text className="text-violet-400" style={{ fontFamily: font.medium }}>← Voltar</Text>
             </Pressable>
-            <Text className="text-lg font-black text-text-primary">Receitas</Text>
+            <Text className="text-[28px] text-text-primary" style={{ fontFamily: font.display }}>Receitas.</Text>
             <View className="w-16" />
           </View>
 
           <TextInput
-            className="bg-surface-card border border-surface-border rounded-2xl px-4 py-3 text-sm text-text-primary mb-3"
+            className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary mb-3"
+            style={{ fontFamily: font.regular }}
             placeholder="Buscar receita..."
-            placeholderTextColor="#6E6580"
+            placeholderTextColor="#6E6382"
             value={search}
             onChangeText={setSearch}
           />
@@ -62,9 +64,12 @@ export default function RecipesScreen() {
                   selectedTags.includes(t.value) ? "bg-violet-500" : "bg-surface-card border border-surface-border"
                 }`}
               >
-                <Text className={`text-xs font-bold ${
-                  selectedTags.includes(t.value) ? "text-white" : "text-text-muted"
-                }`}>
+                <Text
+                  className={`text-xs ${
+                    selectedTags.includes(t.value) ? "text-white" : "text-text-muted"
+                  }`}
+                  style={{ fontFamily: font.semibold }}
+                >
                   {t.label}
                 </Text>
               </Pressable>
@@ -99,7 +104,7 @@ export default function RecipesScreen() {
             ListEmptyComponent={
               <View className="items-center py-10">
                 <Text className="text-3xl mb-3">🍽️</Text>
-                <Text className="text-text-muted text-sm">Nenhuma receita encontrada</Text>
+                <Text className="text-text-muted text-sm" style={{ fontFamily: font.regular }}>Nenhuma receita encontrada</Text>
               </View>
             }
           />

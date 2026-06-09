@@ -4,6 +4,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../lib/auth/provider";
 import { supabase } from "../../lib/supabase/client";
+import { font } from "../../lib/design/tokens";
+import { DisplayHeading } from "../../components/ui/DisplayHeading";
 
 interface Notification {
   id: string;
@@ -85,18 +87,24 @@ export default function NotificationsScreen() {
         <View className="flex-row items-center justify-between px-6 pt-6 pb-4">
           <View className="flex-row items-center gap-3">
             <Pressable onPress={() => router.back()}>
-              <Text className="text-text-muted font-medium text-sm">← Voltar</Text>
+              <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>
+                ← Voltar
+              </Text>
             </Pressable>
-            <Text className="text-xl font-black text-text-primary">Notificacoes</Text>
+            <DisplayHeading size="sm">Notificações.</DisplayHeading>
             {unreadCount > 0 ? (
               <View className="bg-violet-500 rounded-full px-2 py-0.5">
-                <Text className="text-white text-[10px] font-black">{unreadCount}</Text>
+                <Text className="text-white text-[10px]" style={{ fontFamily: font.bold }}>
+                  {unreadCount}
+                </Text>
               </View>
             ) : null}
           </View>
           {unreadCount > 0 ? (
             <Pressable onPress={() => markAllRead.mutate()}>
-              <Text className="text-violet-400 text-xs font-bold">Marcar todas como lidas</Text>
+              <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>
+                Marcar todas como lidas
+              </Text>
             </Pressable>
           ) : null}
         </View>
@@ -108,7 +116,9 @@ export default function NotificationsScreen() {
         ) : !notifications?.length ? (
           <View className="flex-1 items-center justify-center">
             <Text className="text-4xl mb-3">🔔</Text>
-            <Text className="text-text-muted text-sm">Nenhuma notificacao ainda.</Text>
+            <Text className="text-text-muted text-sm" style={{ fontFamily: font.regular }}>
+              Nenhuma notificacao ainda.
+            </Text>
           </View>
         ) : (
           <FlatList
@@ -122,20 +132,29 @@ export default function NotificationsScreen() {
                   !item.is_read ? "bg-surface-card" : ""
                 }`}
               >
-                <View className="w-10 h-10 bg-surface-elevated rounded-xl items-center justify-center mt-0.5">
+                <View className="w-10 h-10 bg-surface-elevated rounded-2xl items-center justify-center mt-0.5">
                   <Text className="text-lg">{typeIcons[item.type] ?? typeIcons.default}</Text>
                 </View>
                 <View className="flex-1">
                   <View className="flex-row items-center gap-2">
-                    <Text className="text-sm font-bold text-text-primary flex-1">{item.title}</Text>
+                    <Text
+                      className="text-sm text-text-primary flex-1"
+                      style={{ fontFamily: item.is_read ? font.medium : font.semibold }}
+                    >
+                      {item.title}
+                    </Text>
                     {!item.is_read ? (
                       <View className="w-2 h-2 bg-violet-500 rounded-full" />
                     ) : null}
                   </View>
                   {item.body ? (
-                    <Text className="text-xs text-text-muted mt-1 leading-4">{item.body}</Text>
+                    <Text className="text-xs text-text-secondary mt-1 leading-4" style={{ fontFamily: font.regular }}>
+                      {item.body}
+                    </Text>
                   ) : null}
-                  <Text className="text-[10px] text-text-muted mt-1.5">{timeAgo(item.created_at)}</Text>
+                  <Text className="text-[10px] text-text-muted mt-1.5" style={{ fontFamily: font.regular }}>
+                    {timeAgo(item.created_at)}
+                  </Text>
                 </View>
               </Pressable>
             )}

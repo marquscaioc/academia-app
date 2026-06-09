@@ -11,11 +11,15 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../../../lib/auth/provider";
 import { supabase } from "../../../lib/supabase/client";
 import { useCreateDietPlan, useAddMeal, useAddMealItem } from "../../../hooks/mutations/useDietMutations";
 import { Avatar } from "../../../components/ui/Avatar";
+import { DisplayHeading } from "../../../components/ui/DisplayHeading";
+import { SectionLabel } from "../../../components/ui/SectionLabel";
+import { font, amethystGlow } from "../../../lib/design/tokens";
 
 interface MealDraft {
   name: string;
@@ -174,11 +178,11 @@ export default function DietBuilderScreen() {
     <SafeAreaView className="flex-1 bg-dark-400">
       <View className="flex-row items-center justify-between px-6 pt-6 pb-4 border-b border-surface-border">
         <Pressable onPress={() => router.back()}>
-          <Text className="text-text-muted font-medium text-sm">← Cancelar</Text>
+          <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>← Cancelar</Text>
         </Pressable>
-        <Text className="text-lg font-black text-text-primary">
-          {step === "student" ? "Selecionar Aluno" : step === "macros" ? "Metas Nutricionais" : step === "meals" ? "Refeicoes" : "Revisar"}
-        </Text>
+        <DisplayHeading size="sm">
+          {step === "student" ? "Selecionar aluno" : step === "macros" ? "Metas nutricionais" : step === "meals" ? "Refeicoes" : "Revisar"}
+        </DisplayHeading>
         <View className="w-16" />
       </View>
 
@@ -196,15 +200,15 @@ export default function DietBuilderScreen() {
           data={students}
           keyExtractor={(item) => item.id}
           contentContainerClassName="px-6 py-4 gap-2"
-          ListEmptyComponent={<View className="items-center py-10"><Text className="text-text-muted text-sm">Nenhum aluno. Convide um primeiro.</Text></View>}
+          ListEmptyComponent={<View className="items-center py-10"><Text className="text-text-muted text-sm" style={{ fontFamily: font.regular }}>Nenhum aluno. Convide um primeiro.</Text></View>}
           renderItem={({ item }) => (
             <Pressable
               onPress={() => { setStudentId(item.student?.id); setStudentName(item.student?.full_name ?? ""); setStep("macros"); }}
-              className="bg-surface-card border border-surface-border rounded-2xl p-4 flex-row items-center gap-4 active:bg-surface-hover"
+              className="bg-surface-card border border-surface-border rounded-3xl p-4 flex-row items-center gap-4 active:bg-surface-hover"
             >
               <Avatar uri={item.student?.avatar_url} name={item.student?.full_name} size="lg" />
-              <Text className="text-sm font-bold text-text-primary flex-1">{item.student?.full_name}</Text>
-              <Text className="text-violet-400 text-xs font-bold">Selecionar →</Text>
+              <Text className="text-[15px] text-text-primary flex-1" style={{ fontFamily: font.semibold }}>{item.student?.full_name}</Text>
+              <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>Selecionar →</Text>
             </Pressable>
           )}
         />
@@ -213,44 +217,51 @@ export default function DietBuilderScreen() {
       {/* Step: Macros */}
       {step === "macros" ? (
         <ScrollView className="flex-1 px-6 py-6" keyboardShouldPersistTaps="handled">
-          <View className="bg-surface-card border border-surface-border rounded-2xl p-4 flex-row items-center gap-3 mb-6">
-            <Text className="text-sm text-text-muted">Aluno:</Text>
-            <Text className="text-sm font-bold text-violet-400">{studentName}</Text>
+          <View className="bg-surface-card border border-surface-border rounded-3xl p-4 flex-row items-center gap-3 mb-6">
+            <Text className="text-sm text-text-muted" style={{ fontFamily: font.regular }}>Aluno:</Text>
+            <Text className="text-sm text-violet-400" style={{ fontFamily: font.semibold }}>{studentName}</Text>
           </View>
 
           <View className="gap-5">
             <View>
-              <Text className="text-xs font-bold text-text-muted mb-2 ml-1 tracking-wider uppercase">Nome do plano *</Text>
-              <TextInput className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary" placeholder="Ex: Cutting - Abril 2026" placeholderTextColor="#6E6580" value={planName} onChangeText={setPlanName} />
+              <SectionLabel className="mb-2 ml-1">Nome do plano *</SectionLabel>
+              <TextInput className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary" placeholder="Ex: Cutting - Abril 2026" placeholderTextColor="#6E6382" value={planName} onChangeText={setPlanName} style={{ fontFamily: font.regular }} />
             </View>
 
-            <Text className="text-xs font-bold text-text-muted tracking-wider uppercase">Metas diarias (opcional)</Text>
+            <SectionLabel>Metas diarias (opcional)</SectionLabel>
             <View className="flex-row gap-3">
               <View className="flex-1">
-                <Text className="text-[10px] text-text-muted mb-1 text-center">Calorias</Text>
-                <TextInput className="bg-surface-card border border-surface-border rounded-xl px-3 py-3 text-sm text-text-primary text-center" placeholder="2000" placeholderTextColor="#6E6580" value={targetCal} onChangeText={setTargetCal} keyboardType="number-pad" />
+                <Text className="text-[10px] text-text-muted mb-1 text-center" style={{ fontFamily: font.medium }}>Calorias</Text>
+                <TextInput className="bg-surface-card/80 border border-surface-border rounded-2xl px-3 py-3 text-sm text-text-primary text-center" placeholder="2000" placeholderTextColor="#6E6382" value={targetCal} onChangeText={setTargetCal} keyboardType="number-pad" style={{ fontFamily: font.regular }} />
               </View>
               <View className="flex-1">
-                <Text className="text-[10px] text-violet-400 mb-1 text-center">Prot (g)</Text>
-                <TextInput className="bg-surface-card border border-surface-border rounded-xl px-3 py-3 text-sm text-text-primary text-center" placeholder="150" placeholderTextColor="#6E6580" value={targetProt} onChangeText={setTargetProt} keyboardType="decimal-pad" />
+                <Text className="text-[10px] text-violet-400 mb-1 text-center" style={{ fontFamily: font.medium }}>Prot (g)</Text>
+                <TextInput className="bg-surface-card/80 border border-surface-border rounded-2xl px-3 py-3 text-sm text-text-primary text-center" placeholder="150" placeholderTextColor="#6E6382" value={targetProt} onChangeText={setTargetProt} keyboardType="decimal-pad" style={{ fontFamily: font.regular }} />
               </View>
               <View className="flex-1">
-                <Text className="text-[10px] text-fuchsia-400 mb-1 text-center">Carb (g)</Text>
-                <TextInput className="bg-surface-card border border-surface-border rounded-xl px-3 py-3 text-sm text-text-primary text-center" placeholder="200" placeholderTextColor="#6E6580" value={targetCarb} onChangeText={setTargetCarb} keyboardType="decimal-pad" />
+                <Text className="text-[10px] text-fuchsia-400 mb-1 text-center" style={{ fontFamily: font.medium }}>Carb (g)</Text>
+                <TextInput className="bg-surface-card/80 border border-surface-border rounded-2xl px-3 py-3 text-sm text-text-primary text-center" placeholder="200" placeholderTextColor="#6E6382" value={targetCarb} onChangeText={setTargetCarb} keyboardType="decimal-pad" style={{ fontFamily: font.regular }} />
               </View>
               <View className="flex-1">
-                <Text className="text-[10px] text-warning-500 mb-1 text-center">Gord (g)</Text>
-                <TextInput className="bg-surface-card border border-surface-border rounded-xl px-3 py-3 text-sm text-text-primary text-center" placeholder="60" placeholderTextColor="#6E6580" value={targetFat} onChangeText={setTargetFat} keyboardType="decimal-pad" />
+                <Text className="text-[10px] text-warning-500 mb-1 text-center" style={{ fontFamily: font.medium }}>Gord (g)</Text>
+                <TextInput className="bg-surface-card/80 border border-surface-border rounded-2xl px-3 py-3 text-sm text-text-primary text-center" placeholder="60" placeholderTextColor="#6E6382" value={targetFat} onChangeText={setTargetFat} keyboardType="decimal-pad" style={{ fontFamily: font.regular }} />
               </View>
             </View>
 
             <Pressable
               onPress={() => planName.trim() && setStep("meals")}
               disabled={!planName.trim()}
-              className={`rounded-2xl items-center mt-6 ${planName.trim() ? "bg-violet-500 active:bg-violet-600" : "bg-surface-border"}`}
-              style={{ paddingVertical: 18 }}
+              className="mt-6 rounded-2xl overflow-hidden"
+              style={planName.trim() ? amethystGlow : undefined}
             >
-              <Text className={`font-black text-base tracking-wide uppercase ${planName.trim() ? "text-white" : "text-text-muted"}`}>Proximo: Refeicoes</Text>
+              <LinearGradient
+                colors={planName.trim() ? ["#781BB6", "#C636E0"] : ["#2E2740", "#2E2740"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0.9 }}
+                style={{ paddingVertical: 18, alignItems: "center" }}
+              >
+                <Text className={planName.trim() ? "text-white" : "text-text-muted"} style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Proximo: Refeicoes</Text>
+              </LinearGradient>
             </Pressable>
           </View>
         </ScrollView>
@@ -261,38 +272,41 @@ export default function DietBuilderScreen() {
         <ScrollView className="flex-1 px-6 py-4" keyboardShouldPersistTaps="handled">
           <View className="gap-4">
             {meals.map((meal, mi) => (
-              <View key={mi} className="bg-surface-card border border-surface-border rounded-2xl p-4">
+              <View key={mi} className="bg-surface-card border border-surface-border rounded-3xl p-4">
                 <View className="flex-row items-center justify-between mb-3">
                   <View className="flex-row items-center gap-2 flex-1">
                     <TextInput
-                      className="text-base font-bold text-text-primary flex-1"
+                      className="text-base text-text-primary flex-1"
                       value={meal.name}
                       onChangeText={(v) => { const u = [...meals]; u[mi].name = v; setMeals(u); }}
                       placeholder="Nome da refeicao"
-                      placeholderTextColor="#6E6580"
+                      placeholderTextColor="#6E6382"
+                      style={{ fontFamily: font.semibold }}
                     />
                     <TextInput
                       className="text-xs text-text-muted w-14 text-center bg-dark-300 rounded-lg py-1"
                       value={meal.targetTime}
                       onChangeText={(v) => { const u = [...meals]; u[mi].targetTime = v; setMeals(u); }}
                       placeholder="12:00"
-                      placeholderTextColor="#6E6580"
+                      placeholderTextColor="#6E6382"
+                      style={{ fontFamily: font.regular }}
                     />
                   </View>
                   <Pressable onPress={() => removeMeal(mi)} className="ml-2">
-                    <Text className="text-danger-500 text-xs font-bold">✕</Text>
+                    <Text className="text-danger-500 text-xs" style={{ fontFamily: font.semibold }}>✕</Text>
                   </Pressable>
                 </View>
 
                 {meal.items.map((item, ii) => (
-                  <View key={ii} className="mb-3 bg-dark-300 rounded-xl p-3">
+                  <View key={ii} className="mb-3 bg-dark-300 rounded-2xl p-3">
                     <View className="flex-row items-center gap-2 mb-2">
                       <TextInput
-                        className="flex-1 text-sm text-text-primary bg-surface-elevated rounded-lg px-3 py-2"
+                        className="flex-1 text-sm text-text-primary bg-surface-elevated rounded-xl px-3 py-2"
                         value={item.food_name}
                         onChangeText={(v) => updateItem(mi, ii, "food_name", v)}
                         placeholder="Alimento (ex: Arroz integral)"
-                        placeholderTextColor="#6E6580"
+                        placeholderTextColor="#6E6382"
+                        style={{ fontFamily: font.regular }}
                       />
                       <Pressable onPress={() => removeItem(mi, ii)}>
                         <Text className="text-danger-500 text-xs">✕</Text>
@@ -300,57 +314,64 @@ export default function DietBuilderScreen() {
                     </View>
                     <View className="flex-row gap-2">
                       <View className="flex-1">
-                        <Text className="text-[8px] text-text-muted mb-0.5 text-center">Qtd</Text>
-                        <TextInput className="bg-surface-elevated rounded-lg px-2 py-1.5 text-xs text-text-primary text-center" value={item.quantity} onChangeText={(v) => updateItem(mi, ii, "quantity", v)} placeholder="100" placeholderTextColor="#6E6580" keyboardType="decimal-pad" />
+                        <Text className="text-[8px] text-text-muted mb-0.5 text-center" style={{ fontFamily: font.medium }}>Qtd</Text>
+                        <TextInput className="bg-surface-elevated rounded-xl px-2 py-1.5 text-xs text-text-primary text-center" value={item.quantity} onChangeText={(v) => updateItem(mi, ii, "quantity", v)} placeholder="100" placeholderTextColor="#6E6382" keyboardType="decimal-pad" style={{ fontFamily: font.regular }} />
                       </View>
                       <View className="w-12">
-                        <Text className="text-[8px] text-text-muted mb-0.5 text-center">Un.</Text>
-                        <TextInput className="bg-surface-elevated rounded-lg px-2 py-1.5 text-xs text-text-primary text-center" value={item.unit} onChangeText={(v) => updateItem(mi, ii, "unit", v)} placeholder="g" placeholderTextColor="#6E6580" />
+                        <Text className="text-[8px] text-text-muted mb-0.5 text-center" style={{ fontFamily: font.medium }}>Un.</Text>
+                        <TextInput className="bg-surface-elevated rounded-xl px-2 py-1.5 text-xs text-text-primary text-center" value={item.unit} onChangeText={(v) => updateItem(mi, ii, "unit", v)} placeholder="g" placeholderTextColor="#6E6382" style={{ fontFamily: font.regular }} />
                       </View>
                       <View className="flex-1">
-                        <Text className="text-[8px] text-text-muted mb-0.5 text-center">kcal</Text>
-                        <TextInput className="bg-surface-elevated rounded-lg px-2 py-1.5 text-xs text-text-primary text-center" value={item.calories} onChangeText={(v) => updateItem(mi, ii, "calories", v)} placeholder="0" placeholderTextColor="#6E6580" keyboardType="decimal-pad" />
+                        <Text className="text-[8px] text-text-muted mb-0.5 text-center" style={{ fontFamily: font.medium }}>kcal</Text>
+                        <TextInput className="bg-surface-elevated rounded-xl px-2 py-1.5 text-xs text-text-primary text-center" value={item.calories} onChangeText={(v) => updateItem(mi, ii, "calories", v)} placeholder="0" placeholderTextColor="#6E6382" keyboardType="decimal-pad" style={{ fontFamily: font.regular }} />
                       </View>
                       <View className="flex-1">
-                        <Text className="text-[8px] text-violet-400 mb-0.5 text-center">P</Text>
-                        <TextInput className="bg-surface-elevated rounded-lg px-2 py-1.5 text-xs text-text-primary text-center" value={item.protein_g} onChangeText={(v) => updateItem(mi, ii, "protein_g", v)} placeholder="0" placeholderTextColor="#6E6580" keyboardType="decimal-pad" />
+                        <Text className="text-[8px] text-violet-400 mb-0.5 text-center" style={{ fontFamily: font.medium }}>P</Text>
+                        <TextInput className="bg-surface-elevated rounded-xl px-2 py-1.5 text-xs text-text-primary text-center" value={item.protein_g} onChangeText={(v) => updateItem(mi, ii, "protein_g", v)} placeholder="0" placeholderTextColor="#6E6382" keyboardType="decimal-pad" style={{ fontFamily: font.regular }} />
                       </View>
                       <View className="flex-1">
-                        <Text className="text-[8px] text-fuchsia-400 mb-0.5 text-center">C</Text>
-                        <TextInput className="bg-surface-elevated rounded-lg px-2 py-1.5 text-xs text-text-primary text-center" value={item.carbs_g} onChangeText={(v) => updateItem(mi, ii, "carbs_g", v)} placeholder="0" placeholderTextColor="#6E6580" keyboardType="decimal-pad" />
+                        <Text className="text-[8px] text-fuchsia-400 mb-0.5 text-center" style={{ fontFamily: font.medium }}>C</Text>
+                        <TextInput className="bg-surface-elevated rounded-xl px-2 py-1.5 text-xs text-text-primary text-center" value={item.carbs_g} onChangeText={(v) => updateItem(mi, ii, "carbs_g", v)} placeholder="0" placeholderTextColor="#6E6382" keyboardType="decimal-pad" style={{ fontFamily: font.regular }} />
                       </View>
                       <View className="flex-1">
-                        <Text className="text-[8px] text-warning-500 mb-0.5 text-center">G</Text>
-                        <TextInput className="bg-surface-elevated rounded-lg px-2 py-1.5 text-xs text-text-primary text-center" value={item.fat_g} onChangeText={(v) => updateItem(mi, ii, "fat_g", v)} placeholder="0" placeholderTextColor="#6E6580" keyboardType="decimal-pad" />
+                        <Text className="text-[8px] text-warning-500 mb-0.5 text-center" style={{ fontFamily: font.medium }}>G</Text>
+                        <TextInput className="bg-surface-elevated rounded-xl px-2 py-1.5 text-xs text-text-primary text-center" value={item.fat_g} onChangeText={(v) => updateItem(mi, ii, "fat_g", v)} placeholder="0" placeholderTextColor="#6E6382" keyboardType="decimal-pad" style={{ fontFamily: font.regular }} />
                       </View>
                     </View>
                   </View>
                 ))}
 
                 <Pressable onPress={() => addItemToMeal(mi)} className="border border-dashed border-surface-border rounded-xl py-2.5 items-center">
-                  <Text className="text-text-muted text-xs font-bold">+ Adicionar alimento</Text>
+                  <Text className="text-text-muted text-xs" style={{ fontFamily: font.semibold }}>+ Adicionar alimento</Text>
                 </Pressable>
               </View>
             ))}
 
             <Pressable onPress={addNewMeal} className="border border-dashed border-violet-500/30 rounded-2xl py-4 items-center">
-              <Text className="text-violet-400 font-bold text-sm">+ Nova refeicao</Text>
+              <Text className="text-violet-400 text-sm" style={{ fontFamily: font.semibold }}>+ Nova refeicao</Text>
             </Pressable>
 
             {/* Macro totals bar */}
-            <View className="bg-surface-elevated rounded-2xl p-4 flex-row justify-around">
-              <View className="items-center"><Text className="text-lg font-black text-text-primary">{Math.round(totalMacros.cal)}</Text><Text className="text-[9px] text-text-muted">kcal</Text></View>
-              <View className="items-center"><Text className="text-lg font-black text-violet-400">{Math.round(totalMacros.prot)}g</Text><Text className="text-[9px] text-text-muted">Prot</Text></View>
-              <View className="items-center"><Text className="text-lg font-black text-fuchsia-400">{Math.round(totalMacros.carb)}g</Text><Text className="text-[9px] text-text-muted">Carb</Text></View>
-              <View className="items-center"><Text className="text-lg font-black text-warning-500">{Math.round(totalMacros.fat)}g</Text><Text className="text-[9px] text-text-muted">Gord</Text></View>
+            <View className="bg-surface-elevated rounded-3xl p-4 flex-row justify-around">
+              <View className="items-center"><Text className="text-lg text-text-primary" style={{ fontFamily: font.bold }}>{Math.round(totalMacros.cal)}</Text><Text className="text-[9px] text-text-muted" style={{ fontFamily: font.regular }}>kcal</Text></View>
+              <View className="items-center"><Text className="text-lg text-violet-400" style={{ fontFamily: font.bold }}>{Math.round(totalMacros.prot)}g</Text><Text className="text-[9px] text-text-muted" style={{ fontFamily: font.regular }}>Prot</Text></View>
+              <View className="items-center"><Text className="text-lg text-fuchsia-400" style={{ fontFamily: font.bold }}>{Math.round(totalMacros.carb)}g</Text><Text className="text-[9px] text-text-muted" style={{ fontFamily: font.regular }}>Carb</Text></View>
+              <View className="items-center"><Text className="text-lg text-warning-500" style={{ fontFamily: font.bold }}>{Math.round(totalMacros.fat)}g</Text><Text className="text-[9px] text-text-muted" style={{ fontFamily: font.regular }}>Gord</Text></View>
             </View>
 
             <Pressable
               onPress={() => setStep("review")}
-              className="bg-violet-500 rounded-2xl items-center active:bg-violet-600 mb-6"
-              style={{ paddingVertical: 18 }}
+              className="rounded-2xl overflow-hidden mb-6"
+              style={amethystGlow}
             >
-              <Text className="text-white font-black text-base tracking-wide uppercase">Revisar Plano</Text>
+              <LinearGradient
+                colors={["#781BB6", "#C636E0"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0.9 }}
+                style={{ paddingVertical: 18, alignItems: "center" }}
+              >
+                <Text className="text-white" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Revisar plano</Text>
+              </LinearGradient>
             </Pressable>
           </View>
         </ScrollView>
@@ -359,31 +380,31 @@ export default function DietBuilderScreen() {
       {/* Step: Review */}
       {step === "review" ? (
         <ScrollView className="flex-1 px-6 py-6">
-          <View className="bg-surface-card border border-violet-500/20 rounded-2xl p-5 mb-4">
-            <Text className="text-xs text-violet-400 font-bold uppercase tracking-wider mb-2">Plano Alimentar</Text>
-            <Text className="text-xl font-black text-text-primary">{planName}</Text>
-            <Text className="text-xs text-text-muted mt-1">Para: {studentName}</Text>
+          <View className="bg-surface-card border border-violet-500/20 rounded-3xl p-5 mb-4">
+            <SectionLabel tone="accent" className="mb-2">Plano alimentar</SectionLabel>
+            <DisplayHeading size="sm">{planName}</DisplayHeading>
+            <Text className="text-xs text-text-muted mt-1" style={{ fontFamily: font.regular }}>Para: {studentName}</Text>
           </View>
 
           {targetCal ? (
-            <View className="bg-surface-elevated rounded-2xl p-4 flex-row justify-around mb-4">
-              <View className="items-center"><Text className="text-sm font-black text-text-primary">{targetCal}</Text><Text className="text-[9px] text-text-muted">Meta kcal</Text></View>
-              {targetProt ? <View className="items-center"><Text className="text-sm font-black text-violet-400">{targetProt}g</Text><Text className="text-[9px] text-text-muted">Prot</Text></View> : null}
-              {targetCarb ? <View className="items-center"><Text className="text-sm font-black text-fuchsia-400">{targetCarb}g</Text><Text className="text-[9px] text-text-muted">Carb</Text></View> : null}
-              {targetFat ? <View className="items-center"><Text className="text-sm font-black text-warning-500">{targetFat}g</Text><Text className="text-[9px] text-text-muted">Gord</Text></View> : null}
+            <View className="bg-surface-elevated rounded-3xl p-4 flex-row justify-around mb-4">
+              <View className="items-center"><Text className="text-sm text-text-primary" style={{ fontFamily: font.bold }}>{targetCal}</Text><Text className="text-[9px] text-text-muted" style={{ fontFamily: font.regular }}>Meta kcal</Text></View>
+              {targetProt ? <View className="items-center"><Text className="text-sm text-violet-400" style={{ fontFamily: font.bold }}>{targetProt}g</Text><Text className="text-[9px] text-text-muted" style={{ fontFamily: font.regular }}>Prot</Text></View> : null}
+              {targetCarb ? <View className="items-center"><Text className="text-sm text-fuchsia-400" style={{ fontFamily: font.bold }}>{targetCarb}g</Text><Text className="text-[9px] text-text-muted" style={{ fontFamily: font.regular }}>Carb</Text></View> : null}
+              {targetFat ? <View className="items-center"><Text className="text-sm text-warning-500" style={{ fontFamily: font.bold }}>{targetFat}g</Text><Text className="text-[9px] text-text-muted" style={{ fontFamily: font.regular }}>Gord</Text></View> : null}
             </View>
           ) : null}
 
           {meals.map((meal, mi) => (
-            <View key={mi} className="bg-surface-card border border-surface-border rounded-2xl p-4 mb-3">
+            <View key={mi} className="bg-surface-card border border-surface-border rounded-3xl p-4 mb-3">
               <View className="flex-row items-center justify-between mb-2">
-                <Text className="text-sm font-bold text-text-primary">{meal.name}</Text>
-                <Text className="text-xs text-text-muted">{meal.targetTime}</Text>
+                <Text className="text-sm text-text-primary" style={{ fontFamily: font.semibold }}>{meal.name}</Text>
+                <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>{meal.targetTime}</Text>
               </View>
               {meal.items.filter((i) => i.food_name.trim()).map((item, ii) => (
                 <View key={ii} className="flex-row justify-between py-1.5 border-b border-surface-border last:border-0">
-                  <Text className="text-xs text-text-secondary flex-1">{item.food_name}</Text>
-                  <Text className="text-xs text-text-muted">{item.quantity}{item.unit} · {item.calories || 0}kcal</Text>
+                  <Text className="text-xs text-text-secondary flex-1" style={{ fontFamily: font.regular }}>{item.food_name}</Text>
+                  <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>{item.quantity}{item.unit} · {item.calories || 0}kcal</Text>
                 </View>
               ))}
             </View>
@@ -391,14 +412,22 @@ export default function DietBuilderScreen() {
 
           <View className="flex-row gap-3 mt-4 mb-10">
             <Pressable onPress={() => setStep("meals")} className="flex-1 border border-surface-border rounded-2xl py-4 items-center">
-              <Text className="text-text-secondary font-bold text-sm">Editar</Text>
+              <Text className="text-text-secondary text-sm" style={{ fontFamily: font.semibold }}>Editar</Text>
             </Pressable>
             <Pressable
               onPress={handleSave}
               disabled={saving}
-              className={`flex-1 rounded-2xl py-4 items-center ${saving ? "bg-violet-700" : "bg-violet-500 active:bg-violet-600"}`}
+              className="flex-1 rounded-2xl overflow-hidden"
+              style={amethystGlow}
             >
-              {saving ? <ActivityIndicator color="#FFFFFF" /> : <Text className="text-white font-black text-sm uppercase">Salvar Plano</Text>}
+              <LinearGradient
+                colors={saving ? ["#50107D", "#86169E"] : ["#781BB6", "#C636E0"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0.9 }}
+                style={{ paddingVertical: 16, alignItems: "center" }}
+              >
+                {saving ? <ActivityIndicator color="#FFFFFF" /> : <Text className="text-white text-sm" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Salvar plano</Text>}
+              </LinearGradient>
             </Pressable>
           </View>
         </ScrollView>

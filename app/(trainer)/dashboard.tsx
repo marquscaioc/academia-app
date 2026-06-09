@@ -6,17 +6,17 @@ import { useAuth } from "../../lib/auth/provider";
 import { supabase } from "../../lib/supabase/client";
 import { useStudentAdherenceList } from "../../hooks/queries/useStudentAdherence";
 import { StudentAdherenceRow } from "../../components/trainer/StudentAdherenceRow";
+import { DisplayHeading, SectionLabel } from "../../components/ui";
+import { font } from "../../lib/design/tokens";
 
 function MetricCard({ value, label, icon, color }: { value: string; label: string; icon: string; color: string }) {
   return (
-    <View className="flex-1 bg-surface-card border border-surface-border rounded-2xl p-5">
+    <View className="flex-1 bg-surface-card border border-surface-border rounded-3xl p-5">
       <View className="flex-row items-center justify-between mb-3">
         <Text className="text-2xl">{icon}</Text>
-        <Text className={`text-3xl font-black ${color}`}>{value}</Text>
+        <Text className={`text-4xl ${color}`} style={{ fontFamily: font.display, letterSpacing: -0.5 }}>{value}</Text>
       </View>
-      <Text className="text-xs text-text-muted uppercase tracking-wider font-bold">
-        {label}
-      </Text>
+      <SectionLabel>{label}</SectionLabel>
     </View>
   );
 }
@@ -54,12 +54,10 @@ export default function TrainerDashboardScreen() {
         {/* Header */}
         <View className="flex-row items-center justify-between mb-8">
           <View>
-            <Text className="text-xs text-violet-400 font-bold uppercase tracking-widest mb-1">
+            <SectionLabel tone="accent" className="mb-2">
               Painel do Personal
-            </Text>
-            <Text className="text-3xl font-black text-text-primary tracking-tight">
-              {firstName}
-            </Text>
+            </SectionLabel>
+            <DisplayHeading size="lg">{firstName}</DisplayHeading>
           </View>
           <Link href="/profile/edit" asChild>
             <Pressable className="w-10 h-10 bg-surface-card border border-surface-border rounded-xl items-center justify-center">
@@ -70,29 +68,29 @@ export default function TrainerDashboardScreen() {
 
         {/* CTA: Criar plano */}
         <Link href="/(trainer)/workout-builder" asChild>
-          <Pressable className="bg-violet-500 rounded-2xl p-5 mb-6 flex-row items-center gap-4 active:bg-violet-600">
-            <View className="w-12 h-12 bg-dark-400/20 rounded-xl items-center justify-center">
+          <Pressable className="bg-violet-500 rounded-3xl p-5 mb-6 flex-row items-center gap-4 active:bg-violet-600">
+            <View className="w-12 h-12 bg-dark-400/20 rounded-2xl items-center justify-center">
               <Text className="text-2xl">📝</Text>
             </View>
             <View className="flex-1">
-              <Text className="text-white font-black text-base">Criar Plano de Treino</Text>
-              <Text className="text-white/70 text-xs mt-0.5">Selecione aluno, exercicios e configure</Text>
+              <Text className="text-white text-base" style={{ fontFamily: font.semibold, letterSpacing: 0.3 }}>Criar plano de treino</Text>
+              <Text className="text-white/70 text-xs mt-0.5" style={{ fontFamily: font.regular }}>Selecione aluno, exercicios e configure</Text>
             </View>
-            <Text className="text-white font-black text-lg">→</Text>
+            <Text className="text-white text-lg" style={{ fontFamily: font.bold }}>→</Text>
           </Pressable>
         </Link>
 
         {/* CTA: Criar dieta */}
         <Link href="/(trainer)/diet-builder" asChild>
-          <Pressable className="bg-surface-card border border-fuchsia-400/30 rounded-2xl p-5 mb-6 flex-row items-center gap-4 active:bg-surface-hover">
-            <View className="w-12 h-12 bg-fuchsia-400/20 rounded-xl items-center justify-center">
+          <Pressable className="bg-surface-card border border-fuchsia-400/30 rounded-3xl p-5 mb-6 flex-row items-center gap-4 active:bg-surface-hover">
+            <View className="w-12 h-12 bg-fuchsia-400/20 rounded-2xl items-center justify-center">
               <Text className="text-2xl">🥗</Text>
             </View>
             <View className="flex-1">
-              <Text className="text-fuchsia-400 font-black text-base">Criar Plano Alimentar</Text>
-              <Text className="text-text-muted text-xs mt-0.5">Refeicoes, macros e metas para o aluno</Text>
+              <Text className="text-fuchsia-400 text-base" style={{ fontFamily: font.semibold, letterSpacing: 0.3 }}>Criar plano alimentar</Text>
+              <Text className="text-text-muted text-xs mt-0.5" style={{ fontFamily: font.regular }}>Refeicoes, macros e metas para o aluno</Text>
             </View>
-            <Text className="text-fuchsia-400 font-black text-lg">→</Text>
+            <Text className="text-fuchsia-400 text-lg" style={{ fontFamily: font.bold }}>→</Text>
           </Pressable>
         </Link>
 
@@ -104,7 +102,7 @@ export default function TrainerDashboardScreen() {
 
         {/* Ferramentas (acesso direto, sobretudo no mobile onde nao ha sidebar) */}
         <View className="mb-6">
-          <Text className="text-xs text-text-muted uppercase tracking-wider font-bold mb-3">Ferramentas</Text>
+          <SectionLabel className="mb-3">Ferramentas</SectionLabel>
           <View className="flex-row flex-wrap gap-2">
             {[
               { href: "/(trainer)/checkins/builder", icon: "📋", label: "Check-ins" },
@@ -117,7 +115,7 @@ export default function TrainerDashboardScreen() {
               <Link key={t.href} href={t.href as never} asChild>
                 <Pressable className="bg-surface-card border border-surface-border rounded-2xl px-4 py-3 flex-row items-center gap-2 active:bg-surface-hover">
                   <Text className="text-lg">{t.icon}</Text>
-                  <Text className="text-xs font-bold text-text-secondary">{t.label}</Text>
+                  <Text className="text-xs text-text-secondary" style={{ fontFamily: font.semibold }}>{t.label}</Text>
                 </Pressable>
               </Link>
             ))}
@@ -127,12 +125,10 @@ export default function TrainerDashboardScreen() {
         {/* Getting started */}
         <View className="bg-surface-card border border-surface-border rounded-3xl p-6 mb-6">
           <View className="flex-row items-center gap-3 mb-5">
-            <View className="w-10 h-10 bg-violet-500/20 rounded-xl items-center justify-center">
+            <View className="w-10 h-10 bg-violet-500/20 rounded-2xl items-center justify-center">
               <Text className="text-lg">🚀</Text>
             </View>
-            <Text className="text-lg font-black text-text-primary">
-              Primeiros passos
-            </Text>
+            <DisplayHeading size="sm">Primeiros passos</DisplayHeading>
           </View>
 
           {[
@@ -145,15 +141,15 @@ export default function TrainerDashboardScreen() {
               <View className={`w-8 h-8 rounded-lg items-center justify-center ${
                 item.done ? "bg-violet-500" : "bg-surface-elevated"
               }`}>
-                <Text className={`text-xs font-black ${
+                <Text className={`text-xs ${
                   item.done ? "text-white" : "text-text-muted"
-                }`}>
+                }`} style={{ fontFamily: font.bold }}>
                   {item.step}
                 </Text>
               </View>
               <Text className={`text-sm flex-1 ${
                 item.done ? "text-text-muted line-through" : "text-text-secondary"
-              }`}>
+              }`} style={{ fontFamily: font.regular }}>
                 {item.text}
               </Text>
             </View>
@@ -162,9 +158,7 @@ export default function TrainerDashboardScreen() {
 
         {/* Student adherence alerts */}
         <View className="mb-6">
-          <Text className="text-xs text-text-muted uppercase tracking-wider font-bold mb-4">
-            Adesao dos Alunos
-          </Text>
+          <SectionLabel className="mb-4">Adesao dos Alunos</SectionLabel>
           {adherenceList && adherenceList.length > 0 ? (
             <View className="gap-2">
               {adherenceList.map((s) => (
@@ -181,7 +175,7 @@ export default function TrainerDashboardScreen() {
           ) : (
             <View className="bg-surface-card border border-surface-border rounded-3xl p-6 items-center">
               <Text className="text-3xl mb-3">📈</Text>
-              <Text className="text-sm text-text-muted text-center">
+              <Text className="text-sm text-text-muted text-center" style={{ fontFamily: font.regular }}>
                 Dados de adesao aparecerão aqui{"\n"}quando seus alunos comecarem a treinar.
               </Text>
             </View>
@@ -193,7 +187,7 @@ export default function TrainerDashboardScreen() {
           onPress={signOut}
           className="border border-surface-border rounded-2xl py-3.5 items-center mb-10 active:bg-surface-hover"
         >
-          <Text className="text-text-muted font-bold text-sm">Sair da conta</Text>
+          <Text className="text-text-muted text-sm" style={{ fontFamily: font.semibold }}>Sair da conta</Text>
         </Pressable>
       </ScrollView>
     </SafeAreaView>

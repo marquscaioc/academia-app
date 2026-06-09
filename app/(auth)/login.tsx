@@ -66,7 +66,7 @@ export default function LoginScreen() {
           </Animated.View>
           <Animated.View entering={FadeInDown.delay(200).springify()} className="items-center mb-12">
             <DisplayHeading size="2xl" tone="primary">
-              Academia.
+              Projeto Gaab.
             </DisplayHeading>
             <Text
               className="text-fuchsia-400 mt-2"

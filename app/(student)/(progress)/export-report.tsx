@@ -1,3 +1,4 @@
+import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useState } from "react";
 import { ActivityIndicator, Alert, Pressable, ScrollView, Text, View } from "react-native";
@@ -10,6 +11,9 @@ import { useAdherenceScore } from "../../../hooks/queries/useCheckins";
 import { useWorkoutSessions } from "../../../hooks/queries/useWorkouts";
 import { exportProgressReport, ProgressReportData } from "../../../lib/utils/exportPdf";
 import { Card } from "../../../components/ui/Card";
+import { DisplayHeading } from "../../../components/ui/DisplayHeading";
+import { SectionLabel } from "../../../components/ui/SectionLabel";
+import { amethystGlow, font } from "../../../lib/design/tokens";
 
 type Period = 30 | 60 | 90;
 
@@ -94,28 +98,29 @@ export default function ExportReportScreen() {
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1 px-6 pt-6">
-        <View className="flex-row items-center justify-between mb-6">
+        <View className="flex-row items-center justify-between mb-2">
           <Pressable onPress={() => router.back()}>
-            <Text className="text-violet-400 font-medium">← Voltar</Text>
+            <Text className="text-violet-400" style={{ fontFamily: font.medium }}>← Voltar</Text>
           </Pressable>
-          <Text className="text-lg font-black text-text-primary">Exportar Relatorio</Text>
           <View className="w-16" />
         </View>
+        <DisplayHeading size="xl" className="mb-8">Exportar relatorio.</DisplayHeading>
 
         {/* Period selector */}
-        <Text className="text-xs font-bold text-text-muted mb-3 ml-1 tracking-wider uppercase">
-          Periodo
-        </Text>
+        <SectionLabel className="mb-3 ml-1">Periodo</SectionLabel>
         <View className="flex-row gap-2 mb-6">
           {periods.map((p) => (
             <Pressable
               key={p.value}
               onPress={() => setPeriod(p.value)}
-              className={`flex-1 py-3 rounded-xl items-center ${
+              className={`flex-1 py-3 rounded-2xl items-center ${
                 period === p.value ? "bg-violet-500" : "bg-surface-card border border-surface-border"
               }`}
             >
-              <Text className={`text-sm font-bold ${period === p.value ? "text-white" : "text-text-muted"}`}>
+              <Text
+                className={`text-sm ${period === p.value ? "text-white" : "text-text-muted"}`}
+                style={{ fontFamily: font.semibold }}
+              >
                 {p.label}
               </Text>
             </Pressable>
@@ -124,27 +129,27 @@ export default function ExportReportScreen() {
 
         {/* Preview */}
         <Card variant="outlined" className="mb-4">
-          <Text className="text-sm font-bold text-text-primary mb-3">O relatorio incluira:</Text>
+          <Text className="text-sm text-text-primary mb-3" style={{ fontFamily: font.semibold }}>O relatorio incluira:</Text>
           <View className="gap-2">
             <View className="flex-row justify-between">
-              <Text className="text-sm text-text-muted">Treinos realizados</Text>
-              <Text className="text-sm font-bold text-text-primary">{filteredSessions.length}</Text>
+              <Text className="text-sm text-text-muted" style={{ fontFamily: font.regular }}>Treinos realizados</Text>
+              <Text className="text-sm text-text-primary" style={{ fontFamily: font.bold }}>{filteredSessions.length}</Text>
             </View>
             <View className="flex-row justify-between">
-              <Text className="text-sm text-text-muted">Medidas registradas</Text>
-              <Text className="text-sm font-bold text-text-primary">{filteredMeasurements.length}</Text>
+              <Text className="text-sm text-text-muted" style={{ fontFamily: font.regular }}>Medidas registradas</Text>
+              <Text className="text-sm text-text-primary" style={{ fontFamily: font.bold }}>{filteredMeasurements.length}</Text>
             </View>
             <View className="flex-row justify-between">
-              <Text className="text-sm text-text-muted">Recordes pessoais</Text>
-              <Text className="text-sm font-bold text-text-primary">{prs?.length ?? 0}</Text>
+              <Text className="text-sm text-text-muted" style={{ fontFamily: font.regular }}>Recordes pessoais</Text>
+              <Text className="text-sm text-text-primary" style={{ fontFamily: font.bold }}>{prs?.length ?? 0}</Text>
             </View>
             <View className="flex-row justify-between">
-              <Text className="text-sm text-text-muted">Fotos de progresso</Text>
-              <Text className="text-sm font-bold text-text-primary">{filteredPhotos.length}</Text>
+              <Text className="text-sm text-text-muted" style={{ fontFamily: font.regular }}>Fotos de progresso</Text>
+              <Text className="text-sm text-text-primary" style={{ fontFamily: font.bold }}>{filteredPhotos.length}</Text>
             </View>
             <View className="flex-row justify-between">
-              <Text className="text-sm text-text-muted">Score de adesao</Text>
-              <Text className="text-sm font-bold text-violet-400">{Math.round(adherence?.overallScore ?? 0)}%</Text>
+              <Text className="text-sm text-text-muted" style={{ fontFamily: font.regular }}>Score de adesao</Text>
+              <Text className="text-sm text-violet-400" style={{ fontFamily: font.bold }}>{Math.round(adherence?.overallScore ?? 0)}%</Text>
             </View>
           </View>
         </Card>
@@ -152,13 +157,23 @@ export default function ExportReportScreen() {
         <Pressable
           onPress={handleExport}
           disabled={exporting}
-          className={`rounded-2xl items-center py-4 mb-10 ${exporting ? "bg-violet-700" : "bg-violet-500 active:bg-violet-600"}`}
+          className="mb-10 rounded-2xl overflow-hidden"
+          style={amethystGlow}
         >
-          {exporting ? (
-            <ActivityIndicator color="#FFFFFF" />
-          ) : (
-            <Text className="text-white font-black text-base tracking-wide">Exportar PDF</Text>
-          )}
+          <LinearGradient
+            colors={exporting ? ["#50107D", "#86169E"] : ["#781BB6", "#C636E0"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0.9 }}
+            className="items-center py-4"
+          >
+            {exporting ? (
+              <ActivityIndicator color="#FFFFFF" />
+            ) : (
+              <Text className="text-white text-base" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>
+                Exportar PDF
+              </Text>
+            )}
+          </LinearGradient>
         </Pressable>
       </ScrollView>
     </SafeAreaView>

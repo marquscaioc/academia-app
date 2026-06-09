@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../../../lib/auth/provider";
 import { supabase } from "../../../lib/supabase/client";
 import { Avatar } from "../../../components/ui/Avatar";
+import { font } from "../../../lib/design/tokens";
 
 interface WhatsAppNotification {
   id: string;
@@ -50,9 +51,9 @@ export default function WhatsAppMessagesScreen() {
       <View className="flex-1">
         <View className="px-6 pt-6 pb-4 flex-row items-center justify-between">
           <Pressable onPress={() => router.back()}>
-            <Text className="text-violet-400 font-medium">← Voltar</Text>
+            <Text className="text-violet-400" style={{ fontFamily: font.medium }}>← Voltar</Text>
           </Pressable>
-          <Text className="text-lg font-black text-text-primary">Mensagens Enviadas</Text>
+          <Text className="text-xl text-text-primary" style={{ fontFamily: font.display }}>Mensagens enviadas</Text>
           <View className="w-16" />
         </View>
 
@@ -63,8 +64,8 @@ export default function WhatsAppMessagesScreen() {
         ) : !messages?.length ? (
           <View className="flex-1 items-center justify-center px-8">
             <Text className="text-3xl mb-3">💬</Text>
-            <Text className="text-base font-bold text-text-primary">Nenhuma mensagem</Text>
-            <Text className="text-sm text-text-muted text-center mt-2">
+            <Text className="text-lg text-text-primary" style={{ fontFamily: font.display }}>Nenhuma mensagem</Text>
+            <Text className="text-sm text-text-muted text-center mt-2" style={{ fontFamily: font.regular }}>
               Mensagens enviadas via WhatsApp aparecerao aqui.
             </Text>
           </View>
@@ -80,7 +81,7 @@ export default function WhatsAppMessagesScreen() {
               const studentInfo = item.student as unknown as { full_name: string; avatar_url: string | null } | null;
 
               return (
-                <View className="bg-surface-card border border-surface-border rounded-2xl p-4">
+                <View className="bg-surface-card border border-surface-border rounded-3xl p-4">
                   <View className="flex-row items-center gap-3 mb-2">
                     {studentInfo ? (
                       <Avatar uri={studentInfo.avatar_url} name={studentInfo.full_name} size="sm" />
@@ -88,23 +89,23 @@ export default function WhatsAppMessagesScreen() {
                       <Text className="text-lg">{icon}</Text>
                     )}
                     <View className="flex-1">
-                      <Text className="text-sm font-bold text-text-primary">
+                      <Text className="text-sm text-text-primary" style={{ fontFamily: font.semibold }}>
                         {studentInfo?.full_name ?? "Aluno"}
                       </Text>
-                      <Text className="text-[10px] text-text-muted">
+                      <Text className="text-[10px] uppercase text-text-muted" style={{ fontFamily: font.semibold, letterSpacing: 1.5 }}>
                         {templateType.replace(/_/g, " ")}
                       </Text>
                     </View>
                     <View className={`px-2 py-0.5 rounded-full ${sent ? "bg-success-500/15" : "bg-danger-500/15"}`}>
-                      <Text className={`text-[10px] font-bold ${sent ? "text-success-500" : "text-danger-500"}`}>
+                      <Text className={`text-[10px] ${sent ? "text-success-500" : "text-danger-500"}`} style={{ fontFamily: font.bold }}>
                         {sent ? "Enviado" : "Falhou"}
                       </Text>
                     </View>
                   </View>
-                  <Text className="text-xs text-text-secondary" numberOfLines={2}>
+                  <Text className="text-xs text-text-secondary" numberOfLines={2} style={{ fontFamily: font.regular }}>
                     {item.body}
                   </Text>
-                  <Text className="text-[10px] text-text-muted mt-2">
+                  <Text className="text-[10px] text-text-muted mt-2" style={{ fontFamily: font.regular }}>
                     {new Date(item.created_at).toLocaleString("pt-BR")}
                   </Text>
                 </View>

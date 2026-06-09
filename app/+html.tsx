@@ -16,7 +16,7 @@ export default function Root({ children }: PropsWithChildren) {
           content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover"
         />
 
-        <title>Academia — Treino e dieta com seu personal</title>
+        <title>Projeto Gaab — Treino e dieta com seu personal</title>
         <meta
           name="description"
           content="Plataforma para personal trainers e nutricionistas acompanharem alunos: treinos, dietas, check-ins, desafios e progresso em um só lugar."
@@ -24,7 +24,7 @@ export default function Root({ children }: PropsWithChildren) {
         <meta name="theme-color" content="#0B0811" />
 
         {/* Open Graph / social preview */}
-        <meta property="og:title" content="Academia — Treino e dieta com seu personal" />
+        <meta property="og:title" content="Projeto Gaab — Treino e dieta com seu personal" />
         <meta
           property="og:description"
           content="Treinos, dietas, check-ins e progresso com seu personal trainer."

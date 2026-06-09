@@ -14,6 +14,7 @@ import { useSendMessage, useMarkConversationRead } from "../../../hooks/mutation
 import { useRealtimeMessages } from "../../../lib/realtime/useRealtimeMessages";
 import { MessageBubble } from "../../../components/chat/MessageBubble";
 import { ChatInput } from "../../../components/chat/ChatInput";
+import { font } from "../../../lib/design/tokens";
 
 export default function ChatScreen() {
   const { conversationId } = useLocalSearchParams<{ conversationId: string }>();
@@ -45,7 +46,7 @@ export default function ChatScreen() {
       {/* Header */}
       <View className="flex-row items-center gap-3 px-4 py-3 border-b border-surface-border">
         <Pressable onPress={() => router.back()} className="px-2 py-1">
-          <Text className="text-violet-400 font-bold text-sm">← Voltar</Text>
+          <Text className="text-violet-400 text-sm" style={{ fontFamily: font.semibold }}>← Voltar</Text>
         </Pressable>
       </View>
 
@@ -80,7 +81,7 @@ export default function ChatScreen() {
           }}
           ListEmptyComponent={
             <View className="flex-1 items-center justify-center py-20">
-              <Text className="text-text-muted text-sm">Nenhuma mensagem ainda. Diga oi!</Text>
+              <Text className="text-text-muted text-sm" style={{ fontFamily: font.regular }}>Nenhuma mensagem ainda. Diga oi!</Text>
             </View>
           }
         />

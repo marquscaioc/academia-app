@@ -6,7 +6,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import { supabase } from "../../lib/supabase/client";
 import { useAuth } from "../../lib/auth/provider";
-import { Logo } from "../../components/ui";
+import { Logo, DisplayHeading, SectionLabel } from "../../components/ui";
+import { font, amethystGlow } from "../../lib/design/tokens";
 
 type Role = "student" | "trainer";
 
@@ -74,31 +75,17 @@ export default function OnboardingScreen() {
           <Logo size="lg" />
         </Animated.View>
         <Animated.View entering={FadeInDown.delay(80).springify()} className="mb-10">
-          <Text
-            className="text-fuchsia-400 mb-3"
-            style={{ fontFamily: "Nunito_700Bold", fontSize: 10, letterSpacing: 3 }}
-          >
+          <SectionLabel tone="accent" className="mb-3">
             PASSO FINAL · ONBOARDING
-          </Text>
-          <Text
-            className="text-text-muted"
-            style={{ fontFamily: "Nunito_400Regular_Italic", fontSize: 26, letterSpacing: -0.5 }}
-          >
+          </SectionLabel>
+          <DisplayHeading size="md" italic tone="muted">
             Escolha
-          </Text>
-          <Text
-            className="text-text-primary mt-1"
-            style={{
-              fontFamily: "Nunito_900Black",
-              fontSize: 40,
-              lineHeight: 40,
-              letterSpacing: -2,
-            }}
-          >
-            UM PERFIL.
-          </Text>
-          <Text className="text-sm text-text-muted mt-4 leading-6" style={{ fontFamily: "Nunito_400Regular" }}>
-            Você é <Text style={{ fontFamily: "Nunito_700Bold" }} className="text-text-primary">aluno</Text> ou <Text style={{ fontFamily: "Nunito_700Bold" }} className="text-text-primary">personal</Text> — não os dois. Essa decisão define toda a experiência no app.
+          </DisplayHeading>
+          <DisplayHeading size="lg" className="mt-1">
+            um perfil.
+          </DisplayHeading>
+          <Text className="text-sm text-text-muted mt-4 leading-6" style={{ fontFamily: font.regular }}>
+            Você é <Text style={{ fontFamily: font.semibold }} className="text-text-primary">aluno</Text> ou <Text style={{ fontFamily: font.semibold }} className="text-text-primary">personal</Text> — não os dois. Essa decisão define toda a experiência no app.
           </Text>
         </Animated.View>
 
@@ -116,9 +103,10 @@ export default function OnboardingScreen() {
               <View key={role.value}>
                 <Pressable
                   onPress={() => setSelectedRole(role.value)}
-                  className={`rounded-3xl p-6 border-2 ${
+                  style={isSelected ? amethystGlow : undefined}
+                  className={`rounded-3xl p-6 border ${
                     isSelected
-                      ? "bg-surface-elevated border-violet-500"
+                      ? "bg-surface-elevated border-violet-400/80"
                       : otherSelected
                         ? "bg-surface-card border-surface-border opacity-40"
                         : "bg-surface-card border-surface-border active:border-surface-hover"
@@ -133,13 +121,13 @@ export default function OnboardingScreen() {
                     <View className="flex-1">
                       <Text
                         className={isSelected ? "text-violet-300" : "text-text-primary"}
-                        style={{ fontFamily: "Nunito_900Black", fontSize: 20, letterSpacing: -0.5 }}
+                        style={{ fontFamily: font.bold, fontSize: 20, letterSpacing: -0.3 }}
                       >
-                        {role.label.toUpperCase()}
+                        {role.label}
                       </Text>
                       <Text
                         className="text-xs text-text-muted mt-1"
-                        style={{ fontFamily: "Nunito_400Regular" }}
+                        style={{ fontFamily: font.regular }}
                       >
                         {role.description}
                       </Text>
@@ -148,7 +136,7 @@ export default function OnboardingScreen() {
                       isSelected ? "border-violet-500 bg-violet-500" : "border-surface-border"
                     }`}>
                       {isSelected ? (
-                        <Text className="text-white text-xs" style={{ fontFamily: "Nunito_700Bold" }}>✓</Text>
+                        <Text className="text-white text-xs" style={{ fontFamily: font.semibold }}>✓</Text>
                       ) : null}
                     </View>
                   </View>
@@ -160,7 +148,7 @@ export default function OnboardingScreen() {
                       }`}>
                         <Text
                           className={isSelected ? "text-violet-300" : "text-text-muted"}
-                          style={{ fontFamily: "Nunito_500Medium", fontSize: 11 }}
+                          style={{ fontFamily: font.medium, fontSize: 11 }}
                         >
                           {f}
                         </Text>
@@ -172,10 +160,10 @@ export default function OnboardingScreen() {
                 {idx === 0 ? (
                   <View className="flex-row items-center my-4">
                     <View className="flex-1 h-px bg-surface-border" />
-                    <View className="mx-4 w-10 h-10 rounded-full bg-dark-300 border-2 border-surface-border items-center justify-center">
+                    <View className="mx-4 w-10 h-10 rounded-full bg-dark-300 border border-surface-border items-center justify-center">
                       <Text
                         className="text-text-muted"
-                        style={{ fontFamily: "Nunito_900Black", fontSize: 12, letterSpacing: 1 }}
+                        style={{ fontFamily: font.bold, fontSize: 12, letterSpacing: 1 }}
                       >
                         OU
                       </Text>
@@ -192,12 +180,13 @@ export default function OnboardingScreen() {
           onPress={handleContinue}
           disabled={!selectedRole || loading}
           className="rounded-2xl overflow-hidden mt-8"
+          style={selectedRole ? amethystGlow : undefined}
         >
           {selectedRole ? (
             <LinearGradient
               colors={loading ? ["#50107D", "#86169E"] : ["#781BB6", "#C636E0"]}
               start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
+              end={{ x: 1, y: 0.9 }}
               style={{ paddingVertical: 18, alignItems: "center" }}
             >
               {loading ? (
@@ -205,9 +194,9 @@ export default function OnboardingScreen() {
               ) : (
                 <Text
                   className="text-white text-base"
-                  style={{ fontFamily: "Nunito_700Bold", letterSpacing: 2 }}
+                  style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
                 >
-                  CONTINUAR →
+                  Continuar →
                 </Text>
               )}
             </LinearGradient>
@@ -215,9 +204,9 @@ export default function OnboardingScreen() {
             <View className="bg-surface-border items-center" style={{ paddingVertical: 18 }}>
               <Text
                 className="text-text-muted text-base"
-                style={{ fontFamily: "Nunito_700Bold", letterSpacing: 2 }}
+                style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
               >
-                SELECIONE UM PERFIL
+                Selecione um perfil
               </Text>
             </View>
           )}

@@ -1,4 +1,4 @@
-// WhatsApp message templates for Academia App
+// WhatsApp message templates for Projeto Gaab
 
 export interface MessageTemplate {
   id: string;
@@ -17,7 +17,7 @@ export const MESSAGE_TEMPLATES: MessageTemplate[] = [
     description: "Enviada quando aluno e conectado ao trainer",
     category: "admin",
     buildMessage: ({ name }) =>
-      `Oi ${name}! 👋\n\nBem-vindo ao Academia App! Aqui voce vai receber lembretes de treino, check-ins e novidades do seu personal.\n\n💪 Bora comecar!`,
+      `Oi ${name}! 👋\n\nBem-vindo ao Projeto Gaab! Aqui voce vai receber lembretes de treino, check-ins e novidades do seu personal.\n\n💪 Bora comecar!`,
   },
   {
     id: "checkin_reminder",

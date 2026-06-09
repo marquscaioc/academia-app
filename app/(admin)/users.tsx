@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "../../lib/supabase/client";
 import { Avatar } from "../../components/ui/Avatar";
+import { font } from "../../lib/design/tokens";
 
 type RoleFilter = "all" | "student" | "trainer" | "admin";
 
@@ -39,12 +40,18 @@ export default function AdminUsersScreen() {
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
       <View className="flex-1 px-6 pt-6">
-        <Text className="text-2xl font-black text-text-primary mb-4">Usuarios</Text>
+        <Text
+          className="text-3xl text-text-primary mb-4"
+          style={{ fontFamily: font.display }}
+        >
+          Usuarios
+        </Text>
 
         <TextInput
-          className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-3 text-sm text-text-primary mb-4"
+          className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary mb-4"
+          style={{ fontFamily: font.regular }}
           placeholder="Buscar por nome..."
-          placeholderTextColor="#6E6580"
+          placeholderTextColor="#6E6382"
           value={search}
           onChangeText={setSearch}
         />
@@ -58,7 +65,10 @@ export default function AdminUsersScreen() {
                 roleFilter === f.value ? "bg-violet-500" : "bg-surface-card border border-surface-border"
               }`}
             >
-              <Text className={`text-xs font-bold ${roleFilter === f.value ? "text-white" : "text-text-muted"}`}>
+              <Text
+                className={`text-xs ${roleFilter === f.value ? "text-white" : "text-text-muted"}`}
+                style={{ fontFamily: font.semibold }}
+              >
                 {f.label}
               </Text>
             </Pressable>
@@ -79,8 +89,16 @@ export default function AdminUsersScreen() {
               <View className="bg-surface-card border border-surface-border rounded-2xl p-4 flex-row items-center gap-4">
                 <Avatar uri={item.avatar_url} name={item.full_name} size="md" />
                 <View className="flex-1">
-                  <Text className="text-sm font-bold text-text-primary">{item.full_name}</Text>
-                  <Text className="text-xs text-text-muted mt-0.5">
+                  <Text
+                    className="text-sm text-text-primary"
+                    style={{ fontFamily: font.semibold }}
+                  >
+                    {item.full_name}
+                  </Text>
+                  <Text
+                    className="text-xs text-text-muted mt-0.5"
+                    style={{ fontFamily: font.regular }}
+                  >
                     {new Date(item.created_at).toLocaleDateString("pt-BR")}
                   </Text>
                 </View>
@@ -88,10 +106,13 @@ export default function AdminUsersScreen() {
                   item.role === "trainer" ? "bg-ice-400/10" :
                   item.role === "admin" ? "bg-danger-500/10" : "bg-violet-500/10"
                 }`}>
-                  <Text className={`text-[10px] font-bold capitalize ${
-                    item.role === "trainer" ? "text-ice-400" :
-                    item.role === "admin" ? "text-danger-500" : "text-violet-400"
-                  }`}>
+                  <Text
+                    className={`text-[10px] capitalize ${
+                      item.role === "trainer" ? "text-ice-400" :
+                      item.role === "admin" ? "text-danger-500" : "text-violet-400"
+                    }`}
+                    style={{ fontFamily: font.bold }}
+                  >
                     {item.role}
                   </Text>
                 </View>

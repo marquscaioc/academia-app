@@ -47,7 +47,7 @@ export function Logo({ size = "md", withWordmark = false, wordmarkTone = "primar
             letterSpacing: -0.5,
           }}
         >
-          Academia
+          Projeto Gaab
         </Text>
         <Text
           className="text-fuchsia-400"

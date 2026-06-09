@@ -9,10 +9,13 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
 import * as ImagePicker from "expo-image-picker";
 import { useAuth } from "../../lib/auth/provider";
 import { supabase } from "../../lib/supabase/client";
 import { Avatar } from "../../components/ui/Avatar";
+import { DisplayHeading } from "../../components/ui/DisplayHeading";
+import { font, amethystGlow } from "../../lib/design/tokens";
 
 export default function EditProfileScreen() {
   const { user, profile, refreshProfile } = useAuth();
@@ -91,9 +94,9 @@ export default function EditProfileScreen() {
       <ScrollView className="flex-1 px-6 pt-6" keyboardShouldPersistTaps="handled">
         <View className="flex-row items-center justify-between mb-8">
           <Pressable onPress={() => router.back()}>
-            <Text className="text-text-muted font-medium text-sm">← Cancelar</Text>
+            <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>← Cancelar</Text>
           </Pressable>
-          <Text className="text-lg font-black text-text-primary">Editar Perfil</Text>
+          <DisplayHeading size="sm">Editar perfil.</DisplayHeading>
           <View className="w-16" />
         </View>
 
@@ -104,80 +107,83 @@ export default function EditProfileScreen() {
             {uploadingAvatar ? (
               <ActivityIndicator color="#a78bfa" />
             ) : (
-              <Text className="text-violet-400 font-bold text-sm">Trocar foto</Text>
+              <Text className="text-violet-400 text-sm" style={{ fontFamily: font.semibold }}>Trocar foto</Text>
             )}
           </Pressable>
         </View>
 
         {error ? (
           <View className="bg-danger-500/10 border border-danger-500/20 rounded-2xl p-4 mb-5">
-            <Text className="text-danger-500 text-center text-sm font-medium">{error}</Text>
+            <Text className="text-danger-500 text-center text-sm" style={{ fontFamily: font.medium }}>{error}</Text>
           </View>
         ) : null}
 
         <View className="gap-5">
           <View>
-            <Text className="text-xs font-bold text-text-muted mb-2 ml-1 tracking-wider uppercase">
+            <Text className="text-[10px] text-text-muted mb-2 ml-1 uppercase" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>
               Nome completo *
             </Text>
             <TextInput
-              className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary"
+              className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
               value={fullName}
               onChangeText={setFullName}
               placeholder="Seu nome"
-              placeholderTextColor="#6E6580"
+              placeholderTextColor="#6E6382"
+              style={{ fontFamily: font.regular }}
             />
           </View>
 
           <View>
-            <Text className="text-xs font-bold text-text-muted mb-2 ml-1 tracking-wider uppercase">
+            <Text className="text-[10px] text-text-muted mb-2 ml-1 uppercase" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>
               Nome de exibicao
             </Text>
             <TextInput
-              className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary"
+              className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
               value={displayName}
               onChangeText={setDisplayName}
               placeholder="Como quer ser chamado"
-              placeholderTextColor="#6E6580"
+              placeholderTextColor="#6E6382"
+              style={{ fontFamily: font.regular }}
             />
           </View>
 
           <View>
-            <Text className="text-xs font-bold text-text-muted mb-2 ml-1 tracking-wider uppercase">
+            <Text className="text-[10px] text-text-muted mb-2 ml-1 uppercase" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>
               Bio
             </Text>
             <TextInput
-              className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary"
+              className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
               value={bio}
               onChangeText={setBio}
               placeholder="Conte um pouco sobre voce"
-              placeholderTextColor="#6E6580"
+              placeholderTextColor="#6E6382"
               multiline
-              style={{ minHeight: 100, textAlignVertical: "top" }}
+              style={{ minHeight: 100, textAlignVertical: "top", fontFamily: font.regular }}
             />
           </View>
 
-          <View className="bg-surface-card border border-surface-border rounded-2xl p-4 mt-2">
+          <View className="bg-surface-card border border-surface-border rounded-3xl p-4 mt-2">
             <View className="flex-row justify-between">
-              <Text className="text-xs text-text-muted">Email</Text>
-              <Text className="text-xs text-text-secondary">{user?.email}</Text>
+              <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>Email</Text>
+              <Text className="text-xs text-text-secondary" style={{ fontFamily: font.regular }}>{user?.email}</Text>
             </View>
             <View className="flex-row justify-between mt-3">
-              <Text className="text-xs text-text-muted">Perfil</Text>
-              <Text className="text-xs text-violet-400 font-bold capitalize">{profile?.role}</Text>
+              <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>Perfil</Text>
+              <Text className="text-xs text-violet-400 capitalize" style={{ fontFamily: font.semibold }}>{profile?.role}</Text>
             </View>
           </View>
 
           {/* WhatsApp */}
-          <View className="bg-surface-card border border-surface-border rounded-2xl p-4 mt-4">
-            <Text className="text-xs font-bold text-text-muted mb-3 uppercase tracking-wider">WhatsApp</Text>
+          <View className="bg-surface-card border border-surface-border rounded-3xl p-4 mt-4">
+            <Text className="text-[10px] text-text-muted mb-3 uppercase" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>WhatsApp</Text>
             <TextInput
-              className="bg-dark-300 border border-surface-border rounded-xl px-4 py-3 text-sm text-text-primary mb-3"
+              className="bg-dark-300 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary mb-3"
               placeholder="55 11 99999-9999"
-              placeholderTextColor="#6E6580"
+              placeholderTextColor="#6E6382"
               keyboardType="phone-pad"
               value={whatsapp}
               onChangeText={setWhatsapp}
+              style={{ fontFamily: font.regular }}
             />
             <Pressable
               onPress={async () => {
@@ -197,7 +203,7 @@ export default function EditProfileScreen() {
               }}
               className="flex-row items-center justify-between"
             >
-              <Text className="text-sm text-text-secondary">Receber lembretes via WhatsApp</Text>
+              <Text className="text-sm text-text-secondary" style={{ fontFamily: font.regular }}>Receber lembretes via WhatsApp</Text>
               <View className={`w-12 h-7 rounded-full p-0.5 ${profile?.whatsapp_opt_in ? "bg-violet-500" : "bg-surface-border"}`}>
                 <View className={`w-6 h-6 bg-white rounded-full ${profile?.whatsapp_opt_in ? "ml-auto" : ""}`} />
               </View>
@@ -205,8 +211,8 @@ export default function EditProfileScreen() {
           </View>
 
           {/* Notification preferences */}
-          <View className="bg-surface-card border border-surface-border rounded-2xl p-4 mt-4">
-            <Text className="text-xs font-bold text-text-muted mb-3 uppercase tracking-wider">Notificacoes</Text>
+          <View className="bg-surface-card border border-surface-border rounded-3xl p-4 mt-4">
+            <Text className="text-[10px] text-text-muted mb-3 uppercase" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>Notificacoes</Text>
             <Pressable
               onPress={async () => {
                 if (!user) return;
@@ -220,7 +226,7 @@ export default function EditProfileScreen() {
               }}
               className="flex-row items-center justify-between"
             >
-              <Text className="text-sm text-text-secondary flex-1 mr-3">
+              <Text className="text-sm text-text-secondary flex-1 mr-3" style={{ fontFamily: font.regular }}>
                 Notificar quando quem sigo treinar
               </Text>
               <View className={`w-12 h-7 rounded-full p-0.5 ${profile?.notify_follower_workouts ? "bg-violet-500" : "bg-surface-border"}`}>
@@ -232,18 +238,23 @@ export default function EditProfileScreen() {
           <Pressable
             onPress={handleSave}
             disabled={loading}
-            className={`rounded-2xl items-center mt-4 mb-10 ${
-              loading ? "bg-violet-700" : "bg-violet-500 active:bg-violet-600"
-            }`}
-            style={{ paddingVertical: 18 }}
+            className="rounded-2xl overflow-hidden mt-4 mb-10"
+            style={amethystGlow}
           >
-            {loading ? (
-              <ActivityIndicator color="#FFFFFF" />
-            ) : (
-              <Text className="text-white font-black text-base tracking-wide uppercase">
-                Salvar
-              </Text>
-            )}
+            <LinearGradient
+              colors={loading ? ["#50107D", "#86169E"] : ["#781BB6", "#C636E0"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0.9 }}
+              style={{ paddingVertical: 18, alignItems: "center" }}
+            >
+              {loading ? (
+                <ActivityIndicator color="#FFFFFF" />
+              ) : (
+                <Text className="text-white text-base" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>
+                  Salvar
+                </Text>
+              )}
+            </LinearGradient>
           </Pressable>
         </View>
       </ScrollView>

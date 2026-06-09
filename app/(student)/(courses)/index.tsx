@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../../lib/auth/provider";
 import { useCourses } from "../../../hooks/queries/useCourses";
 import { EmptyState } from "../../../components/ui/EmptyState";
+import { font } from "../../../lib/design/tokens";
 
 export default function StudentCoursesScreen() {
   const { user } = useAuth();
@@ -13,7 +14,7 @@ export default function StudentCoursesScreen() {
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1 px-6 pt-6">
-        <Text className="text-2xl font-black text-text-primary mb-6">Aulas</Text>
+        <Text className="text-3xl text-text-primary mb-6" style={{ fontFamily: font.display }}>Aulas</Text>
 
         {isLoading ? (
           <View className="items-center py-10"><ActivityIndicator size="large" color="#781BB6" /></View>
@@ -29,7 +30,7 @@ export default function StudentCoursesScreen() {
               <Pressable
                 key={c.id}
                 onPress={() => router.push(`/(student)/(courses)/${c.id}`)}
-                className="bg-surface-card border border-surface-border rounded-2xl p-5 active:bg-surface-hover"
+                className="bg-surface-card border border-surface-border rounded-3xl p-5 active:bg-surface-hover"
               >
                 <View className="flex-row gap-4">
                   {c.cover_url ? (
@@ -40,15 +41,15 @@ export default function StudentCoursesScreen() {
                     </View>
                   )}
                   <View className="flex-1">
-                    <Text className="text-base font-bold text-text-primary mb-1">{c.title}</Text>
+                    <Text className="text-base text-text-primary mb-1" style={{ fontFamily: font.semibold }}>{c.title}</Text>
                     {c.description ? (
-                      <Text className="text-xs text-text-muted mb-2" numberOfLines={2}>{c.description}</Text>
+                      <Text className="text-xs text-text-muted mb-2" numberOfLines={2} style={{ fontFamily: font.regular }}>{c.description}</Text>
                     ) : null}
-                    <Text className="text-xs text-violet-400 font-bold">
+                    <Text className="text-xs text-violet-400" style={{ fontFamily: font.bold }}>
                       {c.lessons?.length ?? 0} aula{(c.lessons?.length ?? 0) !== 1 ? "s" : ""}
                     </Text>
                     {c.trainer?.full_name ? (
-                      <Text className="text-[10px] text-text-muted mt-1">por {c.trainer.full_name}</Text>
+                      <Text className="text-[10px] text-text-muted mt-1" style={{ fontFamily: font.regular }}>por {c.trainer.full_name}</Text>
                     ) : null}
                   </View>
                 </View>

@@ -2,10 +2,13 @@ import { Link, router } from "expo-router";
 import { useState } from "react";
 import { ActivityIndicator, FlatList, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
 import { useChallenges } from "../../hooks/queries/useChallenges";
 import { ChallengeCard } from "../../components/social/ChallengeCard";
+import { DisplayHeading } from "../../components/ui/DisplayHeading";
 import { EmptyState } from "../../components/ui/EmptyState";
 import { useAuth } from "../../lib/auth/provider";
+import { amethystGlow, font } from "../../lib/design/tokens";
 
 type Filter = "active" | "upcoming" | "ended";
 
@@ -21,33 +24,53 @@ export default function ChallengesScreen() {
   const { data: challenges, isLoading } = useChallenges({ filter, userId: user?.id, role });
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-dark-400">
       <View className="flex-1 px-6 pt-6">
-        <View className="flex-row items-center justify-between mb-4">
-          <Pressable onPress={() => router.back()}>
-            <Text className="text-primary-600 font-medium">Voltar</Text>
+        <View className="flex-row items-center justify-between mb-2">
+          <Pressable onPress={() => router.back()} className="py-1">
+            <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>
+              ← Voltar
+            </Text>
           </Pressable>
-          <Text className="text-xl font-bold text-gray-900">Desafios</Text>
           <Link href="/challenges/create" asChild>
-            <Pressable className="bg-primary-600 px-3 py-1.5 rounded-lg">
-              <Text className="text-white font-semibold text-xs">+ Novo</Text>
+            <Pressable className="rounded-full overflow-hidden" style={amethystGlow}>
+              <LinearGradient
+                colors={["#781BB6", "#C636E0"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0.9 }}
+                style={{ paddingHorizontal: 16, paddingVertical: 8 }}
+              >
+                <Text
+                  className="text-white text-xs"
+                  style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
+                >
+                  + Novo
+                </Text>
+              </LinearGradient>
             </Pressable>
           </Link>
         </View>
 
-        <View className="flex-row gap-2 mb-4">
+        <DisplayHeading size="md" className="mb-6">
+          Desafios.
+        </DisplayHeading>
+
+        <View className="flex-row gap-2 mb-5">
           {filters.map((f) => (
             <Pressable
               key={f.value}
               onPress={() => setFilter(f.value)}
-              className={`px-4 py-2 rounded-full ${
-                filter === f.value ? "bg-primary-600" : "bg-gray-100"
+              className={`px-4 py-2 rounded-full border ${
+                filter === f.value
+                  ? "bg-violet-500 border-violet-400/80"
+                  : "bg-surface-card/80 border-surface-border"
               }`}
             >
               <Text
-                className={`text-sm font-medium ${
-                  filter === f.value ? "text-white" : "text-gray-600"
+                className={`text-sm ${
+                  filter === f.value ? "text-white" : "text-text-secondary"
                 }`}
+                style={{ fontFamily: font.semibold }}
               >
                 {f.label}
               </Text>
@@ -57,7 +80,7 @@ export default function ChallengesScreen() {
 
         {isLoading ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" color="#6366f1" />
+            <ActivityIndicator size="large" color="#9B40D8" />
           </View>
         ) : !challenges?.length ? (
           <EmptyState

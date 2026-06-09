@@ -20,7 +20,7 @@ export default function PrivacyScreen() {
         <Text className="text-4xl text-text-primary mb-1" style={{ fontFamily: font.display, letterSpacing: -0.4 }}>
           Política de Privacidade
         </Text>
-        <Text className="text-xs text-text-muted mb-4" style={{ fontFamily: font.regular }}>Academia · Última atualização: a definir</Text>
+        <Text className="text-xs text-text-muted mb-4" style={{ fontFamily: font.regular }}>Projeto Gaab · Última atualização: a definir</Text>
 
         <View className="bg-warning-500/10 border border-warning-500/30 rounded-2xl p-3.5 mb-4">
           <Text className="text-xs text-warning-500" style={{ fontFamily: font.semibold }}>
@@ -29,7 +29,7 @@ export default function PrivacyScreen() {
         </View>
 
         <P>
-          Esta Política descreve como o Academia App ("nós") coleta, usa e protege seus dados pessoais, em
+          Esta Política descreve como o Projeto Gaab ("nós") coleta, usa e protege seus dados pessoais, em
           conformidade com a Lei Geral de Proteção de Dados (LGPD — Lei 13.709/2018).
         </P>
 

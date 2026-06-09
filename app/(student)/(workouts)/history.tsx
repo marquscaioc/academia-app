@@ -3,6 +3,7 @@ import { ActivityIndicator, FlatList, Pressable, Text, View } from "react-native
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../../lib/auth/provider";
 import { useWorkoutSessions } from "../../../hooks/queries/useWorkouts";
+import { font } from "../../../lib/design/tokens";
 
 function formatDuration(seconds: number | null): string {
   if (!seconds) return "--";
@@ -23,9 +24,9 @@ export default function WorkoutHistoryScreen() {
       <View className="flex-1 px-6 pt-6">
         <View className="flex-row items-center justify-between mb-6">
           <Pressable onPress={() => router.back()}>
-            <Text className="text-text-muted font-medium text-sm">← Voltar</Text>
+            <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>← Voltar</Text>
           </Pressable>
-          <Text className="text-lg font-black text-text-primary">Historico</Text>
+          <Text className="text-2xl text-text-primary" style={{ fontFamily: font.display }}>Histórico</Text>
           <View className="w-16" />
         </View>
 
@@ -36,7 +37,7 @@ export default function WorkoutHistoryScreen() {
         ) : !sessions?.length ? (
           <View className="flex-1 items-center justify-center">
             <Text className="text-3xl mb-3">📋</Text>
-            <Text className="text-text-muted text-sm">Nenhum treino registrado ainda.</Text>
+            <Text className="text-text-muted text-sm" style={{ fontFamily: font.regular }}>Nenhum treino registrado ainda.</Text>
           </View>
         ) : (
           <FlatList
@@ -45,9 +46,9 @@ export default function WorkoutHistoryScreen() {
             showsVerticalScrollIndicator={false}
             contentContainerClassName="gap-2 pb-4"
             renderItem={({ item }) => (
-              <View className="bg-surface-card border border-surface-border rounded-2xl p-4">
+              <View className="bg-surface-card border border-surface-border rounded-3xl p-4">
                 <View className="flex-row items-center justify-between mb-2">
-                  <Text className="text-sm font-bold text-text-primary">
+                  <Text className="text-sm text-text-primary" style={{ fontFamily: font.semibold }}>
                     {item.workout?.name ?? "Treino livre"}
                   </Text>
                   {item.mood ? (
@@ -55,14 +56,14 @@ export default function WorkoutHistoryScreen() {
                   ) : null}
                 </View>
                 <View className="flex-row gap-4">
-                  <Text className="text-xs text-text-muted">
+                  <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>
                     {new Date(item.started_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })}
                   </Text>
-                  <Text className="text-xs text-text-muted">
+                  <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>
                     {formatDuration(item.duration_seconds)}
                   </Text>
                   {item.overall_rpe ? (
-                    <Text className="text-xs text-violet-400 font-bold">RPE {item.overall_rpe}</Text>
+                    <Text className="text-xs text-violet-400" style={{ fontFamily: font.bold }}>RPE {item.overall_rpe}</Text>
                   ) : null}
                 </View>
               </View>

@@ -9,10 +9,13 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../lib/auth/provider";
 import { supabase } from "../../lib/supabase/client";
 import { EmptyState } from "../../components/ui/EmptyState";
+import { DisplayHeading } from "../../components/ui/DisplayHeading";
+import { font, amethystGlow, amethystGradient } from "../../lib/design/tokens";
 
 interface Group {
   id: string;
@@ -79,44 +82,67 @@ export default function GroupsScreen() {
         <View className="flex-row items-center justify-between px-6 pt-6 pb-4">
           <View className="flex-row items-center gap-3">
             <Pressable onPress={() => router.back()}>
-              <Text className="text-text-muted font-medium text-sm">← Voltar</Text>
+              <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>← Voltar</Text>
             </Pressable>
-            <Text className="text-xl font-black text-text-primary">Comunidades</Text>
+            <DisplayHeading size="sm">Comunidades.</DisplayHeading>
           </View>
           <Pressable
             onPress={() => setShowCreate(!showCreate)}
-            className="bg-violet-500 px-3 py-1.5 rounded-xl active:bg-violet-600"
+            style={amethystGlow}
+            className="rounded-2xl overflow-hidden active:opacity-90"
           >
-            <Text className="text-white font-black text-xs">+ Criar</Text>
+            <LinearGradient
+              colors={amethystGradient}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0.9 }}
+              className="px-3.5 py-2"
+            >
+              <Text className="text-white text-xs" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>+ Criar</Text>
+            </LinearGradient>
           </Pressable>
         </View>
 
         {showCreate ? (
-          <View className="px-6 py-4 border-b border-surface-border bg-surface-card mx-6 rounded-2xl mb-4">
+          <View className="px-5 py-5 border border-surface-border bg-surface-card mx-6 rounded-3xl mb-4">
             <TextInput
-              className="bg-dark-300 border border-surface-border rounded-xl px-4 py-3 text-sm text-text-primary mb-3"
+              className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary mb-3"
               placeholder="Nome do grupo"
-              placeholderTextColor="#6E6580"
+              placeholderTextColor="#6E6382"
               value={newName}
               onChangeText={setNewName}
+              style={{ fontFamily: font.regular }}
             />
             <TextInput
-              className="bg-dark-300 border border-surface-border rounded-xl px-4 py-3 text-sm text-text-primary mb-3"
+              className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary mb-3"
               placeholder="Descricao (opcional)"
-              placeholderTextColor="#6E6580"
+              placeholderTextColor="#6E6382"
               value={newDesc}
               onChangeText={setNewDesc}
+              style={{ fontFamily: font.regular }}
             />
             <Pressable
               onPress={() => createGroup.mutate()}
               disabled={!newName.trim() || createGroup.isPending}
-              className={`rounded-xl py-3 items-center ${newName.trim() ? "bg-violet-500" : "bg-surface-border"}`}
+              style={newName.trim() ? amethystGlow : undefined}
+              className="rounded-2xl overflow-hidden active:opacity-90"
             >
-              {createGroup.isPending ? (
-                <ActivityIndicator color="#0A0A0B" size="small" />
-              ) : (
-                <Text className={`font-black text-sm ${newName.trim() ? "text-white" : "text-text-muted"}`}>Criar Grupo</Text>
-              )}
+              <LinearGradient
+                colors={newName.trim() ? amethystGradient : ["#201B2A", "#201B2A"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0.9 }}
+                className="py-3.5 items-center"
+              >
+                {createGroup.isPending ? (
+                  <ActivityIndicator color="#F2EEF8" size="small" />
+                ) : (
+                  <Text
+                    className={`text-sm ${newName.trim() ? "text-white" : "text-text-muted"}`}
+                    style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
+                  >
+                    Criar grupo
+                  </Text>
+                )}
+              </LinearGradient>
             </Pressable>
           </View>
         ) : null}
@@ -138,28 +164,28 @@ export default function GroupsScreen() {
             contentContainerClassName="px-6 gap-3 pb-4"
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => (
-              <View className="bg-surface-card border border-surface-border rounded-2xl p-5">
+              <View className="bg-surface-card border border-surface-border rounded-3xl p-5">
                 <Pressable
                   onPress={() => router.push(`/groups/${item.id}` as never)}
                   className="flex-row items-center gap-3 mb-3 active:opacity-70"
                 >
-                  <View className="w-12 h-12 bg-surface-elevated rounded-xl items-center justify-center">
+                  <View className="w-12 h-12 bg-surface-elevated rounded-2xl items-center justify-center">
                     <Text className="text-xl">👥</Text>
                   </View>
                   <View className="flex-1">
-                    <Text className="text-base font-bold text-text-primary">{item.name}</Text>
-                    <Text className="text-xs text-text-muted">{item.member_count} membro{item.member_count !== 1 ? "s" : ""}</Text>
+                    <Text className="text-base text-text-primary" style={{ fontFamily: font.semibold }}>{item.name}</Text>
+                    <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>{item.member_count} membro{item.member_count !== 1 ? "s" : ""}</Text>
                   </View>
                   <Text className="text-text-muted text-lg">›</Text>
                 </Pressable>
                 {item.description ? (
-                  <Text className="text-xs text-text-muted mb-3" numberOfLines={2}>{item.description}</Text>
+                  <Text className="text-xs text-text-secondary mb-3" style={{ fontFamily: font.regular }} numberOfLines={2}>{item.description}</Text>
                 ) : null}
                 <Pressable
                   onPress={() => joinGroup.mutate(item.id)}
-                  className="border border-violet-500/30 rounded-xl py-2.5 items-center active:bg-violet-500/10"
+                  className="border border-violet-400/30 rounded-2xl py-2.5 items-center active:bg-violet-500/10"
                 >
-                  <Text className="text-violet-400 font-bold text-xs">Participar</Text>
+                  <Text className="text-violet-300 text-xs" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Participar</Text>
                 </Pressable>
               </View>
             )}

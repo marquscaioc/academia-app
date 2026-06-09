@@ -10,7 +10,7 @@ if (!existsSync(file)) {
   process.exit(0);
 }
 
-const TITLE = "Academia — Treino e dieta com seu personal";
+const TITLE = "Projeto Gaab — Treino e dieta com seu personal";
 const DESCRIPTION =
   "Plataforma para personal trainers e nutricionistas acompanharem alunos: treinos, dietas, check-ins, desafios e progresso em um só lugar.";
 

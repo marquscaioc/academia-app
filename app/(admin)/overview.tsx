@@ -3,13 +3,19 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../../lib/auth/provider";
 import { supabase } from "../../lib/supabase/client";
+import { font } from "../../lib/design/tokens";
 
 function MetricBox({ value, label, icon }: { value: string; label: string; icon: string }) {
   return (
-    <View className="flex-1 bg-surface-card border border-surface-border rounded-2xl p-5">
+    <View className="flex-1 bg-surface-card border border-surface-border rounded-3xl p-5">
       <Text className="text-2xl mb-2">{icon}</Text>
-      <Text className="text-3xl font-black text-text-primary">{value}</Text>
-      <Text className="text-[10px] text-text-muted mt-1 uppercase tracking-wider font-bold">{label}</Text>
+      <Text className="text-3xl text-text-primary" style={{ fontFamily: font.display }}>{value}</Text>
+      <Text
+        className="text-[10px] text-text-muted mt-1 uppercase"
+        style={{ fontFamily: font.semibold, letterSpacing: 2 }}
+      >
+        {label}
+      </Text>
     </View>
   );
 }
@@ -39,8 +45,15 @@ export default function AdminOverviewScreen() {
     <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1 px-6 pt-6">
         <View className="mb-8">
-          <Text className="text-xs text-danger-500 font-black uppercase tracking-widest mb-1">Admin</Text>
-          <Text className="text-3xl font-black text-text-primary tracking-tight">Painel da Plataforma</Text>
+          <Text
+            className="text-danger-500 uppercase mb-2"
+            style={{ fontFamily: font.semibold, fontSize: 10, letterSpacing: 3 }}
+          >
+            Admin
+          </Text>
+          <Text className="text-4xl text-text-primary" style={{ fontFamily: font.display }}>
+            Painel da plataforma.
+          </Text>
         </View>
 
         <View className="flex-row gap-3 mb-3">
@@ -62,7 +75,12 @@ export default function AdminOverviewScreen() {
           onPress={signOut}
           className="border border-surface-border rounded-2xl py-3.5 items-center mb-10 active:bg-surface-hover"
         >
-          <Text className="text-text-muted font-bold text-sm">Sair da conta</Text>
+          <Text
+            className="text-text-muted text-sm"
+            style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
+          >
+            Sair da conta
+          </Text>
         </Pressable>
       </ScrollView>
     </SafeAreaView>

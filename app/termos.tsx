@@ -20,7 +20,7 @@ export default function TermsScreen() {
         <Text className="text-4xl text-text-primary mb-1" style={{ fontFamily: font.display, letterSpacing: -0.4 }}>
           Termos de Uso
         </Text>
-        <Text className="text-xs text-text-muted mb-4" style={{ fontFamily: font.regular }}>Academia · Última atualização: a definir</Text>
+        <Text className="text-xs text-text-muted mb-4" style={{ fontFamily: font.regular }}>Projeto Gaab · Última atualização: a definir</Text>
 
         <View className="bg-warning-500/10 border border-warning-500/30 rounded-2xl p-3.5 mb-4">
           <Text className="text-xs text-warning-500" style={{ fontFamily: font.semibold }}>
@@ -29,7 +29,7 @@ export default function TermsScreen() {
         </View>
 
         <P>
-          Ao criar uma conta no Academia App, você concorda com estes Termos. O app conecta personal trainers e
+          Ao criar uma conta no Projeto Gaab, você concorda com estes Termos. O app conecta personal trainers e
           nutricionistas a seus alunos para prescrição e acompanhamento de treino e dieta.
         </P>
 
