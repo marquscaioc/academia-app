@@ -19,7 +19,7 @@ import { AppIcon } from "../../components/ui";
 import { font, amethystGlow } from "../../lib/design/tokens";
 
 export default function EditProfileScreen() {
-  const { user, profile, refreshProfile } = useAuth();
+  const { user, profile, refreshProfile, signOut } = useAuth();
   const [fullName, setFullName] = useState(profile?.full_name ?? "");
   const [displayName, setDisplayName] = useState(profile?.display_name ?? "");
   const [bio, setBio] = useState(profile?.bio ?? "");
@@ -27,6 +27,21 @@ export default function EditProfileScreen() {
   const [loading, setLoading] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [error, setError] = useState("");
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDeleteAccount = async () => {
+    setError("");
+    setDeleting(true);
+    const { error: delErr } = await supabase.functions.invoke("delete-account");
+    if (delErr) {
+      setError("Erro ao excluir a conta. Tente novamente.");
+      setDeleting(false);
+      return;
+    }
+    // Account no longer exists — clear the local session and leave.
+    await signOut();
+  };
 
   const handleSave = async () => {
     if (!fullName.trim()) { setError("Nome e obrigatorio"); return; }
@@ -271,6 +286,56 @@ export default function EditProfileScreen() {
               )}
             </LinearGradient>
           </Pressable>
+
+          {/* Danger zone — LGPD account deletion */}
+          <View className="border border-danger-500/25 bg-danger-500/[0.04] rounded-3xl p-4 mb-12">
+            <View className="flex-row items-center gap-2 mb-2">
+              <AppIcon name="warning" size={16} color="#FB7185" strokeWidth={2} />
+              <Text className="text-[10px] text-danger-500 uppercase" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>
+                Zona de perigo
+              </Text>
+            </View>
+            {!confirmDelete ? (
+              <>
+                <Text className="text-sm text-text-secondary mb-3 leading-5" style={{ fontFamily: font.regular }}>
+                  Excluir sua conta remove permanentemente seu perfil, treinos, dietas, fotos e histórico. Esta ação não pode ser desfeita.
+                </Text>
+                <Pressable
+                  onPress={() => setConfirmDelete(true)}
+                  className="flex-row items-center justify-center gap-2 border border-danger-500/40 rounded-2xl py-3 active:bg-danger-500/10"
+                >
+                  <AppIcon name="trash" size={16} color="#FB7185" strokeWidth={2} />
+                  <Text className="text-danger-500 text-sm" style={{ fontFamily: font.semibold }}>Excluir minha conta</Text>
+                </Pressable>
+              </>
+            ) : (
+              <>
+                <Text className="text-sm text-text-primary mb-3 leading-5" style={{ fontFamily: font.semibold }}>
+                  Tem certeza? Tudo será apagado permanentemente.
+                </Text>
+                <View className="flex-row gap-3">
+                  <Pressable
+                    onPress={() => setConfirmDelete(false)}
+                    disabled={deleting}
+                    className="flex-1 border border-surface-border rounded-2xl py-3 items-center active:bg-surface-hover"
+                  >
+                    <Text className="text-text-secondary text-sm" style={{ fontFamily: font.semibold }}>Cancelar</Text>
+                  </Pressable>
+                  <Pressable
+                    onPress={handleDeleteAccount}
+                    disabled={deleting}
+                    className="flex-1 bg-danger-500 rounded-2xl py-3 items-center active:bg-danger-600"
+                  >
+                    {deleting ? (
+                      <ActivityIndicator color="#FFFFFF" />
+                    ) : (
+                      <Text className="text-white text-sm" style={{ fontFamily: font.semibold }}>Sim, excluir</Text>
+                    )}
+                  </Pressable>
+                </View>
+              </>
+            )}
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
