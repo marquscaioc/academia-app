@@ -1,17 +1,19 @@
 import { Tabs } from "expo-router";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { RoleGuard } from "../../components/auth/RoleGuard";
 import { WebFrame } from "../../components/layout/WebFrame";
+import { AppIcon, type IconName } from "../../components/ui";
 
-function TabIcon({ name, focused }: { name: string; focused: boolean }) {
-  const icons: Record<string, string> = {
-    overview: "📊",
-    users: "👥",
-    moderation: "🛡️",
-  };
+const TAB_ICON: Record<string, IconName> = {
+  overview: "progress",
+  users: "social",
+  moderation: "moderation",
+};
+
+function TabIcon({ name, focused, color }: { name: string; focused: boolean; color: string }) {
   return (
     <View className="items-center">
-      <Text style={{ fontSize: 20, opacity: focused ? 1 : 0.4 }}>{icons[name] ?? "●"}</Text>
+      <AppIcon name={TAB_ICON[name] ?? "progress"} size={22} color={color} strokeWidth={focused ? 2.4 : 1.8} />
       {focused ? <View className="w-1.5 h-1.5 bg-violet-500 rounded-full mt-1" /> : null}
     </View>
   );
@@ -34,9 +36,9 @@ function AdminTabs() {
         tabBarLabelStyle: { fontSize: 10, fontWeight: "700", letterSpacing: 0.5 },
       }}
     >
-      <Tabs.Screen name="overview" options={{ title: "Overview", tabBarIcon: ({ focused }) => <TabIcon name="overview" focused={focused} /> }} />
-      <Tabs.Screen name="users" options={{ title: "Usuarios", tabBarIcon: ({ focused }) => <TabIcon name="users" focused={focused} /> }} />
-      <Tabs.Screen name="moderation" options={{ title: "Moderacao", tabBarIcon: ({ focused }) => <TabIcon name="moderation" focused={focused} /> }} />
+      <Tabs.Screen name="overview" options={{ title: "Overview", tabBarIcon: ({ focused, color }) => <TabIcon name="overview" focused={focused} color={color} /> }} />
+      <Tabs.Screen name="users" options={{ title: "Usuarios", tabBarIcon: ({ focused, color }) => <TabIcon name="users" focused={focused} color={color} /> }} />
+      <Tabs.Screen name="moderation" options={{ title: "Moderacao", tabBarIcon: ({ focused, color }) => <TabIcon name="moderation" focused={focused} color={color} /> }} />
     </Tabs>
   );
 }
