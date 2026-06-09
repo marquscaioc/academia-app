@@ -1,5 +1,5 @@
 import { useLocalSearchParams, router } from "expo-router";
-import { ActivityIndicator, FlatList, Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Alert, FlatList, Modal, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../lib/auth/provider";
@@ -50,6 +50,10 @@ export default function ChallengeDetailScreen() {
   const [showTeamSelector, setShowTeamSelector] = useState(false);
   const [selectedRule, setSelectedRule] = useState<PointRule | null>(null);
   const [showPointSelector, setShowPointSelector] = useState(false);
+  const [showMetric, setShowMetric] = useState(false);
+  const [metricValue, setMetricValue] = useState("");
+  const [pendingPoints, setPendingPoints] = useState(1);
+  const [pendingCaption, setPendingCaption] = useState("Check-in!");
 
   if (isLoading || !challenge) {
     return <LoadingScreen />;
@@ -73,22 +77,58 @@ export default function ChallengeDetailScreen() {
     }
   };
 
-  const handleCheckIn = () => {
+  // Submete com `points`/`caption` ja decididos — pede foto antes se exigido.
+  const submitOrPhoto = (points: number, caption: string) => {
+    setPendingPoints(points);
+    setPendingCaption(caption);
+    if (challenge.require_photo_proof) {
+      setShowCamera(true);
+    } else if (user) {
+      submitEntry.mutate({ challenge_id: challenge.id, user_id: user.id, caption, points });
+    }
+  };
+
+  const handleCheckIn = async () => {
     if (!user) return;
     if (hasCustomPoints) {
       setShowPointSelector(true);
       return;
     }
-    if (challenge.require_photo_proof) {
-      setShowCamera(true);
-    } else {
-      submitEntry.mutate({
-        challenge_id: challenge.id,
-        user_id: user.id,
-        caption: "Check-in!",
-        points: 1,
-      });
+    const mode = challenge.scoring_mode;
+    // Modos quantitativos: coleta o numero (vira o score)
+    if (mode === "total_volume" || mode === "active_minutes") {
+      setMetricValue("");
+      setShowMetric(true);
+      return;
     }
+    // Dias ativos: 1 ponto por DIA (dedup) — multiplos check-ins no mesmo dia nao contam de novo
+    if (mode === "days_active") {
+      const start = new Date();
+      start.setHours(0, 0, 0, 0);
+      const { data: today } = await supabase
+        .from("challenge_entries")
+        .select("id")
+        .eq("challenge_id", challenge.id)
+        .eq("user_id", user.id)
+        .gte("created_at", start.toISOString())
+        .limit(1);
+      if (today && today.length) {
+        Alert.alert("Já registrado", "Você já fez seu check-in de hoje neste desafio.");
+        return;
+      }
+      submitOrPhoto(1, "Dia ativo");
+      return;
+    }
+    // check_in_count, workouts_completed: 1 ponto por check-in
+    submitOrPhoto(1, "Check-in!");
+  };
+
+  const confirmMetric = () => {
+    const v = parseFloat(metricValue.replace(",", "."));
+    if (isNaN(v) || v <= 0) return;
+    setShowMetric(false);
+    const unit = challenge.scoring_mode === "active_minutes" ? "min" : "kg";
+    submitOrPhoto(v, `${v} ${unit}`);
   };
 
   const handlePhotoCapture = async (uri: string) => {
@@ -111,25 +151,15 @@ export default function ChallengeDetailScreen() {
       challenge_id: challenge.id,
       user_id: user.id,
       photo_url: photoUrl,
-      caption: "Check-in com foto!",
-      points: selectedRule?.points ?? 1,
+      caption: pendingCaption,
+      points: pendingPoints,
     });
-    setSelectedRule(null);
   };
 
   const handlePointRuleSelect = (rule: PointRule) => {
     setSelectedRule(rule);
     setShowPointSelector(false);
-    if (challenge.require_photo_proof) {
-      setShowCamera(true);
-    } else {
-      submitEntry.mutate({
-        challenge_id: challenge.id,
-        user_id: user!.id,
-        caption: rule.label,
-        points: rule.points,
-      });
-    }
+    submitOrPhoto(rule.points, rule.label);
   };
 
   const handleShareLeaderboard = () => {
@@ -402,6 +432,35 @@ export default function ChallengeDetailScreen() {
         onSubmit={handleBulkSubmit}
         onClose={() => setShowBulk(false)}
       />
+
+      {/* Input de metrica (modos quantitativos) */}
+      <Modal visible={showMetric} animationType="slide" transparent>
+        <View className="flex-1 justify-end">
+          <Pressable className="flex-1" onPress={() => setShowMetric(false)} />
+          <View className="bg-dark-200 border-t border-surface-border rounded-t-3xl px-6 pt-6 pb-10">
+            <Text className="text-lg font-black text-text-primary mb-1">Registrar atividade</Text>
+            <Text className="text-xs text-text-muted mb-4">
+              {challenge.scoring_mode === "active_minutes" ? "Quantos minutos de atividade?" : "Qual o volume total (kg)?"}
+            </Text>
+            <TextInput
+              className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary mb-4"
+              placeholder={challenge.scoring_mode === "active_minutes" ? "Ex: 45" : "Ex: 5000"}
+              placeholderTextColor="#6E6580"
+              keyboardType="numeric"
+              value={metricValue}
+              onChangeText={setMetricValue}
+              autoFocus
+            />
+            <Pressable
+              onPress={confirmMetric}
+              disabled={!metricValue.trim()}
+              className={`rounded-2xl py-4 items-center ${metricValue.trim() ? "bg-violet-500" : "bg-surface-border"}`}
+            >
+              <Text className={`font-black ${metricValue.trim() ? "text-white" : "text-text-muted"}`}>Confirmar</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
