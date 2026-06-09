@@ -29,6 +29,9 @@ interface SelectedExercise {
   reps: string;
   weight: string;
   rest: number;
+  rpe: string;
+  tempo: string;
+  supersetGroup: number | null;
 }
 
 type Step = "select-student" | "plan-info" | "add-exercises" | "review";
@@ -69,7 +72,7 @@ export default function WorkoutBuilderScreen() {
   const addExerciseToList = (ex: { id: string; name: string }) => {
     setExercises([
       ...exercises,
-      { exercise_id: ex.id, name: ex.name, sets: 3, reps: "10-12", weight: "", rest: 60 },
+      { exercise_id: ex.id, name: ex.name, sets: 3, reps: "10-12", weight: "", rest: 60, rpe: "", tempo: "", supersetGroup: null },
     ]);
     setSearchExercise("");
   };
@@ -81,6 +84,24 @@ export default function WorkoutBuilderScreen() {
   const updateExercise = (idx: number, field: keyof SelectedExercise, value: string | number) => {
     const updated = [...exercises];
     updated[idx] = { ...updated[idx], [field]: value };
+    setExercises(updated);
+  };
+
+  // Liga/desliga o exercicio num superset com o de cima (mesmo superset_group)
+  const toggleSuperset = (idx: number) => {
+    if (idx === 0) return;
+    const updated = exercises.map((e) => ({ ...e }));
+    const prevGroup = updated[idx - 1].supersetGroup;
+    if (updated[idx].supersetGroup && updated[idx].supersetGroup === prevGroup) {
+      updated[idx].supersetGroup = null;
+    } else {
+      let group = prevGroup;
+      if (!group) {
+        group = Math.max(0, ...updated.map((e) => e.supersetGroup ?? 0)) + 1;
+        updated[idx - 1].supersetGroup = group;
+      }
+      updated[idx].supersetGroup = group;
+    }
     setExercises(updated);
   };
 
@@ -110,6 +131,9 @@ export default function WorkoutBuilderScreen() {
           target_sets: ex.sets,
           target_reps: ex.reps,
           target_weight_kg: ex.weight ? parseFloat(ex.weight) : undefined,
+          target_rpe: ex.rpe ? parseFloat(ex.rpe) : undefined,
+          tempo: ex.tempo.trim() || undefined,
+          superset_group: ex.supersetGroup ?? undefined,
           rest_seconds: ex.rest,
         });
       }
@@ -317,6 +341,44 @@ export default function WorkoutBuilderScreen() {
                         />
                       </View>
                     </View>
+                    {/* Linha 2: RPE / Tempo + superset */}
+                    <View className="flex-row gap-2 mt-2">
+                      <View className="flex-1">
+                        <Text className="text-[10px] text-text-muted mb-1">RPE</Text>
+                        <TextInput
+                          className="bg-dark-300 border border-surface-border rounded-lg px-3 py-2 text-sm text-text-primary text-center"
+                          value={ex.rpe}
+                          onChangeText={(v) => updateExercise(idx, "rpe", v)}
+                          keyboardType="decimal-pad"
+                          placeholder="-"
+                          placeholderTextColor="#6E6580"
+                        />
+                      </View>
+                      <View style={{ flex: 2 }}>
+                        <Text className="text-[10px] text-text-muted mb-1">Tempo (cadência)</Text>
+                        <TextInput
+                          className="bg-dark-300 border border-surface-border rounded-lg px-3 py-2 text-sm text-text-primary text-center"
+                          value={ex.tempo}
+                          onChangeText={(v) => updateExercise(idx, "tempo", v)}
+                          placeholder="2-0-1-0"
+                          placeholderTextColor="#6E6580"
+                        />
+                      </View>
+                    </View>
+                    {idx > 0 ? (
+                      <Pressable onPress={() => toggleSuperset(idx)} className="mt-2 flex-row items-center gap-2">
+                        <View className={`w-5 h-5 rounded items-center justify-center ${
+                          ex.supersetGroup && exercises[idx - 1].supersetGroup === ex.supersetGroup
+                            ? "bg-violet-500"
+                            : "bg-surface-elevated border border-surface-border"
+                        }`}>
+                          {ex.supersetGroup && exercises[idx - 1].supersetGroup === ex.supersetGroup ? (
+                            <Text className="text-white text-[10px]">✓</Text>
+                          ) : null}
+                        </View>
+                        <Text className="text-xs text-text-muted">⛓ Superset com o exercício acima</Text>
+                      </Pressable>
+                    ) : null}
                   </View>
                 ))}
               </View>

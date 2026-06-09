@@ -55,6 +55,9 @@ interface AddWorkoutExerciseInput {
   target_sets?: number;
   target_reps?: string;
   target_weight_kg?: number;
+  target_rpe?: number;
+  tempo?: string;
+  superset_group?: number;
   rest_seconds?: number;
   notes?: string;
 }
