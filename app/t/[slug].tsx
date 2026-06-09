@@ -5,6 +5,7 @@ import { Image } from "expo-image";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "../../lib/supabase/client";
 import { LoadingScreen } from "../../components/ui/LoadingScreen";
+import { AppIcon } from "../../components/ui";
 import { font } from "../../lib/design/tokens";
 
 export default function TrainerPublicPage() {
@@ -33,8 +34,10 @@ export default function TrainerPublicPage() {
   if (!trainer) {
     return (
       <SafeAreaView className="flex-1 bg-dark-400 items-center justify-center px-8">
-        <Text className="text-4xl mb-4">🔍</Text>
-        <Text className="text-2xl text-text-primary" style={{ fontFamily: font.display }}>Profissional nao encontrado</Text>
+        <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-5">
+          <AppIcon name="search" size={28} color="#9B40D8" strokeWidth={2} />
+        </View>
+        <Text className="text-2xl text-text-primary text-center" style={{ fontFamily: font.display }}>Profissional nao encontrado</Text>
         <Text className="text-sm text-text-muted text-center mt-2" style={{ fontFamily: font.regular }}>Verifique o link e tente novamente.</Text>
       </SafeAreaView>
     );
@@ -97,7 +100,8 @@ export default function TrainerPublicPage() {
             <Text className="text-sm text-text-muted text-center mb-5" style={{ fontFamily: font.regular }}>
               Baixe o app e use o codigo de convite do seu personal.
             </Text>
-            <View className="rounded-2xl py-4 px-8 items-center" style={{ backgroundColor: primaryColor }}>
+            <View className="flex-row rounded-2xl py-4 px-8 items-center justify-center gap-2" style={{ backgroundColor: primaryColor }}>
+              <AppIcon name="rocket" size={18} color="#FFFFFF" strokeWidth={2} />
               <Text className="text-white text-base" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Comecar Agora</Text>
             </View>
           </View>

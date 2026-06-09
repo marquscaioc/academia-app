@@ -22,6 +22,7 @@ import { CommentThread } from "../../../components/social/CommentThread";
 import { EmptyState } from "../../../components/ui/EmptyState";
 import { Avatar } from "../../../components/ui/Avatar";
 import { DisplayHeading } from "../../../components/ui/DisplayHeading";
+import { AppIcon } from "../../../components/ui";
 import { font, amethystGlow } from "../../../lib/design/tokens";
 
 function CommentsSheet({ postId, userId, onClose }: { postId: string; userId?: string; onClose: () => void }) {
@@ -34,8 +35,8 @@ function CommentsSheet({ postId, userId, onClose }: { postId: string; userId?: s
         <View className="bg-dark-200 border-t border-surface-border rounded-t-3xl px-6 pt-6 pb-10 max-h-[80%]">
           <View className="flex-row items-center justify-between mb-4">
             <DisplayHeading size="sm" className="text-text-primary">Comentários</DisplayHeading>
-            <Pressable onPress={onClose}>
-              <Text className="text-text-muted text-lg">✕</Text>
+            <Pressable onPress={onClose} className="w-9 h-9 rounded-2xl bg-surface-card border border-surface-border items-center justify-center">
+              <AppIcon name="close" size={18} color="#6E6382" strokeWidth={2} />
             </Pressable>
           </View>
           <ScrollView keyboardShouldPersistTaps="handled">
@@ -113,11 +114,13 @@ export default function SocialFeedScreen() {
         <View className="flex-row items-center justify-between mb-3">
           <DisplayHeading size="md" className="text-text-primary">Feed</DisplayHeading>
           <View className="flex-row gap-2">
-            <Pressable onPress={() => router.push("/groups")} className="bg-surface-card border border-surface-border px-3 py-1.5 rounded-full">
-              <Text className="text-text-muted text-xs" style={{ fontFamily: font.semibold }}>👥 Grupos</Text>
+            <Pressable onPress={() => router.push("/groups")} className="flex-row items-center gap-1.5 bg-surface-card border border-surface-border px-3 py-1.5 rounded-full">
+              <AppIcon name="social" size={14} color="#A99FBA" strokeWidth={2} />
+              <Text className="text-text-muted text-xs" style={{ fontFamily: font.semibold }}>Grupos</Text>
             </Pressable>
-            <Pressable onPress={() => router.push("/challenges")} className="bg-violet-500/10 px-3 py-1.5 rounded-full">
-              <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>🏆 Desafios</Text>
+            <Pressable onPress={() => router.push("/challenges")} className="flex-row items-center gap-1.5 bg-violet-500/10 border border-violet-500/25 px-3 py-1.5 rounded-full">
+              <AppIcon name="trophy" size={14} color="#9B40D8" strokeWidth={2} />
+              <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>Desafios</Text>
             </Pressable>
           </View>
         </View>
@@ -173,15 +176,15 @@ export default function SocialFeedScreen() {
                   <Image source={{ uri }} style={{ width: "100%", height: "100%" }} contentFit="cover" />
                 </View>
               ))}
-              <Pressable onPress={() => setMediaUris([])} className="w-16 h-16 bg-dark-300 rounded-xl items-center justify-center">
-                <Text className="text-danger-500 text-xs" style={{ fontFamily: font.bold }}>✕</Text>
+              <Pressable onPress={() => setMediaUris([])} className="w-16 h-16 bg-dark-300 border border-surface-border rounded-xl items-center justify-center">
+                <AppIcon name="trash" size={18} color="#FB7185" strokeWidth={2} />
               </Pressable>
             </View>
           ) : null}
 
           <View className="flex-row items-center justify-between mt-3">
-            <Pressable onPress={pickMedia} className="flex-row items-center gap-2 bg-dark-300 px-3 py-2 rounded-full">
-              <Text className="text-sm">📷</Text>
+            <Pressable onPress={pickMedia} className="flex-row items-center gap-2 bg-dark-300 border border-surface-border px-3 py-2 rounded-full">
+              <AppIcon name="camera" size={16} color="#A99FBA" strokeWidth={2} />
               <Text className="text-text-muted text-xs" style={{ fontFamily: font.semibold }}>Foto</Text>
             </Pressable>
             <View className="flex-row gap-2 items-center">
@@ -219,7 +222,7 @@ export default function SocialFeedScreen() {
         </View>
       ) : !posts?.length ? (
         <EmptyState
-          icon="👥"
+          iconName="social"
           title="Nenhuma publicacao"
           description="Seja o primeiro a compartilhar algo! Publique seu treino ou conquista."
         />

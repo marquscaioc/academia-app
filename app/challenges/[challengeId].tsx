@@ -20,6 +20,7 @@ import { PhotoCaptureModal } from "../../components/challenges/PhotoCaptureModal
 import { PointRuleSelector } from "../../components/challenges/PointRuleSelector";
 import { MostImprovedLeaderboard } from "../../components/challenges/MostImprovedLeaderboard";
 import { BulkCheckinModal } from "../../components/challenges/BulkCheckinModal";
+import { AppIcon } from "../../components/ui";
 import { Badge } from "../../components/ui/Badge";
 import { Card } from "../../components/ui/Card";
 import { DisplayHeading } from "../../components/ui/DisplayHeading";
@@ -210,8 +211,9 @@ export default function ChallengeDetailScreen() {
     <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1">
         <View className="px-6 pt-6">
-          <Pressable onPress={() => router.back()} className="mb-4">
-            <Text className="text-violet-400" style={{ fontFamily: font.medium }}>← Voltar</Text>
+          <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5 mb-4 self-start">
+            <AppIcon name="arrow-left" size={18} color="#9B40D8" strokeWidth={2} />
+            <Text className="text-violet-400" style={{ fontFamily: font.medium }}>Voltar</Text>
           </Pressable>
 
           <View className="flex-row items-start justify-between mb-2">
@@ -232,15 +234,24 @@ export default function ChallengeDetailScreen() {
           {/* Stats */}
           <View className="flex-row gap-3 mb-6">
             <Card className="flex-1 items-center py-3">
+              <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-2">
+                <AppIcon name="social" size={18} color="#9B40D8" strokeWidth={2} />
+              </View>
               <Text className="text-3xl text-text-primary" style={{ fontFamily: font.display, letterSpacing: -0.5 }}>{leaderboard?.length ?? 0}</Text>
               <Text className="text-[10px] text-text-muted mt-1 uppercase" style={{ fontFamily: font.semibold, letterSpacing: 1.5 }}>Participantes</Text>
             </Card>
             <Card className="flex-1 items-center py-3">
+              <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-2">
+                <AppIcon name="calendar" size={18} color="#9B40D8" strokeWidth={2} />
+              </View>
               <Text className="text-3xl text-violet-400" style={{ fontFamily: font.display, letterSpacing: -0.5 }}>{daysLeft}</Text>
               <Text className="text-[10px] text-text-muted mt-1 uppercase" style={{ fontFamily: font.semibold, letterSpacing: 1.5 }}>Dias restantes</Text>
             </Card>
             {isJoined ? (
               <Card className="flex-1 items-center py-3">
+                <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-2">
+                  <AppIcon name="trophy" size={18} color="#9B40D8" strokeWidth={2} />
+                </View>
                 <Text className="text-3xl text-ice-400" style={{ fontFamily: font.display, letterSpacing: -0.5 }}>{participation?.total_score ?? 0}</Text>
                 <Text className="text-[10px] text-text-muted mt-1 uppercase" style={{ fontFamily: font.semibold, letterSpacing: 1.5 }}>Meu score</Text>
               </Card>
@@ -305,7 +316,8 @@ export default function ChallengeDetailScreen() {
 
           {/* Share leaderboard */}
           {leaderboard && leaderboard.length > 0 ? (
-            <Pressable onPress={handleShareLeaderboard} className="mb-4">
+            <Pressable onPress={handleShareLeaderboard} className="flex-row items-center justify-center gap-1.5 mb-4">
+              <AppIcon name="share" size={14} color="#9B40D8" strokeWidth={2} />
               <Text className="text-violet-400 text-xs text-center uppercase" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>Compartilhar ranking</Text>
             </Pressable>
           ) : null}
@@ -359,7 +371,12 @@ export default function ChallengeDetailScreen() {
                 ))}
               </View>
             ) : (
-              <Text className="text-sm text-text-muted text-center py-8" style={{ fontFamily: font.regular }}>Nenhum participante ainda.</Text>
+              <View className="items-center py-10">
+                <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
+                  <AppIcon name="trophy" size={28} color="#9B40D8" strokeWidth={2} />
+                </View>
+                <Text className="text-sm text-text-muted text-center" style={{ fontFamily: font.regular }}>Nenhum participante ainda.</Text>
+              </View>
             )
           ) : tab === "improved" ? (
             <MostImprovedLeaderboard entries={improved ?? []} />
@@ -367,8 +384,11 @@ export default function ChallengeDetailScreen() {
             <View className="gap-3">
               {entries.map((entry) => (
                 <Card key={entry.id} variant="outlined">
-                  <View className="flex-row items-center gap-2 mb-2">
-                    <Text className="text-sm text-text-primary" style={{ fontFamily: font.semibold }}>
+                  <View className="flex-row items-center gap-2.5 mb-2">
+                    <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+                      <AppIcon name="activity" size={18} color="#9B40D8" strokeWidth={2} />
+                    </View>
+                    <Text className="flex-1 text-sm text-text-primary" style={{ fontFamily: font.semibold }}>
                       {entry.profile?.full_name ?? "Usuario"}
                     </Text>
                     <Text className="text-xs text-violet-400" style={{ fontFamily: font.bold }}>+{entry.points} pts</Text>
@@ -383,15 +403,23 @@ export default function ChallengeDetailScreen() {
                       contentFit="cover"
                     />
                   ) : null}
-                  <Text className="text-xs text-text-muted mt-2" style={{ fontFamily: font.regular }}>
-                    {new Date(entry.created_at).toLocaleString("pt-BR")}
-                  </Text>
+                  <View className="flex-row items-center gap-1.5 mt-2">
+                    <AppIcon name="clock" size={14} color="#6E6382" strokeWidth={2} />
+                    <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>
+                      {new Date(entry.created_at).toLocaleString("pt-BR")}
+                    </Text>
+                  </View>
                   <EntryComments entryId={entry.id} />
                 </Card>
               ))}
             </View>
           ) : (
-            <Text className="text-sm text-text-muted text-center py-8" style={{ fontFamily: font.regular }}>Nenhuma atividade ainda.</Text>
+            <View className="items-center py-10">
+              <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
+                <AppIcon name="activity" size={28} color="#9B40D8" strokeWidth={2} />
+              </View>
+              <Text className="text-sm text-text-muted text-center" style={{ fontFamily: font.regular }}>Nenhuma atividade ainda.</Text>
+            </View>
           )}
         </View>
       </ScrollView>

@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../../lib/auth/provider";
 import { useCourses } from "../../../hooks/queries/useCourses";
 import { EmptyState } from "../../../components/ui/EmptyState";
+import { AppIcon, SectionLabel } from "../../../components/ui";
 import { font } from "../../../lib/design/tokens";
 
 export default function StudentCoursesScreen() {
@@ -14,13 +15,16 @@ export default function StudentCoursesScreen() {
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1 px-6 pt-6">
-        <Text className="text-3xl text-text-primary mb-6" style={{ fontFamily: font.display }}>Aulas</Text>
+        <View className="mb-6">
+          <SectionLabel>Conteúdo</SectionLabel>
+          <Text className="text-3xl text-text-primary mt-1.5" style={{ fontFamily: font.display }}>Aulas</Text>
+        </View>
 
         {isLoading ? (
           <View className="items-center py-10"><ActivityIndicator size="large" color="#781BB6" /></View>
         ) : !courses?.length ? (
           <EmptyState
-            icon="🎓"
+            iconName="courses"
             title="Nenhuma aula disponivel"
             description="Seu personal ainda nao publicou cursos. Quando publicar, voce vera aqui."
           />
@@ -32,12 +36,12 @@ export default function StudentCoursesScreen() {
                 onPress={() => router.push(`/(student)/(courses)/${c.id}`)}
                 className="bg-surface-card border border-surface-border rounded-3xl p-5 active:bg-surface-hover"
               >
-                <View className="flex-row gap-4">
+                <View className="flex-row items-center gap-4">
                   {c.cover_url ? (
                     <Image source={{ uri: c.cover_url }} style={{ width: 80, height: 80, borderRadius: 12 }} contentFit="cover" />
                   ) : (
-                    <View className="w-20 h-20 bg-violet-500/10 rounded-xl items-center justify-center">
-                      <Text className="text-3xl">🎓</Text>
+                    <View className="w-20 h-20 bg-violet-500/15 border border-violet-500/25 rounded-2xl items-center justify-center">
+                      <AppIcon name="courses" size={28} color="#9B40D8" strokeWidth={2} />
                     </View>
                   )}
                   <View className="flex-1">
@@ -52,6 +56,7 @@ export default function StudentCoursesScreen() {
                       <Text className="text-[10px] text-text-muted mt-1" style={{ fontFamily: font.regular }}>por {c.trainer.full_name}</Text>
                     ) : null}
                   </View>
+                  <AppIcon name="chevron-right" size={18} color="#6E6382" strokeWidth={2} />
                 </View>
               </Pressable>
             ))}

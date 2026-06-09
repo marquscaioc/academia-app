@@ -15,6 +15,7 @@ import { useAuth } from "../../lib/auth/provider";
 import { supabase } from "../../lib/supabase/client";
 import { EmptyState } from "../../components/ui/EmptyState";
 import { DisplayHeading } from "../../components/ui/DisplayHeading";
+import { AppIcon } from "../../components/ui";
 import { font, amethystGlow, amethystGradient } from "../../lib/design/tokens";
 
 interface Group {
@@ -81,8 +82,9 @@ export default function GroupsScreen() {
       <View className="flex-1">
         <View className="flex-row items-center justify-between px-6 pt-6 pb-4">
           <View className="flex-row items-center gap-3">
-            <Pressable onPress={() => router.back()}>
-              <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>← Voltar</Text>
+            <Pressable onPress={() => router.back()} className="flex-row items-center gap-1 active:opacity-70">
+              <AppIcon name="arrow-left" size={16} color="#6E6382" strokeWidth={2} />
+              <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>Voltar</Text>
             </Pressable>
             <DisplayHeading size="sm">Comunidades.</DisplayHeading>
           </View>
@@ -95,9 +97,10 @@ export default function GroupsScreen() {
               colors={amethystGradient}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0.9 }}
-              className="px-3.5 py-2"
+              className="px-3.5 py-2 flex-row items-center gap-1.5"
             >
-              <Text className="text-white text-xs" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>+ Criar</Text>
+              <AppIcon name="plus" size={14} color="#FFFFFF" strokeWidth={2} />
+              <Text className="text-white text-xs" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Criar</Text>
             </LinearGradient>
           </Pressable>
         </View>
@@ -153,7 +156,7 @@ export default function GroupsScreen() {
           </View>
         ) : !groups?.length ? (
           <EmptyState
-            icon="👥"
+            iconName="social"
             title="Nenhuma comunidade"
             description="Crie uma comunidade para reunir alunos com interesses em comum!"
           />
@@ -169,22 +172,26 @@ export default function GroupsScreen() {
                   onPress={() => router.push(`/groups/${item.id}` as never)}
                   className="flex-row items-center gap-3 mb-3 active:opacity-70"
                 >
-                  <View className="w-12 h-12 bg-surface-elevated rounded-2xl items-center justify-center">
-                    <Text className="text-xl">👥</Text>
+                  <View className="w-12 h-12 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+                    <AppIcon name="social" size={20} color="#9B40D8" strokeWidth={2} />
                   </View>
                   <View className="flex-1">
                     <Text className="text-base text-text-primary" style={{ fontFamily: font.semibold }}>{item.name}</Text>
-                    <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>{item.member_count} membro{item.member_count !== 1 ? "s" : ""}</Text>
+                    <View className="flex-row items-center gap-1 mt-0.5">
+                      <AppIcon name="user" size={13} color="#6E6382" strokeWidth={2} />
+                      <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>{item.member_count} membro{item.member_count !== 1 ? "s" : ""}</Text>
+                    </View>
                   </View>
-                  <Text className="text-text-muted text-lg">›</Text>
+                  <AppIcon name="chevron-right" size={18} color="#6E6382" strokeWidth={2} />
                 </Pressable>
                 {item.description ? (
                   <Text className="text-xs text-text-secondary mb-3" style={{ fontFamily: font.regular }} numberOfLines={2}>{item.description}</Text>
                 ) : null}
                 <Pressable
                   onPress={() => joinGroup.mutate(item.id)}
-                  className="border border-violet-400/30 rounded-2xl py-2.5 items-center active:bg-violet-500/10"
+                  className="flex-row items-center justify-center gap-1.5 border border-violet-400/30 rounded-2xl py-2.5 active:bg-violet-500/10"
                 >
+                  <AppIcon name="user-add" size={15} color="#C4B5FD" strokeWidth={2} />
                   <Text className="text-violet-300 text-xs" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Participar</Text>
                 </Pressable>
               </View>

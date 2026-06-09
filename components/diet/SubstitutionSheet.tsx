@@ -1,5 +1,6 @@
 import { Modal, Pressable, ScrollView, Text, View } from "react-native";
 import { useSubstitutions } from "../../hooks/queries/useSubstitutions";
+import { AppIcon } from "../ui";
 
 interface SubstitutionSheetProps {
   visible: boolean;
@@ -25,7 +26,7 @@ export function SubstitutionSheet({
           <View className="flex-row items-center justify-between mb-5">
             <Text className="text-lg font-black text-text-primary">Substituicoes</Text>
             <Pressable onPress={onClose}>
-              <Text className="text-text-muted text-lg">✕</Text>
+              <AppIcon name="close" size={20} color="#6E6382" strokeWidth={2} />
             </Pressable>
           </View>
 

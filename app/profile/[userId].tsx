@@ -9,7 +9,7 @@ import { useProfileStats } from "../../hooks/queries/useProfileStats";
 import { useFollowUser, useUnfollowUser } from "../../hooks/mutations/useSocialMutations";
 import { Avatar } from "../../components/ui/Avatar";
 import { LoadingScreen } from "../../components/ui/LoadingScreen";
-import { BigStat, DisplayHeading, Logo, SectionLabel } from "../../components/ui";
+import { AppIcon, BigStat, DisplayHeading, Logo, SectionLabel } from "../../components/ui";
 import { font, amethystGlow } from "../../lib/design/tokens";
 
 export default function PublicProfileScreen() {
@@ -59,7 +59,7 @@ export default function PublicProfileScreen() {
           {/* Masthead */}
           <Animated.View entering={FadeIn.duration(400)} className="flex-row items-center justify-between mb-10">
             <Pressable onPress={() => router.back()} className="flex-row items-center gap-2">
-              <Text className="text-text-muted text-lg">←</Text>
+              <AppIcon name="arrow-left" size={18} color="#6E6382" strokeWidth={2} />
               <Text className="text-text-muted text-[11px]" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>
                 VOLTAR
               </Text>
@@ -216,7 +216,9 @@ export default function PublicProfileScreen() {
                   style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
                   pointerEvents="none"
                 />
-                <Text className="text-4xl mb-3">🏆</Text>
+                <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
+                  <AppIcon name="trophy" size={28} color="#9B40D8" strokeWidth={2} />
+                </View>
                 <DisplayHeading size="sm" italic tone="muted">
                   Nenhuma conquista ainda
                 </DisplayHeading>

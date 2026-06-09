@@ -5,6 +5,7 @@ import { router } from "expo-router";
 import { useAuth } from "../../../lib/auth/provider";
 import { useDietPlans, useMealLogs, useWaterLogs, useFoodLogs } from "../../../hooks/queries/useDiet";
 import { useLogMeal, useLogWater, useLogFood, useDeleteFoodLog } from "../../../hooks/mutations/useDietMutations";
+import { AppIcon } from "../../../components/ui";
 import { Card } from "../../../components/ui/Card";
 import { EmptyState } from "../../../components/ui/EmptyState";
 import { DisplayHeading } from "../../../components/ui/DisplayHeading";
@@ -116,7 +117,7 @@ export default function DietScreen() {
           <DisplayHeading size="md" className="mb-6">Dieta.</DisplayHeading>
         </View>
         <EmptyState
-          icon="🥗"
+          iconName="diet"
           title="Nenhum plano alimentar"
           description="Seu nutricionista ou personal ainda nao atribuiu um plano alimentar."
         />
@@ -131,6 +132,7 @@ export default function DietScreen() {
         <Text className="text-sm text-text-secondary mb-6" style={{ fontFamily: font.regular }}>{activePlan.name}</Text>
 
         {/* Macro summary */}
+        <SectionLabel className="mb-2.5">Macros de hoje</SectionLabel>
         <View className="flex-row gap-2 mb-6">
           <Card className="flex-1 items-center py-3 px-2">
             <Text className="text-lg text-text-primary" style={{ fontFamily: font.bold }}>{Math.round(totalCal)}</Text>
@@ -181,19 +183,21 @@ export default function DietScreen() {
         {/* Water button */}
         <Pressable
           onPress={handleLogWater}
-          className="bg-blue-500/10 rounded-xl py-3 items-center mb-6 active:bg-blue-500/20 flex-row justify-center gap-2"
+          className="bg-blue-500/10 rounded-2xl py-3.5 items-center mb-6 active:bg-blue-500/20 flex-row justify-center gap-2"
         >
-          <Text className="text-lg">💧</Text>
+          <AppIcon name="water" size={18} color="#60A5FA" strokeWidth={2} />
           <Text className="text-blue-400 text-sm" style={{ fontFamily: font.semibold }}>+ 250ml de agua</Text>
         </Pressable>
 
         {/* Recipes link */}
         <Pressable
           onPress={() => router.push("/(student)/(diet)/recipes" as never)}
-          className="bg-violet-500/10 border border-violet-500/20 rounded-xl py-3 items-center mb-6 active:bg-violet-500/20 flex-row justify-center gap-2"
+          className="bg-violet-500/10 border border-violet-500/20 rounded-2xl py-3.5 items-center mb-6 active:bg-violet-500/20 flex-row justify-center gap-2"
         >
-          <Text className="text-lg">🍽️</Text>
+          <AppIcon name="food" size={18} color="#9B40D8" strokeWidth={2} />
           <Text className="text-violet-400 text-sm" style={{ fontFamily: font.semibold }}>Receitas Fitness</Text>
+          <View className="flex-1" />
+          <AppIcon name="chevron-right" size={18} color="#9B40D8" strokeWidth={2} />
         </Pressable>
 
         {/* Meals */}
@@ -219,7 +223,7 @@ export default function DietScreen() {
                   </View>
                   {isLogged ? (
                     <View className="bg-success-500 rounded-full w-6 h-6 items-center justify-center">
-                      <Text className="text-white text-xs">✓</Text>
+                      <AppIcon name="check" size={14} color="#FFFFFF" strokeWidth={2.5} />
                     </View>
                   ) : (
                     <View className="border border-surface-border rounded-full w-6 h-6" />
@@ -254,8 +258,9 @@ export default function DietScreen() {
         <View className="mb-10">
           <View className="flex-row items-center justify-between mb-3">
             <DisplayHeading size="sm">Registro livre</DisplayHeading>
-            <Pressable onPress={() => setShowAddFood(true)} className="bg-violet-500/10 px-3 py-1.5 rounded-full">
-              <Text className="text-violet-400 text-xs" style={{ fontFamily: font.bold }}>+ Alimento</Text>
+            <Pressable onPress={() => setShowAddFood(true)} className="bg-violet-500/10 px-3 py-1.5 rounded-full flex-row items-center gap-1">
+              <AppIcon name="plus" size={14} color="#9B40D8" strokeWidth={2.5} />
+              <Text className="text-violet-400 text-xs" style={{ fontFamily: font.bold }}>Alimento</Text>
             </Pressable>
           </View>
           {!foodLogs?.length ? (
@@ -263,15 +268,18 @@ export default function DietScreen() {
           ) : (
             <View className="gap-2">
               {foodLogs.map((f) => (
-                <View key={f.id} className="bg-surface-card border border-surface-border rounded-2xl p-3 flex-row items-center justify-between">
+                <View key={f.id} className="bg-surface-card border border-surface-border rounded-2xl p-3 flex-row items-center gap-3">
+                  <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+                    <AppIcon name="apple" size={18} color="#9B40D8" strokeWidth={2} />
+                  </View>
                   <View className="flex-1">
                     <Text className="text-sm text-text-primary" style={{ fontFamily: font.semibold }}>{f.food_name}</Text>
                     <Text className="text-[10px] text-text-muted" style={{ fontFamily: font.regular }}>
                       {f.calories ? `${Math.round(f.calories)} kcal` : ""}{f.protein_g ? ` · ${Math.round(f.protein_g)}g P` : ""}
                     </Text>
                   </View>
-                  <Pressable onPress={() => deleteFoodLog.mutate(f.id)}>
-                    <Text className="text-danger-500 text-xs" style={{ fontFamily: font.bold }}>Remover</Text>
+                  <Pressable onPress={() => deleteFoodLog.mutate(f.id)} className="w-9 h-9 rounded-xl items-center justify-center active:bg-danger-500/10">
+                    <AppIcon name="trash" size={18} color="#FB7185" strokeWidth={2} />
                   </Pressable>
                 </View>
               ))}

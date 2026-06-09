@@ -1,4 +1,5 @@
 import { Pressable, Text, View } from "react-native";
+import { AppIcon } from "../ui";
 import { ExerciseAnimation } from "./ExerciseAnimation";
 
 interface ExerciseCardProps {
@@ -58,13 +59,17 @@ export function ExerciseCard({
                 className="absolute inset-0 items-center justify-center bg-black/40"
                 style={{ borderRadius: 14 }}
               >
-                <Text className="text-white text-lg">▶</Text>
+                <AppIcon name="play" size={18} color="#FFFFFF" strokeWidth={2} />
               </View>
             ) : null}
           </View>
         ) : (
           <View className="w-14 h-14 bg-surface-elevated rounded-xl items-center justify-center">
-            {isVideoMp4 ? <Text className="text-xl">▶️</Text> : <Text className="text-xl">🏋️</Text>}
+            {isVideoMp4 ? (
+              <AppIcon name="play" size={20} color="#6E6382" strokeWidth={2} />
+            ) : (
+              <AppIcon name="workout" size={20} color="#6E6382" strokeWidth={2} />
+            )}
           </View>
         )}
       </Pressable>

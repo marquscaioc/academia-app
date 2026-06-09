@@ -8,6 +8,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useAuth } from "../../../lib/auth/provider";
 import { supabase } from "../../../lib/supabase/client";
 import { font, amethystGlow } from "../../../lib/design/tokens";
+import { AppIcon } from "../../../components/ui";
 
 const colorPresets = [
   { name: "Limao", primary: "#781BB6", secondary: "#00E5FF" },
@@ -76,8 +77,9 @@ export default function BrandingScreen() {
     <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1 px-6 pt-6" keyboardShouldPersistTaps="handled">
         <View className="flex-row items-center justify-between mb-6">
-          <Pressable onPress={() => router.back()}>
-            <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>← Voltar</Text>
+          <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5 active:opacity-70">
+            <AppIcon name="arrow-left" size={16} color="#6E6382" strokeWidth={2} />
+            <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>Voltar</Text>
           </Pressable>
           <Text className="text-2xl text-text-primary" style={{ fontFamily: font.display }}>Portal branded.</Text>
           <View className="w-16" />
@@ -137,11 +139,16 @@ export default function BrandingScreen() {
               {logoUri ? (
                 <View className="items-center">
                   <Image source={{ uri: logoUri }} style={{ width: 48, height: 48, borderRadius: 12 }} contentFit="cover" />
-                  <Text className="text-xs text-violet-400 mt-2" style={{ fontFamily: font.semibold }}>Trocar logo</Text>
+                  <View className="flex-row items-center gap-1.5 mt-2">
+                    <AppIcon name="refresh" size={14} color="#9B40D8" strokeWidth={2} />
+                    <Text className="text-xs text-violet-400" style={{ fontFamily: font.semibold }}>Trocar logo</Text>
+                  </View>
                 </View>
               ) : (
                 <View className="items-center">
-                  <Text className="text-2xl mb-1">🖼️</Text>
+                  <View className="w-12 h-12 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-2">
+                    <AppIcon name="image" size={20} color="#9B40D8" strokeWidth={2} />
+                  </View>
                   <Text className="text-xs text-text-muted" style={{ fontFamily: font.semibold }}>Adicionar logo</Text>
                 </View>
               )}
@@ -176,7 +183,12 @@ export default function BrandingScreen() {
                     <View className="w-6 h-6 rounded-full" style={{ backgroundColor: preset.primary }} />
                     <View className="w-6 h-6 rounded-full" style={{ backgroundColor: preset.secondary }} />
                   </View>
-                  <Text className="text-[10px] text-text-muted" style={{ fontFamily: font.semibold }}>{preset.name}</Text>
+                  <View className="flex-row items-center gap-1">
+                    {selectedPreset === idx ? (
+                      <AppIcon name="check-circle" size={12} color="#9B40D8" strokeWidth={2} />
+                    ) : null}
+                    <Text className="text-[10px] text-text-muted" style={{ fontFamily: font.semibold }}>{preset.name}</Text>
+                  </View>
                 </Pressable>
               ))}
             </View>
@@ -197,7 +209,10 @@ export default function BrandingScreen() {
               {saving ? (
                 <ActivityIndicator color="#FFFFFF" />
               ) : (
-                <Text className="text-white text-base" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Salvar branding</Text>
+                <View className="flex-row items-center gap-2">
+                  <AppIcon name="sparkles" size={18} color="#FFFFFF" strokeWidth={2} />
+                  <Text className="text-white text-base" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Salvar branding</Text>
+                </View>
               )}
             </LinearGradient>
           </Pressable>

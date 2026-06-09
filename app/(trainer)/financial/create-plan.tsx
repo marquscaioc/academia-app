@@ -3,6 +3,7 @@ import { router } from "expo-router";
 import { useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { AppIcon } from "../../../components/ui";
 import { DisplayHeading } from "../../../components/ui/DisplayHeading";
 import { SectionLabel } from "../../../components/ui/SectionLabel";
 import { amethystGlow, font } from "../../../lib/design/tokens";
@@ -51,16 +52,27 @@ export default function CreatePlanScreen() {
     <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1 px-6 pt-6" keyboardShouldPersistTaps="handled">
         <View className="flex-row items-center justify-between mb-6">
-          <Pressable onPress={() => router.back()}>
-            <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>← Cancelar</Text>
+          <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5">
+            <AppIcon name="arrow-left" size={16} color="#6E6382" strokeWidth={2} />
+            <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>Cancelar</Text>
           </Pressable>
           <DisplayHeading size="sm">Novo plano.</DisplayHeading>
           <View className="w-16" />
         </View>
 
+        <View className="flex-row items-center gap-3 mb-6">
+          <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+            <AppIcon name="money" size={18} color="#9B40D8" strokeWidth={2} />
+          </View>
+          <Text className="flex-1 text-text-secondary text-sm leading-5" style={{ fontFamily: font.regular }}>
+            Defina nome, valor e periodo para cobrar seus alunos por assinatura.
+          </Text>
+        </View>
+
         {error ? (
-          <View className="bg-danger-500/10 border border-danger-500/20 rounded-2xl p-4 mb-5">
-            <Text className="text-danger-500 text-center text-sm" style={{ fontFamily: font.medium }}>{error}</Text>
+          <View className="flex-row items-center gap-2.5 bg-danger-500/10 border border-danger-500/20 rounded-2xl p-4 mb-5">
+            <AppIcon name="alert" size={18} color="#FB7185" strokeWidth={2} />
+            <Text className="flex-1 text-danger-500 text-sm" style={{ fontFamily: font.medium }}>{error}</Text>
           </View>
         ) : null}
 
@@ -110,12 +122,15 @@ export default function CreatePlanScreen() {
                 <Pressable
                   key={i.value}
                   onPress={() => setInterval(i.value)}
-                  className={`flex-1 py-3 rounded-2xl border items-center ${
+                  className={`flex-1 flex-row items-center justify-center gap-1.5 py-3 rounded-2xl border ${
                     interval === i.value
                       ? "bg-violet-500/10 border-violet-400/80"
                       : "bg-surface-card/80 border-surface-border"
                   }`}
                 >
+                  {interval === i.value ? (
+                    <AppIcon name="check" size={16} color="#9B40D8" strokeWidth={2} />
+                  ) : null}
                   <Text
                     className={`text-sm ${
                       interval === i.value ? "text-violet-400" : "text-text-muted"
@@ -144,9 +159,12 @@ export default function CreatePlanScreen() {
               {createPlan.isPending ? (
                 <ActivityIndicator color="#FFFFFF" />
               ) : (
-                <Text className="text-white text-base" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>
-                  Criar plano
-                </Text>
+                <View className="flex-row items-center gap-2">
+                  <AppIcon name="plus" size={18} color="#FFFFFF" strokeWidth={2} />
+                  <Text className="text-white text-base" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>
+                    Criar plano
+                  </Text>
+                </View>
               )}
             </LinearGradient>
           </Pressable>

@@ -12,6 +12,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ExerciseCard } from "../../../components/workout/ExerciseCard";
 import { EmptyState } from "../../../components/ui/EmptyState";
+import { AppIcon } from "../../../components/ui";
 import { useExercises, useMuscleGroups } from "../../../hooks/queries/useExercises";
 import { translateExerciseName } from "../../../lib/utils/exerciseTranslations";
 import { useAuth } from "../../../lib/auth/provider";
@@ -34,33 +35,45 @@ export default function ExercisesScreen() {
       <View className="flex-1 px-6 pt-6">
         {/* Header */}
         <View className="flex-row items-center justify-between mb-4">
-          <Text
-            className="text-[34px] leading-tight text-text-primary"
-            style={{ fontFamily: font.display }}
-          >
-            Exercícios.
-          </Text>
+          <View>
+            <Text
+              className="text-[10px] uppercase text-text-muted mb-1"
+              style={{ fontFamily: font.semibold, letterSpacing: 2.5 }}
+            >
+              Biblioteca
+            </Text>
+            <Text
+              className="text-[34px] leading-tight text-text-primary"
+              style={{ fontFamily: font.display }}
+            >
+              Exercícios.
+            </Text>
+          </View>
           <Link href="/(trainer)/exercises/create" asChild>
-            <Pressable className="bg-violet-500 px-4 py-2 rounded-2xl active:bg-violet-600">
+            <Pressable className="flex-row items-center gap-1.5 bg-violet-500 px-4 py-2 rounded-2xl active:bg-violet-600">
+              <AppIcon name="plus" size={16} color="#FFFFFF" strokeWidth={2} />
               <Text
                 className="text-white text-sm"
                 style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
               >
-                + Novo
+                Novo
               </Text>
             </Pressable>
           </Link>
         </View>
 
         {/* Search */}
-        <TextInput
-          className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary mb-4"
-          placeholder="Buscar exercicio..."
-          placeholderTextColor="#6E6382"
-          value={search}
-          onChangeText={setSearch}
-          style={{ fontFamily: font.regular }}
-        />
+        <View className="flex-row items-center gap-2.5 bg-surface-card/80 border border-surface-border rounded-2xl px-4 mb-4">
+          <AppIcon name="search" size={18} color="#6E6382" strokeWidth={2} />
+          <TextInput
+            className="flex-1 py-3.5 text-[15px] text-text-primary"
+            placeholder="Buscar exercicio..."
+            placeholderTextColor="#6E6382"
+            value={search}
+            onChangeText={setSearch}
+            style={{ fontFamily: font.regular }}
+          />
+        </View>
 
         {/* Muscle group filters - fixed height ScrollView */}
         <View style={{ height: 36, marginBottom: 12 }}>
@@ -122,7 +135,7 @@ export default function ExercisesScreen() {
           </View>
         ) : !exercises?.length ? (
           <EmptyState
-            icon="🏋️"
+            iconName="workout"
             title="Nenhum exercicio encontrado"
             description="Adicione exercicios com instrucoes para montar os treinos dos seus alunos."
           />

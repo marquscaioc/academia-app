@@ -15,6 +15,7 @@ import { useAuth } from "../../lib/auth/provider";
 import { supabase } from "../../lib/supabase/client";
 import { Avatar } from "../../components/ui/Avatar";
 import { DisplayHeading } from "../../components/ui/DisplayHeading";
+import { AppIcon } from "../../components/ui";
 import { font, amethystGlow } from "../../lib/design/tokens";
 
 export default function EditProfileScreen() {
@@ -93,8 +94,9 @@ export default function EditProfileScreen() {
     <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1 px-6 pt-6" keyboardShouldPersistTaps="handled">
         <View className="flex-row items-center justify-between mb-8">
-          <Pressable onPress={() => router.back()}>
-            <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>← Cancelar</Text>
+          <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5">
+            <AppIcon name="arrow-left" size={16} color="#6E6382" strokeWidth={2} />
+            <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>Cancelar</Text>
           </Pressable>
           <DisplayHeading size="sm">Editar perfil.</DisplayHeading>
           <View className="w-16" />
@@ -103,17 +105,21 @@ export default function EditProfileScreen() {
         {/* Avatar */}
         <View className="items-center mb-8">
           <Avatar uri={profile?.avatar_url} name={fullName} size="xl" />
-          <Pressable className="mt-3" onPress={pickAvatar} disabled={uploadingAvatar}>
+          <Pressable className="mt-3 flex-row items-center gap-1.5" onPress={pickAvatar} disabled={uploadingAvatar}>
             {uploadingAvatar ? (
               <ActivityIndicator color="#a78bfa" />
             ) : (
-              <Text className="text-violet-400 text-sm" style={{ fontFamily: font.semibold }}>Trocar foto</Text>
+              <>
+                <AppIcon name="camera" size={16} color="#9B40D8" strokeWidth={2} />
+                <Text className="text-violet-400 text-sm" style={{ fontFamily: font.semibold }}>Trocar foto</Text>
+              </>
             )}
           </Pressable>
         </View>
 
         {error ? (
-          <View className="bg-danger-500/10 border border-danger-500/20 rounded-2xl p-4 mb-5">
+          <View className="bg-danger-500/10 border border-danger-500/20 rounded-2xl p-4 mb-5 flex-row items-center justify-center gap-2">
+            <AppIcon name="warning" size={16} color="#FB7185" strokeWidth={2} />
             <Text className="text-danger-500 text-center text-sm" style={{ fontFamily: font.medium }}>{error}</Text>
           </View>
         ) : null}
@@ -175,7 +181,10 @@ export default function EditProfileScreen() {
 
           {/* WhatsApp */}
           <View className="bg-surface-card border border-surface-border rounded-3xl p-4 mt-4">
-            <Text className="text-[10px] text-text-muted mb-3 uppercase" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>WhatsApp</Text>
+            <View className="flex-row items-center gap-2 mb-3">
+              <AppIcon name="chat" size={16} color="#6E6382" strokeWidth={2} />
+              <Text className="text-[10px] text-text-muted uppercase" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>WhatsApp</Text>
+            </View>
             <TextInput
               className="bg-dark-300 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary mb-3"
               placeholder="55 11 99999-9999"
@@ -212,7 +221,10 @@ export default function EditProfileScreen() {
 
           {/* Notification preferences */}
           <View className="bg-surface-card border border-surface-border rounded-3xl p-4 mt-4">
-            <Text className="text-[10px] text-text-muted mb-3 uppercase" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>Notificacoes</Text>
+            <View className="flex-row items-center gap-2 mb-3">
+              <AppIcon name="bell" size={16} color="#6E6382" strokeWidth={2} />
+              <Text className="text-[10px] text-text-muted uppercase" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>Notificacoes</Text>
+            </View>
             <Pressable
               onPress={async () => {
                 if (!user) return;
@@ -250,9 +262,12 @@ export default function EditProfileScreen() {
               {loading ? (
                 <ActivityIndicator color="#FFFFFF" />
               ) : (
-                <Text className="text-white text-base" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>
-                  Salvar
-                </Text>
+                <View className="flex-row items-center gap-2">
+                  <AppIcon name="check" size={18} color="#FFFFFF" strokeWidth={2} />
+                  <Text className="text-white text-base" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>
+                    Salvar
+                  </Text>
+                </View>
               )}
             </LinearGradient>
           </Pressable>

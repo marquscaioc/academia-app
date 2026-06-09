@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../../lib/auth/provider";
 import { useCreateInvite } from "../../../hooks/mutations/useInviteMutations";
 import { DisplayHeading } from "../../../components/ui/DisplayHeading";
+import { AppIcon } from "../../../components/ui";
 import { amethystGlow, font } from "../../../lib/design/tokens";
 
 export default function InviteScreen() {
@@ -23,9 +24,13 @@ export default function InviteScreen() {
     <SafeAreaView className="flex-1 bg-dark-400">
       <View className="flex-1 px-6 pt-6">
         <View className="flex-row items-center justify-between mb-8">
-          <Pressable onPress={() => router.back()}>
+          <Pressable
+            onPress={() => router.back()}
+            className="flex-row items-center gap-1.5 active:opacity-70"
+          >
+            <AppIcon name="arrow-left" size={18} color="#6E6382" strokeWidth={2} />
             <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>
-              ← Voltar
+              Voltar
             </Text>
           </Pressable>
           <DisplayHeading size="sm" className="text-text-primary">
@@ -37,8 +42,8 @@ export default function InviteScreen() {
         <View className="flex-1 items-center justify-center">
           {inviteCode ? (
             <View className="items-center">
-              <View className="w-20 h-20 bg-violet-500/20 rounded-3xl items-center justify-center mb-6">
-                <Text className="text-4xl">🎟️</Text>
+              <View className="w-20 h-20 bg-violet-500/15 border border-violet-500/25 rounded-3xl items-center justify-center mb-6">
+                <AppIcon name="qr" size={30} color="#9B40D8" strokeWidth={2} />
               </View>
               <Text
                 className="text-sm text-text-secondary mb-4"
@@ -46,7 +51,13 @@ export default function InviteScreen() {
               >
                 Compartilhe este codigo com seu aluno:
               </Text>
-              <View className="bg-surface-card border border-violet-400/80 rounded-3xl px-10 py-8 mb-6">
+              <View className="bg-surface-card border border-violet-400/80 rounded-3xl px-10 py-8 mb-6 items-center">
+                <Text
+                  className="text-text-muted text-[11px] mb-3"
+                  style={{ fontFamily: font.semibold, letterSpacing: 2 }}
+                >
+                  CODIGO DE CONVITE
+                </Text>
                 <Text
                   className="text-6xl text-fuchsia-300 tracking-[8px] text-center"
                   style={{ fontFamily: font.display }}
@@ -64,8 +75,9 @@ export default function InviteScreen() {
 
               <Pressable
                 onPress={handleGenerate}
-                className="border border-surface-border rounded-2xl px-6 py-3 mt-8 active:bg-surface-hover"
+                className="flex-row items-center gap-2 border border-surface-border rounded-2xl px-6 py-3 mt-8 active:bg-surface-hover"
               >
+                <AppIcon name="refresh" size={18} color="#A99FBA" strokeWidth={2} />
                 <Text
                   className="text-text-secondary text-sm"
                   style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
@@ -76,8 +88,8 @@ export default function InviteScreen() {
             </View>
           ) : (
             <View className="items-center">
-              <View className="w-20 h-20 bg-surface-card border border-surface-border rounded-3xl items-center justify-center mb-6">
-                <Text className="text-4xl">👥</Text>
+              <View className="w-20 h-20 bg-violet-500/15 border border-violet-500/25 rounded-3xl items-center justify-center mb-6">
+                <AppIcon name="user-add" size={30} color="#9B40D8" strokeWidth={2} />
               </View>
               <DisplayHeading size="md" className="text-text-primary text-center mb-2">
                 Adicionar aluno
@@ -105,12 +117,15 @@ export default function InviteScreen() {
                   {createInvite.isPending ? (
                     <ActivityIndicator color="#FFFFFF" />
                   ) : (
-                    <Text
-                      className="text-white text-base"
-                      style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
-                    >
-                      Gerar codigo
-                    </Text>
+                    <View className="flex-row items-center gap-2">
+                      <AppIcon name="qr" size={18} color="#FFFFFF" strokeWidth={2} />
+                      <Text
+                        className="text-white text-base"
+                        style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
+                      >
+                        Gerar codigo
+                      </Text>
+                    </View>
                   )}
                 </LinearGradient>
               </Pressable>

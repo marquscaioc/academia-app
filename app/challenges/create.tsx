@@ -5,6 +5,7 @@ import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from 
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../lib/auth/provider";
 import { useCreateChallenge } from "../../hooks/mutations/useChallengeMutations";
+import { AppIcon } from "../../components/ui";
 import { font, amethystGlow } from "../../lib/design/tokens";
 
 const scoringModes = [
@@ -59,8 +60,9 @@ export default function CreateChallengeScreen() {
     <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1 px-6 pt-6" keyboardShouldPersistTaps="handled">
         <View className="flex-row items-center justify-between mb-6">
-          <Pressable onPress={() => router.back()}>
-            <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>← Cancelar</Text>
+          <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5">
+            <AppIcon name="arrow-left" size={16} color="#6E6382" strokeWidth={2} />
+            <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>Cancelar</Text>
           </Pressable>
           <Text className="text-2xl text-text-primary" style={{ fontFamily: font.display }}>Novo desafio.</Text>
           <View className="w-16" />
@@ -118,14 +120,21 @@ export default function CreateChallengeScreen() {
                 <Pressable
                   key={m.value}
                   onPress={() => setScoringMode(m.value)}
-                  className={`border rounded-2xl p-4 ${
+                  className={`flex-row items-center border rounded-2xl p-4 ${
                     scoringMode === m.value ? "border-violet-500 bg-violet-500/10" : "border-surface-border bg-surface-card"
                   }`}
                 >
-                  <Text className={`text-sm ${scoringMode === m.value ? "text-violet-400" : "text-text-primary"}`} style={{ fontFamily: font.semibold }}>
-                    {m.label}
-                  </Text>
-                  <Text className="text-xs text-text-muted mt-0.5" style={{ fontFamily: font.regular }}>{m.desc}</Text>
+                  <View className="flex-1 mr-3">
+                    <Text className={`text-sm ${scoringMode === m.value ? "text-violet-400" : "text-text-primary"}`} style={{ fontFamily: font.semibold }}>
+                      {m.label}
+                    </Text>
+                    <Text className="text-xs text-text-muted mt-0.5" style={{ fontFamily: font.regular }}>{m.desc}</Text>
+                  </View>
+                  {scoringMode === m.value ? (
+                    <AppIcon name="check-circle" size={20} color="#9B40D8" strokeWidth={2} />
+                  ) : (
+                    <View className="w-5 h-5 rounded-full border border-surface-border" />
+                  )}
                 </Pressable>
               ))}
             </View>
@@ -167,7 +176,10 @@ export default function CreateChallengeScreen() {
               {createChallenge.isPending ? (
                 <ActivityIndicator color="#FFFFFF" />
               ) : (
-                <Text className="text-white text-base" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Criar desafio</Text>
+                <View className="flex-row items-center gap-2">
+                  <AppIcon name="trophy" size={18} color="#FFFFFF" strokeWidth={2} />
+                  <Text className="text-white text-base" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Criar desafio</Text>
+                </View>
               )}
             </LinearGradient>
           </Pressable>

@@ -13,6 +13,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import * as ImagePicker from "expo-image-picker";
 import { Image } from "expo-image";
 import { font, amethystGlow } from "../../../lib/design/tokens";
+import { AppIcon } from "../../../components/ui";
 import { useAuth } from "../../../lib/auth/provider";
 import { supabase } from "../../../lib/supabase/client";
 import { useMuscleGroups, useEquipment } from "../../../hooks/queries/useExercises";
@@ -121,15 +122,17 @@ export default function CreateExerciseScreen() {
     <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1 px-6 pt-6" keyboardShouldPersistTaps="handled">
         <View className="flex-row items-center justify-between mb-6">
-          <Pressable onPress={() => router.back()}>
-            <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>← Cancelar</Text>
+          <Pressable onPress={() => router.back()} className="flex-row items-center gap-1">
+            <AppIcon name="chevron-left" size={16} color="#6E6382" strokeWidth={2} />
+            <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>Cancelar</Text>
           </Pressable>
           <Text className="text-2xl text-text-primary" style={{ fontFamily: font.display }}>Novo exercício.</Text>
           <View className="w-16" />
         </View>
 
         {error ? (
-          <View className="bg-danger-500/10 border border-danger-500/20 rounded-2xl p-4 mb-4">
+          <View className="flex-row items-center justify-center gap-2 bg-danger-500/10 border border-danger-500/20 rounded-2xl p-4 mb-4">
+            <AppIcon name="warning" size={16} color="#FB7185" strokeWidth={2} />
             <Text className="text-danger-500 text-center text-sm" style={{ fontFamily: font.medium }}>{error}</Text>
           </View>
         ) : null}
@@ -155,13 +158,17 @@ export default function CreateExerciseScreen() {
               <Pressable onPress={pickVideo} className="flex-1 bg-surface-card border border-dashed border-surface-border rounded-2xl py-6 items-center active:bg-surface-hover">
                 {videoUri ? (
                   <View className="items-center">
-                    <Text className="text-2xl mb-1">🎬</Text>
+                    <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-2">
+                      <AppIcon name="check-circle" size={18} color="#9B40D8" strokeWidth={2} />
+                    </View>
                     <Text className="text-xs text-violet-400" style={{ fontFamily: font.semibold }}>Video selecionado</Text>
                     <Text className="text-[10px] text-text-muted mt-1" style={{ fontFamily: font.regular }}>Toque para trocar</Text>
                   </View>
                 ) : (
                   <View className="items-center">
-                    <Text className="text-2xl mb-1">📹</Text>
+                    <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-2">
+                      <AppIcon name="video" size={18} color="#9B40D8" strokeWidth={2} />
+                    </View>
                     <Text className="text-xs text-text-muted" style={{ fontFamily: font.semibold }}>Adicionar video</Text>
                   </View>
                 )}
@@ -171,7 +178,9 @@ export default function CreateExerciseScreen() {
                   <Image source={{ uri: thumbUri }} style={{ width: "100%", height: "100%", position: "absolute", borderRadius: 16 }} contentFit="cover" />
                 ) : (
                   <View className="items-center">
-                    <Text className="text-2xl mb-1">🖼️</Text>
+                    <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-2">
+                      <AppIcon name="image" size={18} color="#9B40D8" strokeWidth={2} />
+                    </View>
                     <Text className="text-xs text-text-muted" style={{ fontFamily: font.semibold }}>Thumbnail</Text>
                   </View>
                 )}

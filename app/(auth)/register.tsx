@@ -14,7 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import { useAuth } from "../../lib/auth/provider";
-import { DisplayHeading, Logo } from "../../components/ui";
+import { AppIcon, DisplayHeading, Logo } from "../../components/ui";
 import { amethystGlow, font } from "../../lib/design/tokens";
 
 export default function RegisterScreen() {
@@ -200,7 +200,7 @@ export default function RegisterScreen() {
                   accepted ? "bg-violet-500 border-violet-500" : "border-surface-border"
                 }`}
               >
-                {accepted ? <Text className="text-white text-xs font-bold">✓</Text> : null}
+                {accepted ? <AppIcon name="check" size={12} color="#FFFFFF" strokeWidth={3} /> : null}
               </View>
               <Text className="flex-1 text-text-muted text-xs leading-5">
                 Li e aceito os{" "}

@@ -8,6 +8,7 @@ import { supabase } from "../../../lib/supabase/client";
 import { useUpdateStudentStatus } from "../../../hooks/mutations/useStudentStatus";
 import { Avatar } from "../../../components/ui/Avatar";
 import { EmptyState } from "../../../components/ui/EmptyState";
+import { AppIcon } from "../../../components/ui";
 import { font, amethystGlow, amethystGradient } from "../../../lib/design/tokens";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -91,9 +92,10 @@ export default function StudentsScreen() {
                 colors={amethystGradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0.9 }}
-                className="px-4 py-2 rounded-xl"
+                className="px-4 py-2 rounded-xl flex-row items-center gap-1.5"
               >
-                <Text className="text-white text-xs" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>+ Convidar</Text>
+                <AppIcon name="user-add" size={16} color="#FFFFFF" strokeWidth={2} />
+                <Text className="text-white text-xs" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Convidar</Text>
               </LinearGradient>
             </Pressable>
           </Link>
@@ -129,7 +131,7 @@ export default function StudentsScreen() {
           </View>
         ) : !students?.length ? (
           <EmptyState
-            icon="👥"
+            iconName="social"
             title="Nenhum aluno"
             description={filter === "active" ? "Convide alunos com codigo de convite." : "Nenhum aluno inativo."}
           />
@@ -156,9 +158,12 @@ export default function StudentsScreen() {
                     <Avatar uri={item.student?.avatar_url} name={item.student?.full_name} size="lg" />
                     <View className="flex-1">
                       <Text className="text-sm text-text-primary" style={{ fontFamily: font.semibold }}>{item.student?.full_name}</Text>
-                      <Text className="text-xs text-text-muted mt-0.5" style={{ fontFamily: font.regular }}>
-                        Desde {new Date(item.started_at).toLocaleDateString("pt-BR")}
-                      </Text>
+                      <View className="flex-row items-center gap-1.5 mt-0.5">
+                        <AppIcon name="calendar" size={12} color="#6E6382" strokeWidth={2} />
+                        <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>
+                          Desde {new Date(item.started_at).toLocaleDateString("pt-BR")}
+                        </Text>
+                      </View>
                     </View>
                     <View className={`px-2 py-1 rounded-full ${
                       isActive ? "bg-violet-500/10" : item.status === "paused" ? "bg-warning-500/15" : "bg-danger-500/15"
@@ -172,6 +177,7 @@ export default function StudentsScreen() {
                         {isActive ? "Ativo" : item.status === "paused" ? "Pausado" : "Cancelado"}
                       </Text>
                     </View>
+                    <AppIcon name="chevron-right" size={18} color="#6E6382" strokeWidth={2} />
                   </Pressable>
 
                   {/* Action buttons */}
@@ -181,15 +187,16 @@ export default function StudentsScreen() {
                       disabled={updateStatus.isPending}
                       className="bg-success-500 rounded-2xl py-2.5 items-center mt-3 active:bg-success-600 flex-row justify-center gap-2"
                     >
-                      <Text className="text-white text-sm">↻</Text>
+                      <AppIcon name="refresh" size={16} color="#FFFFFF" strokeWidth={2} />
                       <Text className="text-white text-xs" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Reativar aluno</Text>
                     </Pressable>
                   ) : (
                     <Pressable
                       onPress={() => handlePause(item.student_id)}
                       disabled={updateStatus.isPending}
-                      className="border border-surface-border rounded-2xl py-2 items-center mt-3 active:bg-surface-hover"
+                      className="border border-surface-border rounded-2xl py-2 items-center mt-3 active:bg-surface-hover flex-row justify-center gap-2"
                     >
+                      <AppIcon name="pause" size={14} color="#6E6382" strokeWidth={2} />
                       <Text className="text-text-muted text-xs" style={{ fontFamily: font.semibold }}>Pausar acompanhamento</Text>
                     </Pressable>
                   )}
@@ -204,6 +211,9 @@ export default function StudentsScreen() {
       <Modal visible={!!waterModal} animationType="fade" transparent>
         <View className="flex-1 items-center justify-center bg-black/60 px-6">
           <View className="bg-dark-200 border border-surface-border rounded-3xl p-6 w-full max-w-sm">
+            <View className="w-12 h-12 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
+              <AppIcon name="water" size={22} color="#9B40D8" strokeWidth={2} />
+            </View>
             <Text className="text-2xl text-text-primary mb-1" style={{ fontFamily: font.display }}>Meta de agua.</Text>
             <Text className="text-sm text-text-muted mb-5" style={{ fontFamily: font.regular }}>{waterModal?.name}</Text>
 

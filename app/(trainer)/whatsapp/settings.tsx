@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { font, amethystGlow } from "../../../lib/design/tokens";
+import { AppIcon } from "../../../components/ui";
 import { EVOLUTION_CONFIG } from "../../../lib/whatsapp/config";
 import * as evo from "../../../lib/whatsapp/client";
 import { MESSAGE_TEMPLATES } from "../../../lib/whatsapp/templates";
@@ -37,18 +38,22 @@ export default function WhatsAppSettingsScreen() {
     <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1 px-6 pt-6">
         <View className="flex-row items-center justify-between mb-6">
-          <Pressable onPress={() => router.back()}>
-            <Text className="text-violet-400" style={{ fontFamily: font.medium }}>← Voltar</Text>
+          <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5">
+            <AppIcon name="arrow-left" size={18} color="#9B40D8" strokeWidth={2} />
+            <Text className="text-violet-400" style={{ fontFamily: font.medium }}>Voltar</Text>
           </Pressable>
-          <Text className="text-2xl text-text-primary" style={{ fontFamily: font.display }}>Configurações</Text>
+          <View className="items-center">
+            <Text className="text-text-muted text-[10px]" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>WHATSAPP</Text>
+            <Text className="text-2xl text-text-primary" style={{ fontFamily: font.display }}>Configurações</Text>
+          </View>
           <View className="w-16" />
         </View>
 
         {/* Webhook */}
         <View className="bg-surface-card border border-surface-border rounded-3xl p-6 mb-6">
           <View className="flex-row items-center gap-3 mb-4">
-            <View className="w-10 h-10 bg-violet-500/15 rounded-xl items-center justify-center">
-              <Text className="text-lg">🔗</Text>
+            <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+              <AppIcon name="link" size={18} color="#9B40D8" strokeWidth={2} />
             </View>
             <View>
               <Text className="text-sm text-text-primary" style={{ fontFamily: font.bold }}>Webhook</Text>
@@ -97,12 +102,14 @@ export default function WhatsAppSettingsScreen() {
           )}
 
           {webhookSaved ? (
-            <View className="bg-success-500/10 rounded-xl p-3 mt-3">
+            <View className="flex-row items-center justify-center gap-2 bg-success-500/10 rounded-xl p-3 mt-3">
+              <AppIcon name="check-circle" size={16} color="#34D399" strokeWidth={2} />
               <Text className="text-success-500 text-xs text-center" style={{ fontFamily: font.semibold }}>Webhook configurado!</Text>
             </View>
           ) : null}
           {webhookError ? (
-            <View className="bg-danger-500/10 rounded-xl p-3 mt-3">
+            <View className="flex-row items-center justify-center gap-2 bg-danger-500/10 rounded-xl p-3 mt-3">
+              <AppIcon name="x-circle" size={16} color="#FB7185" strokeWidth={2} />
               <Text className="text-danger-500 text-xs text-center" style={{ fontFamily: font.semibold }}>{webhookError}</Text>
             </View>
           ) : null}
@@ -111,8 +118,8 @@ export default function WhatsAppSettingsScreen() {
         {/* Connection info */}
         <View className="bg-surface-card border border-surface-border rounded-3xl p-6 mb-6">
           <View className="flex-row items-center gap-3 mb-4">
-            <View className="w-10 h-10 bg-violet-500/15 rounded-xl items-center justify-center">
-              <Text className="text-lg">⚙️</Text>
+            <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+              <AppIcon name="settings" size={18} color="#9B40D8" strokeWidth={2} />
             </View>
             <Text className="text-sm text-text-primary" style={{ fontFamily: font.bold }}>API</Text>
           </View>
@@ -141,15 +148,17 @@ export default function WhatsAppSettingsScreen() {
         {/* Templates */}
         <View className="bg-surface-card border border-surface-border rounded-3xl p-6 mb-10">
           <View className="flex-row items-center gap-3 mb-4">
-            <View className="w-10 h-10 bg-violet-500/15 rounded-xl items-center justify-center">
-              <Text className="text-lg">📝</Text>
+            <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+              <AppIcon name="edit" size={18} color="#9B40D8" strokeWidth={2} />
             </View>
             <Text className="text-sm text-text-primary" style={{ fontFamily: font.bold }}>Templates de mensagem</Text>
           </View>
           <View className="gap-3">
             {MESSAGE_TEMPLATES.map((t) => (
               <View key={t.id} className="flex-row items-center gap-3 py-2 border-b border-surface-border last:border-0">
-                <Text className="text-lg">{t.icon}</Text>
+                <View className="w-9 h-9 rounded-2xl bg-surface-elevated border border-surface-border items-center justify-center">
+                  <Text className="text-base">{t.icon}</Text>
+                </View>
                 <View className="flex-1">
                   <Text className="text-sm text-text-primary" style={{ fontFamily: font.semibold }}>{t.name}</Text>
                   <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>{t.description}</Text>

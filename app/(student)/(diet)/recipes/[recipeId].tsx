@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../../../lib/auth/provider";
 import { useRecipeDetail, useRecipeFavorites } from "../../../../hooks/queries/useRecipes";
 import { useToggleFavorite } from "../../../../hooks/mutations/useRecipeMutations";
+import { AppIcon } from "../../../../components/ui";
 import { Card } from "../../../../components/ui/Card";
 import { LoadingScreen } from "../../../../components/ui/LoadingScreen";
 import { font } from "../../../../lib/design/tokens";
@@ -29,7 +30,9 @@ export default function RecipeDetailScreen() {
           <Image source={{ uri: recipe.image_url }} style={{ width: "100%", height: 250 }} contentFit="cover" />
         ) : (
           <View className="w-full h-48 bg-surface-elevated items-center justify-center">
-            <Text className="text-5xl">🍽️</Text>
+            <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+              <AppIcon name="food" size={28} color="#9B40D8" strokeWidth={2} />
+            </View>
           </View>
         )}
 
@@ -38,9 +41,9 @@ export default function RecipeDetailScreen() {
             <Text className="text-3xl text-text-primary flex-1 mr-3" style={{ fontFamily: font.display }}>{recipe.name}</Text>
             <Pressable
               onPress={() => user && toggleFavorite.mutate({ user_id: user.id, recipe_id: recipe.id })}
-              className="w-10 h-10 bg-surface-card border border-surface-border rounded-xl items-center justify-center"
+              className="w-10 h-10 bg-surface-card border border-surface-border rounded-2xl items-center justify-center"
             >
-              <Text className="text-lg">{isFav ? "❤️" : "🤍"}</Text>
+              <AppIcon name="heart" size={18} color={isFav ? "#FB7185" : "#6E6382"} strokeWidth={2} />
             </Pressable>
           </View>
 
@@ -69,20 +72,34 @@ export default function RecipeDetailScreen() {
           </View>
 
           {/* Info */}
-          <View className="flex-row gap-4 mb-6">
+          <View className="flex-row items-center flex-wrap gap-x-4 gap-y-2 mb-6">
             {recipe.prep_time_minutes ? (
-              <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>Preparo: {recipe.prep_time_minutes}min</Text>
+              <View className="flex-row items-center gap-1.5">
+                <AppIcon name="clock" size={14} color="#6E6382" strokeWidth={2} />
+                <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>Preparo: {recipe.prep_time_minutes}min</Text>
+              </View>
             ) : null}
             {recipe.cook_time_minutes ? (
-              <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>Cozimento: {recipe.cook_time_minutes}min</Text>
+              <View className="flex-row items-center gap-1.5">
+                <AppIcon name="timer" size={14} color="#6E6382" strokeWidth={2} />
+                <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>Cozimento: {recipe.cook_time_minutes}min</Text>
+              </View>
             ) : null}
-            <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>{recipe.servings} porcao(es)</Text>
+            <View className="flex-row items-center gap-1.5">
+              <AppIcon name="food" size={14} color="#6E6382" strokeWidth={2} />
+              <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>{recipe.servings} porcao(es)</Text>
+            </View>
           </View>
 
           {/* Ingredients */}
           {recipe.ingredients?.length ? (
             <View className="mb-6">
-              <Text className="text-xl text-text-primary mb-3" style={{ fontFamily: font.display }}>Ingredientes</Text>
+              <View className="flex-row items-center gap-2.5 mb-3">
+                <View className="w-9 h-9 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+                  <AppIcon name="list" size={18} color="#9B40D8" strokeWidth={2} />
+                </View>
+                <Text className="text-xl text-text-primary" style={{ fontFamily: font.display }}>Ingredientes</Text>
+              </View>
               {recipe.ingredients.map((ing) => (
                 <View key={ing.id} className="flex-row items-center gap-2 py-1.5 border-b border-surface-border">
                   <View className="w-2 h-2 bg-violet-500 rounded-full" />
@@ -98,13 +115,19 @@ export default function RecipeDetailScreen() {
           {/* Instructions */}
           {recipe.instructions ? (
             <View>
-              <Text className="text-xl text-text-primary mb-3" style={{ fontFamily: font.display }}>Modo de preparo</Text>
+              <View className="flex-row items-center gap-2.5 mb-3">
+                <View className="w-9 h-9 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+                  <AppIcon name="clipboard-check" size={18} color="#9B40D8" strokeWidth={2} />
+                </View>
+                <Text className="text-xl text-text-primary" style={{ fontFamily: font.display }}>Modo de preparo</Text>
+              </View>
               <Text className="text-sm text-text-secondary leading-6" style={{ fontFamily: font.regular }}>{recipe.instructions}</Text>
             </View>
           ) : null}
 
-          <Pressable onPress={() => router.back()} className="mt-8 items-center">
-            <Text className="text-violet-400" style={{ fontFamily: font.semibold, letterSpacing: 0.3 }}>← Voltar para receitas</Text>
+          <Pressable onPress={() => router.back()} className="mt-8 flex-row items-center justify-center gap-2">
+            <AppIcon name="arrow-left" size={18} color="#9B40D8" strokeWidth={2} />
+            <Text className="text-violet-400" style={{ fontFamily: font.semibold, letterSpacing: 0.3 }}>Voltar para receitas</Text>
           </Pressable>
         </View>
       </ScrollView>

@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "../../lib/supabase/client";
 import { Avatar } from "../../components/ui/Avatar";
+import { AppIcon } from "../../components/ui";
 import { font } from "../../lib/design/tokens";
 
 type RoleFilter = "all" | "student" | "trainer" | "admin";
@@ -41,20 +42,29 @@ export default function AdminUsersScreen() {
     <SafeAreaView className="flex-1 bg-dark-400">
       <View className="flex-1 px-6 pt-6">
         <Text
+          className="text-[11px] uppercase text-text-muted mb-1"
+          style={{ fontFamily: font.semibold, letterSpacing: 2 }}
+        >
+          Administracao
+        </Text>
+        <Text
           className="text-3xl text-text-primary mb-4"
           style={{ fontFamily: font.display }}
         >
           Usuarios
         </Text>
 
-        <TextInput
-          className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary mb-4"
-          style={{ fontFamily: font.regular }}
-          placeholder="Buscar por nome..."
-          placeholderTextColor="#6E6382"
-          value={search}
-          onChangeText={setSearch}
-        />
+        <View className="flex-row items-center gap-3 bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 mb-4">
+          <AppIcon name="search" size={18} color="#6E6382" strokeWidth={2} />
+          <TextInput
+            className="flex-1 text-[15px] text-text-primary"
+            style={{ fontFamily: font.regular }}
+            placeholder="Buscar por nome..."
+            placeholderTextColor="#6E6382"
+            value={search}
+            onChangeText={setSearch}
+          />
+        </View>
 
         <View className="flex-row gap-2 mb-4">
           {filters.map((f) => (
@@ -86,7 +96,7 @@ export default function AdminUsersScreen() {
             showsVerticalScrollIndicator={false}
             contentContainerClassName="gap-2 pb-4"
             renderItem={({ item }) => (
-              <View className="bg-surface-card border border-surface-border rounded-2xl p-4 flex-row items-center gap-4">
+              <View className="bg-surface-card border border-surface-border rounded-3xl p-4 flex-row items-center gap-4">
                 <Avatar uri={item.avatar_url} name={item.full_name} size="md" />
                 <View className="flex-1">
                   <Text
@@ -95,12 +105,15 @@ export default function AdminUsersScreen() {
                   >
                     {item.full_name}
                   </Text>
-                  <Text
-                    className="text-xs text-text-muted mt-0.5"
-                    style={{ fontFamily: font.regular }}
-                  >
-                    {new Date(item.created_at).toLocaleDateString("pt-BR")}
-                  </Text>
+                  <View className="flex-row items-center gap-1.5 mt-0.5">
+                    <AppIcon name="calendar" size={14} color="#6E6382" strokeWidth={2} />
+                    <Text
+                      className="text-xs text-text-muted"
+                      style={{ fontFamily: font.regular }}
+                    >
+                      {new Date(item.created_at).toLocaleDateString("pt-BR")}
+                    </Text>
+                  </View>
                 </View>
                 <View className={`px-2 py-1 rounded-full ${
                   item.role === "trainer" ? "bg-ice-400/10" :

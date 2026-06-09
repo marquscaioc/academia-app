@@ -12,6 +12,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { font, amethystGlow, amethystGradient } from "../../../lib/design/tokens";
 import { DisplayHeading } from "../../../components/ui/DisplayHeading";
+import { AppIcon } from "../../../components/ui";
 import { ExerciseCard } from "../../../components/workout/ExerciseCard";
 import { RestTimer } from "../../../components/workout/RestTimer";
 import { VideoPlayerModal } from "../../../components/workout/VideoPlayerModal";
@@ -60,8 +61,9 @@ export default function WorkoutExecutionScreen() {
             colors={amethystGradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0.9 }}
-            className="rounded-2xl px-6 py-3"
+            className="flex-row gap-2 rounded-2xl px-6 py-3 items-center justify-center"
           >
+            <AppIcon name="arrow-left" size={18} color="#FFFFFF" strokeWidth={2} />
             <Text
               className="text-white"
               style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
@@ -165,12 +167,22 @@ export default function WorkoutExecutionScreen() {
     return (
       <SafeAreaView className="flex-1 bg-dark-400">
         <ScrollView className="flex-1 px-6 pt-6">
-          <Pressable onPress={() => router.back()} className="mb-4">
+          <Pressable
+            onPress={() => router.back()}
+            className="flex-row items-center gap-1.5 mb-4"
+          >
+            <AppIcon name="arrow-left" size={18} color="#9B40D8" strokeWidth={2} />
             <Text className="text-violet-400" style={{ fontFamily: font.medium }}>
               Voltar
             </Text>
           </Pressable>
 
+          <Text
+            className="text-text-muted uppercase mb-2"
+            style={{ fontFamily: font.semibold, fontSize: 10, letterSpacing: 2 }}
+          >
+            Treino
+          </Text>
           <DisplayHeading size="lg" className="mb-2">
             {workout.name}
           </DisplayHeading>
@@ -214,17 +226,20 @@ export default function WorkoutExecutionScreen() {
               }
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0.9 }}
-              className="rounded-2xl py-4 items-center"
+              className="flex-row gap-2 rounded-2xl py-4 items-center justify-center"
             >
               {startSessionMutation.isPending ? (
                 <ActivityIndicator color="#fff" />
               ) : (
-                <Text
-                  className="text-white text-lg"
-                  style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
-                >
-                  Iniciar treino
-                </Text>
+                <>
+                  <AppIcon name="play" size={20} color="#FFFFFF" strokeWidth={2} />
+                  <Text
+                    className="text-white text-lg"
+                    style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
+                  >
+                    Iniciar treino
+                  </Text>
+                </>
               )}
             </LinearGradient>
           </Pressable>
@@ -252,20 +267,25 @@ export default function WorkoutExecutionScreen() {
               {currentExercise?.exercise?.name ?? "Exercicio"}
             </Text>
             {currentExercise?.exercise?.video_url ? (
-              <Pressable onPress={() => setPlayingVideoUrl(currentExercise.exercise?.video_url ?? null)}>
+              <Pressable
+                onPress={() => setPlayingVideoUrl(currentExercise.exercise?.video_url ?? null)}
+                className="flex-row items-center gap-1.5 mt-1"
+              >
+                <AppIcon name="play" size={14} color="#9B40D8" strokeWidth={2} />
                 <Text
-                  className="text-violet-400 text-xs mt-1"
+                  className="text-violet-400 text-xs"
                   style={{ fontFamily: font.semibold }}
                 >
-                  ▶ Ver video
+                  Ver video
                 </Text>
               </Pressable>
             ) : null}
           </View>
           <Pressable
             onPress={handleFinishWorkout}
-            className="bg-danger-500/10 px-4 py-2 rounded-2xl"
+            className="flex-row items-center gap-1.5 bg-danger-500/10 px-4 py-2 rounded-2xl"
           >
+            <AppIcon name="check-circle" size={16} color="#FB7185" strokeWidth={2} />
             <Text
               className="text-danger-600 text-sm"
               style={{ fontFamily: font.semibold }}
@@ -278,13 +298,16 @@ export default function WorkoutExecutionScreen() {
         {currentExercise ? (
           <View className="flex-1">
             <View className="bg-surface-card border border-surface-border rounded-3xl p-5 mb-4">
-              <View className="flex-row justify-between mb-3">
-                <Text
-                  className="text-sm text-text-secondary"
-                  style={{ fontFamily: font.regular }}
-                >
-                  Meta
-                </Text>
+              <View className="flex-row items-center justify-between mb-3">
+                <View className="flex-row items-center gap-2">
+                  <AppIcon name="target" size={16} color="#6E6382" strokeWidth={2} />
+                  <Text
+                    className="text-sm text-text-secondary"
+                    style={{ fontFamily: font.regular }}
+                  >
+                    Meta
+                  </Text>
+                </View>
                 <Text
                   className="text-sm text-text-primary"
                   style={{ fontFamily: font.semibold }}
@@ -296,13 +319,16 @@ export default function WorkoutExecutionScreen() {
                     : ""}
                 </Text>
               </View>
-              <View className="flex-row justify-between">
-                <Text
-                  className="text-sm text-text-secondary"
-                  style={{ fontFamily: font.regular }}
-                >
-                  Concluidas
-                </Text>
+              <View className="flex-row items-center justify-between">
+                <View className="flex-row items-center gap-2">
+                  <AppIcon name="check-all" size={16} color="#6E6382" strokeWidth={2} />
+                  <Text
+                    className="text-sm text-text-secondary"
+                    style={{ fontFamily: font.regular }}
+                  >
+                    Concluidas
+                  </Text>
+                </View>
                 <Text
                   className="text-sm text-violet-400"
                   style={{ fontFamily: font.bold }}
@@ -315,12 +341,15 @@ export default function WorkoutExecutionScreen() {
             {/* Progressao de carga */}
             {lastPerf?.lastWeight ? (
               <View className="bg-violet-500/5 border border-violet-500/20 rounded-3xl p-4 mb-4">
-                <Text
-                  className="text-text-muted uppercase mb-1"
-                  style={{ fontFamily: font.semibold, fontSize: 10, letterSpacing: 2 }}
-                >
-                  Ultima vez
-                </Text>
+                <View className="flex-row items-center gap-1.5 mb-1">
+                  <AppIcon name="trend" size={14} color="#9B40D8" strokeWidth={2} />
+                  <Text
+                    className="text-text-muted uppercase"
+                    style={{ fontFamily: font.semibold, fontSize: 10, letterSpacing: 2 }}
+                  >
+                    Ultima vez
+                  </Text>
+                </View>
                 <Text
                   className="text-sm text-text-primary"
                   style={{ fontFamily: font.bold }}
@@ -328,14 +357,18 @@ export default function WorkoutExecutionScreen() {
                   {lastPerf.lastWeight}kg x {lastPerf.lastReps} reps
                 </Text>
                 {lastPerf.targetRepsHit && lastPerf.suggestedWeight ? (
-                  <Text
-                    className="text-xs text-violet-400 mt-1"
-                    style={{ fontFamily: font.bold }}
-                  >
-                    Sugestao: {lastPerf.suggestedWeight}kg (+2.5kg)
-                  </Text>
+                  <View className="flex-row items-center gap-1.5 mt-1">
+                    <AppIcon name="sparkles" size={14} color="#9B40D8" strokeWidth={2} />
+                    <Text
+                      className="text-xs text-violet-400"
+                      style={{ fontFamily: font.bold }}
+                    >
+                      Sugestao: {lastPerf.suggestedWeight}kg (+2.5kg)
+                    </Text>
+                  </View>
                 ) : null}
                 <View className="flex-row items-center gap-2 mt-3">
+                  <AppIcon name="scale" size={16} color="#6E6382" strokeWidth={2} />
                   <Text
                     className="text-xs text-text-secondary"
                     style={{ fontFamily: font.regular }}
@@ -385,12 +418,15 @@ export default function WorkoutExecutionScreen() {
                       Serie {idx + 1}
                     </Text>
                     {isCompleted ? (
-                      <Text
-                        className="text-success-600"
-                        style={{ fontFamily: font.medium }}
-                      >
-                        Concluida
-                      </Text>
+                      <View className="flex-row items-center gap-1.5">
+                        <AppIcon name="check-circle" size={16} color="#34D399" strokeWidth={2} />
+                        <Text
+                          className="text-success-600"
+                          style={{ fontFamily: font.medium }}
+                        >
+                          Concluida
+                        </Text>
+                      </View>
                     ) : null}
                   </View>
                 );
@@ -412,8 +448,9 @@ export default function WorkoutExecutionScreen() {
                     }
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0.9 }}
-                    className="rounded-2xl py-4 items-center"
+                    className="flex-row gap-2 rounded-2xl py-4 items-center justify-center"
                   >
+                    <AppIcon name="check" size={20} color="#FFFFFF" strokeWidth={2} />
                     <Text
                       className="text-white text-base"
                       style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
@@ -426,8 +463,9 @@ export default function WorkoutExecutionScreen() {
                 <Pressable
                   onPress={handleNextExercise}
                   disabled
-                  className="rounded-2xl py-4 items-center bg-surface-border"
+                  className="flex-row gap-2 rounded-2xl py-4 items-center justify-center bg-surface-border"
                 >
+                  <AppIcon name="check-all" size={20} color="#FFFFFF" strokeWidth={2} />
                   <Text
                     className="text-white text-base"
                     style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
@@ -441,7 +479,7 @@ export default function WorkoutExecutionScreen() {
                     colors={amethystGradient}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0.9 }}
-                    className="rounded-2xl py-4 items-center"
+                    className="flex-row gap-2 rounded-2xl py-4 items-center justify-center"
                   >
                     <Text
                       className="text-white text-base"
@@ -449,6 +487,7 @@ export default function WorkoutExecutionScreen() {
                     >
                       Proximo exercicio
                     </Text>
+                    <AppIcon name="arrow-right" size={20} color="#FFFFFF" strokeWidth={2} />
                   </LinearGradient>
                 </Pressable>
               )}

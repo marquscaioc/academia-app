@@ -14,6 +14,7 @@ import { useAuth } from "../../../../lib/auth/provider";
 import { supabase } from "../../../../lib/supabase/client";
 import { useSubmitCheckIn } from "../../../../hooks/mutations/useCheckinMutations";
 import { LoadingScreen } from "../../../../components/ui/LoadingScreen";
+import { AppIcon } from "../../../../components/ui";
 import { font, amethystGlow } from "../../../../lib/design/tokens";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -76,8 +77,9 @@ export default function CheckInResponseScreen() {
       <View className="flex-1 px-6 pt-6">
         {/* Header */}
         <View className="flex-row items-center justify-between mb-2">
-          <Pressable onPress={() => router.back()}>
-            <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>← Sair</Text>
+          <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5">
+            <AppIcon name="arrow-left" size={16} color="#6E6382" strokeWidth={2} />
+            <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>Sair</Text>
           </Pressable>
           <Text className="text-xs text-text-muted" style={{ fontFamily: font.bold }}>
             {currentIdx + 1} / {totalQ}
@@ -92,9 +94,12 @@ export default function CheckInResponseScreen() {
           />
         </View>
 
-        <Text className="text-violet-400 uppercase mb-3" style={{ fontFamily: font.semibold, fontSize: 10, letterSpacing: 2 }}>
-          {checkIn.template?.title}
-        </Text>
+        <View className="flex-row items-center gap-1.5 mb-3">
+          <AppIcon name="clipboard-check" size={14} color="#9B40D8" strokeWidth={2} />
+          <Text className="text-violet-400 uppercase" style={{ fontFamily: font.semibold, fontSize: 10, letterSpacing: 2 }}>
+            {checkIn.template?.title}
+          </Text>
+        </View>
 
         {/* Question */}
         <Text className="text-3xl text-text-primary mb-8 leading-9" style={{ fontFamily: font.display }}>
@@ -189,7 +194,10 @@ export default function CheckInResponseScreen() {
             if (!needsJustification) return null;
             return (
               <View className="mt-4">
-                <Text className="text-xs text-warning-500 mb-2" style={{ fontFamily: font.semibold }}>Justifique sua resposta *</Text>
+                <View className="flex-row items-center gap-1.5 mb-2">
+                  <AppIcon name="warning" size={14} color="#FBBF24" strokeWidth={2} />
+                  <Text className="text-xs text-warning-500" style={{ fontFamily: font.semibold }}>Justifique sua resposta *</Text>
+                </View>
                 <TextInput
                   className="bg-surface-card/80 border border-warning-500/30 rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
                   placeholder="Explique o motivo..."
@@ -209,8 +217,9 @@ export default function CheckInResponseScreen() {
           {currentIdx > 0 ? (
             <Pressable
               onPress={() => setCurrentIdx(currentIdx - 1)}
-              className="flex-1 border border-surface-border rounded-2xl py-4 items-center"
+              className="flex-1 flex-row items-center justify-center gap-1.5 border border-surface-border rounded-2xl py-4"
             >
+              <AppIcon name="chevron-left" size={18} color="#A99FBA" strokeWidth={2} />
               <Text className="text-text-secondary text-sm" style={{ fontFamily: font.semibold }}>Anterior</Text>
             </Pressable>
           ) : null}
@@ -229,9 +238,12 @@ export default function CheckInResponseScreen() {
               {submitCheckIn.isPending ? (
                 <ActivityIndicator color="#ffffff" />
               ) : (
-                <Text className="text-white text-sm" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>
-                  {isLast ? "Enviar" : "Proximo"}
-                </Text>
+                <View className="flex-row items-center gap-2">
+                  <Text className="text-white text-sm" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>
+                    {isLast ? "Enviar" : "Proximo"}
+                  </Text>
+                  <AppIcon name={isLast ? "send" : "chevron-right"} size={18} color="#FFFFFF" strokeWidth={2} />
+                </View>
               )}
             </LinearGradient>
           </Pressable>

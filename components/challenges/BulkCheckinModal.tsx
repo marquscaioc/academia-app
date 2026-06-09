@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Modal, Pressable, ScrollView, Text, View } from "react-native";
 import { PointRule } from "../../hooks/queries/useChallengePointRules";
+import { AppIcon, type IconName } from "../ui";
 
 interface BulkCheckinModalProps {
   visible: boolean;
@@ -9,13 +10,13 @@ interface BulkCheckinModalProps {
   onClose: () => void;
 }
 
-const activityIcons: Record<string, string> = {
-  workout: "🏋️",
-  cardio: "🏃",
-  photo: "📸",
-  checkin: "✅",
-  steps: "👟",
-  custom: "⭐",
+const activityIcons: Record<string, IconName> = {
+  workout: "workout",
+  cardio: "activity",
+  photo: "camera",
+  checkin: "check-circle",
+  steps: "steps",
+  custom: "star",
 };
 
 export function BulkCheckinModal({ visible, rules, onSubmit, onClose }: BulkCheckinModalProps) {
@@ -44,7 +45,7 @@ export function BulkCheckinModal({ visible, rules, onSubmit, onClose }: BulkChec
           <View className="flex-row items-center justify-between mb-5">
             <Text className="text-lg font-black text-text-primary">Registrar Atividades</Text>
             <Pressable onPress={onClose}>
-              <Text className="text-text-muted text-lg">✕</Text>
+              <AppIcon name="close" size={18} color="#6E6382" strokeWidth={2} />
             </Pressable>
           </View>
 
@@ -66,10 +67,10 @@ export function BulkCheckinModal({ visible, rules, onSubmit, onClose }: BulkChec
                     selected.has(rule.id) ? "bg-violet-500" : "bg-surface-elevated"
                   }`}>
                     {selected.has(rule.id) ? (
-                      <Text className="text-white text-xs">✓</Text>
+                      <AppIcon name="check" size={14} color="#FFFFFF" strokeWidth={3} />
                     ) : null}
                   </View>
-                  <Text className="text-xl">{activityIcons[rule.activity_type] ?? "⭐"}</Text>
+                  <AppIcon name={activityIcons[rule.activity_type] ?? "star"} size={20} color="#6E6382" strokeWidth={2} />
                   <Text className={`text-sm font-bold ${selected.has(rule.id) ? "text-violet-400" : "text-text-primary"}`}>
                     {rule.label}
                   </Text>

@@ -4,11 +4,14 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../../lib/auth/provider";
 import { supabase } from "../../lib/supabase/client";
 import { font } from "../../lib/design/tokens";
+import { AppIcon, type IconName } from "../../components/ui";
 
-function MetricBox({ value, label, icon }: { value: string; label: string; icon: string }) {
+function MetricBox({ value, label, icon }: { value: string; label: string; icon: IconName }) {
   return (
     <View className="flex-1 bg-surface-card border border-surface-border rounded-3xl p-5">
-      <Text className="text-2xl mb-2">{icon}</Text>
+      <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
+        <AppIcon name={icon} size={18} color="#9B40D8" strokeWidth={2} />
+      </View>
       <Text className="text-3xl text-text-primary" style={{ fontFamily: font.display }}>{value}</Text>
       <Text
         className="text-[10px] text-text-muted mt-1 uppercase"
@@ -57,18 +60,18 @@ export default function AdminOverviewScreen() {
         </View>
 
         <View className="flex-row gap-3 mb-3">
-          <MetricBox value={String(stats?.totalUsers ?? 0)} label="Usuarios totais" icon="👥" />
-          <MetricBox value={String(stats?.trainers ?? 0)} label="Trainers" icon="📋" />
+          <MetricBox value={String(stats?.totalUsers ?? 0)} label="Usuarios totais" icon="social" />
+          <MetricBox value={String(stats?.trainers ?? 0)} label="Trainers" icon="clipboard" />
         </View>
 
         <View className="flex-row gap-3 mb-3">
-          <MetricBox value={String(stats?.students ?? 0)} label="Alunos" icon="💪" />
-          <MetricBox value={String(stats?.workoutSessions ?? 0)} label="Sessoes de treino" icon="🏋️" />
+          <MetricBox value={String(stats?.students ?? 0)} label="Alunos" icon="user" />
+          <MetricBox value={String(stats?.workoutSessions ?? 0)} label="Sessoes de treino" icon="workout" />
         </View>
 
         <View className="flex-row gap-3 mb-8">
-          <MetricBox value={String(stats?.challenges ?? 0)} label="Desafios" icon="🏆" />
-          <MetricBox value={String(stats?.posts ?? 0)} label="Posts no feed" icon="📱" />
+          <MetricBox value={String(stats?.challenges ?? 0)} label="Desafios" icon="trophy" />
+          <MetricBox value={String(stats?.posts ?? 0)} label="Posts no feed" icon="message" />
         </View>
 
         <Pressable

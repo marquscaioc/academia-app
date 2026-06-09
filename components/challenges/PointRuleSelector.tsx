@@ -1,5 +1,6 @@
 import { Pressable, Text, View } from "react-native";
 import { PointRule } from "../../hooks/queries/useChallengePointRules";
+import { AppIcon, type IconName } from "../ui";
 
 interface PointRuleSelectorProps {
   rules: PointRule[];
@@ -10,13 +11,13 @@ interface PointRuleSelectorProps {
 export function PointRuleSelector({ rules, selectedRuleId, onSelect }: PointRuleSelectorProps) {
   if (!rules.length) return null;
 
-  const activityIcons: Record<string, string> = {
-    workout: "🏋️",
-    cardio: "🏃",
-    photo: "📸",
-    checkin: "✅",
-    steps: "👟",
-    custom: "⭐",
+  const activityIcons: Record<string, IconName> = {
+    workout: "workout",
+    cardio: "activity",
+    photo: "camera",
+    checkin: "check-circle",
+    steps: "steps",
+    custom: "star",
   };
 
   return (
@@ -35,7 +36,12 @@ export function PointRuleSelector({ rules, selectedRuleId, onSelect }: PointRule
           } active:bg-surface-hover`}
         >
           <View className="flex-row items-center gap-3">
-            <Text className="text-xl">{activityIcons[rule.activity_type] ?? "⭐"}</Text>
+            <AppIcon
+              name={activityIcons[rule.activity_type] ?? "star"}
+              size={22}
+              color={selectedRuleId === rule.id ? "#A78BFA" : "#6E6382"}
+              strokeWidth={2}
+            />
             <View>
               <Text className={`text-sm font-bold ${selectedRuleId === rule.id ? "text-violet-400" : "text-text-primary"}`}>
                 {rule.label}

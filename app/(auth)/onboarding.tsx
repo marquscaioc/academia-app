@@ -6,22 +6,22 @@ import { LinearGradient } from "expo-linear-gradient";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import { supabase } from "../../lib/supabase/client";
 import { useAuth } from "../../lib/auth/provider";
-import { Logo, DisplayHeading, SectionLabel } from "../../components/ui";
+import { Logo, DisplayHeading, SectionLabel, AppIcon, type IconName } from "../../components/ui";
 import { font, amethystGlow } from "../../lib/design/tokens";
 
 type Role = "student" | "trainer";
 
-const roles: { value: Role; icon: string; label: string; description: string; features: string[] }[] = [
+const roles: { value: Role; icon: IconName; label: string; description: string; features: string[] }[] = [
   {
     value: "student",
-    icon: "💪",
+    icon: "workout",
     label: "Aluno",
     description: "Acompanhe treinos, dieta e evolucao",
     features: ["Treinos prescritos", "Dieta personalizada", "Acompanhamento de progresso", "Desafios e competicoes"],
   },
   {
     value: "trainer",
-    icon: "📋",
+    icon: "clipboard",
     label: "Personal Trainer",
     description: "Gerencie alunos, prescreva treinos e dietas",
     features: ["Gestao de alunos", "Builder de treinos", "Acompanhamento de progresso", "Dashboard financeiro"],
@@ -113,10 +113,10 @@ export default function OnboardingScreen() {
                   }`}
                 >
                   <View className="flex-row items-center gap-4 mb-4">
-                    <View className={`w-14 h-14 rounded-2xl items-center justify-center ${
-                      isSelected ? "bg-violet-500/20" : "bg-surface-elevated"
+                    <View className={`w-14 h-14 rounded-2xl items-center justify-center border ${
+                      isSelected ? "bg-violet-500/20 border-violet-500/30" : "bg-surface-elevated border-surface-border"
                     }`}>
-                      <Text className="text-2xl">{role.icon}</Text>
+                      <AppIcon name={role.icon} size={24} color={isSelected ? "#9B40D8" : "#A99FBA"} strokeWidth={2} />
                     </View>
                     <View className="flex-1">
                       <Text
@@ -136,7 +136,7 @@ export default function OnboardingScreen() {
                       isSelected ? "border-violet-500 bg-violet-500" : "border-surface-border"
                     }`}>
                       {isSelected ? (
-                        <Text className="text-white text-xs" style={{ fontFamily: font.semibold }}>✓</Text>
+                        <AppIcon name="check" size={14} color="#FFFFFF" strokeWidth={3} />
                       ) : null}
                     </View>
                   </View>
@@ -192,12 +192,15 @@ export default function OnboardingScreen() {
               {loading ? (
                 <ActivityIndicator color="#FFFFFF" />
               ) : (
-                <Text
-                  className="text-white text-base"
-                  style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
-                >
-                  Continuar →
-                </Text>
+                <View className="flex-row items-center gap-2">
+                  <Text
+                    className="text-white text-base"
+                    style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
+                  >
+                    Continuar
+                  </Text>
+                  <AppIcon name="arrow-right" size={18} color="#FFFFFF" strokeWidth={2} />
+                </View>
               )}
             </LinearGradient>
           ) : (

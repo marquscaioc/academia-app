@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../../../lib/auth/provider";
 import { supabase } from "../../../lib/supabase/client";
 import { Avatar } from "../../../components/ui/Avatar";
+import { AppIcon, EmptyState, SectionLabel, type IconName } from "../../../components/ui";
 import { font } from "../../../lib/design/tokens";
 
 interface WhatsAppNotification {
@@ -37,23 +38,27 @@ export default function WhatsAppMessagesScreen() {
     enabled: !!user,
   });
 
-  const templateIcons: Record<string, string> = {
-    checkin_reminder: "📋",
-    daily_workout: "🏋️",
-    plan_expiring: "⚠️",
-    smart_nudge: "🔥",
-    welcome: "👋",
-    incoming_unknown: "❓",
+  const templateIcons: Record<string, IconName> = {
+    checkin_reminder: "clipboard",
+    daily_workout: "workout",
+    plan_expiring: "warning",
+    smart_nudge: "streak",
+    welcome: "celebrate",
+    incoming_unknown: "info",
   };
 
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
       <View className="flex-1">
         <View className="px-6 pt-6 pb-4 flex-row items-center justify-between">
-          <Pressable onPress={() => router.back()}>
-            <Text className="text-violet-400" style={{ fontFamily: font.medium }}>← Voltar</Text>
+          <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5">
+            <AppIcon name="arrow-left" size={18} color="#9B40D8" strokeWidth={2} />
+            <Text className="text-violet-400" style={{ fontFamily: font.medium }}>Voltar</Text>
           </Pressable>
-          <Text className="text-xl text-text-primary" style={{ fontFamily: font.display }}>Mensagens enviadas</Text>
+          <View className="items-center">
+            <SectionLabel className="mb-0.5">WhatsApp</SectionLabel>
+            <Text className="text-xl text-text-primary" style={{ fontFamily: font.display }}>Mensagens enviadas</Text>
+          </View>
           <View className="w-16" />
         </View>
 
@@ -62,13 +67,11 @@ export default function WhatsAppMessagesScreen() {
             <ActivityIndicator size="large" color="#781BB6" />
           </View>
         ) : !messages?.length ? (
-          <View className="flex-1 items-center justify-center px-8">
-            <Text className="text-3xl mb-3">💬</Text>
-            <Text className="text-lg text-text-primary" style={{ fontFamily: font.display }}>Nenhuma mensagem</Text>
-            <Text className="text-sm text-text-muted text-center mt-2" style={{ fontFamily: font.regular }}>
-              Mensagens enviadas via WhatsApp aparecerao aqui.
-            </Text>
-          </View>
+          <EmptyState
+            iconName="chat"
+            title="Nenhuma mensagem"
+            description="Mensagens enviadas via WhatsApp aparecerao aqui."
+          />
         ) : (
           <FlatList
             data={messages}
@@ -76,7 +79,7 @@ export default function WhatsAppMessagesScreen() {
             contentContainerClassName="px-6 gap-2 pb-10"
             renderItem={({ item }) => {
               const templateType = item.type.replace("whatsapp_", "");
-              const icon = templateIcons[templateType] ?? "💬";
+              const icon: IconName = templateIcons[templateType] ?? "chat";
               const sent = item.data?.sent !== false;
               const studentInfo = item.student as unknown as { full_name: string; avatar_url: string | null } | null;
 
@@ -86,7 +89,9 @@ export default function WhatsAppMessagesScreen() {
                     {studentInfo ? (
                       <Avatar uri={studentInfo.avatar_url} name={studentInfo.full_name} size="sm" />
                     ) : (
-                      <Text className="text-lg">{icon}</Text>
+                      <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+                        <AppIcon name={icon} size={18} color="#9B40D8" strokeWidth={2} />
+                      </View>
                     )}
                     <View className="flex-1">
                       <Text className="text-sm text-text-primary" style={{ fontFamily: font.semibold }}>
@@ -96,7 +101,13 @@ export default function WhatsAppMessagesScreen() {
                         {templateType.replace(/_/g, " ")}
                       </Text>
                     </View>
-                    <View className={`px-2 py-0.5 rounded-full ${sent ? "bg-success-500/15" : "bg-danger-500/15"}`}>
+                    <View className={`flex-row items-center gap-1 px-2.5 py-1 rounded-full ${sent ? "bg-success-500/15" : "bg-danger-500/15"}`}>
+                      <AppIcon
+                        name={sent ? "check-circle" : "x-circle"}
+                        size={12}
+                        color={sent ? "#34D399" : "#FB7185"}
+                        strokeWidth={2}
+                      />
                       <Text className={`text-[10px] ${sent ? "text-success-500" : "text-danger-500"}`} style={{ fontFamily: font.bold }}>
                         {sent ? "Enviado" : "Falhou"}
                       </Text>
@@ -105,9 +116,12 @@ export default function WhatsAppMessagesScreen() {
                   <Text className="text-xs text-text-secondary" numberOfLines={2} style={{ fontFamily: font.regular }}>
                     {item.body}
                   </Text>
-                  <Text className="text-[10px] text-text-muted mt-2" style={{ fontFamily: font.regular }}>
-                    {new Date(item.created_at).toLocaleString("pt-BR")}
-                  </Text>
+                  <View className="flex-row items-center gap-1.5 mt-2">
+                    <AppIcon name="clock" size={12} color="#6E6382" strokeWidth={2} />
+                    <Text className="text-[10px] text-text-muted" style={{ fontFamily: font.regular }}>
+                      {new Date(item.created_at).toLocaleString("pt-BR")}
+                    </Text>
+                  </View>
                 </View>
               );
             }}

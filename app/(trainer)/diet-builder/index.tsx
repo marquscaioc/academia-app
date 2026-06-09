@@ -19,6 +19,7 @@ import { useCreateDietPlan, useAddMeal, useAddMealItem } from "../../../hooks/mu
 import { Avatar } from "../../../components/ui/Avatar";
 import { DisplayHeading } from "../../../components/ui/DisplayHeading";
 import { SectionLabel } from "../../../components/ui/SectionLabel";
+import { AppIcon } from "../../../components/ui";
 import { font, amethystGlow } from "../../../lib/design/tokens";
 
 interface MealDraft {
@@ -177,8 +178,9 @@ export default function DietBuilderScreen() {
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
       <View className="flex-row items-center justify-between px-6 pt-6 pb-4 border-b border-surface-border">
-        <Pressable onPress={() => router.back()}>
-          <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>← Cancelar</Text>
+        <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5">
+          <AppIcon name="arrow-left" size={16} color="#6E6382" strokeWidth={2} />
+          <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>Cancelar</Text>
         </Pressable>
         <DisplayHeading size="sm">
           {step === "student" ? "Selecionar aluno" : step === "macros" ? "Metas nutricionais" : step === "meals" ? "Refeicoes" : "Revisar"}
@@ -208,7 +210,10 @@ export default function DietBuilderScreen() {
             >
               <Avatar uri={item.student?.avatar_url} name={item.student?.full_name} size="lg" />
               <Text className="text-[15px] text-text-primary flex-1" style={{ fontFamily: font.semibold }}>{item.student?.full_name}</Text>
-              <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>Selecionar →</Text>
+              <View className="flex-row items-center gap-1">
+                <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>Selecionar</Text>
+                <AppIcon name="chevron-right" size={16} color="#9B40D8" strokeWidth={2} />
+              </View>
             </Pressable>
           )}
         />
@@ -218,8 +223,13 @@ export default function DietBuilderScreen() {
       {step === "macros" ? (
         <ScrollView className="flex-1 px-6 py-6" keyboardShouldPersistTaps="handled">
           <View className="bg-surface-card border border-surface-border rounded-3xl p-4 flex-row items-center gap-3 mb-6">
-            <Text className="text-sm text-text-muted" style={{ fontFamily: font.regular }}>Aluno:</Text>
-            <Text className="text-sm text-violet-400" style={{ fontFamily: font.semibold }}>{studentName}</Text>
+            <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+              <AppIcon name="user" size={18} color="#9B40D8" strokeWidth={2} />
+            </View>
+            <View className="flex-1">
+              <Text className="text-[10px] text-text-muted" style={{ fontFamily: font.medium, letterSpacing: 1 }}>Aluno</Text>
+              <Text className="text-sm text-violet-400" style={{ fontFamily: font.semibold }}>{studentName}</Text>
+            </View>
           </View>
 
           <View className="gap-5">
@@ -258,9 +268,11 @@ export default function DietBuilderScreen() {
                 colors={planName.trim() ? ["#781BB6", "#C636E0"] : ["#2E2740", "#2E2740"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0.9 }}
-                style={{ paddingVertical: 18, alignItems: "center" }}
+                style={{ paddingVertical: 18, alignItems: "center", flexDirection: "row", justifyContent: "center", gap: 8 }}
               >
+                <AppIcon name="food" size={18} color={planName.trim() ? "#FFFFFF" : "#6E6382"} strokeWidth={2} />
                 <Text className={planName.trim() ? "text-white" : "text-text-muted"} style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Proximo: Refeicoes</Text>
+                <AppIcon name="arrow-right" size={18} color={planName.trim() ? "#FFFFFF" : "#6E6382"} strokeWidth={2} />
               </LinearGradient>
             </Pressable>
           </View>
@@ -292,8 +304,8 @@ export default function DietBuilderScreen() {
                       style={{ fontFamily: font.regular }}
                     />
                   </View>
-                  <Pressable onPress={() => removeMeal(mi)} className="ml-2">
-                    <Text className="text-danger-500 text-xs" style={{ fontFamily: font.semibold }}>✕</Text>
+                  <Pressable onPress={() => removeMeal(mi)} className="ml-2 w-8 h-8 rounded-xl bg-danger-500/10 items-center justify-center">
+                    <AppIcon name="trash" size={16} color="#FB7185" strokeWidth={2} />
                   </Pressable>
                 </View>
 
@@ -308,8 +320,8 @@ export default function DietBuilderScreen() {
                         placeholderTextColor="#6E6382"
                         style={{ fontFamily: font.regular }}
                       />
-                      <Pressable onPress={() => removeItem(mi, ii)}>
-                        <Text className="text-danger-500 text-xs">✕</Text>
+                      <Pressable onPress={() => removeItem(mi, ii)} className="w-7 h-7 items-center justify-center">
+                        <AppIcon name="close" size={15} color="#FB7185" strokeWidth={2} />
                       </Pressable>
                     </View>
                     <View className="flex-row gap-2">
@@ -341,14 +353,16 @@ export default function DietBuilderScreen() {
                   </View>
                 ))}
 
-                <Pressable onPress={() => addItemToMeal(mi)} className="border border-dashed border-surface-border rounded-xl py-2.5 items-center">
-                  <Text className="text-text-muted text-xs" style={{ fontFamily: font.semibold }}>+ Adicionar alimento</Text>
+                <Pressable onPress={() => addItemToMeal(mi)} className="border border-dashed border-surface-border rounded-xl py-2.5 flex-row items-center justify-center gap-1.5">
+                  <AppIcon name="plus" size={15} color="#6E6382" strokeWidth={2} />
+                  <Text className="text-text-muted text-xs" style={{ fontFamily: font.semibold }}>Adicionar alimento</Text>
                 </Pressable>
               </View>
             ))}
 
-            <Pressable onPress={addNewMeal} className="border border-dashed border-violet-500/30 rounded-2xl py-4 items-center">
-              <Text className="text-violet-400 text-sm" style={{ fontFamily: font.semibold }}>+ Nova refeicao</Text>
+            <Pressable onPress={addNewMeal} className="border border-dashed border-violet-500/30 rounded-2xl py-4 flex-row items-center justify-center gap-2">
+              <AppIcon name="food" size={18} color="#9B40D8" strokeWidth={2} />
+              <Text className="text-violet-400 text-sm" style={{ fontFamily: font.semibold }}>Nova refeicao</Text>
             </Pressable>
 
             {/* Macro totals bar */}
@@ -368,8 +382,9 @@ export default function DietBuilderScreen() {
                 colors={["#781BB6", "#C636E0"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0.9 }}
-                style={{ paddingVertical: 18, alignItems: "center" }}
+                style={{ paddingVertical: 18, alignItems: "center", flexDirection: "row", justifyContent: "center", gap: 8 }}
               >
+                <AppIcon name="clipboard-check" size={18} color="#FFFFFF" strokeWidth={2} />
                 <Text className="text-white" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Revisar plano</Text>
               </LinearGradient>
             </Pressable>
@@ -398,8 +413,16 @@ export default function DietBuilderScreen() {
           {meals.map((meal, mi) => (
             <View key={mi} className="bg-surface-card border border-surface-border rounded-3xl p-4 mb-3">
               <View className="flex-row items-center justify-between mb-2">
-                <Text className="text-sm text-text-primary" style={{ fontFamily: font.semibold }}>{meal.name}</Text>
-                <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>{meal.targetTime}</Text>
+                <View className="flex-row items-center gap-2 flex-1">
+                  <View className="w-8 h-8 rounded-xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+                    <AppIcon name="food" size={15} color="#9B40D8" strokeWidth={2} />
+                  </View>
+                  <Text className="text-sm text-text-primary" style={{ fontFamily: font.semibold }}>{meal.name}</Text>
+                </View>
+                <View className="flex-row items-center gap-1">
+                  <AppIcon name="clock" size={13} color="#6E6382" strokeWidth={2} />
+                  <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>{meal.targetTime}</Text>
+                </View>
               </View>
               {meal.items.filter((i) => i.food_name.trim()).map((item, ii) => (
                 <View key={ii} className="flex-row justify-between py-1.5 border-b border-surface-border last:border-0">
@@ -411,7 +434,8 @@ export default function DietBuilderScreen() {
           ))}
 
           <View className="flex-row gap-3 mt-4 mb-10">
-            <Pressable onPress={() => setStep("meals")} className="flex-1 border border-surface-border rounded-2xl py-4 items-center">
+            <Pressable onPress={() => setStep("meals")} className="flex-1 border border-surface-border rounded-2xl py-4 flex-row items-center justify-center gap-2">
+              <AppIcon name="pencil" size={16} color="#A99FBA" strokeWidth={2} />
               <Text className="text-text-secondary text-sm" style={{ fontFamily: font.semibold }}>Editar</Text>
             </Pressable>
             <Pressable
@@ -424,9 +448,9 @@ export default function DietBuilderScreen() {
                 colors={saving ? ["#50107D", "#86169E"] : ["#781BB6", "#C636E0"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0.9 }}
-                style={{ paddingVertical: 16, alignItems: "center" }}
+                style={{ paddingVertical: 16, alignItems: "center", flexDirection: "row", justifyContent: "center", gap: 8 }}
               >
-                {saving ? <ActivityIndicator color="#FFFFFF" /> : <Text className="text-white text-sm" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Salvar plano</Text>}
+                {saving ? <ActivityIndicator color="#FFFFFF" /> : <><AppIcon name="check-circle" size={18} color="#FFFFFF" strokeWidth={2} /><Text className="text-white text-sm" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Salvar plano</Text></>}
               </LinearGradient>
             </Pressable>
           </View>

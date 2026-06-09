@@ -7,6 +7,7 @@ import { useAuth } from "../../../lib/auth/provider";
 import { useCourses } from "../../../hooks/queries/useCourses";
 import { useCreateCourse, useTogglePublishCourse } from "../../../hooks/mutations/useCourseMutations";
 import { EmptyState } from "../../../components/ui/EmptyState";
+import { AppIcon } from "../../../components/ui";
 import { font } from "../../../lib/design/tokens";
 
 export default function TrainerCoursesScreen() {
@@ -34,12 +35,17 @@ export default function TrainerCoursesScreen() {
     <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1 px-6 pt-6">
         <View className="flex-row items-center justify-between mb-4">
-          <Pressable onPress={() => router.back()}>
-            <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>← Voltar</Text>
+          <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5">
+            <AppIcon name="chevron-left" size={18} color="#6E6382" strokeWidth={2} />
+            <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>Voltar</Text>
           </Pressable>
-          <Text className="text-2xl text-text-primary" style={{ fontFamily: font.display }}>Aulas</Text>
-          <Pressable onPress={() => setShowNew(!showNew)} className="bg-violet-500 px-3 py-1.5 rounded-xl">
-            <Text className="text-white text-xs" style={{ fontFamily: font.bold }}>+ Curso</Text>
+          <View className="items-center">
+            <Text className="text-text-muted uppercase mb-0.5" style={{ fontFamily: font.semibold, fontSize: 10, letterSpacing: 2 }}>Conteudo</Text>
+            <Text className="text-2xl text-text-primary" style={{ fontFamily: font.display }}>Aulas</Text>
+          </View>
+          <Pressable onPress={() => setShowNew(!showNew)} className="flex-row items-center gap-1.5 bg-violet-500 px-3 py-1.5 rounded-xl">
+            <AppIcon name="plus" size={16} color="#FFFFFF" strokeWidth={2} />
+            <Text className="text-white text-xs" style={{ fontFamily: font.bold }}>Curso</Text>
           </Pressable>
         </View>
 
@@ -81,7 +87,7 @@ export default function TrainerCoursesScreen() {
           <View className="items-center py-10"><ActivityIndicator size="large" color="#781BB6" /></View>
         ) : !courses?.length ? (
           <EmptyState
-            icon="🎓"
+            iconName="courses"
             title="Nenhum curso ainda"
             description="Crie cursos com videoaulas para seus alunos assistirem. Inclua tecnicas, dicas de execucao, ou conteudo teorico."
           />
@@ -97,8 +103,8 @@ export default function TrainerCoursesScreen() {
                   {c.cover_url ? (
                     <Image source={{ uri: c.cover_url }} style={{ width: 64, height: 64, borderRadius: 16 }} contentFit="cover" />
                   ) : (
-                    <View className="w-16 h-16 bg-surface-elevated rounded-2xl items-center justify-center">
-                      <Text className="text-2xl">🎓</Text>
+                    <View className="w-16 h-16 bg-violet-500/15 border border-violet-500/25 rounded-2xl items-center justify-center">
+                      <AppIcon name="courses" size={24} color="#9B40D8" strokeWidth={2} />
                     </View>
                   )}
                   <View className="flex-1">
@@ -114,9 +120,12 @@ export default function TrainerCoursesScreen() {
                       <Text className="text-xs text-text-muted mb-2" numberOfLines={2} style={{ fontFamily: font.regular }}>{c.description}</Text>
                     ) : null}
                     <View className="flex-row items-center justify-between">
-                      <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>
-                        {c.lessons?.length ?? 0} aula{(c.lessons?.length ?? 0) !== 1 ? "s" : ""}
-                      </Text>
+                      <View className="flex-row items-center gap-1.5">
+                        <AppIcon name="video" size={14} color="#6E6382" strokeWidth={2} />
+                        <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>
+                          {c.lessons?.length ?? 0} aula{(c.lessons?.length ?? 0) !== 1 ? "s" : ""}
+                        </Text>
+                      </View>
                       <Pressable
                         onPress={(e) => {
                           e.stopPropagation();

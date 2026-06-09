@@ -7,6 +7,7 @@ import { useAuth } from "../../../lib/auth/provider";
 import { supabase } from "../../../lib/supabase/client";
 import { useReviewCheckIn } from "../../../hooks/mutations/useCheckinMutations";
 import { Avatar } from "../../../components/ui/Avatar";
+import { AppIcon } from "../../../components/ui";
 import { font } from "../../../lib/design/tokens";
 
 interface CheckInWithDetails {
@@ -52,8 +53,9 @@ export default function CheckInResponsesScreen() {
     <SafeAreaView className="flex-1 bg-dark-400">
       <View className="flex-1">
         <View className="flex-row items-center justify-between px-6 pt-6 pb-4">
-          <Pressable onPress={() => router.back()}>
-            <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>← Voltar</Text>
+          <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5">
+            <AppIcon name="arrow-left" size={18} color="#6E6382" strokeWidth={2} />
+            <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>Voltar</Text>
           </Pressable>
           <Text className="text-2xl text-text-primary" style={{ fontFamily: font.display }}>Respostas.</Text>
           <View className="w-16" />
@@ -65,7 +67,9 @@ export default function CheckInResponsesScreen() {
           </View>
         ) : !checkIns?.length ? (
           <View className="flex-1 items-center justify-center px-8">
-            <Text className="text-3xl mb-3">📋</Text>
+            <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
+              <AppIcon name="clipboard" size={28} color="#9B40D8" strokeWidth={2} />
+            </View>
             <Text className="text-xl text-text-primary" style={{ fontFamily: font.display }}>Nenhuma resposta</Text>
             <Text className="text-sm text-text-muted text-center mt-2" style={{ fontFamily: font.regular }}>
               As respostas dos check-ins dos seus alunos aparecerão aqui.
@@ -141,24 +145,31 @@ export default function CheckInResponsesScreen() {
                       <Pressable
                         onPress={() => reviewCheckIn.mutate({ check_in_id: item.id, trainer_notes: notes[item.id]?.trim() || undefined })}
                         disabled={reviewCheckIn.isPending}
-                        className="bg-success-500 rounded-2xl py-3 items-center mt-2 active:bg-success-600"
+                        className="flex-row items-center justify-center gap-2 bg-success-500 rounded-2xl py-3 mt-2 active:bg-success-600"
                       >
+                        <AppIcon name="check-circle" size={16} color="#FFFFFF" strokeWidth={2} />
                         <Text className="text-white text-xs" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Marcar como revisado</Text>
                       </Pressable>
                     </View>
                   ) : item.status === "reviewed" && item.trainer_notes ? (
                     <View className="mt-3 bg-success-500/5 border border-success-500/20 rounded-2xl p-3">
-                      <Text className="text-[10px] text-success-500 uppercase mb-1" style={{ fontFamily: font.semibold, letterSpacing: 1.5 }}>Feedback do coach</Text>
+                      <View className="flex-row items-center gap-1.5 mb-1">
+                        <AppIcon name="message" size={14} color="#34D399" strokeWidth={2} />
+                        <Text className="text-[10px] text-success-500 uppercase" style={{ fontFamily: font.semibold, letterSpacing: 1.5 }}>Feedback do coach</Text>
+                      </View>
                       <Text className="text-sm text-text-secondary" style={{ fontFamily: font.regular }}>{item.trainer_notes}</Text>
                     </View>
                   ) : null}
 
                   {/* Date */}
-                  <Text className="text-[10px] text-text-muted mt-3" style={{ fontFamily: font.regular }}>
-                    {item.submitted_at
-                      ? `Respondido em ${new Date(item.submitted_at).toLocaleDateString("pt-BR")}`
-                      : `Enviado em ${new Date(item.created_at).toLocaleDateString("pt-BR")}`}
-                  </Text>
+                  <View className="flex-row items-center gap-1.5 mt-3">
+                    <AppIcon name="calendar" size={14} color="#6E6382" strokeWidth={2} />
+                    <Text className="text-[10px] text-text-muted" style={{ fontFamily: font.regular }}>
+                      {item.submitted_at
+                        ? `Respondido em ${new Date(item.submitted_at).toLocaleDateString("pt-BR")}`
+                        : `Enviado em ${new Date(item.created_at).toLocaleDateString("pt-BR")}`}
+                    </Text>
+                  </View>
                 </View>
               );
             }}

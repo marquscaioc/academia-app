@@ -12,7 +12,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { supabase } from "../../lib/supabase/client";
-import { DisplayHeading, Logo } from "../../components/ui";
+import { AppIcon, DisplayHeading, Logo } from "../../components/ui";
 import { amethystGlow, amethystGradient, font } from "../../lib/design/tokens";
 
 export default function ForgotPasswordScreen() {
@@ -41,7 +41,7 @@ export default function ForgotPasswordScreen() {
         <View className="flex-1 justify-center px-8 max-w-[440px] w-full self-center">
           <View className="items-center">
             <View className="w-20 h-20 bg-violet-500/15 border border-violet-500/25 rounded-3xl items-center justify-center mb-6">
-              <Text className="text-4xl">📧</Text>
+              <AppIcon name="mail" size={32} color="#9B40D8" strokeWidth={1.8} />
             </View>
             <DisplayHeading size="lg" tone="primary" className="text-center">
               Email enviado.

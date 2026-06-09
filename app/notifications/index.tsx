@@ -6,6 +6,7 @@ import { useAuth } from "../../lib/auth/provider";
 import { supabase } from "../../lib/supabase/client";
 import { font } from "../../lib/design/tokens";
 import { DisplayHeading } from "../../components/ui/DisplayHeading";
+import { AppIcon, type IconName } from "../../components/ui";
 
 interface Notification {
   id: string;
@@ -17,15 +18,15 @@ interface Notification {
   data: Record<string, unknown> | null;
 }
 
-const typeIcons: Record<string, string> = {
-  new_workout: "🏋️",
-  check_in_due: "📋",
-  message: "💬",
-  challenge_update: "🏆",
-  achievement: "🎖️",
-  payment: "💰",
-  invite_accepted: "👥",
-  default: "🔔",
+const typeIcons: Record<string, IconName> = {
+  new_workout: "workout",
+  check_in_due: "clipboard-check",
+  message: "chat",
+  challenge_update: "trophy",
+  achievement: "award",
+  payment: "money",
+  invite_accepted: "social",
+  default: "bell",
 };
 
 function timeAgo(dateStr: string): string {
@@ -86,10 +87,11 @@ export default function NotificationsScreen() {
       <View className="flex-1">
         <View className="flex-row items-center justify-between px-6 pt-6 pb-4">
           <View className="flex-row items-center gap-3">
-            <Pressable onPress={() => router.back()}>
-              <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>
-                ← Voltar
-              </Text>
+            <Pressable
+              onPress={() => router.back()}
+              className="w-10 h-10 rounded-2xl bg-surface-card border border-surface-border items-center justify-center"
+            >
+              <AppIcon name="arrow-left" size={18} color="#6E6382" strokeWidth={2} />
             </Pressable>
             <DisplayHeading size="sm">Notificações.</DisplayHeading>
             {unreadCount > 0 ? (
@@ -101,7 +103,11 @@ export default function NotificationsScreen() {
             ) : null}
           </View>
           {unreadCount > 0 ? (
-            <Pressable onPress={() => markAllRead.mutate()}>
+            <Pressable
+              onPress={() => markAllRead.mutate()}
+              className="flex-row items-center gap-1.5"
+            >
+              <AppIcon name="check-all" size={16} color="#9B40D8" strokeWidth={2} />
               <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>
                 Marcar todas como lidas
               </Text>
@@ -114,9 +120,12 @@ export default function NotificationsScreen() {
             <ActivityIndicator size="large" color="#781BB6" />
           </View>
         ) : !notifications?.length ? (
-          <View className="flex-1 items-center justify-center">
-            <Text className="text-4xl mb-3">🔔</Text>
-            <Text className="text-text-muted text-sm" style={{ fontFamily: font.regular }}>
+          <View className="flex-1 items-center justify-center px-6">
+            <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-5">
+              <AppIcon name="bell" size={28} color="#9B40D8" strokeWidth={2} />
+            </View>
+            <DisplayHeading size="sm">Tudo em dia.</DisplayHeading>
+            <Text className="text-text-secondary text-sm text-center mt-2" style={{ fontFamily: font.regular }}>
               Nenhuma notificacao ainda.
             </Text>
           </View>
@@ -132,8 +141,13 @@ export default function NotificationsScreen() {
                   !item.is_read ? "bg-surface-card" : ""
                 }`}
               >
-                <View className="w-10 h-10 bg-surface-elevated rounded-2xl items-center justify-center mt-0.5">
-                  <Text className="text-lg">{typeIcons[item.type] ?? typeIcons.default}</Text>
+                <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mt-0.5">
+                  <AppIcon
+                    name={typeIcons[item.type] ?? typeIcons.default}
+                    size={18}
+                    color="#9B40D8"
+                    strokeWidth={2}
+                  />
                 </View>
                 <View className="flex-1">
                   <View className="flex-row items-center gap-2">

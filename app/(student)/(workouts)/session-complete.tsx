@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../../lib/auth/provider";
 import { useCreatePost } from "../../../hooks/mutations/useSocialMutations";
 import { WorkoutSummaryCard } from "../../../components/workout/WorkoutSummaryCard";
+import { AppIcon } from "../../../components/ui";
 import { font, amethystGlow } from "../../../lib/design/tokens";
 
 export default function SessionCompleteScreen() {
@@ -39,7 +40,15 @@ export default function SessionCompleteScreen() {
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
       <View className="flex-1 px-6 pt-10 items-center">
-        <Text className="text-4xl mb-4">🎉</Text>
+        <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-5">
+          <AppIcon name="celebrate" size={28} color="#9B40D8" strokeWidth={2} />
+        </View>
+        <Text
+          className="text-text-muted mb-2"
+          style={{ fontFamily: font.semibold, fontSize: 11, letterSpacing: 2, textTransform: "uppercase" }}
+        >
+          Treino concluido
+        </Text>
         <Text
           className="text-text-primary mb-8"
           style={{ fontFamily: font.display, fontSize: 34, lineHeight: 38 }}

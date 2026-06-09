@@ -14,6 +14,7 @@ import { useAuth } from "../../lib/auth/provider";
 import { supabase } from "../../lib/supabase/client";
 import { FeedPost } from "../../components/social/FeedPost";
 import { Avatar } from "../../components/ui/Avatar";
+import { AppIcon } from "../../components/ui";
 import { useToggleReaction } from "../../hooks/mutations/useSocialMutations";
 import { font } from "../../lib/design/tokens";
 
@@ -86,15 +87,19 @@ export default function GroupDetailScreen() {
         {/* Header */}
         <View className="px-6 pt-6 pb-4 border-b border-surface-border">
           <View className="flex-row items-center gap-3 mb-3">
-            <Pressable onPress={() => router.back()}>
-              <Text className="text-violet-400" style={{ fontFamily: font.medium }}>← Voltar</Text>
+            <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5">
+              <AppIcon name="arrow-left" size={18} color="#9B40D8" strokeWidth={2} />
+              <Text className="text-violet-400" style={{ fontFamily: font.medium }}>Voltar</Text>
             </Pressable>
           </View>
           <Text className="text-3xl text-text-primary" style={{ fontFamily: font.display }}>{group?.name ?? "Grupo"}</Text>
           {group?.description ? (
             <Text className="text-xs text-text-muted mt-1" style={{ fontFamily: font.regular }}>{group.description}</Text>
           ) : null}
-          <Text className="text-[10px] text-text-muted mt-1" style={{ fontFamily: font.regular }}>{group?.member_count ?? 0} membros</Text>
+          <View className="flex-row items-center gap-1.5 mt-1.5">
+            <AppIcon name="social" size={14} color="#6E6382" strokeWidth={2} />
+            <Text className="text-[10px] text-text-muted" style={{ fontFamily: font.regular }}>{group?.member_count ?? 0} membros</Text>
+          </View>
 
           {/* Tabs */}
           <View className="flex-row gap-4 mt-4">
@@ -126,8 +131,9 @@ export default function GroupDetailScreen() {
               <Pressable
                 onPress={() => newPost.trim() && createPost.mutate(newPost.trim())}
                 disabled={!newPost.trim() || createPost.isPending}
-                className="bg-violet-500 rounded-2xl px-4 items-center justify-center"
+                className="bg-violet-500 rounded-2xl px-4 flex-row items-center justify-center gap-1.5"
               >
+                <AppIcon name="send" size={16} color="#FFFFFF" strokeWidth={2} />
                 <Text className="text-white text-xs" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Postar</Text>
               </Pressable>
             </View>
@@ -154,9 +160,12 @@ export default function GroupDetailScreen() {
                   />
                 )}
                 ListEmptyComponent={
-                  <View className="items-center py-10">
-                    <Text className="text-3xl mb-3">💬</Text>
-                    <Text className="text-text-muted text-sm" style={{ fontFamily: font.regular }}>Nenhuma publicacao no grupo</Text>
+                  <View className="items-center py-14 px-8">
+                    <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
+                      <AppIcon name="chat" size={28} color="#9B40D8" strokeWidth={2} />
+                    </View>
+                    <Text className="text-xl text-text-primary mb-1.5" style={{ fontFamily: font.display }}>Sem publicações</Text>
+                    <Text className="text-text-secondary text-sm text-center" style={{ fontFamily: font.regular }}>Seja o primeiro a escrever no grupo</Text>
                   </View>
                 }
               />
@@ -176,12 +185,17 @@ export default function GroupDetailScreen() {
                     <Text className="text-sm text-text-primary" style={{ fontFamily: font.semibold }}>{profile?.full_name}</Text>
                     <Text className="text-[10px] text-text-muted capitalize" style={{ fontFamily: font.regular }}>{item.role}</Text>
                   </View>
+                  <AppIcon name="chevron-right" size={18} color="#6E6382" strokeWidth={2} />
                 </View>
               );
             }}
             ListEmptyComponent={
-              <View className="items-center py-10">
-                <Text className="text-text-muted text-sm" style={{ fontFamily: font.regular }}>Nenhum membro</Text>
+              <View className="items-center py-14 px-8">
+                <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
+                  <AppIcon name="social" size={28} color="#9B40D8" strokeWidth={2} />
+                </View>
+                <Text className="text-xl text-text-primary mb-1.5" style={{ fontFamily: font.display }}>Sem membros</Text>
+                <Text className="text-text-secondary text-sm text-center" style={{ fontFamily: font.regular }}>Este grupo ainda não tem participantes</Text>
               </View>
             }
           />

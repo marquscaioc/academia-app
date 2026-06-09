@@ -12,6 +12,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../../lib/auth/provider";
 import { useCreateTemplate, useAddQuestion } from "../../../hooks/mutations/useCheckinMutations";
+import { AppIcon } from "../../../components/ui";
 import { DisplayHeading } from "../../../components/ui/DisplayHeading";
 import { SectionLabel } from "../../../components/ui/SectionLabel";
 import { amethystGlow, font } from "../../../lib/design/tokens";
@@ -25,11 +26,11 @@ interface DraftQuestion {
 }
 
 const questionTypes = [
-  { value: "text", label: "Texto", icon: "📝" },
-  { value: "number", label: "Numero", icon: "🔢" },
-  { value: "scale", label: "Escala 1-10", icon: "📊" },
-  { value: "choice", label: "Multipla escolha", icon: "☑️" },
-  { value: "boolean", label: "Sim/Nao", icon: "✅" },
+  { value: "text", label: "Texto", icon: "notebook" },
+  { value: "number", label: "Numero", icon: "gauge" },
+  { value: "scale", label: "Escala 1-10", icon: "scale" },
+  { value: "choice", label: "Multipla escolha", icon: "list" },
+  { value: "boolean", label: "Sim/Nao", icon: "check-circle" },
 ] as const;
 
 export default function CheckinBuilderScreen() {
@@ -98,8 +99,9 @@ export default function CheckinBuilderScreen() {
     <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1 px-6 pt-6" keyboardShouldPersistTaps="handled">
         <View className="flex-row items-center justify-between mb-6">
-          <Pressable onPress={() => router.back()}>
-            <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>← Cancelar</Text>
+          <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5">
+            <AppIcon name="arrow-left" size={18} color="#6E6382" strokeWidth={2} />
+            <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>Cancelar</Text>
           </Pressable>
           <DisplayHeading size="sm">Novo questionário.</DisplayHeading>
           <View className="w-16" />
@@ -157,8 +159,9 @@ export default function CheckinBuilderScreen() {
           <View>
             <View className="flex-row items-center justify-between mb-3">
               <SectionLabel>Perguntas ({questions.length})</SectionLabel>
-              <Pressable onPress={addNewQuestion} className="bg-violet-500/10 px-3 py-1.5 rounded-lg">
-                <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>+ Adicionar</Text>
+              <Pressable onPress={addNewQuestion} className="flex-row items-center gap-1.5 bg-violet-500/10 px-3 py-1.5 rounded-lg">
+                <AppIcon name="plus" size={14} color="#9B40D8" strokeWidth={2} />
+                <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>Adicionar</Text>
               </Pressable>
             </View>
 
@@ -166,8 +169,14 @@ export default function CheckinBuilderScreen() {
               {questions.map((q, idx) => (
                 <View key={idx} className="bg-surface-card border border-surface-border rounded-3xl p-4">
                   <View className="flex-row items-center justify-between mb-3">
-                    <Text className="text-xs text-text-muted" style={{ fontFamily: font.semibold }}>Pergunta {idx + 1}</Text>
-                    <Pressable onPress={() => removeQuestion(idx)}>
+                    <View className="flex-row items-center gap-2">
+                      <View className="w-7 h-7 rounded-xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+                        <Text className="text-[11px] text-violet-300" style={{ fontFamily: font.bold }}>{idx + 1}</Text>
+                      </View>
+                      <Text className="text-xs text-text-muted" style={{ fontFamily: font.semibold }}>Pergunta {idx + 1}</Text>
+                    </View>
+                    <Pressable onPress={() => removeQuestion(idx)} className="flex-row items-center gap-1">
+                      <AppIcon name="trash" size={14} color="#FB7185" strokeWidth={2} />
                       <Text className="text-danger-500 text-xs" style={{ fontFamily: font.semibold }}>Remover</Text>
                     </Pressable>
                   </View>
@@ -186,15 +195,21 @@ export default function CheckinBuilderScreen() {
                       <Pressable
                         key={t.value}
                         onPress={() => updateQuestion(idx, "type", t.value)}
-                        className={`px-2.5 py-1.5 rounded-lg ${
+                        className={`flex-row items-center gap-1.5 px-2.5 py-1.5 rounded-lg ${
                           q.type === t.value ? "bg-violet-500" : "bg-surface-elevated"
                         }`}
                       >
+                        <AppIcon
+                          name={t.icon}
+                          size={14}
+                          color={q.type === t.value ? "#FFFFFF" : "#A99FBA"}
+                          strokeWidth={2}
+                        />
                         <Text
                           className={`text-[10px] ${q.type === t.value ? "text-white" : "text-text-muted"}`}
                           style={{ fontFamily: font.semibold }}
                         >
-                          {t.icon} {t.label}
+                          {t.label}
                         </Text>
                       </Pressable>
                     ))}
@@ -234,7 +249,9 @@ export default function CheckinBuilderScreen() {
                   onPress={addNewQuestion}
                   className="border border-dashed border-surface-border rounded-3xl py-10 items-center"
                 >
-                  <Text className="text-2xl mb-2">📋</Text>
+                  <View className="w-16 h-16 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-3">
+                    <AppIcon name="clipboard" size={28} color="#9B40D8" strokeWidth={2} />
+                  </View>
                   <Text className="text-text-muted text-sm" style={{ fontFamily: font.regular }}>Adicione a primeira pergunta</Text>
                 </Pressable>
               ) : null}

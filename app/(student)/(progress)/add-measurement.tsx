@@ -14,7 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { useAuth } from "../../../lib/auth/provider";
 import { useAddMeasurement } from "../../../hooks/mutations/useProgressMutations";
-import { DisplayHeading } from "../../../components/ui";
+import { AppIcon, DisplayHeading } from "../../../components/ui";
 import { amethystGlow, font } from "../../../lib/design/tokens";
 
 interface MeasurementField {
@@ -123,7 +123,16 @@ export default function AddMeasurementScreen() {
           keyboardShouldPersistTaps="handled"
         >
           <View className="flex-row items-center justify-between mb-5">
-            <Pressable onPress={() => router.back()}>
+            <Pressable
+              onPress={() => router.back()}
+              className="flex-row items-center gap-1"
+            >
+              <AppIcon
+                name="chevron-left"
+                size={18}
+                color="#9B40D8"
+                strokeWidth={2}
+              />
               <Text
                 className="text-violet-400"
                 style={{ fontFamily: font.medium }}
@@ -132,6 +141,10 @@ export default function AddMeasurementScreen() {
               </Text>
             </Pressable>
             <View className="w-16" />
+          </View>
+
+          <View className="w-12 h-12 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
+            <AppIcon name="ruler" size={22} color="#9B40D8" strokeWidth={2} />
           </View>
 
           <Text
@@ -181,12 +194,20 @@ export default function AddMeasurementScreen() {
             ))}
 
             <View className="mt-2">
-              <Text
-                className="text-[11px] text-text-muted mb-2 ml-0.5 uppercase"
-                style={{ fontFamily: font.semibold, letterSpacing: 1.5 }}
-              >
-                Observacoes
-              </Text>
+              <View className="flex-row items-center gap-1.5 mb-2 ml-0.5">
+                <AppIcon
+                  name="clipboard"
+                  size={14}
+                  color="#6E6382"
+                  strokeWidth={2}
+                />
+                <Text
+                  className="text-[11px] text-text-muted uppercase"
+                  style={{ fontFamily: font.semibold, letterSpacing: 1.5 }}
+                >
+                  Observacoes
+                </Text>
+              </View>
               <TextInput
                 className="border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary bg-surface-card/80"
                 placeholder="Notas opcionais..."
@@ -217,12 +238,20 @@ export default function AddMeasurementScreen() {
                 {addMeasurement.isPending ? (
                   <ActivityIndicator color="#FFFFFF" />
                 ) : (
-                  <Text
-                    className="text-white text-[15px]"
-                    style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
-                  >
-                    Salvar
-                  </Text>
+                  <View className="flex-row items-center gap-2">
+                    <AppIcon
+                      name="check"
+                      size={18}
+                      color="#FFFFFF"
+                      strokeWidth={2}
+                    />
+                    <Text
+                      className="text-white text-[15px]"
+                      style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
+                    >
+                      Salvar
+                    </Text>
+                  </View>
                 )}
               </LinearGradient>
             </Pressable>

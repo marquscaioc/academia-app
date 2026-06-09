@@ -6,6 +6,7 @@ import { useAuth } from "../../../lib/auth/provider";
 import { useCourseDetail } from "../../../hooks/queries/useCourses";
 import { useMarkLessonComplete } from "../../../hooks/mutations/useCourseMutations";
 import { LoadingScreen } from "../../../components/ui/LoadingScreen";
+import { AppIcon } from "../../../components/ui";
 import { font, amethystGlow } from "../../../lib/design/tokens";
 import { useState } from "react";
 
@@ -33,8 +34,9 @@ export default function StudentCourseDetailScreen() {
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1 px-6 pt-6">
-        <Pressable onPress={() => router.back()} className="mb-4">
-          <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>← Voltar</Text>
+        <Pressable onPress={() => router.back()} className="mb-4 flex-row items-center gap-1.5 self-start">
+          <AppIcon name="arrow-left" size={16} color="#6E6382" strokeWidth={2} />
+          <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>Voltar</Text>
         </Pressable>
 
         <Text
@@ -50,14 +52,19 @@ export default function StudentCourseDetailScreen() {
         ) : null}
 
         {/* Progress bar */}
-        <View className="bg-surface-card border border-surface-border rounded-3xl p-4 mb-6">
-          <View className="flex-row items-center justify-between mb-2">
-            <Text
-              className="text-xs text-text-muted uppercase"
-              style={{ fontFamily: font.semibold, letterSpacing: 2 }}
-            >
-              Progresso
-            </Text>
+        <View className="bg-surface-card border border-surface-border rounded-3xl p-5 mb-6">
+          <View className="flex-row items-center justify-between mb-3">
+            <View className="flex-row items-center gap-2.5">
+              <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+                <AppIcon name="progress" size={18} color="#9B40D8" strokeWidth={2} />
+              </View>
+              <Text
+                className="text-xs text-text-muted uppercase"
+                style={{ fontFamily: font.semibold, letterSpacing: 2 }}
+              >
+                Progresso
+              </Text>
+            </View>
             <Text className="text-xs text-violet-400" style={{ fontFamily: font.bold }}>
               {completedCount}/{totalCount}
             </Text>
@@ -111,9 +118,10 @@ export default function StudentCourseDetailScreen() {
                   </LinearGradient>
                 </Pressable>
               ) : (
-                <View className="bg-success-500/15 px-3 py-1.5 rounded-xl">
+                <View className="bg-success-500/15 px-3 py-1.5 rounded-xl flex-row items-center gap-1.5">
+                  <AppIcon name="check" size={14} color="#34D399" strokeWidth={2.5} />
                   <Text className="text-success-500 text-xs" style={{ fontFamily: font.bold }}>
-                    ✓ Concluida
+                    Concluida
                   </Text>
                 </View>
               )}
@@ -122,8 +130,14 @@ export default function StudentCourseDetailScreen() {
         ) : null}
 
         <Text
-          className="text-xs text-text-muted uppercase mb-3"
+          className="text-[11px] text-text-muted uppercase mb-1"
           style={{ fontFamily: font.semibold, letterSpacing: 2 }}
+        >
+          Conteudo
+        </Text>
+        <Text
+          className="text-2xl text-text-primary mb-3"
+          style={{ fontFamily: font.display }}
         >
           Aulas
         </Text>
@@ -139,15 +153,19 @@ export default function StudentCourseDetailScreen() {
                   isActive ? "bg-violet-500/10 border-violet-400/40" : "bg-surface-card border-surface-border"
                 }`}
               >
-                <View className={`w-8 h-8 rounded-xl items-center justify-center ${
+                <View className={`w-9 h-9 rounded-xl items-center justify-center ${
                   isDone ? "bg-success-500" : isActive ? "bg-violet-500" : "bg-surface-elevated"
                 }`}>
-                  <Text
-                    className={`text-xs ${isDone || isActive ? "text-white" : "text-text-muted"}`}
-                    style={{ fontFamily: font.bold }}
-                  >
-                    {isDone ? "✓" : idx + 1}
-                  </Text>
+                  {isDone ? (
+                    <AppIcon name="check" size={16} color="#FFFFFF" strokeWidth={2.5} />
+                  ) : (
+                    <Text
+                      className={`text-xs ${isActive ? "text-white" : "text-text-muted"}`}
+                      style={{ fontFamily: font.bold }}
+                    >
+                      {idx + 1}
+                    </Text>
+                  )}
                 </View>
                 <View className="flex-1">
                   <Text
@@ -157,12 +175,19 @@ export default function StudentCourseDetailScreen() {
                     {l.title}
                   </Text>
                   {l.duration_seconds ? (
-                    <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>
-                      {Math.floor(l.duration_seconds / 60)}min
-                    </Text>
+                    <View className="flex-row items-center gap-1 mt-0.5">
+                      <AppIcon name="clock" size={12} color="#6E6382" strokeWidth={2} />
+                      <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>
+                        {Math.floor(l.duration_seconds / 60)}min
+                      </Text>
+                    </View>
                   ) : null}
                 </View>
-                {l.video_url ? <Text className="text-violet-400 text-lg">▶</Text> : null}
+                {l.video_url ? (
+                  <View className="w-8 h-8 rounded-xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+                    <AppIcon name="play" size={15} color="#9B40D8" strokeWidth={2} />
+                  </View>
+                ) : null}
               </Pressable>
             );
           })}

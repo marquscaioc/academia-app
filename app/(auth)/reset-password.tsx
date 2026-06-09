@@ -13,7 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import { supabase } from "../../lib/supabase/client";
-import { DisplayHeading, Logo } from "../../components/ui";
+import { AppIcon, DisplayHeading, Logo } from "../../components/ui";
 import { amethystGlow, font } from "../../lib/design/tokens";
 
 export default function ResetPasswordScreen() {
@@ -85,7 +85,7 @@ export default function ResetPasswordScreen() {
         <View className="flex-1 justify-center items-center px-8 max-w-[440px] w-full self-center">
           <Animated.View entering={FadeIn.duration(400)} className="items-center">
             <View className="w-20 h-20 bg-success-500/15 border border-success-500/25 rounded-3xl items-center justify-center mb-6">
-              <Text className="text-4xl">✅</Text>
+              <AppIcon name="check-circle" size={32} color="#34D399" strokeWidth={1.8} />
             </View>
             <DisplayHeading size="lg" tone="primary" className="text-center">
               Senha atualizada.

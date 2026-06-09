@@ -7,7 +7,7 @@ import Animated, { FadeInDown, FadeIn } from "react-native-reanimated";
 import { useAuth } from "../../../lib/auth/provider";
 import { useWorkoutPlans, useWorkoutSessions } from "../../../hooks/queries/useWorkouts";
 import { WorkoutCalendar } from "../../../components/progress/WorkoutCalendar";
-import { BigStat, DisplayHeading, Logo, SectionLabel } from "../../../components/ui";
+import { AppIcon, BigStat, DisplayHeading, Logo, SectionLabel } from "../../../components/ui";
 import { font } from "../../../lib/design/tokens";
 
 export default function WorkoutsScreen() {
@@ -126,7 +126,9 @@ export default function WorkoutsScreen() {
               style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
               pointerEvents="none"
             />
-            <Text className="text-4xl mb-4">🏋️</Text>
+            <View className="w-16 h-16 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-5">
+              <AppIcon name="workout" size={28} color="#9B40D8" strokeWidth={2} />
+            </View>
             <DisplayHeading size="sm" italic className="text-center mb-2">
               Nenhum treino ainda
             </DisplayHeading>
@@ -190,14 +192,14 @@ export default function WorkoutsScreen() {
                         </Text>
                         <View className="flex-row items-center gap-4">
                           <View className="flex-row items-center gap-1.5">
-                            <View className="w-1 h-1 rounded-full bg-violet-400" />
+                            <AppIcon name="list" size={14} color="#9B40D8" strokeWidth={2} />
                             <Text className="text-[11px] text-violet-300" style={{ fontFamily: font.semibold }}>
                               {w.exercises?.length ?? 0} exercícios
                             </Text>
                           </View>
                           {w.estimated_duration_minutes ? (
                             <View className="flex-row items-center gap-1.5">
-                              <View className="w-1 h-1 rounded-full bg-ice-400" />
+                              <AppIcon name="clock" size={14} color="#7FD3E0" strokeWidth={2} />
                               <Text className="text-[11px] text-ice-400" style={{ fontFamily: font.semibold }}>
                                 ~{w.estimated_duration_minutes}min
                               </Text>
@@ -206,7 +208,9 @@ export default function WorkoutsScreen() {
                         </View>
                       </View>
 
-                      <Text className="text-text-muted text-lg mt-1">→</Text>
+                      <View className="self-center">
+                        <AppIcon name="chevron-right" size={18} color="#6E6382" strokeWidth={2} />
+                      </View>
                     </View>
                   </Pressable>
                 </Link>

@@ -9,8 +9,8 @@ import { supabase } from "../../../lib/supabase/client";
 import { useConversations, Conversation } from "../../../hooks/queries/useChat";
 import { useGetOrCreateDM } from "../../../hooks/mutations/useChatMutations";
 import { Avatar } from "../../../components/ui/Avatar";
-import { EmptyState } from "../../../components/ui/EmptyState";
 import { DisplayHeading } from "../../../components/ui/DisplayHeading";
+import { AppIcon } from "../../../components/ui";
 import { font, amethystGlow } from "../../../lib/design/tokens";
 
 function timeAgo(dateStr: string | null): string {
@@ -78,8 +78,8 @@ function NewConversationModal({ userId, onClose }: { userId: string; onClose: ()
         <View className="bg-dark-200 border-t border-surface-border rounded-t-3xl px-6 pt-6 pb-10 max-h-[70%]">
           <View className="flex-row items-center justify-between mb-4">
             <DisplayHeading size="sm">Nova conversa</DisplayHeading>
-            <Pressable onPress={onClose}>
-              <Text className="text-text-muted text-lg">✕</Text>
+            <Pressable onPress={onClose} className="w-9 h-9 rounded-2xl bg-surface-elevated border border-surface-border items-center justify-center active:bg-surface-hover">
+              <AppIcon name="close" size={18} color="#A99FBA" strokeWidth={2} />
             </Pressable>
           </View>
           {!connections?.length ? (
@@ -132,11 +132,29 @@ export default function ChatListScreen() {
             <ActivityIndicator size="large" color="#781BB6" />
           </View>
         ) : !conversations?.length ? (
-          <EmptyState
-            icon="💬"
-            title="Nenhuma conversa"
-            description="Suas conversas com trainers e outros alunos aparecerão aqui."
-          />
+          <View className="flex-1 items-center justify-center px-8 py-12">
+            <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-6">
+              <AppIcon name="chat" size={28} color="#9B40D8" strokeWidth={2} />
+            </View>
+            <Text className="text-3xl text-text-primary text-center" style={{ fontFamily: font.display, letterSpacing: -0.3 }}>
+              Nenhuma conversa
+            </Text>
+            <Text className="text-sm text-text-secondary text-center mt-2.5 max-w-[300px] leading-5" style={{ fontFamily: font.regular }}>
+              Suas conversas com trainers e outros alunos aparecerão aqui.
+            </Text>
+            <Pressable onPress={() => setShowNew(true)} style={amethystGlow} className="mt-7 rounded-2xl overflow-hidden">
+              <LinearGradient
+                colors={["#781BB6", "#C636E0"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0.9 }}
+                style={{ paddingVertical: 13, paddingHorizontal: 26 }}
+              >
+                <Text className="text-white text-sm" style={{ fontFamily: font.semibold, letterSpacing: 0.4 }}>
+                  Iniciar conversa
+                </Text>
+              </LinearGradient>
+            </Pressable>
+          </View>
         ) : (
           <FlatList
             data={conversations}
@@ -153,8 +171,8 @@ export default function ChatListScreen() {
                   className="flex-row items-center gap-4 px-6 py-4 active:bg-surface-hover border-b border-surface-border"
                 >
                   {isGroup ? (
-                    <View className="w-12 h-12 bg-surface-elevated rounded-xl items-center justify-center">
-                      <Text className="text-lg">👥</Text>
+                    <View className="w-12 h-12 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+                      <AppIcon name="social" size={20} color="#9B40D8" strokeWidth={2} />
                     </View>
                   ) : (
                     <Avatar uri={avatar} name={name} size="lg" />

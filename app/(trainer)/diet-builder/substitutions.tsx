@@ -8,6 +8,7 @@ import { supabase } from "../../../lib/supabase/client";
 import { useDietPlans } from "../../../hooks/queries/useDiet";
 import { useCreateSubstitution } from "../../../hooks/mutations/useSubstitutionMutations";
 import { Avatar } from "../../../components/ui/Avatar";
+import { AppIcon } from "../../../components/ui";
 import { font, amethystGlow } from "../../../lib/design/tokens";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -64,8 +65,12 @@ export default function SubstitutionsScreen() {
     <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1 px-6 pt-6" keyboardShouldPersistTaps="handled">
         <View className="flex-row items-center justify-between mb-6">
-          <Pressable onPress={() => (studentId ? (setStudentId(null), resetForm()) : router.back())}>
-            <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>← Voltar</Text>
+          <Pressable
+            onPress={() => (studentId ? (setStudentId(null), resetForm()) : router.back())}
+            className="flex-row items-center gap-1.5 active:opacity-70"
+          >
+            <AppIcon name="arrow-left" size={16} color="#6E6382" strokeWidth={2} />
+            <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>Voltar</Text>
           </Pressable>
           <Text className="text-3xl text-text-primary" style={{ fontFamily: font.display }}>Substituições</Text>
           <View className="w-12" />
@@ -76,7 +81,12 @@ export default function SubstitutionsScreen() {
           <View className="gap-2">
             <Text className="text-text-muted uppercase mb-1" style={{ fontFamily: font.semibold, fontSize: 11, letterSpacing: 2 }}>Escolha o aluno</Text>
             {!students?.length ? (
-              <Text className="text-sm text-text-muted text-center py-8" style={{ fontFamily: font.regular }}>Nenhum aluno ativo.</Text>
+              <View className="items-center py-8 gap-3">
+                <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+                  <AppIcon name="social" size={28} color="#9B40D8" strokeWidth={2} />
+                </View>
+                <Text className="text-sm text-text-muted text-center" style={{ fontFamily: font.regular }}>Nenhum aluno ativo.</Text>
+              </View>
             ) : (
               students.map((s) => (
                 <Pressable
@@ -89,7 +99,7 @@ export default function SubstitutionsScreen() {
                 >
                   <Avatar uri={s.student?.avatar_url} name={s.student?.full_name} size="md" />
                   <Text className="text-sm text-text-primary flex-1" style={{ fontFamily: font.semibold }}>{s.student?.full_name}</Text>
-                  <Text className="text-text-muted text-lg">›</Text>
+                  <AppIcon name="chevron-right" size={18} color="#6E6382" strokeWidth={2} />
                 </Pressable>
               ))
             )}
@@ -99,8 +109,12 @@ export default function SubstitutionsScreen() {
             <ActivityIndicator size="large" color="#781BB6" />
           </View>
         ) : !plans?.length || !plans[0].meals?.length ? (
-          <View className="items-center py-10">
-            <Text className="text-sm text-text-muted text-center" style={{ fontFamily: font.regular }}>
+          <View className="items-center py-10 gap-4">
+            <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+              <AppIcon name="diet" size={28} color="#9B40D8" strokeWidth={2} />
+            </View>
+            <Text className="text-xl text-text-primary text-center" style={{ fontFamily: font.display }}>Sem plano ativo</Text>
+            <Text className="text-sm text-text-muted text-center px-4" style={{ fontFamily: font.regular }}>
               {studentName} não tem um plano alimentar ativo com refeições.
             </Text>
           </View>
@@ -112,15 +126,25 @@ export default function SubstitutionsScreen() {
             </Text>
             {plans[0].meals!.map((meal) => (
               <View key={meal.id}>
-                <Text className="text-base text-text-primary mb-2" style={{ fontFamily: font.display }}>{meal.name}</Text>
+                <View className="flex-row items-center gap-2 mb-2">
+                  <AppIcon name="food" size={18} color="#6E6382" strokeWidth={2} />
+                  <Text className="text-base text-text-primary" style={{ fontFamily: font.display }}>{meal.name}</Text>
+                </View>
                 <View className="gap-2">
                   {(meal.items ?? []).map((item) => (
                     <View key={item.id} className="bg-surface-card border border-surface-border rounded-3xl p-4">
-                      <View className="flex-row items-center justify-between">
+                      <View className="flex-row items-center justify-between gap-3">
+                        <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+                          <AppIcon name="apple" size={18} color="#9B40D8" strokeWidth={2} />
+                        </View>
                         <Text className="text-sm text-text-primary flex-1" style={{ fontFamily: font.semibold }}>{item.food_name}</Text>
-                        <Pressable onPress={() => (activeItem === item.id ? resetForm() : setActiveItem(item.id))}>
+                        <Pressable
+                          onPress={() => (activeItem === item.id ? resetForm() : setActiveItem(item.id))}
+                          className="flex-row items-center gap-1.5 active:opacity-70"
+                        >
+                          <AppIcon name={activeItem === item.id ? "close" : "plus"} size={14} color="#9B40D8" strokeWidth={2} />
                           <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>
-                            {activeItem === item.id ? "Cancelar" : "+ Substituição"}
+                            {activeItem === item.id ? "Cancelar" : "Substituição"}
                           </Text>
                         </Pressable>
                       </View>

@@ -1,5 +1,6 @@
 import { Modal, Pressable, Text, View } from "react-native";
 import { Video, ResizeMode } from "expo-av";
+import { AppIcon } from "../ui";
 
 interface VideoPlayerModalProps {
   visible: boolean;
@@ -14,7 +15,7 @@ export function VideoPlayerModal({ visible, videoUrl, onClose }: VideoPlayerModa
     <Modal visible={visible} animationType="fade" transparent statusBarTranslucent>
       <View className="flex-1 bg-black/95 items-center justify-center">
         <Pressable onPress={onClose} className="absolute top-14 right-6 z-10 w-10 h-10 bg-surface-elevated rounded-full items-center justify-center">
-          <Text className="text-text-primary text-lg">✕</Text>
+          <AppIcon name="close" size={20} color="#6E6382" strokeWidth={2} />
         </Pressable>
 
         <Video
@@ -26,7 +27,11 @@ export function VideoPlayerModal({ visible, videoUrl, onClose }: VideoPlayerModa
           isLooping
         />
 
-        <Text className="text-text-muted text-xs mt-4">Toque ✕ para fechar</Text>
+        <View className="flex-row items-center mt-4">
+          <Text className="text-text-muted text-xs">Toque </Text>
+          <AppIcon name="close" size={12} color="#6E6382" strokeWidth={2} />
+          <Text className="text-text-muted text-xs"> para fechar</Text>
+        </View>
       </View>
     </Modal>
   );

@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { useChallenges } from "../../hooks/queries/useChallenges";
 import { ChallengeCard } from "../../components/social/ChallengeCard";
+import { AppIcon, SectionLabel } from "../../components/ui";
 import { DisplayHeading } from "../../components/ui/DisplayHeading";
 import { EmptyState } from "../../components/ui/EmptyState";
 import { useAuth } from "../../lib/auth/provider";
@@ -27,9 +28,10 @@ export default function ChallengesScreen() {
     <SafeAreaView className="flex-1 bg-dark-400">
       <View className="flex-1 px-6 pt-6">
         <View className="flex-row items-center justify-between mb-2">
-          <Pressable onPress={() => router.back()} className="py-1">
+          <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5 py-1">
+            <AppIcon name="arrow-left" size={18} color="#6E6382" strokeWidth={2} />
             <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>
-              ← Voltar
+              Voltar
             </Text>
           </Pressable>
           <Link href="/challenges/create" asChild>
@@ -38,19 +40,21 @@ export default function ChallengesScreen() {
                 colors={["#781BB6", "#C636E0"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0.9 }}
-                style={{ paddingHorizontal: 16, paddingVertical: 8 }}
+                style={{ paddingHorizontal: 16, paddingVertical: 8, flexDirection: "row", alignItems: "center", gap: 6 }}
               >
+                <AppIcon name="plus" size={16} color="#FFFFFF" strokeWidth={2.5} />
                 <Text
                   className="text-white text-xs"
                   style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
                 >
-                  + Novo
+                  Novo
                 </Text>
               </LinearGradient>
             </Pressable>
           </Link>
         </View>
 
+        <SectionLabel className="mb-2">Comunidade</SectionLabel>
         <DisplayHeading size="md" className="mb-6">
           Desafios.
         </DisplayHeading>
@@ -84,7 +88,7 @@ export default function ChallengesScreen() {
           </View>
         ) : !challenges?.length ? (
           <EmptyState
-            icon="🏆"
+            iconName="trophy"
             title="Nenhum desafio encontrado"
             description="Crie um desafio e convide seus amigos para competir!"
           />

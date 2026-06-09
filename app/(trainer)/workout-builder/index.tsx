@@ -16,6 +16,7 @@ import { useQuery } from "@tanstack/react-query";
 import { font, amethystGlow } from "../../../lib/design/tokens";
 import { DisplayHeading } from "../../../components/ui/DisplayHeading";
 import { SectionLabel } from "../../../components/ui/SectionLabel";
+import { AppIcon } from "../../../components/ui";
 import { useAuth } from "../../../lib/auth/provider";
 import { supabase } from "../../../lib/supabase/client";
 import { useExercises, useMuscleGroups } from "../../../hooks/queries/useExercises";
@@ -154,8 +155,9 @@ export default function WorkoutBuilderScreen() {
     <SafeAreaView className="flex-1 bg-dark-400">
       {/* Header */}
       <View className="flex-row items-center justify-between px-6 pt-6 pb-4 border-b border-surface-border">
-        <Pressable onPress={() => router.back()}>
-          <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>← Cancelar</Text>
+        <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5">
+          <AppIcon name="arrow-left" size={16} color="#6E6382" strokeWidth={2} />
+          <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>Cancelar</Text>
         </Pressable>
         <DisplayHeading size="sm" className="text-text-primary">
           {step === "select-student" ? "Selecionar aluno" :
@@ -183,6 +185,9 @@ export default function WorkoutBuilderScreen() {
           contentContainerClassName="px-6 py-4 gap-2"
           ListEmptyComponent={
             <View className="items-center py-10">
+              <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
+                <AppIcon name="user-add" size={28} color="#9B40D8" strokeWidth={2} />
+              </View>
               <Text className="text-text-muted text-sm" style={{ fontFamily: font.regular }}>Nenhum aluno. Convide um primeiro.</Text>
             </View>
           }
@@ -196,8 +201,11 @@ export default function WorkoutBuilderScreen() {
               className="bg-surface-card border border-surface-border rounded-3xl p-4 flex-row items-center gap-4 active:bg-surface-hover"
             >
               <Avatar uri={item.student?.avatar_url} name={item.student?.full_name} size="lg" />
-              <Text className="text-[15px] text-text-primary flex-1" style={{ fontFamily: font.semibold }}>{item.student?.full_name}</Text>
-              <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>Selecionar →</Text>
+              <View className="flex-1">
+                <Text className="text-[15px] text-text-primary" style={{ fontFamily: font.semibold }}>{item.student?.full_name}</Text>
+                <Text className="text-text-secondary text-xs mt-0.5" style={{ fontFamily: font.regular }}>Selecionar aluno</Text>
+              </View>
+              <AppIcon name="chevron-right" size={18} color="#6E6382" strokeWidth={2} />
             </Pressable>
           )}
         />
@@ -207,8 +215,11 @@ export default function WorkoutBuilderScreen() {
       {step === "plan-info" ? (
         <ScrollView className="flex-1 px-6 py-6" keyboardShouldPersistTaps="handled">
           <View className="bg-surface-card border border-surface-border rounded-3xl p-4 flex-row items-center gap-3 mb-6">
+            <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+              <AppIcon name="user" size={18} color="#9B40D8" strokeWidth={2} />
+            </View>
             <Text className="text-sm text-text-muted" style={{ fontFamily: font.regular }}>Aluno:</Text>
-            <Text className="text-sm text-violet-400" style={{ fontFamily: font.semibold }}>{selectedStudentName}</Text>
+            <Text className="text-sm text-violet-400 flex-1" style={{ fontFamily: font.semibold }}>{selectedStudentName}</Text>
           </View>
 
           <View className="gap-5">
@@ -258,11 +269,12 @@ export default function WorkoutBuilderScreen() {
               colors={planName.trim() ? ["#781BB6", "#C636E0"] : ["#201B2A", "#201B2A"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0.9 }}
-              style={{ paddingVertical: 18, alignItems: "center" }}
+              style={{ paddingVertical: 18, alignItems: "center", flexDirection: "row", justifyContent: "center", gap: 8 }}
             >
               <Text className={planName.trim() ? "text-white" : "text-text-muted"} style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>
                 Próximo: exercícios
               </Text>
+              <AppIcon name="arrow-right" size={18} color={planName.trim() ? "#FFFFFF" : "#6E6382"} strokeWidth={2} />
             </LinearGradient>
           </Pressable>
         </ScrollView>
@@ -293,9 +305,14 @@ export default function WorkoutBuilderScreen() {
                   onPress={() => addExerciseToList(item)}
                   className="bg-surface-elevated rounded-2xl p-3 flex-row items-center gap-3"
                 >
-                  <Text className="text-sm">🏋️</Text>
+                  <View className="w-9 h-9 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+                    <AppIcon name="workout" size={18} color="#9B40D8" strokeWidth={2} />
+                  </View>
                   <Text className="text-sm text-text-primary flex-1" style={{ fontFamily: font.regular }}>{item.name}</Text>
-                  <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>+ Add</Text>
+                  <View className="flex-row items-center gap-1">
+                    <AppIcon name="plus" size={14} color="#9B40D8" strokeWidth={2} />
+                    <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>Add</Text>
+                  </View>
                 </Pressable>
               )}
             />
@@ -304,6 +321,9 @@ export default function WorkoutBuilderScreen() {
           <ScrollView className="flex-1 px-6 py-4">
             {exercises.length === 0 ? (
               <View className="items-center py-10">
+                <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
+                  <AppIcon name="search" size={28} color="#9B40D8" strokeWidth={2} />
+                </View>
                 <Text className="text-text-muted text-sm" style={{ fontFamily: font.regular }}>Busque e adicione exercicios acima</Text>
               </View>
             ) : (
@@ -312,7 +332,8 @@ export default function WorkoutBuilderScreen() {
                   <View key={idx} className="bg-surface-card border border-surface-border rounded-3xl p-4">
                     <View className="flex-row items-center justify-between mb-3">
                       <Text className="text-[15px] text-text-primary flex-1" style={{ fontFamily: font.semibold }}>{ex.name}</Text>
-                      <Pressable onPress={() => removeExercise(idx)}>
+                      <Pressable onPress={() => removeExercise(idx)} className="flex-row items-center gap-1">
+                        <AppIcon name="trash" size={14} color="#FB7185" strokeWidth={2} />
                         <Text className="text-danger-500 text-xs" style={{ fontFamily: font.semibold }}>Remover</Text>
                       </Pressable>
                     </View>
@@ -393,10 +414,11 @@ export default function WorkoutBuilderScreen() {
                             : "bg-surface-elevated border border-surface-border"
                         }`}>
                           {ex.supersetGroup && exercises[idx - 1].supersetGroup === ex.supersetGroup ? (
-                            <Text className="text-white text-[10px]">✓</Text>
+                            <AppIcon name="check" size={12} color="#FFFFFF" strokeWidth={2} />
                           ) : null}
                         </View>
-                        <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>⛓ Superset com o exercício acima</Text>
+                        <AppIcon name="link" size={14} color="#6E6382" strokeWidth={2} />
+                        <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>Superset com o exercício acima</Text>
                       </Pressable>
                     ) : null}
                   </View>
@@ -416,11 +438,12 @@ export default function WorkoutBuilderScreen() {
                 colors={exercises.length > 0 ? ["#781BB6", "#C636E0"] : ["#201B2A", "#201B2A"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0.9 }}
-                style={{ paddingVertical: 16, alignItems: "center" }}
+                style={{ paddingVertical: 16, alignItems: "center", flexDirection: "row", justifyContent: "center", gap: 8 }}
               >
                 <Text className={exercises.length > 0 ? "text-white" : "text-text-muted"} style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>
                   Revisar ({exercises.length} exercícios)
                 </Text>
+                <AppIcon name="arrow-right" size={18} color={exercises.length > 0 ? "#FFFFFF" : "#6E6382"} strokeWidth={2} />
               </LinearGradient>
             </Pressable>
           </View>
@@ -431,9 +454,17 @@ export default function WorkoutBuilderScreen() {
       {step === "review" ? (
         <ScrollView className="flex-1 px-6 py-6">
           <View className="bg-surface-card border border-violet-500/20 rounded-3xl p-5 mb-4">
-            <SectionLabel tone="accent" className="mb-2">Plano</SectionLabel>
+            <View className="flex-row items-center gap-3 mb-3">
+              <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+                <AppIcon name="clipboard" size={18} color="#9B40D8" strokeWidth={2} />
+              </View>
+              <SectionLabel tone="accent">Plano</SectionLabel>
+            </View>
             <DisplayHeading size="sm" className="text-text-primary">{planName}</DisplayHeading>
-            <Text className="text-xs text-text-muted mt-1" style={{ fontFamily: font.regular }}>Para: {selectedStudentName}</Text>
+            <View className="flex-row items-center gap-1.5 mt-1">
+              <AppIcon name="user" size={14} color="#6E6382" strokeWidth={2} />
+              <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>Para: {selectedStudentName}</Text>
+            </View>
           </View>
 
           <SectionLabel className="mb-3">
@@ -459,8 +490,9 @@ export default function WorkoutBuilderScreen() {
           <View className="flex-row gap-3 mb-10">
             <Pressable
               onPress={() => setStep("add-exercises")}
-              className="flex-1 border border-surface-border rounded-2xl py-4 items-center"
+              className="flex-1 border border-surface-border rounded-2xl py-4 flex-row items-center justify-center gap-2"
             >
+              <AppIcon name="pencil" size={16} color="#A99FBA" strokeWidth={2} />
               <Text className="text-text-secondary text-sm" style={{ fontFamily: font.semibold }}>Editar</Text>
             </Pressable>
             <Pressable
@@ -473,12 +505,15 @@ export default function WorkoutBuilderScreen() {
                 colors={saving ? ["#50107D", "#86169E"] : ["#781BB6", "#C636E0"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0.9 }}
-                style={{ paddingVertical: 16, alignItems: "center" }}
+                style={{ paddingVertical: 16, alignItems: "center", flexDirection: "row", justifyContent: "center", gap: 8 }}
               >
                 {saving ? (
                   <ActivityIndicator color="#FFFFFF" />
                 ) : (
-                  <Text className="text-white text-sm" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Salvar plano</Text>
+                  <>
+                    <AppIcon name="check-circle" size={18} color="#FFFFFF" strokeWidth={2} />
+                    <Text className="text-white text-sm" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Salvar plano</Text>
+                  </>
                 )}
               </LinearGradient>
             </Pressable>

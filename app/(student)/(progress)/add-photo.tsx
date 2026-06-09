@@ -15,6 +15,7 @@ import {
   uploadProgressPhoto,
 } from "../../../hooks/mutations/useProgressMutations";
 import { font } from "../../../lib/design/tokens";
+import { AppIcon } from "../../../components/ui";
 
 const poses = [
   { value: "front" as const, label: "Frente" },
@@ -150,8 +151,9 @@ export default function AddPhotoScreen() {
             <View className="flex-row gap-3 mb-6">
               <Pressable
                 onPress={() => setImageUri(null)}
-                className="flex-1 border border-surface-border rounded-2xl py-3 items-center"
+                className="flex-1 flex-row gap-2 border border-surface-border rounded-2xl py-3 items-center justify-center"
               >
+                <AppIcon name="repeat" size={18} color="#A99FBA" strokeWidth={2} />
                 <Text
                   className="text-text-secondary"
                   style={{ fontFamily: font.medium }}
@@ -179,7 +181,9 @@ export default function AddPhotoScreen() {
           </View>
         ) : (
           <View className="flex-1 items-center justify-center gap-4">
-            <Text className="text-6xl mb-4">📸</Text>
+            <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
+              <AppIcon name="camera" size={28} color="#9B40D8" strokeWidth={2} />
+            </View>
             <Text
               className="text-2xl text-text-primary"
               style={{ fontFamily: font.display }}
@@ -196,8 +200,9 @@ export default function AddPhotoScreen() {
             <View className="w-full max-w-[280px] gap-3">
               <Pressable
                 onPress={takePhoto}
-                className="bg-violet-500 rounded-2xl py-4 items-center active:bg-violet-600"
+                className="flex-row gap-2 bg-violet-500 rounded-2xl py-4 items-center justify-center active:bg-violet-600"
               >
+                <AppIcon name="camera" size={18} color="#FFFFFF" strokeWidth={2} />
                 <Text
                   className="text-white"
                   style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
@@ -207,8 +212,9 @@ export default function AddPhotoScreen() {
               </Pressable>
               <Pressable
                 onPress={pickImage}
-                className="border border-surface-border rounded-2xl py-4 items-center active:bg-surface-hover"
+                className="flex-row gap-2 border border-surface-border rounded-2xl py-4 items-center justify-center active:bg-surface-hover"
               >
+                <AppIcon name="photos" size={18} color="#A99FBA" strokeWidth={2} />
                 <Text
                   className="text-text-secondary"
                   style={{ fontFamily: font.semibold }}

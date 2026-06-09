@@ -8,7 +8,7 @@ import { useAddStudentNote } from "../../../../hooks/mutations/useStudentNotes";
 import { TimelineItem } from "../../../../components/trainer/TimelineItem";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "../../../../lib/supabase/client";
-import { DisplayHeading, SectionLabel } from "../../../../components/ui";
+import { AppIcon, DisplayHeading, EmptyState, SectionLabel } from "../../../../components/ui";
 import { font } from "../../../../lib/design/tokens";
 
 export default function StudentDetailScreen() {
@@ -47,8 +47,9 @@ export default function StudentDetailScreen() {
     <SafeAreaView className="flex-1 bg-dark-400">
       <View className="flex-1">
         <View className="px-6 pt-6 pb-4 border-b border-surface-border">
-          <Pressable onPress={() => router.back()} className="mb-3">
-            <Text className="text-violet-400" style={{ fontFamily: font.medium }}>← Voltar</Text>
+          <Pressable onPress={() => router.back()} className="mb-3 flex-row items-center gap-1.5">
+            <AppIcon name="arrow-left" size={18} color="#9B40D8" strokeWidth={2} />
+            <Text className="text-violet-400" style={{ fontFamily: font.medium }}>Voltar</Text>
           </Pressable>
           <DisplayHeading size="md">{student?.full_name ?? "Aluno"}</DisplayHeading>
           <SectionLabel className="mt-2">Prontuario e Timeline</SectionLabel>
@@ -56,9 +57,10 @@ export default function StudentDetailScreen() {
           <View className="flex-row gap-3 mt-4">
             <Pressable
               onPress={() => setShowNote(!showNote)}
-              className="bg-violet-500/10 px-4 py-2 rounded-full border border-violet-400/30"
+              className="bg-violet-500/10 px-4 py-2 rounded-full border border-violet-400/30 flex-row items-center gap-1.5"
             >
-              <Text className="text-violet-400 text-xs" style={{ fontFamily: font.bold }}>+ Nota</Text>
+              <AppIcon name="plus" size={14} color="#9B40D8" strokeWidth={2} />
+              <Text className="text-violet-400 text-xs" style={{ fontFamily: font.bold }}>Nota</Text>
             </Pressable>
           </View>
 
@@ -97,10 +99,11 @@ export default function StudentDetailScreen() {
             contentContainerClassName="px-6 pt-4 pb-10"
             renderItem={({ item }) => <TimelineItem event={item} />}
             ListEmptyComponent={
-              <View className="items-center py-10">
-                <Text className="text-3xl mb-3">📋</Text>
-                <Text className="text-text-muted text-sm" style={{ fontFamily: font.regular }}>Nenhum evento registrado</Text>
-              </View>
+              <EmptyState
+                iconName="clipboard"
+                title="Prontuario vazio"
+                description="Nenhum evento registrado ainda. As notas e atualizacoes do aluno aparecerao aqui."
+              />
             }
           />
         )}

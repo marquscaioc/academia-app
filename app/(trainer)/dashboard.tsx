@@ -6,14 +6,16 @@ import { useAuth } from "../../lib/auth/provider";
 import { supabase } from "../../lib/supabase/client";
 import { useStudentAdherenceList } from "../../hooks/queries/useStudentAdherence";
 import { StudentAdherenceRow } from "../../components/trainer/StudentAdherenceRow";
-import { DisplayHeading, SectionLabel } from "../../components/ui";
+import { AppIcon, DisplayHeading, SectionLabel, type IconName } from "../../components/ui";
 import { font } from "../../lib/design/tokens";
 
-function MetricCard({ value, label, icon, color }: { value: string; label: string; icon: string; color: string }) {
+function MetricCard({ value, label, icon, color }: { value: string; label: string; icon: IconName; color: string }) {
   return (
     <View className="flex-1 bg-surface-card border border-surface-border rounded-3xl p-5">
       <View className="flex-row items-center justify-between mb-3">
-        <Text className="text-2xl">{icon}</Text>
+        <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+          <AppIcon name={icon} size={18} color="#9B40D8" strokeWidth={2} />
+        </View>
         <Text className={`text-4xl ${color}`} style={{ fontFamily: font.display, letterSpacing: -0.5 }}>{value}</Text>
       </View>
       <SectionLabel>{label}</SectionLabel>
@@ -60,8 +62,8 @@ export default function TrainerDashboardScreen() {
             <DisplayHeading size="lg">{firstName}</DisplayHeading>
           </View>
           <Link href="/profile/edit" asChild>
-            <Pressable className="w-10 h-10 bg-surface-card border border-surface-border rounded-xl items-center justify-center">
-              <Text className="text-sm">⚙️</Text>
+            <Pressable className="w-10 h-10 bg-surface-card border border-surface-border rounded-2xl items-center justify-center active:bg-surface-hover">
+              <AppIcon name="settings" size={18} color="#A99FBA" strokeWidth={2} />
             </Pressable>
           </Link>
         </View>
@@ -70,13 +72,13 @@ export default function TrainerDashboardScreen() {
         <Link href="/(trainer)/workout-builder" asChild>
           <Pressable className="bg-violet-500 rounded-3xl p-5 mb-6 flex-row items-center gap-4 active:bg-violet-600">
             <View className="w-12 h-12 bg-dark-400/20 rounded-2xl items-center justify-center">
-              <Text className="text-2xl">📝</Text>
+              <AppIcon name="clipboard-check" size={22} color="#FFFFFF" strokeWidth={2} />
             </View>
             <View className="flex-1">
               <Text className="text-white text-base" style={{ fontFamily: font.semibold, letterSpacing: 0.3 }}>Criar plano de treino</Text>
               <Text className="text-white/70 text-xs mt-0.5" style={{ fontFamily: font.regular }}>Selecione aluno, exercicios e configure</Text>
             </View>
-            <Text className="text-white text-lg" style={{ fontFamily: font.bold }}>→</Text>
+            <AppIcon name="arrow-right" size={20} color="#FFFFFF" strokeWidth={2} />
           </Pressable>
         </Link>
 
@@ -84,37 +86,39 @@ export default function TrainerDashboardScreen() {
         <Link href="/(trainer)/diet-builder" asChild>
           <Pressable className="bg-surface-card border border-fuchsia-400/30 rounded-3xl p-5 mb-6 flex-row items-center gap-4 active:bg-surface-hover">
             <View className="w-12 h-12 bg-fuchsia-400/20 rounded-2xl items-center justify-center">
-              <Text className="text-2xl">🥗</Text>
+              <AppIcon name="diet" size={22} color="#C636E0" strokeWidth={2} />
             </View>
             <View className="flex-1">
               <Text className="text-fuchsia-400 text-base" style={{ fontFamily: font.semibold, letterSpacing: 0.3 }}>Criar plano alimentar</Text>
               <Text className="text-text-muted text-xs mt-0.5" style={{ fontFamily: font.regular }}>Refeicoes, macros e metas para o aluno</Text>
             </View>
-            <Text className="text-fuchsia-400 text-lg" style={{ fontFamily: font.bold }}>→</Text>
+            <AppIcon name="arrow-right" size={20} color="#C636E0" strokeWidth={2} />
           </Pressable>
         </Link>
 
         {/* Metrics */}
         <View className="flex-row gap-3 mb-6">
-          <MetricCard value={String(counts?.activeStudents ?? 0)} label="Alunos ativos" icon="👥" color="text-violet-400" />
-          <MetricCard value={String(counts?.workoutPlans ?? 0)} label="Treinos criados" icon="🏋️" color="text-ice-400" />
+          <MetricCard value={String(counts?.activeStudents ?? 0)} label="Alunos ativos" icon="social" color="text-violet-400" />
+          <MetricCard value={String(counts?.workoutPlans ?? 0)} label="Treinos criados" icon="workout" color="text-ice-400" />
         </View>
 
         {/* Ferramentas (acesso direto, sobretudo no mobile onde nao ha sidebar) */}
         <View className="mb-6">
           <SectionLabel className="mb-3">Ferramentas</SectionLabel>
           <View className="flex-row flex-wrap gap-2">
-            {[
-              { href: "/(trainer)/checkins/builder", icon: "📋", label: "Check-ins" },
-              { href: "/(trainer)/checkins/responses", icon: "📈", label: "Respostas" },
-              { href: "/(trainer)/whatsapp", icon: "💬", label: "WhatsApp" },
-              { href: "/(trainer)/courses", icon: "🎓", label: "Aulas" },
-              { href: "/(trainer)/checkins/branding", icon: "🎨", label: "Branding" },
-              { href: "/(trainer)/diet-builder/substitutions", icon: "🔄", label: "Substituições" },
-            ].map((t) => (
+            {([
+              { href: "/(trainer)/checkins/builder", icon: "clipboard", label: "Check-ins" },
+              { href: "/(trainer)/checkins/responses", icon: "trend", label: "Respostas" },
+              { href: "/(trainer)/whatsapp", icon: "chat", label: "WhatsApp" },
+              { href: "/(trainer)/courses", icon: "courses", label: "Aulas" },
+              { href: "/(trainer)/checkins/branding", icon: "sparkles", label: "Branding" },
+              { href: "/(trainer)/diet-builder/substitutions", icon: "repeat", label: "Substituições" },
+            ] as { href: string; icon: IconName; label: string }[]).map((t) => (
               <Link key={t.href} href={t.href as never} asChild>
-                <Pressable className="bg-surface-card border border-surface-border rounded-2xl px-4 py-3 flex-row items-center gap-2 active:bg-surface-hover">
-                  <Text className="text-lg">{t.icon}</Text>
+                <Pressable className="bg-surface-card border border-surface-border rounded-2xl px-4 py-3 flex-row items-center gap-2.5 active:bg-surface-hover">
+                  <View className="w-8 h-8 rounded-xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+                    <AppIcon name={t.icon} size={16} color="#9B40D8" strokeWidth={2} />
+                  </View>
                   <Text className="text-xs text-text-secondary" style={{ fontFamily: font.semibold }}>{t.label}</Text>
                 </Pressable>
               </Link>
@@ -125,8 +129,8 @@ export default function TrainerDashboardScreen() {
         {/* Getting started */}
         <View className="bg-surface-card border border-surface-border rounded-3xl p-6 mb-6">
           <View className="flex-row items-center gap-3 mb-5">
-            <View className="w-10 h-10 bg-violet-500/20 rounded-2xl items-center justify-center">
-              <Text className="text-lg">🚀</Text>
+            <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+              <AppIcon name="rocket" size={18} color="#9B40D8" strokeWidth={2} />
             </View>
             <DisplayHeading size="sm">Primeiros passos</DisplayHeading>
           </View>
@@ -174,7 +178,10 @@ export default function TrainerDashboardScreen() {
             </View>
           ) : (
             <View className="bg-surface-card border border-surface-border rounded-3xl p-6 items-center">
-              <Text className="text-3xl mb-3">📈</Text>
+              <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
+                <AppIcon name="trend" size={28} color="#9B40D8" strokeWidth={2} />
+              </View>
+              <DisplayHeading size="sm" className="mb-2">Sem dados ainda</DisplayHeading>
               <Text className="text-sm text-text-muted text-center" style={{ fontFamily: font.regular }}>
                 Dados de adesao aparecerão aqui{"\n"}quando seus alunos comecarem a treinar.
               </Text>
