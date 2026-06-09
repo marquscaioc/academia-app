@@ -8,6 +8,7 @@ import { useLogMeal, useLogWater, useLogFood, useDeleteFoodLog } from "../../../
 import { Card } from "../../../components/ui/Card";
 import { EmptyState } from "../../../components/ui/EmptyState";
 import { SubstitutionSheet } from "../../../components/diet/SubstitutionSheet";
+import { TACO_FOODS, TacoFood } from "../../../lib/data/taco";
 
 function getTodayDate() {
   return new Date().toISOString().split("T")[0];
@@ -32,6 +33,8 @@ export default function DietScreen() {
   const [fProt, setFProt] = useState("");
   const [fCarb, setFCarb] = useState("");
   const [fFat, setFFat] = useState("");
+  const [selectedFood, setSelectedFood] = useState<TacoFood | null>(null);
+  const [grams, setGrams] = useState("");
 
   const activePlan = plans?.[0];
   const meals = activePlan?.meals ?? [];
@@ -55,6 +58,25 @@ export default function DietScreen() {
   const resetFood = () => {
     setShowAddFood(false);
     setFName(""); setFCal(""); setFProt(""); setFCarb(""); setFFat("");
+    setSelectedFood(null); setGrams("");
+  };
+  const applyFood = (food: TacoFood, gramsStr: string) => {
+    const g = parseFloat(gramsStr.replace(",", ".")) || 0;
+    const k = g / 100;
+    setFCal(g ? String(Math.round(food.kcal * k)) : "");
+    setFProt(g ? String(Math.round(food.protein * k * 10) / 10) : "");
+    setFCarb(g ? String(Math.round(food.carbs * k * 10) / 10) : "");
+    setFFat(g ? String(Math.round(food.fat * k * 10) / 10) : "");
+  };
+  const selectTacoFood = (food: TacoFood) => {
+    setSelectedFood(food);
+    setFName(food.name);
+    setGrams("100");
+    applyFood(food, "100");
+  };
+  const onGramsChange = (v: string) => {
+    setGrams(v);
+    if (selectedFood) applyFood(selectedFood, v);
   };
   const handleAddFood = () => {
     if (!user || !fName.trim()) return;
@@ -78,6 +100,11 @@ export default function DietScreen() {
 
   const extraCal = (foodLogs ?? []).reduce((s, f) => s + (f.calories ?? 0), 0);
   const extraProt = (foodLogs ?? []).reduce((s, f) => s + (f.protein_g ?? 0), 0);
+
+  const tacoMatches =
+    showAddFood && fName.trim().length >= 2 && (!selectedFood || selectedFood.name !== fName)
+      ? TACO_FOODS.filter((f) => f.name.toLowerCase().includes(fName.toLowerCase())).slice(0, 6)
+      : [];
 
   if (!activePlan) {
     return (
@@ -269,7 +296,36 @@ export default function DietScreen() {
           <Pressable className="flex-1" onPress={resetFood} />
           <View className="bg-dark-200 border-t border-surface-border rounded-t-3xl px-6 pt-6 pb-10">
             <Text className="text-lg font-black text-text-primary mb-4">Registrar alimento</Text>
-            <TextInput className="bg-surface-card border border-surface-border rounded-xl px-4 py-3 text-sm text-text-primary mb-2" placeholder="Alimento" placeholderTextColor="#6E6580" value={fName} onChangeText={setFName} />
+            <TextInput
+              className="bg-surface-card border border-surface-border rounded-xl px-4 py-3 text-sm text-text-primary mb-2"
+              placeholder="Buscar alimento (TACO) ou digitar"
+              placeholderTextColor="#6E6580"
+              value={fName}
+              onChangeText={(v) => { setFName(v); if (selectedFood && v !== selectedFood.name) setSelectedFood(null); }}
+            />
+            {tacoMatches.length > 0 ? (
+              <View className="bg-surface-card border border-surface-border rounded-xl mb-2 overflow-hidden">
+                {tacoMatches.map((f) => (
+                  <Pressable key={f.name} onPress={() => selectTacoFood(f)} className="px-4 py-2.5 border-b border-surface-border active:bg-surface-hover">
+                    <Text className="text-sm text-text-primary">{f.name}</Text>
+                    <Text className="text-[10px] text-text-muted">{f.kcal} kcal · {f.protein}P · {f.carbs}C · {f.fat}G /100g</Text>
+                  </Pressable>
+                ))}
+              </View>
+            ) : null}
+            {selectedFood ? (
+              <View className="mb-2">
+                <Text className="text-[10px] text-text-muted mb-1">Quantidade (g)</Text>
+                <TextInput
+                  className="bg-surface-card border border-surface-border rounded-xl px-4 py-3 text-sm text-text-primary"
+                  placeholder="100"
+                  placeholderTextColor="#6E6580"
+                  keyboardType="numeric"
+                  value={grams}
+                  onChangeText={onGramsChange}
+                />
+              </View>
+            ) : null}
             <View className="flex-row gap-2 mb-2">
               <TextInput className="flex-1 bg-surface-card border border-surface-border rounded-xl px-4 py-3 text-sm text-text-primary" placeholder="Kcal" placeholderTextColor="#6E6580" keyboardType="numeric" value={fCal} onChangeText={setFCal} />
               <TextInput className="flex-1 bg-surface-card border border-surface-border rounded-xl px-4 py-3 text-sm text-text-primary" placeholder="Prot (g)" placeholderTextColor="#6E6580" keyboardType="numeric" value={fProt} onChangeText={setFProt} />
