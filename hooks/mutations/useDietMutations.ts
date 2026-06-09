@@ -92,3 +92,36 @@ export function useLogWater() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["diet", "water-logs"] }),
   });
 }
+
+export function useLogFood() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: {
+      user_id: string;
+      food_name: string;
+      quantity?: number;
+      unit?: string;
+      calories?: number;
+      protein_g?: number;
+      carbs_g?: number;
+      fat_g?: number;
+      photo_url?: string;
+    }) => {
+      const { data, error } = await supabase.from("food_logs").insert(input).select().single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["diet", "food-logs"] }),
+  });
+}
+
+export function useDeleteFoodLog() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("food_logs").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["diet", "food-logs"] }),
+  });
+}

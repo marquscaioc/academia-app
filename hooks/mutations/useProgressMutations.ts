@@ -15,6 +15,12 @@ interface AddMeasurementInput {
   thigh_right_cm?: number;
   calf_left_cm?: number;
   calf_right_cm?: number;
+  skinfold_triceps_mm?: number;
+  skinfold_subscapular_mm?: number;
+  skinfold_suprailiac_mm?: number;
+  skinfold_abdominal_mm?: number;
+  skinfold_thigh_mm?: number;
+  skinfold_chest_mm?: number;
   notes?: string;
 }
 
