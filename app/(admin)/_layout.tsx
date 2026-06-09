@@ -1,5 +1,7 @@
 import { Tabs } from "expo-router";
 import { Text, View } from "react-native";
+import { RoleGuard } from "../../components/auth/RoleGuard";
+import { WebFrame } from "../../components/layout/WebFrame";
 
 function TabIcon({ name, focused }: { name: string; focused: boolean }) {
   const icons: Record<string, string> = {
@@ -15,7 +17,7 @@ function TabIcon({ name, focused }: { name: string; focused: boolean }) {
   );
 }
 
-export default function AdminLayout() {
+function AdminTabs() {
   return (
     <Tabs
       screenOptions={{
@@ -36,5 +38,15 @@ export default function AdminLayout() {
       <Tabs.Screen name="users" options={{ title: "Usuarios", tabBarIcon: ({ focused }) => <TabIcon name="users" focused={focused} /> }} />
       <Tabs.Screen name="moderation" options={{ title: "Moderacao", tabBarIcon: ({ focused }) => <TabIcon name="moderation" focused={focused} /> }} />
     </Tabs>
+  );
+}
+
+export default function AdminLayout() {
+  return (
+    <RoleGuard allow="admin">
+      <WebFrame maxWidth={680}>
+        <AdminTabs />
+      </WebFrame>
+    </RoleGuard>
   );
 }

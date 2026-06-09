@@ -25,6 +25,7 @@ export default function RegisterScreen() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
+  const [accepted, setAccepted] = useState(false);
 
   const handleRegister = async () => {
     if (!fullName || !email || !password || !confirmPassword) {
@@ -37,6 +38,10 @@ export default function RegisterScreen() {
     }
     if (password !== confirmPassword) {
       setError("As senhas nao conferem");
+      return;
+    }
+    if (!accepted) {
+      setError("Você precisa aceitar os Termos e a Política de Privacidade");
       return;
     }
     setError("");
@@ -191,6 +196,30 @@ export default function RegisterScreen() {
                 autoComplete="new-password"
               />
             </View>
+
+            <Pressable
+              onPress={() => setAccepted((v) => !v)}
+              className="flex-row items-start gap-3 mt-1 px-1"
+            >
+              <View
+                className={`w-5 h-5 rounded-md border-2 items-center justify-center mt-0.5 ${
+                  accepted ? "bg-violet-500 border-violet-500" : "border-surface-border"
+                }`}
+              >
+                {accepted ? <Text className="text-white text-xs font-bold">✓</Text> : null}
+              </View>
+              <Text className="flex-1 text-text-muted text-xs leading-5">
+                Li e aceito os{" "}
+                <Link href="/termos" asChild>
+                  <Text className="text-violet-300 font-bold">Termos de Uso</Text>
+                </Link>{" "}
+                e a{" "}
+                <Link href="/privacidade" asChild>
+                  <Text className="text-violet-300 font-bold">Política de Privacidade</Text>
+                </Link>
+                , e declaro ter 16 anos ou mais.
+              </Text>
+            </Pressable>
 
             <Pressable
               onPress={handleRegister}

@@ -1,6 +1,7 @@
 import { Tabs } from "expo-router";
 import { Platform, Text, View } from "react-native";
 import { TrainerSidebar } from "../../components/layout/TrainerSidebar";
+import { RoleGuard } from "../../components/auth/RoleGuard";
 
 function TabIcon({ name, focused }: { name: string; focused: boolean }) {
   const icons: Record<string, string> = {
@@ -17,7 +18,7 @@ function TabIcon({ name, focused }: { name: string; focused: boolean }) {
   );
 }
 
-export default function TrainerLayout() {
+function TrainerTabs() {
   const isWeb = Platform.OS === "web";
 
   return (
@@ -57,5 +58,13 @@ export default function TrainerLayout() {
         </Tabs>
       </View>
     </View>
+  );
+}
+
+export default function TrainerLayout() {
+  return (
+    <RoleGuard allow="trainer">
+      <TrainerTabs />
+    </RoleGuard>
   );
 }

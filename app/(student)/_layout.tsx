@@ -1,6 +1,8 @@
 import { Tabs } from "expo-router";
 import { Text, View } from "react-native";
 import { BrandingProvider, useBranding } from "../../lib/branding/BrandingProvider";
+import { RoleGuard } from "../../components/auth/RoleGuard";
+import { WebFrame } from "../../components/layout/WebFrame";
 
 function TabIcon({ name, focused }: { name: string; focused: boolean }) {
   const icons: Record<string, string> = {
@@ -103,8 +105,12 @@ function StudentTabs() {
 
 export default function StudentLayout() {
   return (
-    <BrandingProvider>
-      <StudentTabs />
-    </BrandingProvider>
+    <RoleGuard allow="student">
+      <BrandingProvider>
+        <WebFrame>
+          <StudentTabs />
+        </WebFrame>
+      </BrandingProvider>
+    </RoleGuard>
   );
 }

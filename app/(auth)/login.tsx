@@ -210,6 +210,20 @@ export default function LoginScreen() {
                 </Text>
               </Pressable>
             </Link>
+
+            <View className="flex-row items-center gap-2 mt-8">
+              <Link href="/termos" asChild>
+                <Pressable className="py-1">
+                  <Text className="text-text-muted text-[11px]">Termos</Text>
+                </Pressable>
+              </Link>
+              <Text className="text-surface-border text-[11px]">·</Text>
+              <Link href="/privacidade" asChild>
+                <Pressable className="py-1">
+                  <Text className="text-text-muted text-[11px]">Privacidade</Text>
+                </Pressable>
+              </Link>
+            </View>
           </Animated.View>
         </View>
       </KeyboardAvoidingView>
