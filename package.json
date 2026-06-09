@@ -8,7 +8,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "build": "npx expo export --platform web && node scripts/patch-web-html.mjs"
+    "build": "npx expo export --platform web --clear && node scripts/patch-web-html.mjs"
   },
   "dependencies": {
     "@expo-google-fonts/archivo-black": "^0.4.1",
