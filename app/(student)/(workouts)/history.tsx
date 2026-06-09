@@ -5,6 +5,7 @@ import { useAuth } from "../../../lib/auth/provider";
 import { useWorkoutSessions } from "../../../hooks/queries/useWorkouts";
 import { font } from "../../../lib/design/tokens";
 import { AppIcon } from "../../../components/ui";
+import { WebContainer } from "../../../components/layout/WebContainer";
 
 function formatDuration(seconds: number | null): string {
   if (!seconds) return "--";
@@ -22,6 +23,7 @@ export default function WorkoutHistoryScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
+      <WebContainer maxWidth={1180}>
       <View className="flex-1 px-6 pt-6">
         <View className="flex-row items-center justify-between mb-6">
           <Pressable onPress={() => router.back()} className="flex-row items-center gap-1">
@@ -88,6 +90,7 @@ export default function WorkoutHistoryScreen() {
           />
         )}
       </View>
+      </WebContainer>
     </SafeAreaView>
   );
 }

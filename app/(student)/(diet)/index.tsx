@@ -11,6 +11,7 @@ import { EmptyState } from "../../../components/ui/EmptyState";
 import { DisplayHeading } from "../../../components/ui/DisplayHeading";
 import { SectionLabel } from "../../../components/ui/SectionLabel";
 import { SubstitutionSheet } from "../../../components/diet/SubstitutionSheet";
+import { WebContainer } from "../../../components/layout/WebContainer";
 import { TACO_FOODS, TacoFood } from "../../../lib/data/taco";
 import { font } from "../../../lib/design/tokens";
 
@@ -113,14 +114,16 @@ export default function DietScreen() {
   if (!activePlan) {
     return (
       <SafeAreaView className="flex-1 bg-dark-400">
-        <View className="px-6 pt-6">
-          <DisplayHeading size="md" className="mb-6">Dieta.</DisplayHeading>
-        </View>
-        <EmptyState
-          iconName="diet"
-          title="Nenhum plano alimentar"
-          description="Seu nutricionista ou personal ainda nao atribuiu um plano alimentar."
-        />
+        <WebContainer maxWidth={1180}>
+          <View className="px-6 pt-6">
+            <DisplayHeading size="md" className="mb-6">Dieta.</DisplayHeading>
+          </View>
+          <EmptyState
+            iconName="diet"
+            title="Nenhum plano alimentar"
+            description="Seu nutricionista ou personal ainda nao atribuiu um plano alimentar."
+          />
+        </WebContainer>
       </SafeAreaView>
     );
   }
@@ -128,6 +131,7 @@ export default function DietScreen() {
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1 px-6 pt-6">
+        <WebContainer maxWidth={1180}>
         <DisplayHeading size="md" className="mb-1">Dieta.</DisplayHeading>
         <Text className="text-sm text-text-secondary mb-6" style={{ fontFamily: font.regular }}>{activePlan.name}</Text>
 
@@ -202,7 +206,7 @@ export default function DietScreen() {
 
         {/* Meals */}
         <DisplayHeading size="sm" className="mb-3">Refeicoes do dia</DisplayHeading>
-        <View className="gap-3 mb-10">
+        <View className="flex-row flex-wrap gap-3 mb-10">
           {meals.map((meal) => {
             const isLogged = loggedMealIds.has(meal.id);
             return (
@@ -210,7 +214,7 @@ export default function DietScreen() {
                 key={meal.id}
                 onPress={() => handleLogMeal(meal.id)}
                 disabled={isLogged}
-                className={`border rounded-3xl p-4 ${
+                className={`grow basis-[360px] border rounded-3xl p-4 ${
                   isLogged ? "bg-success-500/5 border-success-500/30" : "bg-surface-card border-surface-border active:bg-surface-hover"
                 }`}
               >
@@ -289,6 +293,7 @@ export default function DietScreen() {
             </View>
           )}
         </View>
+        </WebContainer>
       </ScrollView>
       <SubstitutionSheet
         visible={!!subSheet}

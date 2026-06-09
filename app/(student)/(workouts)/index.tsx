@@ -8,6 +8,7 @@ import { useAuth } from "../../../lib/auth/provider";
 import { useWorkoutPlans, useWorkoutSessions } from "../../../hooks/queries/useWorkouts";
 import { WorkoutCalendar } from "../../../components/progress/WorkoutCalendar";
 import { AppIcon, BigStat, DisplayHeading, Logo, SectionLabel } from "../../../components/ui";
+import { WebContainer } from "../../../components/layout/WebContainer";
 import { font } from "../../../lib/design/tokens";
 
 export default function WorkoutsScreen() {
@@ -49,6 +50,7 @@ export default function WorkoutsScreen() {
       />
 
       <ScrollView className="flex-1 px-6 pt-4" showsVerticalScrollIndicator={false}>
+        <WebContainer maxWidth={1180}>
         {/* Masthead */}
         <Animated.View entering={FadeIn.duration(400)} className="flex-row items-center justify-between mb-6">
           <View className="flex-row items-center gap-3">
@@ -144,9 +146,11 @@ export default function WorkoutsScreen() {
             <SectionLabel withRule className="mb-2">
               Programa atual
             </SectionLabel>
+            <View className="flex-row flex-wrap gap-3">
             {allWorkouts.map((w, idx) => (
               <Animated.View
                 key={w.id}
+                className="grow basis-[360px]"
                 entering={FadeInDown.delay(300 + idx * 60).springify()}
               >
                 <Link href={`/(student)/(workouts)/${w.id}`} asChild>
@@ -216,10 +220,12 @@ export default function WorkoutsScreen() {
                 </Link>
               </Animated.View>
             ))}
+            </View>
           </View>
         )}
 
         <View className="h-10" />
+        </WebContainer>
       </ScrollView>
     </SafeAreaView>
   );

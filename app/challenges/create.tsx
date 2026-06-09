@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../lib/auth/provider";
 import { useCreateChallenge } from "../../hooks/mutations/useChallengeMutations";
 import { AppIcon } from "../../components/ui";
+import { WebContainer } from "../../components/layout/WebContainer";
 import { font, amethystGlow } from "../../lib/design/tokens";
 
 const scoringModes = [
@@ -59,6 +60,7 @@ export default function CreateChallengeScreen() {
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1 px-6 pt-6" keyboardShouldPersistTaps="handled">
+        <WebContainer maxWidth={640}>
         <View className="flex-row items-center justify-between mb-6">
           <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5">
             <AppIcon name="arrow-left" size={16} color="#6E6382" strokeWidth={2} />
@@ -184,6 +186,7 @@ export default function CreateChallengeScreen() {
             </LinearGradient>
           </Pressable>
         </View>
+        </WebContainer>
       </ScrollView>
     </SafeAreaView>
   );

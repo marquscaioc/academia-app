@@ -10,6 +10,7 @@ import { DisplayHeading } from "../../components/ui/DisplayHeading";
 import { EmptyState } from "../../components/ui/EmptyState";
 import { useAuth } from "../../lib/auth/provider";
 import { amethystGlow, font } from "../../lib/design/tokens";
+import { WebContainer } from "../../components/layout/WebContainer";
 
 type Filter = "active" | "upcoming" | "ended";
 
@@ -27,6 +28,7 @@ export default function ChallengesScreen() {
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
       <View className="flex-1 px-6 pt-6">
+        <WebContainer maxWidth={1180}>
         <View className="flex-row items-center justify-between mb-2">
           <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5 py-1">
             <AppIcon name="arrow-left" size={18} color="#6E6382" strokeWidth={2} />
@@ -113,6 +115,7 @@ export default function ChallengesScreen() {
             )}
           />
         )}
+        </WebContainer>
       </View>
     </SafeAreaView>
   );

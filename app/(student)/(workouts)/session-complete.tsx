@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../../lib/auth/provider";
 import { useCreatePost } from "../../../hooks/mutations/useSocialMutations";
 import { WorkoutSummaryCard } from "../../../components/workout/WorkoutSummaryCard";
+import { WebContainer } from "../../../components/layout/WebContainer";
 import { AppIcon } from "../../../components/ui";
 import { font, amethystGlow } from "../../../lib/design/tokens";
 
@@ -39,6 +40,7 @@ export default function SessionCompleteScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
+      <WebContainer maxWidth={640}>
       <View className="flex-1 px-6 pt-10 items-center">
         <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-5">
           <AppIcon name="celebrate" size={28} color="#9B40D8" strokeWidth={2} />
@@ -100,6 +102,7 @@ export default function SessionCompleteScreen() {
           </Pressable>
         </View>
       </View>
+      </WebContainer>
     </SafeAreaView>
   );
 }

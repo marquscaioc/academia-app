@@ -1,11 +1,13 @@
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { WebContainer } from "../../components/layout/WebContainer";
 import { AppIcon, SectionLabel } from "../../components/ui";
 import { font } from "../../lib/design/tokens";
 
 export default function ModerationScreen() {
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
+      <WebContainer maxWidth={1180} className="flex-1">
       <View className="flex-1 px-6 pt-6">
         <SectionLabel className="mb-2">Comunidade</SectionLabel>
         <Text
@@ -32,6 +34,7 @@ export default function ModerationScreen() {
           </Text>
         </View>
       </View>
+      </WebContainer>
     </SafeAreaView>
   );
 }

@@ -8,6 +8,7 @@ import { useSyncHealthData } from "../../../hooks/mutations/useSyncHealth";
 import { isHealthAvailable } from "../../../lib/health/healthConnect";
 import { Card } from "../../../components/ui/Card";
 import { AppIcon } from "../../../components/ui";
+import { WebContainer } from "../../../components/layout/WebContainer";
 import { font, amethystGlow } from "../../../lib/design/tokens";
 
 export default function HealthSyncScreen() {
@@ -20,6 +21,7 @@ export default function HealthSyncScreen() {
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1 px-6 pt-6">
+        <WebContainer maxWidth={1180}>
         <View className="flex-row items-center justify-between mb-6">
           <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5">
             <AppIcon name="arrow-left" size={18} color="#9B40D8" strokeWidth={2} />
@@ -102,8 +104,9 @@ export default function HealthSyncScreen() {
             {healthData?.workouts.length ? (
               <View>
                 <Text className="text-xs text-text-muted mb-3 uppercase" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>Treinos externos</Text>
+                <View className="flex-row flex-wrap gap-4">
                 {healthData.workouts.map((w, idx) => (
-                  <Card key={idx} variant="outlined" className="mb-2 flex-row items-center gap-3">
+                  <Card key={idx} variant="outlined" className="grow basis-[300px] mb-2 flex-row items-center gap-3">
                     <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
                       <AppIcon name="activity" size={18} color="#9B40D8" strokeWidth={2} />
                     </View>
@@ -115,10 +118,12 @@ export default function HealthSyncScreen() {
                     </View>
                   </Card>
                 ))}
+                </View>
               </View>
             ) : null}
           </>
         )}
+        </WebContainer>
       </ScrollView>
     </SafeAreaView>
   );

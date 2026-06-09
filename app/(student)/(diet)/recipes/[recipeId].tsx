@@ -8,6 +8,7 @@ import { useToggleFavorite } from "../../../../hooks/mutations/useRecipeMutation
 import { AppIcon } from "../../../../components/ui";
 import { Card } from "../../../../components/ui/Card";
 import { LoadingScreen } from "../../../../components/ui/LoadingScreen";
+import { WebContainer } from "../../../../components/layout/WebContainer";
 import { font } from "../../../../lib/design/tokens";
 
 export default function RecipeDetailScreen() {
@@ -26,6 +27,7 @@ export default function RecipeDetailScreen() {
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1">
+        <WebContainer maxWidth={640}>
         {recipe.image_url ? (
           <Image source={{ uri: recipe.image_url }} style={{ width: "100%", height: 250 }} contentFit="cover" />
         ) : (
@@ -130,6 +132,7 @@ export default function RecipeDetailScreen() {
             <Text className="text-violet-400" style={{ fontFamily: font.semibold, letterSpacing: 0.3 }}>Voltar para receitas</Text>
           </Pressable>
         </View>
+        </WebContainer>
       </ScrollView>
     </SafeAreaView>
   );

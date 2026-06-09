@@ -15,6 +15,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useAuth } from "../../../lib/auth/provider";
 import { useAddMeasurement } from "../../../hooks/mutations/useProgressMutations";
 import { AppIcon, DisplayHeading } from "../../../components/ui";
+import { WebContainer } from "../../../components/layout/WebContainer";
 import { amethystGlow, font } from "../../../lib/design/tokens";
 
 interface MeasurementField {
@@ -122,6 +123,7 @@ export default function AddMeasurementScreen() {
           className="flex-1 px-6 pt-6"
           keyboardShouldPersistTaps="handled"
         >
+          <WebContainer maxWidth={640}>
           <View className="flex-row items-center justify-between mb-5">
             <Pressable
               onPress={() => router.back()}
@@ -256,6 +258,7 @@ export default function AddMeasurementScreen() {
               </LinearGradient>
             </Pressable>
           </View>
+          </WebContainer>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

@@ -68,12 +68,6 @@ export default function LoginScreen() {
             <DisplayHeading size="2xl" tone="primary">
               Projeto Gaab.
             </DisplayHeading>
-            <Text
-              className="text-fuchsia-400 mt-2"
-              style={{ fontFamily: font.semibold, fontSize: 10, letterSpacing: 3 }}
-            >
-              ROYAL AMETHYST · EST. 2026
-            </Text>
           </Animated.View>
 
           {/* Error */}

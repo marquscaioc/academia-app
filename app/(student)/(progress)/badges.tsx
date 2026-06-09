@@ -8,6 +8,7 @@ import { useUserAchievements } from "../../../hooks/queries/useFeed";
 import { AchievementCard } from "../../../components/achievements/AchievementCard";
 import { LoadingScreen } from "../../../components/ui/LoadingScreen";
 import { AppIcon, SectionLabel } from "../../../components/ui";
+import { WebContainer } from "../../../components/layout/WebContainer";
 import { font } from "../../../lib/design/tokens";
 
 export default function BadgesScreen() {
@@ -35,6 +36,7 @@ export default function BadgesScreen() {
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1 px-6 pt-6">
+        <WebContainer maxWidth={1180}>
         <View className="flex-row items-center justify-between mb-8">
           <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5">
             <AppIcon name="arrow-left" size={18} color="#9B40D8" strokeWidth={2} />
@@ -71,6 +73,7 @@ export default function BadgesScreen() {
             </View>
           ))}
         </View>
+        </WebContainer>
       </ScrollView>
     </SafeAreaView>
   );

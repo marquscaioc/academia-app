@@ -16,6 +16,7 @@ import {
 } from "../../../hooks/mutations/useProgressMutations";
 import { font } from "../../../lib/design/tokens";
 import { AppIcon } from "../../../components/ui";
+import { WebContainer } from "../../../components/layout/WebContainer";
 
 const poses = [
   { value: "front" as const, label: "Frente" },
@@ -82,6 +83,7 @@ export default function AddPhotoScreen() {
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
       <View className="flex-1 px-6 pt-6">
+        <WebContainer maxWidth={640}>
         <View className="flex-row items-center justify-between mb-6">
           <Pressable onPress={() => router.back()}>
             <Text
@@ -225,6 +227,7 @@ export default function AddPhotoScreen() {
             </View>
           </View>
         )}
+        </WebContainer>
       </View>
     </SafeAreaView>
   );

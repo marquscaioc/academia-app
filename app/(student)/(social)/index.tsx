@@ -24,6 +24,7 @@ import { Avatar } from "../../../components/ui/Avatar";
 import { DisplayHeading } from "../../../components/ui/DisplayHeading";
 import { AppIcon } from "../../../components/ui";
 import { font, amethystGlow } from "../../../lib/design/tokens";
+import { WebContainer } from "../../../components/layout/WebContainer";
 
 function CommentsSheet({ postId, userId, onClose }: { postId: string; userId?: string; onClose: () => void }) {
   const { data: comments } = usePostComments(postId);
@@ -109,6 +110,7 @@ export default function SocialFeedScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
+      <WebContainer maxWidth={1180}>
       {/* Header */}
       <View className="px-6 pt-6 pb-3 border-b border-surface-border">
         <View className="flex-row items-center justify-between mb-3">
@@ -258,6 +260,7 @@ export default function SocialFeedScreen() {
       {commentsPostId ? (
         <CommentsSheet postId={commentsPostId} userId={user?.id} onClose={() => setCommentsPostId(null)} />
       ) : null}
+      </WebContainer>
     </SafeAreaView>
   );
 }

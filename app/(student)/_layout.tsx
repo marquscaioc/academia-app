@@ -1,8 +1,8 @@
 import { Tabs } from "expo-router";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import { BrandingProvider, useBranding } from "../../lib/branding/BrandingProvider";
 import { RoleGuard } from "../../components/auth/RoleGuard";
-import { WebFrame } from "../../components/layout/WebFrame";
+import { AppSidebar, STUDENT_NAV } from "../../components/layout/AppSidebar";
 import { AppIcon, type IconName } from "../../components/ui";
 
 const TAB_ICON: Record<string, IconName> = {
@@ -26,28 +26,34 @@ function TabIcon({ name, focused, color }: { name: string; focused: boolean; col
 
 function StudentTabs() {
   const { primaryColor } = useBranding();
+  const isWeb = Platform.OS === "web";
 
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: primaryColor,
-        tabBarInactiveTintColor: "#6E6382",
-        tabBarStyle: {
-          backgroundColor: "#14101B",
-          borderTopWidth: 1,
-          borderTopColor: "#2E2740",
-          paddingTop: 8,
-          height: 65,
-        },
-        tabBarLabelStyle: {
-          fontSize: 10,
-          fontWeight: "700",
-          letterSpacing: 0.5,
-          textTransform: "uppercase",
-        },
-      }}
-    >
+    <View className="flex-1 flex-row">
+      {isWeb ? <AppSidebar items={STUDENT_NAV} subtitle="Aluno" /> : null}
+      <View className="flex-1">
+        <Tabs
+          screenOptions={{
+            headerShown: false,
+            tabBarActiveTintColor: primaryColor,
+            tabBarInactiveTintColor: "#6E6382",
+            tabBarStyle: isWeb
+              ? { display: "none" as const }
+              : {
+                  backgroundColor: "#14101B",
+                  borderTopWidth: 1,
+                  borderTopColor: "#2E2740",
+                  paddingTop: 8,
+                  height: 65,
+                },
+            tabBarLabelStyle: {
+              fontSize: 10,
+              fontWeight: "700",
+              letterSpacing: 0.5,
+              textTransform: "uppercase",
+            },
+          }}
+        >
       <Tabs.Screen
         name="(home)"
         options={{
@@ -97,7 +103,9 @@ function StudentTabs() {
           tabBarIcon: ({ focused, color }) => <TabIcon name="courses" focused={focused} color={color} />,
         }}
       />
-    </Tabs>
+        </Tabs>
+      </View>
+    </View>
   );
 }
 
@@ -105,9 +113,7 @@ export default function StudentLayout() {
   return (
     <RoleGuard allow="student">
       <BrandingProvider>
-        <WebFrame>
-          <StudentTabs />
-        </WebFrame>
+        <StudentTabs />
       </BrandingProvider>
     </RoleGuard>
   );

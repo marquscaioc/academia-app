@@ -7,6 +7,7 @@ import { supabase } from "../../lib/supabase/client";
 import { font } from "../../lib/design/tokens";
 import { DisplayHeading } from "../../components/ui/DisplayHeading";
 import { AppIcon, type IconName } from "../../components/ui";
+import { WebContainer } from "../../components/layout/WebContainer";
 
 interface Notification {
   id: string;
@@ -85,6 +86,7 @@ export default function NotificationsScreen() {
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
       <View className="flex-1">
+        <WebContainer maxWidth={640}>
         <View className="flex-row items-center justify-between px-6 pt-6 pb-4">
           <View className="flex-row items-center gap-3">
             <Pressable
@@ -174,6 +176,7 @@ export default function NotificationsScreen() {
             )}
           />
         )}
+        </WebContainer>
       </View>
     </SafeAreaView>
   );

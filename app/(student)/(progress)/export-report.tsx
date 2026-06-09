@@ -14,6 +14,7 @@ import { AppIcon } from "../../../components/ui";
 import { Card } from "../../../components/ui/Card";
 import { DisplayHeading } from "../../../components/ui/DisplayHeading";
 import { SectionLabel } from "../../../components/ui/SectionLabel";
+import { WebContainer } from "../../../components/layout/WebContainer";
 import { amethystGlow, font } from "../../../lib/design/tokens";
 
 type Period = 30 | 60 | 90;
@@ -99,6 +100,7 @@ export default function ExportReportScreen() {
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1 px-6 pt-6">
+        <WebContainer maxWidth={640}>
         <View className="flex-row items-center justify-between mb-2">
           <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5">
             <AppIcon name="arrow-left" size={18} color="#9B40D8" strokeWidth={2} />
@@ -200,6 +202,7 @@ export default function ExportReportScreen() {
             )}
           </LinearGradient>
         </Pressable>
+        </WebContainer>
       </ScrollView>
     </SafeAreaView>
   );

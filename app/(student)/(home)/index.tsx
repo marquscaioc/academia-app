@@ -17,11 +17,12 @@ import { useWorkoutPlans } from "../../../hooks/queries/useWorkouts";
 import { useUnreadCount } from "../../../hooks/queries/useUnreadNotifications";
 import { useCheckIns } from "../../../hooks/queries/useCheckins";
 import { AppIcon, BigStat, DisplayHeading, GradientCard, Logo, SectionLabel, type IconName } from "../../../components/ui";
+import { WebContainer } from "../../../components/layout/WebContainer";
 import { font } from "../../../lib/design/tokens";
 
 function QuickAction({ icon, label, href, index }: { icon: IconName; label: string; href: string; index: number }) {
   return (
-    <Animated.View entering={FadeInDown.delay(500 + index * 70).springify()} style={{ flex: 1 }}>
+    <Animated.View entering={FadeInDown.delay(500 + index * 70).springify()} className="grow basis-[200px]" style={{ flex: 1 }}>
       <Link href={href as never} asChild>
         <Pressable className="bg-surface-card border border-surface-border rounded-2xl py-5 items-center active:bg-surface-hover overflow-hidden">
           <LinearGradient
@@ -91,6 +92,7 @@ export default function StudentHomeScreen() {
       />
 
       <ScrollView className="flex-1 px-6 pt-4" showsVerticalScrollIndicator={false}>
+        <WebContainer maxWidth={1180}>
         {/* Masthead — magazine-style */}
         <Animated.View entering={FadeIn.duration(500)} className="flex-row items-center justify-between mb-8">
           <View className="flex-row items-center gap-3">
@@ -339,7 +341,7 @@ export default function StudentHomeScreen() {
         <SectionLabel withRule className="mb-4">
           Ações rápidas
         </SectionLabel>
-        <View className="flex-row gap-3 mb-10">
+        <View className="flex-row flex-wrap gap-3 mb-10">
           <QuickAction icon="ruler" label="Medidas" href="/(student)/(progress)/add-measurement" index={0} />
           <QuickAction icon="camera" label="Foto" href="/(student)/(progress)/add-photo" index={1} />
           <QuickAction icon="trophy" label="Desafios" href="/challenges" index={2} />
@@ -354,6 +356,7 @@ export default function StudentHomeScreen() {
             SAIR DA CONTA
           </Text>
         </Pressable>
+        </WebContainer>
       </ScrollView>
     </SafeAreaView>
   );

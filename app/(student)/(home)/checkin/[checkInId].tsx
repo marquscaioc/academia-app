@@ -14,6 +14,7 @@ import { useAuth } from "../../../../lib/auth/provider";
 import { supabase } from "../../../../lib/supabase/client";
 import { useSubmitCheckIn } from "../../../../hooks/mutations/useCheckinMutations";
 import { LoadingScreen } from "../../../../components/ui/LoadingScreen";
+import { WebContainer } from "../../../../components/layout/WebContainer";
 import { AppIcon } from "../../../../components/ui";
 import { font, amethystGlow } from "../../../../lib/design/tokens";
 import { LinearGradient } from "expo-linear-gradient";
@@ -74,6 +75,7 @@ export default function CheckInResponseScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
+      <WebContainer maxWidth={640}>
       <View className="flex-1 px-6 pt-6">
         {/* Header */}
         <View className="flex-row items-center justify-between mb-2">
@@ -249,6 +251,7 @@ export default function CheckInResponseScreen() {
           </Pressable>
         </View>
       </View>
+      </WebContainer>
     </SafeAreaView>
   );
 }

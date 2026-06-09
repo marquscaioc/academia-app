@@ -9,6 +9,7 @@ import { useProfileStats } from "../../hooks/queries/useProfileStats";
 import { useFollowUser, useUnfollowUser } from "../../hooks/mutations/useSocialMutations";
 import { Avatar } from "../../components/ui/Avatar";
 import { LoadingScreen } from "../../components/ui/LoadingScreen";
+import { WebContainer } from "../../components/layout/WebContainer";
 import { AppIcon, BigStat, DisplayHeading, Logo, SectionLabel } from "../../components/ui";
 import { font, amethystGlow } from "../../lib/design/tokens";
 
@@ -55,6 +56,7 @@ export default function PublicProfileScreen() {
       />
 
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+        <WebContainer maxWidth={640}>
         <View className="px-6 pt-4">
           {/* Masthead */}
           <Animated.View entering={FadeIn.duration(400)} className="flex-row items-center justify-between mb-10">
@@ -185,7 +187,7 @@ export default function PublicProfileScreen() {
                   <Animated.View
                     key={a.id}
                     entering={FadeInDown.delay(460 + idx * 40).springify()}
-                    style={{ width: "30%" }}
+                    className="grow basis-[200px]"
                   >
                     <View className="bg-surface-card border border-surface-border rounded-2xl p-4 items-center overflow-hidden">
                       <LinearGradient
@@ -237,6 +239,7 @@ export default function PublicProfileScreen() {
             </Text>
           </View>
         </View>
+        </WebContainer>
       </ScrollView>
     </SafeAreaView>
   );

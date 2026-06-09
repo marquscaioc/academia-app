@@ -13,6 +13,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../lib/auth/provider";
 import { supabase } from "../../lib/supabase/client";
 import { FeedPost } from "../../components/social/FeedPost";
+import { WebContainer } from "../../components/layout/WebContainer";
 import { Avatar } from "../../components/ui/Avatar";
 import { AppIcon } from "../../components/ui";
 import { useToggleReaction } from "../../hooks/mutations/useSocialMutations";
@@ -83,6 +84,7 @@ export default function GroupDetailScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
+      <WebContainer maxWidth={1180}>
       <View className="flex-1">
         {/* Header */}
         <View className="px-6 pt-6 pb-4 border-b border-surface-border">
@@ -201,6 +203,7 @@ export default function GroupDetailScreen() {
           />
         )}
       </View>
+      </WebContainer>
     </SafeAreaView>
   );
 }

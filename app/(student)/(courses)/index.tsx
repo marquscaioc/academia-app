@@ -7,6 +7,7 @@ import { useCourses } from "../../../hooks/queries/useCourses";
 import { EmptyState } from "../../../components/ui/EmptyState";
 import { AppIcon, SectionLabel } from "../../../components/ui";
 import { font } from "../../../lib/design/tokens";
+import { WebContainer } from "../../../components/layout/WebContainer";
 
 export default function StudentCoursesScreen() {
   const { user } = useAuth();
@@ -15,6 +16,7 @@ export default function StudentCoursesScreen() {
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1 px-6 pt-6">
+        <WebContainer maxWidth={1180}>
         <View className="mb-6">
           <SectionLabel>Conteúdo</SectionLabel>
           <Text className="text-3xl text-text-primary mt-1.5" style={{ fontFamily: font.display }}>Aulas</Text>
@@ -29,12 +31,12 @@ export default function StudentCoursesScreen() {
             description="Seu personal ainda nao publicou cursos. Quando publicar, voce vera aqui."
           />
         ) : (
-          <View className="gap-3 pb-10">
+          <View className="flex-row flex-wrap gap-3 pb-10">
             {courses.map((c) => (
               <Pressable
                 key={c.id}
                 onPress={() => router.push(`/(student)/(courses)/${c.id}`)}
-                className="bg-surface-card border border-surface-border rounded-3xl p-5 active:bg-surface-hover"
+                className="grow basis-[360px] bg-surface-card border border-surface-border rounded-3xl p-5 active:bg-surface-hover"
               >
                 <View className="flex-row items-center gap-4">
                   {c.cover_url ? (
@@ -62,6 +64,7 @@ export default function StudentCoursesScreen() {
             ))}
           </View>
         )}
+        </WebContainer>
       </ScrollView>
     </SafeAreaView>
   );

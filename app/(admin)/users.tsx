@@ -6,6 +6,7 @@ import { supabase } from "../../lib/supabase/client";
 import { Avatar } from "../../components/ui/Avatar";
 import { AppIcon } from "../../components/ui";
 import { font } from "../../lib/design/tokens";
+import { WebContainer } from "../../components/layout/WebContainer";
 
 type RoleFilter = "all" | "student" | "trainer" | "admin";
 
@@ -40,6 +41,7 @@ export default function AdminUsersScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
+      <WebContainer maxWidth={1180}>
       <View className="flex-1 px-6 pt-6">
         <Text
           className="text-[11px] uppercase text-text-muted mb-1"
@@ -135,6 +137,7 @@ export default function AdminUsersScreen() {
           />
         )}
       </View>
+      </WebContainer>
     </SafeAreaView>
   );
 }

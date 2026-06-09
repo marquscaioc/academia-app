@@ -16,6 +16,7 @@ import { supabase } from "../../lib/supabase/client";
 import { EmptyState } from "../../components/ui/EmptyState";
 import { DisplayHeading } from "../../components/ui/DisplayHeading";
 import { AppIcon } from "../../components/ui";
+import { WebContainer } from "../../components/layout/WebContainer";
 import { font, amethystGlow, amethystGradient } from "../../lib/design/tokens";
 
 interface Group {
@@ -80,6 +81,7 @@ export default function GroupsScreen() {
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
       <View className="flex-1">
+        <WebContainer maxWidth={1180}>
         <View className="flex-row items-center justify-between px-6 pt-6 pb-4">
           <View className="flex-row items-center gap-3">
             <Pressable onPress={() => router.back()} className="flex-row items-center gap-1 active:opacity-70">
@@ -198,6 +200,7 @@ export default function GroupsScreen() {
             )}
           />
         )}
+        </WebContainer>
       </View>
     </SafeAreaView>
   );

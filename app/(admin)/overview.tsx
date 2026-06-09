@@ -5,10 +5,11 @@ import { useAuth } from "../../lib/auth/provider";
 import { supabase } from "../../lib/supabase/client";
 import { font } from "../../lib/design/tokens";
 import { AppIcon, type IconName } from "../../components/ui";
+import { WebContainer } from "../../components/layout/WebContainer";
 
 function MetricBox({ value, label, icon }: { value: string; label: string; icon: IconName }) {
   return (
-    <View className="flex-1 bg-surface-card border border-surface-border rounded-3xl p-5">
+    <View className="grow basis-[200px] bg-surface-card border border-surface-border rounded-3xl p-5">
       <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
         <AppIcon name={icon} size={18} color="#9B40D8" strokeWidth={2} />
       </View>
@@ -47,6 +48,7 @@ export default function AdminOverviewScreen() {
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1 px-6 pt-6">
+        <WebContainer maxWidth={1180}>
         <View className="mb-8">
           <Text
             className="text-danger-500 uppercase mb-2"
@@ -59,17 +61,11 @@ export default function AdminOverviewScreen() {
           </Text>
         </View>
 
-        <View className="flex-row gap-3 mb-3">
+        <View className="flex-row flex-wrap gap-3 mb-8">
           <MetricBox value={String(stats?.totalUsers ?? 0)} label="Usuarios totais" icon="social" />
           <MetricBox value={String(stats?.trainers ?? 0)} label="Trainers" icon="clipboard" />
-        </View>
-
-        <View className="flex-row gap-3 mb-3">
           <MetricBox value={String(stats?.students ?? 0)} label="Alunos" icon="user" />
           <MetricBox value={String(stats?.workoutSessions ?? 0)} label="Sessoes de treino" icon="workout" />
-        </View>
-
-        <View className="flex-row gap-3 mb-8">
           <MetricBox value={String(stats?.challenges ?? 0)} label="Desafios" icon="trophy" />
           <MetricBox value={String(stats?.posts ?? 0)} label="Posts no feed" icon="message" />
         </View>
@@ -85,6 +81,7 @@ export default function AdminOverviewScreen() {
             Sair da conta
           </Text>
         </Pressable>
+        </WebContainer>
       </ScrollView>
     </SafeAreaView>
   );

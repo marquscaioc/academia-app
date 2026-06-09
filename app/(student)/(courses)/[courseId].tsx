@@ -8,6 +8,7 @@ import { useMarkLessonComplete } from "../../../hooks/mutations/useCourseMutatio
 import { LoadingScreen } from "../../../components/ui/LoadingScreen";
 import { AppIcon } from "../../../components/ui";
 import { font, amethystGlow } from "../../../lib/design/tokens";
+import { WebContainer } from "../../../components/layout/WebContainer";
 import { useState } from "react";
 
 export default function StudentCourseDetailScreen() {
@@ -34,6 +35,7 @@ export default function StudentCourseDetailScreen() {
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1 px-6 pt-6">
+        <WebContainer maxWidth={640}>
         <Pressable onPress={() => router.back()} className="mb-4 flex-row items-center gap-1.5 self-start">
           <AppIcon name="arrow-left" size={16} color="#6E6382" strokeWidth={2} />
           <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>Voltar</Text>
@@ -192,6 +194,7 @@ export default function StudentCourseDetailScreen() {
             );
           })}
         </View>
+        </WebContainer>
       </ScrollView>
     </SafeAreaView>
   );

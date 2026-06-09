@@ -1,7 +1,7 @@
 import { Tabs } from "expo-router";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import { RoleGuard } from "../../components/auth/RoleGuard";
-import { WebFrame } from "../../components/layout/WebFrame";
+import { AppSidebar, ADMIN_NAV } from "../../components/layout/AppSidebar";
 import { AppIcon, type IconName } from "../../components/ui";
 
 const TAB_ICON: Record<string, IconName> = {
@@ -20,35 +20,41 @@ function TabIcon({ name, focused, color }: { name: string; focused: boolean; col
 }
 
 function AdminTabs() {
+  const isWeb = Platform.OS === "web";
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: "#781BB6",
-        tabBarInactiveTintColor: "#6E6382",
-        tabBarStyle: {
-          backgroundColor: "#14101B",
-          borderTopWidth: 1,
-          borderTopColor: "#2E2740",
-          paddingTop: 8,
-          height: 65,
-        },
-        tabBarLabelStyle: { fontSize: 10, fontWeight: "700", letterSpacing: 0.5 },
-      }}
-    >
-      <Tabs.Screen name="overview" options={{ title: "Overview", tabBarIcon: ({ focused, color }) => <TabIcon name="overview" focused={focused} color={color} /> }} />
-      <Tabs.Screen name="users" options={{ title: "Usuarios", tabBarIcon: ({ focused, color }) => <TabIcon name="users" focused={focused} color={color} /> }} />
-      <Tabs.Screen name="moderation" options={{ title: "Moderacao", tabBarIcon: ({ focused, color }) => <TabIcon name="moderation" focused={focused} color={color} /> }} />
-    </Tabs>
+    <View className="flex-1 flex-row">
+      {isWeb ? <AppSidebar items={ADMIN_NAV} subtitle="Admin" /> : null}
+      <View className="flex-1">
+        <Tabs
+          screenOptions={{
+            headerShown: false,
+            tabBarActiveTintColor: "#781BB6",
+            tabBarInactiveTintColor: "#6E6382",
+            tabBarStyle: isWeb
+              ? { display: "none" as const }
+              : {
+                  backgroundColor: "#14101B",
+                  borderTopWidth: 1,
+                  borderTopColor: "#2E2740",
+                  paddingTop: 8,
+                  height: 65,
+                },
+            tabBarLabelStyle: { fontSize: 10, fontWeight: "700", letterSpacing: 0.5 },
+          }}
+        >
+          <Tabs.Screen name="overview" options={{ title: "Overview", tabBarIcon: ({ focused, color }) => <TabIcon name="overview" focused={focused} color={color} /> }} />
+          <Tabs.Screen name="users" options={{ title: "Usuarios", tabBarIcon: ({ focused, color }) => <TabIcon name="users" focused={focused} color={color} /> }} />
+          <Tabs.Screen name="moderation" options={{ title: "Moderacao", tabBarIcon: ({ focused, color }) => <TabIcon name="moderation" focused={focused} color={color} /> }} />
+        </Tabs>
+      </View>
+    </View>
   );
 }
 
 export default function AdminLayout() {
   return (
     <RoleGuard allow="admin">
-      <WebFrame maxWidth={680}>
-        <AdminTabs />
-      </WebFrame>
+      <AdminTabs />
     </RoleGuard>
   );
 }

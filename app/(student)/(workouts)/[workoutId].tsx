@@ -27,6 +27,7 @@ import { useTimerStore } from "../../../stores/useTimerStore";
 import { useWorkoutSessionStore } from "../../../stores/useWorkoutSessionStore";
 import { useLastPerformance } from "../../../hooks/queries/useLastPerformance";
 import { LoadingScreen } from "../../../components/ui/LoadingScreen";
+import { WebContainer } from "../../../components/layout/WebContainer";
 
 export default function WorkoutExecutionScreen() {
   const { workoutId } = useLocalSearchParams<{ workoutId: string }>();
@@ -167,6 +168,7 @@ export default function WorkoutExecutionScreen() {
     return (
       <SafeAreaView className="flex-1 bg-dark-400">
         <ScrollView className="flex-1 px-6 pt-6">
+          <WebContainer maxWidth={640}>
           <Pressable
             onPress={() => router.back()}
             className="flex-row items-center gap-1.5 mb-4"
@@ -195,10 +197,10 @@ export default function WorkoutExecutionScreen() {
             </Text>
           ) : null}
 
-          <View className="gap-3 mb-8">
+          <View className="flex-row flex-wrap gap-3 mb-8">
             {exercises.map((ex, idx) => (
+              <View key={ex.id} className="grow basis-[300px]">
               <ExerciseCard
-                key={ex.id}
                 name={ex.exercise?.name ?? "Exercicio"}
                 muscleGroup={ex.exercise?.muscle_group?.name}
                 thumbnailUrl={ex.exercise?.thumbnail_url}
@@ -209,6 +211,7 @@ export default function WorkoutExecutionScreen() {
                 restSeconds={ex.rest_seconds}
                 onPlayVideo={() => setPlayingVideoUrl(ex.exercise?.video_url ?? null)}
               />
+              </View>
             ))}
           </View>
 
@@ -243,6 +246,7 @@ export default function WorkoutExecutionScreen() {
               )}
             </LinearGradient>
           </Pressable>
+          </WebContainer>
         </ScrollView>
         <VideoPlayerModal visible={!!playingVideoUrl} videoUrl={playingVideoUrl} onClose={() => setPlayingVideoUrl(null)} />
       </SafeAreaView>

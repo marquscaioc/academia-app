@@ -20,6 +20,7 @@ import { PhotoCaptureModal } from "../../components/challenges/PhotoCaptureModal
 import { PointRuleSelector } from "../../components/challenges/PointRuleSelector";
 import { MostImprovedLeaderboard } from "../../components/challenges/MostImprovedLeaderboard";
 import { BulkCheckinModal } from "../../components/challenges/BulkCheckinModal";
+import { WebContainer } from "../../components/layout/WebContainer";
 import { AppIcon } from "../../components/ui";
 import { Badge } from "../../components/ui/Badge";
 import { Card } from "../../components/ui/Card";
@@ -210,6 +211,7 @@ export default function ChallengeDetailScreen() {
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1">
+        <WebContainer maxWidth={640}>
         <View className="px-6 pt-6">
           <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5 mb-4 self-start">
             <AppIcon name="arrow-left" size={18} color="#9B40D8" strokeWidth={2} />
@@ -381,9 +383,9 @@ export default function ChallengeDetailScreen() {
           ) : tab === "improved" ? (
             <MostImprovedLeaderboard entries={improved ?? []} />
           ) : entries?.length ? (
-            <View className="gap-3">
+            <View className="flex-row flex-wrap gap-3">
               {entries.map((entry) => (
-                <Card key={entry.id} variant="outlined">
+                <Card key={entry.id} variant="outlined" className="grow basis-[300px]">
                   <View className="flex-row items-center gap-2.5 mb-2">
                     <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
                       <AppIcon name="activity" size={18} color="#9B40D8" strokeWidth={2} />
@@ -422,6 +424,7 @@ export default function ChallengeDetailScreen() {
             </View>
           )}
         </View>
+        </WebContainer>
       </ScrollView>
 
       {/* Photo capture modal */}

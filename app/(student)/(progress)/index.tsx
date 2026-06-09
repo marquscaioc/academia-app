@@ -15,6 +15,7 @@ import { CheckinScoreChart } from "../../../components/progress/CheckinScoreChar
 import { useCheckinScoreHistory } from "../../../hooks/queries/useCheckinScoreHistory";
 import { useUserAchievements } from "../../../hooks/queries/useFeed";
 import { useSignedUrls } from "../../../lib/supabase/media";
+import { WebContainer } from "../../../components/layout/WebContainer";
 
 export default function ProgressScreen() {
   const { user } = useAuth();
@@ -49,6 +50,7 @@ export default function ProgressScreen() {
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1 px-6 pt-6">
+        <WebContainer maxWidth={1180}>
         <DisplayHeading size="xl" className="mb-6">Meu progresso.</DisplayHeading>
 
         {/* Weight + Variation cards */}
@@ -171,9 +173,9 @@ export default function ProgressScreen() {
               </View>
             </Card>
           ) : (
-            <View className="gap-2">
+            <View className="flex-row flex-wrap gap-2">
               {measurements.slice(0, 5).map((m) => (
-                <Card key={m.id} variant="outlined">
+                <Card key={m.id} variant="outlined" className="grow basis-[300px]">
                   <View className="flex-row justify-between items-center">
                     <Text className="text-sm text-text-secondary" style={{ fontFamily: font.medium }}>
                       {new Date(m.measured_at).toLocaleDateString("pt-BR")}
@@ -231,6 +233,7 @@ export default function ProgressScreen() {
             </View>
           )}
         </View>
+        </WebContainer>
       </ScrollView>
     </SafeAreaView>
   );

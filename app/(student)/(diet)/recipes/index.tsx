@@ -7,6 +7,7 @@ import { useRecipes, useRecipeFavorites } from "../../../../hooks/queries/useRec
 import { RecipeCard } from "../../../../components/diet/RecipeCard";
 import { AppIcon } from "../../../../components/ui";
 import { font } from "../../../../lib/design/tokens";
+import { WebContainer } from "../../../../components/layout/WebContainer";
 
 const tagFilters = [
   { value: "low_carb", label: "Low Carb" },
@@ -38,6 +39,8 @@ export default function RecipesScreen() {
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
       <View className="flex-1">
+        <WebContainer maxWidth={1180}>
+        <View className="flex-1">
         <View className="px-6 pt-6 pb-3">
           <View className="flex-row items-center justify-between mb-4">
             <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5">
@@ -129,6 +132,8 @@ export default function RecipesScreen() {
             }
           />
         )}
+        </View>
+        </WebContainer>
       </View>
     </SafeAreaView>
   );

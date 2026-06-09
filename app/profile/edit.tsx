@@ -16,6 +16,7 @@ import { supabase } from "../../lib/supabase/client";
 import { Avatar } from "../../components/ui/Avatar";
 import { DisplayHeading } from "../../components/ui/DisplayHeading";
 import { AppIcon } from "../../components/ui";
+import { WebContainer } from "../../components/layout/WebContainer";
 import { font, amethystGlow } from "../../lib/design/tokens";
 
 export default function EditProfileScreen() {
@@ -108,6 +109,7 @@ export default function EditProfileScreen() {
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1 px-6 pt-6" keyboardShouldPersistTaps="handled">
+        <WebContainer maxWidth={640}>
         <View className="flex-row items-center justify-between mb-8">
           <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5">
             <AppIcon name="arrow-left" size={16} color="#6E6382" strokeWidth={2} />
@@ -337,6 +339,7 @@ export default function EditProfileScreen() {
             )}
           </View>
         </View>
+        </WebContainer>
       </ScrollView>
     </SafeAreaView>
   );
