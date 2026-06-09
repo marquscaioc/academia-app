@@ -116,11 +116,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, s) => {
+    } = supabase.auth.onAuthStateChange((_event, s) => {
       setSession(s);
       if (s?.user) {
-        await fetchProfile(s.user.id);
-        registerForPushNotifications(s.user.id).catch(() => {});
+        // IMPORTANT: never `await` Supabase calls directly inside this callback.
+        // supabase-js holds an internal auth lock while notifying subscribers, so
+        // calling fetchProfile/updateUser here deadlocks — e.g. the password-reset
+        // updateUser() would hang forever (infinite spinner). Defer to a later tick
+        // so the lock is released first.
+        const uid = s.user.id;
+        setTimeout(() => {
+          fetchProfile(uid);
+          registerForPushNotifications(uid).catch(() => {});
+        }, 0);
       } else {
         setProfile(null);
       }
