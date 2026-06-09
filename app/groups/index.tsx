@@ -139,7 +139,10 @@ export default function GroupsScreen() {
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => (
               <View className="bg-surface-card border border-surface-border rounded-2xl p-5">
-                <View className="flex-row items-center gap-3 mb-3">
+                <Pressable
+                  onPress={() => router.push(`/groups/${item.id}` as never)}
+                  className="flex-row items-center gap-3 mb-3 active:opacity-70"
+                >
                   <View className="w-12 h-12 bg-surface-elevated rounded-xl items-center justify-center">
                     <Text className="text-xl">👥</Text>
                   </View>
@@ -147,7 +150,8 @@ export default function GroupsScreen() {
                     <Text className="text-base font-bold text-text-primary">{item.name}</Text>
                     <Text className="text-xs text-text-muted">{item.member_count} membro{item.member_count !== 1 ? "s" : ""}</Text>
                   </View>
-                </View>
+                  <Text className="text-text-muted text-lg">›</Text>
+                </Pressable>
                 {item.description ? (
                   <Text className="text-xs text-text-muted mb-3" numberOfLines={2}>{item.description}</Text>
                 ) : null}

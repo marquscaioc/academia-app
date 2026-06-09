@@ -5,6 +5,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import Animated, { FadeInDown, FadeIn } from "react-native-reanimated";
 import { useAuth } from "../../lib/auth/provider";
 import { useUserProfile, useIsFollowing, useUserAchievements } from "../../hooks/queries/useFeed";
+import { useProfileStats } from "../../hooks/queries/useProfileStats";
 import { useFollowUser, useUnfollowUser } from "../../hooks/mutations/useSocialMutations";
 import { Avatar } from "../../components/ui/Avatar";
 import { LoadingScreen } from "../../components/ui/LoadingScreen";
@@ -16,6 +17,7 @@ export default function PublicProfileScreen() {
   const { data: profile, isLoading } = useUserProfile(userId ?? "");
   const { data: isFollowing } = useIsFollowing(user?.id, userId);
   const { data: achievements } = useUserAchievements(userId);
+  const { data: stats } = useProfileStats(userId ?? "");
   const followUser = useFollowUser();
   const unfollowUser = useUnfollowUser();
 
@@ -163,6 +165,20 @@ export default function PublicProfileScreen() {
               <BigStat value={String(profile.following_count ?? 0)} label="Seguindo" tone="primary" size="lg" align="center" />
               <View className="w-px h-12 bg-surface-border mx-3" />
               <BigStat value={String(achievements?.length ?? 0)} label="Badges" tone="accent" size="lg" align="center" />
+            </View>
+          </Animated.View>
+
+          {/* Atividade */}
+          <Animated.View entering={FadeInDown.delay(390).springify()} className="mb-10">
+            <SectionLabel withRule className="mb-5">
+              Atividade
+            </SectionLabel>
+            <View className="flex-row items-end justify-between">
+              <BigStat value={String(stats?.workoutsThisMonth ?? 0)} label="Treinos/mês" tone="primary" size="lg" />
+              <View className="w-px h-12 bg-surface-border mx-3" />
+              <BigStat value={String(stats?.currentStreak ?? 0)} label="Streak" tone="accent" size="lg" align="center" />
+              <View className="w-px h-12 bg-surface-border mx-3" />
+              <BigStat value={String(stats?.totalPRs ?? 0)} label="PRs" tone="primary" size="lg" align="center" />
             </View>
           </Animated.View>
 

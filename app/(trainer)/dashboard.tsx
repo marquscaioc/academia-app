@@ -102,6 +102,27 @@ export default function TrainerDashboardScreen() {
           <MetricCard value={String(counts?.workoutPlans ?? 0)} label="Treinos criados" icon="🏋️" color="text-ice-400" />
         </View>
 
+        {/* Ferramentas (acesso direto, sobretudo no mobile onde nao ha sidebar) */}
+        <View className="mb-6">
+          <Text className="text-xs text-text-muted uppercase tracking-wider font-bold mb-3">Ferramentas</Text>
+          <View className="flex-row flex-wrap gap-2">
+            {[
+              { href: "/(trainer)/checkins/builder", icon: "📋", label: "Check-ins" },
+              { href: "/(trainer)/checkins/responses", icon: "📈", label: "Respostas" },
+              { href: "/(trainer)/whatsapp", icon: "💬", label: "WhatsApp" },
+              { href: "/(trainer)/courses", icon: "🎓", label: "Aulas" },
+              { href: "/(trainer)/checkins/branding", icon: "🎨", label: "Branding" },
+            ].map((t) => (
+              <Link key={t.href} href={t.href as never} asChild>
+                <Pressable className="bg-surface-card border border-surface-border rounded-2xl px-4 py-3 flex-row items-center gap-2 active:bg-surface-hover">
+                  <Text className="text-lg">{t.icon}</Text>
+                  <Text className="text-xs font-bold text-text-secondary">{t.label}</Text>
+                </Pressable>
+              </Link>
+            ))}
+          </View>
+        </View>
+
         {/* Getting started */}
         <View className="bg-surface-card border border-surface-border rounded-3xl p-6 mb-6">
           <View className="flex-row items-center gap-3 mb-5">
