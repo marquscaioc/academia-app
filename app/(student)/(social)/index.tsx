@@ -3,7 +3,9 @@ import { useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
+  Modal,
   Pressable,
+  ScrollView,
   Text,
   TextInput,
   View,
@@ -13,11 +15,45 @@ import * as ImagePicker from "expo-image-picker";
 import { Image } from "expo-image";
 import { useAuth } from "../../../lib/auth/provider";
 import { supabase } from "../../../lib/supabase/client";
-import { useFeedPosts } from "../../../hooks/queries/useFeed";
-import { useCreatePost, useToggleReaction } from "../../../hooks/mutations/useSocialMutations";
+import { useFeedPosts, usePostComments } from "../../../hooks/queries/useFeed";
+import { useCreatePost, useToggleReaction, useCreateComment } from "../../../hooks/mutations/useSocialMutations";
 import { FeedPost } from "../../../components/social/FeedPost";
+import { CommentThread } from "../../../components/social/CommentThread";
 import { EmptyState } from "../../../components/ui/EmptyState";
 import { Avatar } from "../../../components/ui/Avatar";
+
+function CommentsSheet({ postId, userId, onClose }: { postId: string; userId?: string; onClose: () => void }) {
+  const { data: comments } = usePostComments(postId);
+  const createComment = useCreateComment();
+  return (
+    <Modal visible animationType="slide" transparent>
+      <View className="flex-1 justify-end">
+        <Pressable className="flex-1" onPress={onClose} />
+        <View className="bg-dark-200 border-t border-surface-border rounded-t-3xl px-6 pt-6 pb-10 max-h-[80%]">
+          <View className="flex-row items-center justify-between mb-4">
+            <Text className="text-lg font-black text-text-primary">Comentários</Text>
+            <Pressable onPress={onClose}>
+              <Text className="text-text-muted text-lg">✕</Text>
+            </Pressable>
+          </View>
+          <ScrollView keyboardShouldPersistTaps="handled">
+            <CommentThread
+              comments={comments ?? []}
+              postId={postId}
+              currentUserId={userId}
+              onReply={(content, parentId) => {
+                if (userId) {
+                  createComment.mutate({ post_id: postId, author_id: userId, content, parent_comment_id: parentId });
+                }
+              }}
+              isPending={createComment.isPending}
+            />
+          </ScrollView>
+        </View>
+      </View>
+    </Modal>
+  );
+}
 
 export default function SocialFeedScreen() {
   const { user, profile } = useAuth();
@@ -28,6 +64,7 @@ export default function SocialFeedScreen() {
   const [newPostContent, setNewPostContent] = useState("");
   const [showComposer, setShowComposer] = useState(false);
   const [mediaUris, setMediaUris] = useState<string[]>([]);
+  const [commentsPostId, setCommentsPostId] = useState<string | null>(null);
 
   const pickMedia = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -196,11 +233,16 @@ export default function SocialFeedScreen() {
                   if (user) toggleReaction.mutate({ post_id: item.id, user_id: user.id, reaction_type: type });
                 },
               }))}
+              onComment={() => setCommentsPostId(item.id)}
               onProfile={() => router.push(`/profile/${item.author_id}`)}
             />
           )}
         />
       )}
+
+      {commentsPostId ? (
+        <CommentsSheet postId={commentsPostId} userId={user?.id} onClose={() => setCommentsPostId(null)} />
+      ) : null}
     </SafeAreaView>
   );
 }
