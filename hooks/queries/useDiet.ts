@@ -119,3 +119,36 @@ export function useWaterLogs(userId?: string, date?: string) {
     enabled: !!userId && !!date,
   });
 }
+
+export interface FoodLog {
+  id: string;
+  food_name: string;
+  quantity: number | null;
+  unit: string | null;
+  calories: number | null;
+  protein_g: number | null;
+  carbs_g: number | null;
+  fat_g: number | null;
+  photo_url: string | null;
+  logged_at: string;
+}
+
+export function useFoodLogs(userId?: string, date?: string) {
+  return useQuery({
+    queryKey: ["diet", "food-logs", { userId, date }],
+    queryFn: async () => {
+      const startOfDay = `${date}T00:00:00`;
+      const endOfDay = `${date}T23:59:59`;
+      const { data, error } = await supabase
+        .from("food_logs")
+        .select("*")
+        .eq("user_id", userId!)
+        .gte("logged_at", startOfDay)
+        .lte("logged_at", endOfDay)
+        .order("logged_at", { ascending: false });
+      if (error) throw error;
+      return data as FoodLog[];
+    },
+    enabled: !!userId && !!date,
+  });
+}

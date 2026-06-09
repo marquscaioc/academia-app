@@ -40,3 +40,11 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# agent tooling & generated docs (nao versionar)
+.claude/
+Obsidian Vault/
+supabase/.temp/
+
+# doc antigo (local)
+CODE_REVIEW.md

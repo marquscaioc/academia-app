@@ -76,20 +76,20 @@ export default function OnboardingScreen() {
         <Animated.View entering={FadeInDown.delay(80).springify()} className="mb-10">
           <Text
             className="text-fuchsia-400 mb-3"
-            style={{ fontFamily: "DMSans_700Bold", fontSize: 10, letterSpacing: 3 }}
+            style={{ fontFamily: "Nunito_700Bold", fontSize: 10, letterSpacing: 3 }}
           >
             PASSO FINAL · ONBOARDING
           </Text>
           <Text
             className="text-text-muted"
-            style={{ fontFamily: "InstrumentSerif_400Regular_Italic", fontSize: 26, letterSpacing: -0.5 }}
+            style={{ fontFamily: "Nunito_400Regular_Italic", fontSize: 26, letterSpacing: -0.5 }}
           >
             Escolha
           </Text>
           <Text
             className="text-text-primary mt-1"
             style={{
-              fontFamily: "ArchivoBlack_400Regular",
+              fontFamily: "Nunito_900Black",
               fontSize: 40,
               lineHeight: 40,
               letterSpacing: -2,
@@ -97,8 +97,8 @@ export default function OnboardingScreen() {
           >
             UM PERFIL.
           </Text>
-          <Text className="text-sm text-text-muted mt-4 leading-6" style={{ fontFamily: "DMSans_400Regular" }}>
-            Você é <Text style={{ fontFamily: "DMSans_700Bold" }} className="text-text-primary">aluno</Text> ou <Text style={{ fontFamily: "DMSans_700Bold" }} className="text-text-primary">personal</Text> — não os dois. Essa decisão define toda a experiência no app.
+          <Text className="text-sm text-text-muted mt-4 leading-6" style={{ fontFamily: "Nunito_400Regular" }}>
+            Você é <Text style={{ fontFamily: "Nunito_700Bold" }} className="text-text-primary">aluno</Text> ou <Text style={{ fontFamily: "Nunito_700Bold" }} className="text-text-primary">personal</Text> — não os dois. Essa decisão define toda a experiência no app.
           </Text>
         </Animated.View>
 
@@ -133,13 +133,13 @@ export default function OnboardingScreen() {
                     <View className="flex-1">
                       <Text
                         className={isSelected ? "text-violet-300" : "text-text-primary"}
-                        style={{ fontFamily: "ArchivoBlack_400Regular", fontSize: 20, letterSpacing: -0.5 }}
+                        style={{ fontFamily: "Nunito_900Black", fontSize: 20, letterSpacing: -0.5 }}
                       >
                         {role.label.toUpperCase()}
                       </Text>
                       <Text
                         className="text-xs text-text-muted mt-1"
-                        style={{ fontFamily: "DMSans_400Regular" }}
+                        style={{ fontFamily: "Nunito_400Regular" }}
                       >
                         {role.description}
                       </Text>
@@ -148,7 +148,7 @@ export default function OnboardingScreen() {
                       isSelected ? "border-violet-500 bg-violet-500" : "border-surface-border"
                     }`}>
                       {isSelected ? (
-                        <Text className="text-white text-xs" style={{ fontFamily: "DMSans_700Bold" }}>✓</Text>
+                        <Text className="text-white text-xs" style={{ fontFamily: "Nunito_700Bold" }}>✓</Text>
                       ) : null}
                     </View>
                   </View>
@@ -160,7 +160,7 @@ export default function OnboardingScreen() {
                       }`}>
                         <Text
                           className={isSelected ? "text-violet-300" : "text-text-muted"}
-                          style={{ fontFamily: "DMSans_500Medium", fontSize: 11 }}
+                          style={{ fontFamily: "Nunito_500Medium", fontSize: 11 }}
                         >
                           {f}
                         </Text>
@@ -175,7 +175,7 @@ export default function OnboardingScreen() {
                     <View className="mx-4 w-10 h-10 rounded-full bg-dark-300 border-2 border-surface-border items-center justify-center">
                       <Text
                         className="text-text-muted"
-                        style={{ fontFamily: "ArchivoBlack_400Regular", fontSize: 12, letterSpacing: 1 }}
+                        style={{ fontFamily: "Nunito_900Black", fontSize: 12, letterSpacing: 1 }}
                       >
                         OU
                       </Text>
@@ -205,7 +205,7 @@ export default function OnboardingScreen() {
               ) : (
                 <Text
                   className="text-white text-base"
-                  style={{ fontFamily: "DMSans_700Bold", letterSpacing: 2 }}
+                  style={{ fontFamily: "Nunito_700Bold", letterSpacing: 2 }}
                 >
                   CONTINUAR →
                 </Text>
@@ -215,7 +215,7 @@ export default function OnboardingScreen() {
             <View className="bg-surface-border items-center" style={{ paddingVertical: 18 }}>
               <Text
                 className="text-text-muted text-base"
-                style={{ fontFamily: "DMSans_700Bold", letterSpacing: 2 }}
+                style={{ fontFamily: "Nunito_700Bold", letterSpacing: 2 }}
               >
                 SELECIONE UM PERFIL
               </Text>

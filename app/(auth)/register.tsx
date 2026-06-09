@@ -83,7 +83,7 @@ export default function RegisterScreen() {
                 <Text className="text-text-muted text-lg">←</Text>
                 <Text
                   className="text-text-muted text-[11px]"
-                  style={{ fontFamily: "DMSans_700Bold", letterSpacing: 2 }}
+                  style={{ fontFamily: "Nunito_700Bold", letterSpacing: 2 }}
                 >
                   VOLTAR
                 </Text>
@@ -94,14 +94,14 @@ export default function RegisterScreen() {
           <Animated.View entering={FadeInDown.delay(80).springify()} className="mb-10">
             <Text
               className="text-text-muted"
-              style={{ fontFamily: "InstrumentSerif_400Regular_Italic", fontSize: 28, letterSpacing: -0.5 }}
+              style={{ fontFamily: "Nunito_400Regular_Italic", fontSize: 28, letterSpacing: -0.5 }}
             >
               Comece sua
             </Text>
             <Text
               className="text-text-primary mt-1"
               style={{
-                fontFamily: "ArchivoBlack_400Regular",
+                fontFamily: "Nunito_900Black",
                 fontSize: 44,
                 lineHeight: 44,
                 letterSpacing: -2,
@@ -111,7 +111,7 @@ export default function RegisterScreen() {
             </Text>
             <Text
               className="text-fuchsia-400 mt-3"
-              style={{ fontFamily: "DMSans_700Bold", fontSize: 10, letterSpacing: 3 }}
+              style={{ fontFamily: "Nunito_700Bold", fontSize: 10, letterSpacing: 3 }}
             >
               CADASTRO · ROYAL AMETHYST
             </Text>
@@ -208,7 +208,7 @@ export default function RegisterScreen() {
                 ) : (
                   <Text
                     className="text-white text-base"
-                    style={{ fontFamily: "DMSans_700Bold", letterSpacing: 2 }}
+                    style={{ fontFamily: "Nunito_700Bold", letterSpacing: 2 }}
                   >
                     CRIAR CONTA
                   </Text>

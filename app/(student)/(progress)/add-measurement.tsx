@@ -68,6 +68,12 @@ const fields: MeasurementField[] = [
     unit: "cm",
     placeholder: "37",
   },
+  { key: "skinfold_triceps_mm", label: "Dobra tríceps", unit: "mm", placeholder: "12" },
+  { key: "skinfold_subscapular_mm", label: "Dobra subescapular", unit: "mm", placeholder: "14" },
+  { key: "skinfold_suprailiac_mm", label: "Dobra suprailíaca", unit: "mm", placeholder: "16" },
+  { key: "skinfold_abdominal_mm", label: "Dobra abdominal", unit: "mm", placeholder: "18" },
+  { key: "skinfold_thigh_mm", label: "Dobra coxa", unit: "mm", placeholder: "20" },
+  { key: "skinfold_chest_mm", label: "Dobra peitoral", unit: "mm", placeholder: "10" },
 ];
 
 export default function AddMeasurementScreen() {

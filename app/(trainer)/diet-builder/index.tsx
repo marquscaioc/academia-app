@@ -2,6 +2,7 @@ import { router } from "expo-router";
 import { useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   Pressable,
   ScrollView,
@@ -124,45 +125,49 @@ export default function DietBuilderScreen() {
   const handleSave = async () => {
     if (!user || !studentId || !planName.trim()) return;
     setSaving(true);
-
-    const plan = await createPlan.mutateAsync({
-      trainer_id: user.id,
-      student_id: studentId,
-      name: planName.trim(),
-      target_calories: parseNonNegative(targetCal, 20000),
-      target_protein_g: parseNonNegative(targetProt, 1000),
-      target_carbs_g: parseNonNegative(targetCarb, 1000),
-      target_fat_g: parseNonNegative(targetFat, 1000),
-    });
-
-    for (let mi = 0; mi < meals.length; mi++) {
-      const meal = meals[mi];
-      const mealData = await addMeal.mutateAsync({
-        diet_plan_id: plan.id,
-        name: meal.name,
-        sort_order: mi,
-        target_time: meal.targetTime || undefined,
+    try {
+      const plan = await createPlan.mutateAsync({
+        trainer_id: user.id,
+        student_id: studentId,
+        name: planName.trim(),
+        target_calories: parseNonNegative(targetCal, 20000),
+        target_protein_g: parseNonNegative(targetProt, 1000),
+        target_carbs_g: parseNonNegative(targetCarb, 1000),
+        target_fat_g: parseNonNegative(targetFat, 1000),
       });
 
-      for (let ii = 0; ii < meal.items.length; ii++) {
-        const item = meal.items[ii];
-        if (!item.food_name.trim()) continue;
-        await addMealItem.mutateAsync({
-          meal_id: mealData.id,
-          food_name: item.food_name.trim(),
-          quantity: parseNonNegative(item.quantity, 10000),
-          unit: item.unit || "g",
-          calories: parseNonNegative(item.calories, 10000),
-          protein_g: parseNonNegative(item.protein_g, 1000),
-          carbs_g: parseNonNegative(item.carbs_g, 1000),
-          fat_g: parseNonNegative(item.fat_g, 1000),
-          sort_order: ii,
+      for (let mi = 0; mi < meals.length; mi++) {
+        const meal = meals[mi];
+        const mealData = await addMeal.mutateAsync({
+          diet_plan_id: plan.id,
+          name: meal.name,
+          sort_order: mi,
+          target_time: meal.targetTime || undefined,
         });
-      }
-    }
 
-    setSaving(false);
-    router.back();
+        for (let ii = 0; ii < meal.items.length; ii++) {
+          const item = meal.items[ii];
+          if (!item.food_name.trim()) continue;
+          await addMealItem.mutateAsync({
+            meal_id: mealData.id,
+            food_name: item.food_name.trim(),
+            quantity: parseNonNegative(item.quantity, 10000),
+            unit: item.unit || "g",
+            calories: parseNonNegative(item.calories, 10000),
+            protein_g: parseNonNegative(item.protein_g, 1000),
+            carbs_g: parseNonNegative(item.carbs_g, 1000),
+            fat_g: parseNonNegative(item.fat_g, 1000),
+            sort_order: ii,
+          });
+        }
+      }
+
+      router.back();
+    } catch (e) {
+      Alert.alert("Erro", "Nao foi possivel salvar o plano. Tente novamente.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (

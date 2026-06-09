@@ -2,6 +2,7 @@ import { router } from "expo-router";
 import { useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   Pressable,
   ScrollView,
@@ -28,6 +29,9 @@ interface SelectedExercise {
   reps: string;
   weight: string;
   rest: number;
+  rpe: string;
+  tempo: string;
+  supersetGroup: number | null;
 }
 
 type Step = "select-student" | "plan-info" | "add-exercises" | "review";
@@ -68,7 +72,7 @@ export default function WorkoutBuilderScreen() {
   const addExerciseToList = (ex: { id: string; name: string }) => {
     setExercises([
       ...exercises,
-      { exercise_id: ex.id, name: ex.name, sets: 3, reps: "10-12", weight: "", rest: 60 },
+      { exercise_id: ex.id, name: ex.name, sets: 3, reps: "10-12", weight: "", rest: 60, rpe: "", tempo: "", supersetGroup: null },
     ]);
     setSearchExercise("");
   };
@@ -83,38 +87,63 @@ export default function WorkoutBuilderScreen() {
     setExercises(updated);
   };
 
+  // Liga/desliga o exercicio num superset com o de cima (mesmo superset_group)
+  const toggleSuperset = (idx: number) => {
+    if (idx === 0) return;
+    const updated = exercises.map((e) => ({ ...e }));
+    const prevGroup = updated[idx - 1].supersetGroup;
+    if (updated[idx].supersetGroup && updated[idx].supersetGroup === prevGroup) {
+      updated[idx].supersetGroup = null;
+    } else {
+      let group = prevGroup;
+      if (!group) {
+        group = Math.max(0, ...updated.map((e) => e.supersetGroup ?? 0)) + 1;
+        updated[idx - 1].supersetGroup = group;
+      }
+      updated[idx].supersetGroup = group;
+    }
+    setExercises(updated);
+  };
+
   const handleSave = async () => {
     if (!user || !selectedStudentId || !planName.trim() || exercises.length === 0) return;
     setSaving(true);
-
-    const plan = await createPlan.mutateAsync({
-      trainer_id: user.id,
-      student_id: selectedStudentId,
-      name: planName.trim(),
-      description: planDescription.trim() || undefined,
-    });
-
-    const workout = await addWorkout.mutateAsync({
-      plan_id: plan.id,
-      name: workoutName.trim() || "Treino A",
-      sort_order: 0,
-    });
-
-    for (let i = 0; i < exercises.length; i++) {
-      const ex = exercises[i];
-      await addExercise.mutateAsync({
-        workout_id: workout.id,
-        exercise_id: ex.exercise_id,
-        sort_order: i,
-        target_sets: ex.sets,
-        target_reps: ex.reps,
-        target_weight_kg: ex.weight ? parseFloat(ex.weight) : undefined,
-        rest_seconds: ex.rest,
+    try {
+      const plan = await createPlan.mutateAsync({
+        trainer_id: user.id,
+        student_id: selectedStudentId,
+        name: planName.trim(),
+        description: planDescription.trim() || undefined,
       });
-    }
 
-    setSaving(false);
-    router.back();
+      const workout = await addWorkout.mutateAsync({
+        plan_id: plan.id,
+        name: workoutName.trim() || "Treino A",
+        sort_order: 0,
+      });
+
+      for (let i = 0; i < exercises.length; i++) {
+        const ex = exercises[i];
+        await addExercise.mutateAsync({
+          workout_id: workout.id,
+          exercise_id: ex.exercise_id,
+          sort_order: i,
+          target_sets: ex.sets,
+          target_reps: ex.reps,
+          target_weight_kg: ex.weight ? parseFloat(ex.weight) : undefined,
+          target_rpe: ex.rpe ? parseFloat(ex.rpe) : undefined,
+          tempo: ex.tempo.trim() || undefined,
+          superset_group: ex.supersetGroup ?? undefined,
+          rest_seconds: ex.rest,
+        });
+      }
+
+      router.back();
+    } catch (e) {
+      Alert.alert("Erro", "Nao foi possivel salvar o plano. Tente novamente.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -312,6 +341,44 @@ export default function WorkoutBuilderScreen() {
                         />
                       </View>
                     </View>
+                    {/* Linha 2: RPE / Tempo + superset */}
+                    <View className="flex-row gap-2 mt-2">
+                      <View className="flex-1">
+                        <Text className="text-[10px] text-text-muted mb-1">RPE</Text>
+                        <TextInput
+                          className="bg-dark-300 border border-surface-border rounded-lg px-3 py-2 text-sm text-text-primary text-center"
+                          value={ex.rpe}
+                          onChangeText={(v) => updateExercise(idx, "rpe", v)}
+                          keyboardType="decimal-pad"
+                          placeholder="-"
+                          placeholderTextColor="#6E6580"
+                        />
+                      </View>
+                      <View style={{ flex: 2 }}>
+                        <Text className="text-[10px] text-text-muted mb-1">Tempo (cadência)</Text>
+                        <TextInput
+                          className="bg-dark-300 border border-surface-border rounded-lg px-3 py-2 text-sm text-text-primary text-center"
+                          value={ex.tempo}
+                          onChangeText={(v) => updateExercise(idx, "tempo", v)}
+                          placeholder="2-0-1-0"
+                          placeholderTextColor="#6E6580"
+                        />
+                      </View>
+                    </View>
+                    {idx > 0 ? (
+                      <Pressable onPress={() => toggleSuperset(idx)} className="mt-2 flex-row items-center gap-2">
+                        <View className={`w-5 h-5 rounded items-center justify-center ${
+                          ex.supersetGroup && exercises[idx - 1].supersetGroup === ex.supersetGroup
+                            ? "bg-violet-500"
+                            : "bg-surface-elevated border border-surface-border"
+                        }`}>
+                          {ex.supersetGroup && exercises[idx - 1].supersetGroup === ex.supersetGroup ? (
+                            <Text className="text-white text-[10px]">✓</Text>
+                          ) : null}
+                        </View>
+                        <Text className="text-xs text-text-muted">⛓ Superset com o exercício acima</Text>
+                      </Pressable>
+                    ) : null}
                   </View>
                 ))}
               </View>

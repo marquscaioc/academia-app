@@ -1,5 +1,6 @@
 import { Platform } from "react-native";
 import * as Notifications from "expo-notifications";
+import Constants from "expo-constants";
 import { supabase } from "../supabase/client";
 
 Notifications.setNotificationHandler({
@@ -25,16 +26,33 @@ export async function registerForPushNotifications(userId: string): Promise<stri
 
   if (finalStatus !== "granted") return null;
 
-  const tokenData = await Notifications.getExpoPushTokenAsync();
-  const token = tokenData.data;
+  // O projectId do EAS e obrigatorio para obter o token em build standalone.
+  // Vem de app.json (extra.eas.projectId) apos `eas init`. Em dev/Expo Go pode
+  // ser autodetectado pelo manifest.
+  const projectId =
+    Constants.expoConfig?.extra?.eas?.projectId ??
+    (Constants as any).easConfig?.projectId;
 
-  // Save token to profile
-  await supabase
-    .from("profiles")
-    .update({ push_token: token })
-    .eq("id", userId);
+  try {
+    const tokenData = await Notifications.getExpoPushTokenAsync(
+      projectId ? { projectId } : undefined,
+    );
+    const token = tokenData.data;
 
-  return token;
+    // Save token to profile
+    await supabase
+      .from("profiles")
+      .update({ push_token: token })
+      .eq("id", userId);
+
+    return token;
+  } catch (e) {
+    console.warn(
+      "getExpoPushTokenAsync falhou (projectId EAS ausente? rode `eas init`):",
+      e,
+    );
+    return null;
+  }
 }
 
 export async function scheduleLocalNotification(title: string, body: string, seconds: number = 1) {

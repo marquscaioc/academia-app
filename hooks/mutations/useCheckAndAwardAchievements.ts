@@ -3,7 +3,7 @@ import { supabase } from "../../lib/supabase/client";
 interface AchievementDef {
   id: string;
   criteria_type: string;
-  threshold: number;
+  criteria_threshold: number;
 }
 
 export async function checkAndAwardAchievements(userId: string) {
@@ -11,7 +11,7 @@ export async function checkAndAwardAchievements(userId: string) {
     // Get all achievement definitions
     const { data: definitions } = await supabase
       .from("achievement_definitions")
-      .select("id, criteria_type, threshold");
+      .select("id, criteria_type, criteria_threshold");
 
     if (!definitions?.length) return;
 
@@ -41,20 +41,14 @@ export async function checkAndAwardAchievements(userId: string) {
       .select("*", { count: "exact", head: true })
       .eq("author_id", userId);
 
-    const { count: photoCount } = await supabase
-      .from("progress_photos")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", userId);
-
+    // Mapa de stats por criteria_type valido (CHECK em achievement_definitions:
+    // workout_count, streak_days, challenge_won, weight_pr, social_posts, check_in_streak).
+    // challenge_won e check_in_streak exigem um sinal proprio (rank do desafio /
+    // streak de check-ins) que ainda nao calculamos; ficam de fora ate la.
     const statsMap: Record<string, number> = {
-      first_workout: workoutCount ?? 0,
-      workouts_10: workoutCount ?? 0,
-      workouts_50: workoutCount ?? 0,
-      workouts_100: workoutCount ?? 0,
-      streak_7: profile?.current_streak ?? 0,
-      streak_30: profile?.current_streak ?? 0,
-      posts_10: postCount ?? 0,
-      photos_10: photoCount ?? 0,
+      workout_count: workoutCount ?? 0,
+      streak_days: profile?.current_streak ?? 0,
+      social_posts: postCount ?? 0,
     };
 
     // Check and award
@@ -62,7 +56,7 @@ export async function checkAndAwardAchievements(userId: string) {
       if (earnedIds.has(def.id)) continue;
       const current = statsMap[def.criteria_type];
       if (current === undefined) continue;
-      if (current >= def.threshold) {
+      if (current >= def.criteria_threshold) {
         await supabase.from("user_achievements").insert({
           user_id: userId,
           achievement_id: def.id,

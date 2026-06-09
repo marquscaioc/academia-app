@@ -1,13 +1,14 @@
 import { useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Modal, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { useAuth } from "../../../lib/auth/provider";
-import { useDietPlans, useMealLogs, useWaterLogs } from "../../../hooks/queries/useDiet";
-import { useLogMeal, useLogWater } from "../../../hooks/mutations/useDietMutations";
+import { useDietPlans, useMealLogs, useWaterLogs, useFoodLogs } from "../../../hooks/queries/useDiet";
+import { useLogMeal, useLogWater, useLogFood, useDeleteFoodLog } from "../../../hooks/mutations/useDietMutations";
 import { Card } from "../../../components/ui/Card";
 import { EmptyState } from "../../../components/ui/EmptyState";
 import { SubstitutionSheet } from "../../../components/diet/SubstitutionSheet";
+import { TACO_FOODS, TacoFood } from "../../../lib/data/taco";
 
 function getTodayDate() {
   return new Date().toISOString().split("T")[0];
@@ -21,8 +22,19 @@ export default function DietScreen() {
   const { data: waterLogs } = useWaterLogs(user?.id, today);
   const logMeal = useLogMeal();
   const logWater = useLogWater();
+  const { data: foodLogs } = useFoodLogs(user?.id, today);
+  const logFood = useLogFood();
+  const deleteFoodLog = useDeleteFoodLog();
 
   const [subSheet, setSubSheet] = useState<{ itemId: string; name: string; cal?: number; prot?: number } | null>(null);
+  const [showAddFood, setShowAddFood] = useState(false);
+  const [fName, setFName] = useState("");
+  const [fCal, setFCal] = useState("");
+  const [fProt, setFProt] = useState("");
+  const [fCarb, setFCarb] = useState("");
+  const [fFat, setFFat] = useState("");
+  const [selectedFood, setSelectedFood] = useState<TacoFood | null>(null);
+  const [grams, setGrams] = useState("");
 
   const activePlan = plans?.[0];
   const meals = activePlan?.meals ?? [];
@@ -43,6 +55,38 @@ export default function DietScreen() {
     logWater.mutate({ user_id: user.id, amount_ml: 250 });
   };
 
+  const resetFood = () => {
+    setShowAddFood(false);
+    setFName(""); setFCal(""); setFProt(""); setFCarb(""); setFFat("");
+    setSelectedFood(null); setGrams("");
+  };
+  const applyFood = (food: TacoFood, gramsStr: string) => {
+    const g = parseFloat(gramsStr.replace(",", ".")) || 0;
+    const k = g / 100;
+    setFCal(g ? String(Math.round(food.kcal * k)) : "");
+    setFProt(g ? String(Math.round(food.protein * k * 10) / 10) : "");
+    setFCarb(g ? String(Math.round(food.carbs * k * 10) / 10) : "");
+    setFFat(g ? String(Math.round(food.fat * k * 10) / 10) : "");
+  };
+  const selectTacoFood = (food: TacoFood) => {
+    setSelectedFood(food);
+    setFName(food.name);
+    setGrams("100");
+    applyFood(food, "100");
+  };
+  const onGramsChange = (v: string) => {
+    setGrams(v);
+    if (selectedFood) applyFood(selectedFood, v);
+  };
+  const handleAddFood = () => {
+    if (!user || !fName.trim()) return;
+    const n = (v: string) => (v ? parseFloat(v.replace(",", ".")) : undefined);
+    logFood.mutate(
+      { user_id: user.id, food_name: fName.trim(), calories: n(fCal), protein_g: n(fProt), carbs_g: n(fCarb), fat_g: n(fFat) },
+      { onSuccess: resetFood },
+    );
+  };
+
   // Calculate daily macros
   let totalCal = 0, totalProt = 0, totalCarb = 0, totalFat = 0;
   for (const meal of meals) {
@@ -53,6 +97,14 @@ export default function DietScreen() {
       totalFat += item.fat_g ?? 0;
     }
   }
+
+  const extraCal = (foodLogs ?? []).reduce((s, f) => s + (f.calories ?? 0), 0);
+  const extraProt = (foodLogs ?? []).reduce((s, f) => s + (f.protein_g ?? 0), 0);
+
+  const tacoMatches =
+    showAddFood && fName.trim().length >= 2 && (!selectedFood || selectedFood.name !== fName)
+      ? TACO_FOODS.filter((f) => f.name.toLowerCase().includes(fName.toLowerCase())).slice(0, 6)
+      : [];
 
   if (!activePlan) {
     return (
@@ -194,6 +246,38 @@ export default function DietScreen() {
             );
           })}
         </View>
+
+        {/* Registro livre (alimentos fora do plano) */}
+        <View className="mb-10">
+          <View className="flex-row items-center justify-between mb-3">
+            <Text className="text-lg font-bold text-text-primary">Registro livre</Text>
+            <Pressable onPress={() => setShowAddFood(true)} className="bg-violet-500/10 px-3 py-1.5 rounded-lg">
+              <Text className="text-violet-400 font-bold text-xs">+ Alimento</Text>
+            </Pressable>
+          </View>
+          {!foodLogs?.length ? (
+            <Text className="text-xs text-text-muted">Logue alimentos que comeu fora do plano.</Text>
+          ) : (
+            <View className="gap-2">
+              {foodLogs.map((f) => (
+                <View key={f.id} className="bg-surface-card border border-surface-border rounded-xl p-3 flex-row items-center justify-between">
+                  <View className="flex-1">
+                    <Text className="text-sm font-bold text-text-primary">{f.food_name}</Text>
+                    <Text className="text-[10px] text-text-muted">
+                      {f.calories ? `${Math.round(f.calories)} kcal` : ""}{f.protein_g ? ` · ${Math.round(f.protein_g)}g P` : ""}
+                    </Text>
+                  </View>
+                  <Pressable onPress={() => deleteFoodLog.mutate(f.id)}>
+                    <Text className="text-danger-500 text-xs font-bold">Remover</Text>
+                  </Pressable>
+                </View>
+              ))}
+              <Text className="text-[10px] text-text-muted mt-1">
+                Extra hoje: {Math.round(extraCal)} kcal · {Math.round(extraProt)}g proteína
+              </Text>
+            </View>
+          )}
+        </View>
       </ScrollView>
       <SubstitutionSheet
         visible={!!subSheet}
@@ -206,6 +290,56 @@ export default function DietScreen() {
         }}
         onClose={() => setSubSheet(null)}
       />
+
+      <Modal visible={showAddFood} animationType="slide" transparent>
+        <View className="flex-1 justify-end">
+          <Pressable className="flex-1" onPress={resetFood} />
+          <View className="bg-dark-200 border-t border-surface-border rounded-t-3xl px-6 pt-6 pb-10">
+            <Text className="text-lg font-black text-text-primary mb-4">Registrar alimento</Text>
+            <TextInput
+              className="bg-surface-card border border-surface-border rounded-xl px-4 py-3 text-sm text-text-primary mb-2"
+              placeholder="Buscar alimento (TACO) ou digitar"
+              placeholderTextColor="#6E6580"
+              value={fName}
+              onChangeText={(v) => { setFName(v); if (selectedFood && v !== selectedFood.name) setSelectedFood(null); }}
+            />
+            {tacoMatches.length > 0 ? (
+              <View className="bg-surface-card border border-surface-border rounded-xl mb-2 overflow-hidden">
+                {tacoMatches.map((f) => (
+                  <Pressable key={f.name} onPress={() => selectTacoFood(f)} className="px-4 py-2.5 border-b border-surface-border active:bg-surface-hover">
+                    <Text className="text-sm text-text-primary">{f.name}</Text>
+                    <Text className="text-[10px] text-text-muted">{f.kcal} kcal · {f.protein}P · {f.carbs}C · {f.fat}G /100g</Text>
+                  </Pressable>
+                ))}
+              </View>
+            ) : null}
+            {selectedFood ? (
+              <View className="mb-2">
+                <Text className="text-[10px] text-text-muted mb-1">Quantidade (g)</Text>
+                <TextInput
+                  className="bg-surface-card border border-surface-border rounded-xl px-4 py-3 text-sm text-text-primary"
+                  placeholder="100"
+                  placeholderTextColor="#6E6580"
+                  keyboardType="numeric"
+                  value={grams}
+                  onChangeText={onGramsChange}
+                />
+              </View>
+            ) : null}
+            <View className="flex-row gap-2 mb-2">
+              <TextInput className="flex-1 bg-surface-card border border-surface-border rounded-xl px-4 py-3 text-sm text-text-primary" placeholder="Kcal" placeholderTextColor="#6E6580" keyboardType="numeric" value={fCal} onChangeText={setFCal} />
+              <TextInput className="flex-1 bg-surface-card border border-surface-border rounded-xl px-4 py-3 text-sm text-text-primary" placeholder="Prot (g)" placeholderTextColor="#6E6580" keyboardType="numeric" value={fProt} onChangeText={setFProt} />
+            </View>
+            <View className="flex-row gap-2 mb-4">
+              <TextInput className="flex-1 bg-surface-card border border-surface-border rounded-xl px-4 py-3 text-sm text-text-primary" placeholder="Carb (g)" placeholderTextColor="#6E6580" keyboardType="numeric" value={fCarb} onChangeText={setFCarb} />
+              <TextInput className="flex-1 bg-surface-card border border-surface-border rounded-xl px-4 py-3 text-sm text-text-primary" placeholder="Gord (g)" placeholderTextColor="#6E6580" keyboardType="numeric" value={fFat} onChangeText={setFFat} />
+            </View>
+            <Pressable onPress={handleAddFood} disabled={!fName.trim() || logFood.isPending} className={`rounded-2xl py-4 items-center ${fName.trim() ? "bg-violet-500" : "bg-surface-border"}`}>
+              <Text className={`font-black ${fName.trim() ? "text-white" : "text-text-muted"}`}>{logFood.isPending ? "Salvando..." : "Registrar"}</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }

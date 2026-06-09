@@ -27,7 +27,7 @@ import { LoadingScreen } from "../../../components/ui/LoadingScreen";
 export default function WorkoutExecutionScreen() {
   const { workoutId } = useLocalSearchParams<{ workoutId: string }>();
   const { user } = useAuth();
-  const { data: workout, isLoading } = useWorkoutDetail(workoutId ?? "");
+  const { data: workout, isLoading, isError } = useWorkoutDetail(workoutId ?? "");
   const startSessionMutation = useStartSession();
   const logSetMutation = useLogSet();
   const finishSessionMutation = useFinishSession();
@@ -37,8 +37,19 @@ export default function WorkoutExecutionScreen() {
   const [playingVideoUrl, setPlayingVideoUrl] = useState<string | null>(null);
   const [customWeight, setCustomWeight] = useState("");
 
-  if (isLoading || !workout) {
+  if (isLoading) {
     return <LoadingScreen />;
+  }
+  if (isError || !workout) {
+    return (
+      <SafeAreaView className="flex-1 bg-dark-400 items-center justify-center px-6">
+        <Text className="text-text-primary font-bold text-base mb-2">Nao foi possivel carregar o treino</Text>
+        <Text className="text-text-muted text-sm text-center mb-6">Verifique sua conexao e tente novamente.</Text>
+        <Pressable onPress={() => router.back()} className="bg-violet-500 rounded-2xl px-6 py-3">
+          <Text className="text-white font-bold">Voltar</Text>
+        </Pressable>
+      </SafeAreaView>
+    );
   }
 
   const exercises = workout.exercises ?? [];
@@ -46,7 +57,7 @@ export default function WorkoutExecutionScreen() {
   const completedSets = currentExercise
     ? sessionStore.getCompletedSetsForExercise(currentExercise.exercise_id)
     : [];
-  const { data: lastPerf } = useLastPerformance(currentExercise?.exercise_id, user?.id);
+  const { data: lastPerf } = useLastPerformance(currentExercise?.exercise_id, user?.id, currentExercise?.target_reps);
 
   const handleStartWorkout = async () => {
     if (!user) return;

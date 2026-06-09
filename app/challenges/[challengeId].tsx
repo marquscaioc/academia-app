@@ -1,5 +1,5 @@
 import { useLocalSearchParams, router } from "expo-router";
-import { ActivityIndicator, FlatList, Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Alert, FlatList, Modal, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../lib/auth/provider";
@@ -7,6 +7,7 @@ import { useChallengeDetail, useLeaderboard, useChallengeEntries, useMyParticipa
 import { useChallengePointRules } from "../../hooks/queries/useChallengePointRules";
 import { useChallengeTeams } from "../../hooks/queries/useChallengeTeams";
 import { useDailyPose } from "../../hooks/queries/useDailyPose";
+import { useMostImproved } from "../../hooks/queries/useMostImproved";
 import { useJoinChallenge, useSubmitChallengeEntry } from "../../hooks/mutations/useChallengeMutations";
 import { useCreateTeam, useJoinTeam } from "../../hooks/mutations/useTeamMutations";
 import { useConvertToGroup } from "../../hooks/mutations/useChallengeToGroup";
@@ -16,6 +17,8 @@ import { TeamLeaderboard } from "../../components/challenges/TeamLeaderboard";
 import { TeamSelector } from "../../components/challenges/TeamSelector";
 import { PhotoCaptureModal } from "../../components/challenges/PhotoCaptureModal";
 import { PointRuleSelector } from "../../components/challenges/PointRuleSelector";
+import { MostImprovedLeaderboard } from "../../components/challenges/MostImprovedLeaderboard";
+import { BulkCheckinModal } from "../../components/challenges/BulkCheckinModal";
 import { Badge } from "../../components/ui/Badge";
 import { Card } from "../../components/ui/Card";
 import { LoadingScreen } from "../../components/ui/LoadingScreen";
@@ -34,17 +37,23 @@ export default function ChallengeDetailScreen() {
   const { data: pointRules } = useChallengePointRules(challengeId ?? "");
   const { data: teams } = useChallengeTeams(challenge?.team_mode ? challengeId : undefined);
   const { data: dailyPose } = useDailyPose();
+  const { data: improved } = useMostImproved(challengeId ?? "");
   const joinChallenge = useJoinChallenge();
   const submitEntry = useSubmitChallengeEntry();
   const createTeam = useCreateTeam();
   const joinTeam = useJoinTeam();
   const convertToGroup = useConvertToGroup();
 
-  const [tab, setTab] = useState<"leaderboard" | "feed">("leaderboard");
+  const [tab, setTab] = useState<"leaderboard" | "feed" | "improved">("leaderboard");
   const [showCamera, setShowCamera] = useState(false);
+  const [showBulk, setShowBulk] = useState(false);
   const [showTeamSelector, setShowTeamSelector] = useState(false);
   const [selectedRule, setSelectedRule] = useState<PointRule | null>(null);
   const [showPointSelector, setShowPointSelector] = useState(false);
+  const [showMetric, setShowMetric] = useState(false);
+  const [metricValue, setMetricValue] = useState("");
+  const [pendingPoints, setPendingPoints] = useState(1);
+  const [pendingCaption, setPendingCaption] = useState("Check-in!");
 
   if (isLoading || !challenge) {
     return <LoadingScreen />;
@@ -68,22 +77,58 @@ export default function ChallengeDetailScreen() {
     }
   };
 
-  const handleCheckIn = () => {
+  // Submete com `points`/`caption` ja decididos — pede foto antes se exigido.
+  const submitOrPhoto = (points: number, caption: string) => {
+    setPendingPoints(points);
+    setPendingCaption(caption);
+    if (challenge.require_photo_proof) {
+      setShowCamera(true);
+    } else if (user) {
+      submitEntry.mutate({ challenge_id: challenge.id, user_id: user.id, caption, points });
+    }
+  };
+
+  const handleCheckIn = async () => {
     if (!user) return;
     if (hasCustomPoints) {
       setShowPointSelector(true);
       return;
     }
-    if (challenge.require_photo_proof) {
-      setShowCamera(true);
-    } else {
-      submitEntry.mutate({
-        challenge_id: challenge.id,
-        user_id: user.id,
-        caption: "Check-in!",
-        points: 1,
-      });
+    const mode = challenge.scoring_mode;
+    // Modos quantitativos: coleta o numero (vira o score)
+    if (mode === "total_volume" || mode === "active_minutes") {
+      setMetricValue("");
+      setShowMetric(true);
+      return;
     }
+    // Dias ativos: 1 ponto por DIA (dedup) — multiplos check-ins no mesmo dia nao contam de novo
+    if (mode === "days_active") {
+      const start = new Date();
+      start.setHours(0, 0, 0, 0);
+      const { data: today } = await supabase
+        .from("challenge_entries")
+        .select("id")
+        .eq("challenge_id", challenge.id)
+        .eq("user_id", user.id)
+        .gte("created_at", start.toISOString())
+        .limit(1);
+      if (today && today.length) {
+        Alert.alert("Já registrado", "Você já fez seu check-in de hoje neste desafio.");
+        return;
+      }
+      submitOrPhoto(1, "Dia ativo");
+      return;
+    }
+    // check_in_count, workouts_completed: 1 ponto por check-in
+    submitOrPhoto(1, "Check-in!");
+  };
+
+  const confirmMetric = () => {
+    const v = parseFloat(metricValue.replace(",", "."));
+    if (isNaN(v) || v <= 0) return;
+    setShowMetric(false);
+    const unit = challenge.scoring_mode === "active_minutes" ? "min" : "kg";
+    submitOrPhoto(v, `${v} ${unit}`);
   };
 
   const handlePhotoCapture = async (uri: string) => {
@@ -106,25 +151,15 @@ export default function ChallengeDetailScreen() {
       challenge_id: challenge.id,
       user_id: user.id,
       photo_url: photoUrl,
-      caption: "Check-in com foto!",
-      points: selectedRule?.points ?? 1,
+      caption: pendingCaption,
+      points: pendingPoints,
     });
-    setSelectedRule(null);
   };
 
   const handlePointRuleSelect = (rule: PointRule) => {
     setSelectedRule(rule);
     setShowPointSelector(false);
-    if (challenge.require_photo_proof) {
-      setShowCamera(true);
-    } else {
-      submitEntry.mutate({
-        challenge_id: challenge.id,
-        user_id: user!.id,
-        caption: rule.label,
-        points: rule.points,
-      });
-    }
+    submitOrPhoto(rule.points, rule.label);
   };
 
   const handleShareLeaderboard = () => {
@@ -145,6 +180,19 @@ export default function ChallengeDetailScreen() {
   const handleConvertToGroup = () => {
     if (!user) return;
     convertToGroup.mutate({ challengeId: challenge.id, userId: user.id });
+  };
+
+  const handleBulkSubmit = (selectedRules: PointRule[]) => {
+    if (!user) return;
+    setShowBulk(false);
+    for (const rule of selectedRules) {
+      submitEntry.mutate({
+        challenge_id: challenge.id,
+        user_id: user.id,
+        caption: rule.label,
+        points: rule.points,
+      });
+    }
   };
 
   const formatDate = (d: string) =>
@@ -221,6 +269,16 @@ export default function ChallengeDetailScreen() {
             </Pressable>
           ) : null}
 
+          {/* Registro em lote (so quando ha Hustle Points) */}
+          {isJoined && isActive && hasCustomPoints ? (
+            <Pressable
+              onPress={() => setShowBulk(true)}
+              className="bg-surface-card border border-violet-500/30 rounded-2xl py-3 items-center mb-4 active:bg-surface-hover"
+            >
+              <Text className="text-violet-400 font-bold text-sm">Registrar várias atividades</Text>
+            </Pressable>
+          ) : null}
+
           {/* Convert to group (ended + creator) */}
           {isEnded && isCreator ? (
             <Pressable
@@ -259,6 +317,14 @@ export default function ChallengeDetailScreen() {
                 Atividade
               </Text>
             </Pressable>
+            <Pressable
+              onPress={() => setTab("improved")}
+              className={`flex-1 py-3 items-center border-b-2 ${tab === "improved" ? "border-violet-500" : "border-transparent"}`}
+            >
+              <Text className={`font-bold text-sm ${tab === "improved" ? "text-violet-400" : "text-text-muted"}`}>
+                Evolução
+              </Text>
+            </Pressable>
           </View>
         </View>
 
@@ -284,6 +350,8 @@ export default function ChallengeDetailScreen() {
             ) : (
               <Text className="text-sm text-text-muted text-center py-8">Nenhum participante ainda.</Text>
             )
+          ) : tab === "improved" ? (
+            <MostImprovedLeaderboard entries={improved ?? []} />
           ) : entries?.length ? (
             <View className="gap-3">
               {entries.map((entry) => (
@@ -357,6 +425,42 @@ export default function ChallengeDetailScreen() {
           </Pressable>
         </View>
       ) : null}
+
+      <BulkCheckinModal
+        visible={showBulk}
+        rules={pointRules ?? []}
+        onSubmit={handleBulkSubmit}
+        onClose={() => setShowBulk(false)}
+      />
+
+      {/* Input de metrica (modos quantitativos) */}
+      <Modal visible={showMetric} animationType="slide" transparent>
+        <View className="flex-1 justify-end">
+          <Pressable className="flex-1" onPress={() => setShowMetric(false)} />
+          <View className="bg-dark-200 border-t border-surface-border rounded-t-3xl px-6 pt-6 pb-10">
+            <Text className="text-lg font-black text-text-primary mb-1">Registrar atividade</Text>
+            <Text className="text-xs text-text-muted mb-4">
+              {challenge.scoring_mode === "active_minutes" ? "Quantos minutos de atividade?" : "Qual o volume total (kg)?"}
+            </Text>
+            <TextInput
+              className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary mb-4"
+              placeholder={challenge.scoring_mode === "active_minutes" ? "Ex: 45" : "Ex: 5000"}
+              placeholderTextColor="#6E6580"
+              keyboardType="numeric"
+              value={metricValue}
+              onChangeText={setMetricValue}
+              autoFocus
+            />
+            <Pressable
+              onPress={confirmMetric}
+              disabled={!metricValue.trim()}
+              className={`rounded-2xl py-4 items-center ${metricValue.trim() ? "bg-violet-500" : "bg-surface-border"}`}
+            >
+              <Text className={`font-black ${metricValue.trim() ? "text-white" : "text-text-muted"}`}>Confirmar</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }

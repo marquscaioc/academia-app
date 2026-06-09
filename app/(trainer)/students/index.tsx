@@ -30,10 +30,12 @@ export default function StudentsScreen() {
 
   const updateWaterGoal = useMutation({
     mutationFn: async ({ studentId, goalMl }: { studentId: string; goalMl: number }) => {
-      const { error } = await supabase
-        .from("profiles")
-        .update({ water_goal_ml: goalMl })
-        .eq("id", studentId);
+      // RPC valida o vinculo trainer-aluno (a policy de UPDATE de profiles so
+      // permite o proprio usuario, entao update direto falharia em silencio).
+      const { error } = await supabase.rpc("set_student_water_goal", {
+        p_student_id: studentId,
+        p_goal_ml: goalMl,
+      });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -58,7 +60,7 @@ export default function StudentsScreen() {
   });
 
   const activeCount = allStudents?.filter((s) => s.status === "active").length ?? 0;
-  const pausedCount = allStudents?.filter((s) => s.status !== "active").length ?? 0;
+  const pausedCount = allStudents?.filter((s) => s.status === "paused" || s.status === "cancelled").length ?? 0;
 
   const students = allStudents?.filter((s) => {
     if (filter === "active") return s.status === "active";

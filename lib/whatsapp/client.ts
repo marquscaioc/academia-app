@@ -90,7 +90,7 @@ export async function deleteInstance(instanceName: string): Promise<void> {
 }
 
 // ==========================================
-// Messaging (v2 flat format)
+// Messaging (v1.8.1 nested format)
 // ==========================================
 
 export function formatPhone(phone: string): string {
@@ -107,9 +107,8 @@ export async function sendText(
 ): Promise<SendMessageResponse> {
   const input: SendTextInput = {
     number: formatPhone(phone),
-    text,
-    delay: options?.delay ?? 1200,
-    presence: "composing",
+    options: { delay: options?.delay ?? 1200, presence: "composing" },
+    textMessage: { text },
   };
   return request(`/message/sendText/${instanceName}`, {
     method: "POST",
@@ -125,10 +124,12 @@ export async function sendMedia(
 ): Promise<SendMessageResponse> {
   const input: SendMediaInput = {
     number: formatPhone(phone),
-    mediatype: options?.mediatype ?? "image",
-    caption: options?.caption,
-    media: mediaUrl,
-    delay: 1200,
+    options: { delay: 1200 },
+    mediaMessage: {
+      mediatype: options?.mediatype ?? "image",
+      caption: options?.caption,
+      media: mediaUrl,
+    },
   };
   return request(`/message/sendMedia/${instanceName}`, {
     method: "POST",
@@ -137,7 +138,7 @@ export async function sendMedia(
 }
 
 // ==========================================
-// Webhooks (v2 format)
+// Webhooks (v1.8.1 format)
 // ==========================================
 
 export async function setWebhook(
@@ -152,13 +153,11 @@ export async function setWebhook(
   await request(`/webhook/set/${instanceName}`, {
     method: "POST",
     body: JSON.stringify({
-      webhook: {
-        enabled: true,
-        url: webhookUrl,
-        webhookByEvents: false,
-        webhookBase64: true,
-        events,
-      },
+      enabled: true,
+      url: webhookUrl,
+      webhook_by_events: false,
+      webhook_base64: true,
+      events,
     }),
   });
 }

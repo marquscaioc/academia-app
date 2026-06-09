@@ -63,14 +63,17 @@ export function useMessages(conversationId: string) {
   return useQuery({
     queryKey: ["chat", "messages", conversationId],
     queryFn: async () => {
+      // Busca as 100 mensagens MAIS RECENTES (desc) e inverte para exibir em
+      // ordem cronologica. Com ascending+limit, conversas grandes mostrariam
+      // apenas as mensagens mais antigas, cortando as recentes.
       const { data, error } = await supabase
         .from("messages")
         .select("*, sender:profiles!sender_id(full_name, avatar_url)")
         .eq("conversation_id", conversationId)
-        .order("created_at", { ascending: true })
+        .order("created_at", { ascending: false })
         .limit(100);
       if (error) throw error;
-      return data as Message[];
+      return (data as Message[]).reverse();
     },
     enabled: !!conversationId,
   });

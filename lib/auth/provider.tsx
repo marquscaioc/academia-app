@@ -23,6 +23,8 @@ interface Profile {
   current_streak: number;
   longest_streak: number;
   notify_follower_workouts: boolean;
+  whatsapp_number: string | null;
+  whatsapp_opt_in: boolean;
 }
 
 interface AuthContextType {
@@ -48,13 +50,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchProfile = async (userId: string) => {
+  const fetchProfile = async (userId: string, retries = 2) => {
     // Try full select first, fallback to basic if new columns don't exist yet
     const { data, error } = await supabase
       .from("profiles")
-      .select("id, role, full_name, display_name, avatar_url, bio, onboarding_completed, water_goal_ml, current_streak, longest_streak, notify_follower_workouts")
+      .select("id, role, full_name, display_name, avatar_url, bio, onboarding_completed, water_goal_ml, current_streak, longest_streak, notify_follower_workouts, whatsapp_number, whatsapp_opt_in")
       .eq("id", userId)
-      .single();
+      .maybeSingle();
 
     if (!error && data) {
       setProfile(data as Profile);
@@ -62,19 +64,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     // Fallback: columns may not exist yet (migrations not applied)
-    const { data: fallback } = await supabase
+    const { data: fallback, error: fbError } = await supabase
       .from("profiles")
       .select("id, role, full_name, display_name, avatar_url, bio, onboarding_completed")
       .eq("id", userId)
-      .single();
+      .maybeSingle();
 
-    setProfile(fallback ? {
-      ...fallback,
-      water_goal_ml: null,
-      current_streak: 0,
-      longest_streak: 0,
-      notify_follower_workouts: false,
-    } as Profile : null);
+    if (fallback) {
+      setProfile({
+        ...fallback,
+        water_goal_ml: null,
+        current_streak: 0,
+        longest_streak: 0,
+        notify_follower_workouts: false,
+        whatsapp_number: null,
+        whatsapp_opt_in: false,
+      } as Profile);
+      return;
+    }
+
+    // Row may not exist yet right after signup (race with handle_new_user trigger): retry with backoff
+    if (!fbError && retries > 0) {
+      await new Promise((r) => setTimeout(r, 600));
+      return fetchProfile(userId, retries - 1);
+    }
+
+    setProfile(null);
   };
 
   useEffect(() => {

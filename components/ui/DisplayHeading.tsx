@@ -23,7 +23,7 @@ const TONE_MAP: Record<NonNullable<Props["tone"]>, string> = {
 };
 
 export function DisplayHeading({ size = "lg", italic = false, tone = "primary", className, style, ...rest }: Props) {
-  const fontFamily = italic ? "InstrumentSerif_400Regular_Italic" : "InstrumentSerif_400Regular";
+  const fontFamily = italic ? "Nunito_400Regular_Italic" : "Nunito_400Regular";
   return (
     <Text
       className={`${SIZE_MAP[size]} ${TONE_MAP[tone]} ${className ?? ""}`}

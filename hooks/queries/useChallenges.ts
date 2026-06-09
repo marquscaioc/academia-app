@@ -71,9 +71,13 @@ export function useChallenges(opts: {
         .select("*, creator:profiles!created_by(full_name, avatar_url)")
         .order("starts_at", { ascending: false });
 
-      if (filter === "active") query = query.eq("status", "active");
-      else if (filter === "upcoming") query = query.eq("status", "upcoming");
-      else if (filter === "ended") query = query.eq("status", "ended");
+      // Deriva o estado das DATAS (nao do campo status, que nao tem cron que o
+      // transicione): assim um desafio criado para agora aparece em "Ativos" e
+      // some de "Ativos" quando termina, sem job agendado.
+      const nowIso = new Date().toISOString();
+      if (filter === "active") query = query.lte("starts_at", nowIso).gte("ends_at", nowIso);
+      else if (filter === "upcoming") query = query.gt("starts_at", nowIso);
+      else if (filter === "ended") query = query.lt("ends_at", nowIso);
 
       // Tenant filter: global (trainer_id is null) OR scoped to linked trainers OR own
       if (role === "trainer" && userId) {
@@ -105,7 +109,16 @@ export function useChallengeDetail(challengeId: string) {
         .eq("id", challengeId)
         .single();
       if (error) throw error;
-      return data as Challenge;
+      // Deriva o status das DATAS para bater com a lista (sem cron que transicione
+      // o campo status); evita detalhe mostrar "upcoming/active" desatualizado.
+      const now = Date.now();
+      const derivedStatus =
+        new Date(data.starts_at).getTime() > now
+          ? "upcoming"
+          : new Date(data.ends_at).getTime() < now
+            ? "ended"
+            : "active";
+      return { ...data, status: derivedStatus } as Challenge;
     },
     enabled: !!challengeId,
   });

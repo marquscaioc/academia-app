@@ -41,23 +41,27 @@ export interface CreateInstanceResponse {
   qrcode?: QrCodeResponse;
 }
 
-// v2 inline format (no nested textMessage/mediaMessage)
+// v1.8.1 nested format (textMessage/mediaMessage + options)
 export interface SendTextInput {
   number: string;
-  text: string;
-  delay?: number;
-  presence?: "composing" | "recording" | "available";
-  linkPreview?: boolean;
+  options?: {
+    delay?: number;
+    presence?: "composing" | "recording" | "available";
+    linkPreview?: boolean;
+  };
+  textMessage: { text: string };
 }
 
 export interface SendMediaInput {
   number: string;
-  mediatype: "image" | "video" | "document" | "audio";
-  mimetype?: string;
-  caption?: string;
-  fileName?: string;
-  media: string; // URL or base64
-  delay?: number;
+  options?: { delay?: number };
+  mediaMessage: {
+    mediatype: "image" | "video" | "document" | "audio";
+    mimetype?: string;
+    caption?: string;
+    fileName?: string;
+    media: string; // URL or base64
+  };
 }
 
 export interface SendMessageResponse {

@@ -30,7 +30,7 @@ function QuickAction({ icon, label, href, index }: { icon: string; label: string
             pointerEvents="none"
           />
           <Text className="text-2xl mb-2">{icon}</Text>
-          <Text className="text-[11px] text-text-secondary" style={{ fontFamily: "DMSans_600SemiBold", letterSpacing: 0.5 }}>
+          <Text className="text-[11px] text-text-secondary" style={{ fontFamily: "Nunito_600SemiBold", letterSpacing: 0.5 }}>
             {label}
           </Text>
         </Pressable>
@@ -93,13 +93,13 @@ export default function StudentHomeScreen() {
             <View>
               <Text
                 className="text-[10px] text-fuchsia-400"
-                style={{ fontFamily: "DMSans_700Bold", letterSpacing: 3 }}
+                style={{ fontFamily: "Nunito_700Bold", letterSpacing: 3 }}
               >
                 ED. {edition}
               </Text>
               <Text
                 className="text-[9px] text-text-muted mt-0.5"
-                style={{ fontFamily: "DMSans_700Bold", letterSpacing: 2 }}
+                style={{ fontFamily: "Nunito_700Bold", letterSpacing: 2 }}
               >
                 ROYAL AMETHYST
               </Text>
@@ -111,7 +111,7 @@ export default function StudentHomeScreen() {
                 <Text className="text-sm">🔔</Text>
                 {(unreadCount ?? 0) > 0 ? (
                   <View className="absolute -top-1 -right-1 bg-fuchsia-500 rounded-full min-w-[18px] h-[18px] items-center justify-center px-1">
-                    <Text className="text-white text-[9px]" style={{ fontFamily: "DMSans_700Bold" }}>
+                    <Text className="text-white text-[9px]" style={{ fontFamily: "Nunito_700Bold" }}>
                       {unreadCount! > 99 ? "99+" : unreadCount}
                     </Text>
                   </View>
@@ -136,7 +136,7 @@ export default function StudentHomeScreen() {
           <Text
             className="text-text-primary"
             style={{
-              fontFamily: "ArchivoBlack_400Regular",
+              fontFamily: "Nunito_900Black",
               fontSize: 56,
               lineHeight: 56,
               letterSpacing: -2.5,
@@ -158,14 +158,14 @@ export default function StudentHomeScreen() {
                   <Text className="text-lg">🎟️</Text>
                 </View>
                 <View className="flex-1">
-                  <Text className="text-sm text-text-primary" style={{ fontFamily: "DMSans_600SemiBold" }}>
+                  <Text className="text-sm text-text-primary" style={{ fontFamily: "Nunito_600SemiBold" }}>
                     Tem um código de convite?
                   </Text>
-                  <Text className="text-xs text-text-muted mt-0.5" style={{ fontFamily: "DMSans_400Regular" }}>
+                  <Text className="text-xs text-text-muted mt-0.5" style={{ fontFamily: "Nunito_400Regular" }}>
                     Conecte-se ao seu personal trainer
                   </Text>
                 </View>
-                <Text className="text-fuchsia-400 text-sm" style={{ fontFamily: "DMSans_700Bold" }}>
+                <Text className="text-fuchsia-400 text-sm" style={{ fontFamily: "Nunito_700Bold" }}>
                   Inserir →
                 </Text>
               </Pressable>
@@ -176,14 +176,14 @@ export default function StudentHomeScreen() {
                 </SectionLabel>
                 {inviteError ? (
                   <View className="bg-danger-500/10 rounded-xl p-3 mb-3">
-                    <Text className="text-danger-500 text-xs text-center" style={{ fontFamily: "DMSans_500Medium" }}>
+                    <Text className="text-danger-500 text-xs text-center" style={{ fontFamily: "Nunito_500Medium" }}>
                       {inviteError}
                     </Text>
                   </View>
                 ) : null}
                 <TextInput
                   className="bg-dark-300 border-2 border-surface-border rounded-xl px-4 py-3 text-center text-3xl text-violet-300"
-                  style={{ fontFamily: "ArchivoBlack_400Regular", letterSpacing: 8 }}
+                  style={{ fontFamily: "Nunito_900Black", letterSpacing: 8 }}
                   placeholder="ABCDEF"
                   placeholderTextColor="#2A2A30"
                   value={inviteCode}
@@ -196,7 +196,7 @@ export default function StudentHomeScreen() {
                     onPress={() => { setShowInvite(false); setInviteCode(""); setInviteError(""); }}
                     className="flex-1 border border-surface-border rounded-xl py-3 items-center"
                   >
-                    <Text className="text-text-muted text-sm" style={{ fontFamily: "DMSans_700Bold" }}>
+                    <Text className="text-text-muted text-sm" style={{ fontFamily: "Nunito_700Bold" }}>
                       Cancelar
                     </Text>
                   </Pressable>
@@ -212,7 +212,7 @@ export default function StudentHomeScreen() {
                     ) : (
                       <Text
                         className={`text-sm ${inviteCode.length >= 6 ? "text-white" : "text-text-muted"}`}
-                        style={{ fontFamily: "DMSans_700Bold", letterSpacing: 1 }}
+                        style={{ fontFamily: "Nunito_700Bold", letterSpacing: 1 }}
                       >
                         CONECTAR
                       </Text>
@@ -228,7 +228,7 @@ export default function StudentHomeScreen() {
             className="bg-success-500/10 border border-success-500/20 rounded-2xl p-4 mb-6 flex-row items-center gap-3"
           >
             <Text className="text-lg">✅</Text>
-            <Text className="text-sm text-success-500 flex-1" style={{ fontFamily: "DMSans_600SemiBold" }}>
+            <Text className="text-sm text-success-500 flex-1" style={{ fontFamily: "Nunito_600SemiBold" }}>
               Conectado ao seu personal! Confira o chat.
             </Text>
           </Animated.View>
@@ -247,7 +247,7 @@ export default function StudentHomeScreen() {
               </DisplayHeading>
               <Text
                 className="text-sm text-text-secondary mt-3 leading-6"
-                style={{ fontFamily: "DMSans_400Regular" }}
+                style={{ fontFamily: "Nunito_400Regular" }}
               >
                 Peça ao seu personal para criar um plano de treino personalizado para os seus objetivos.
               </Text>
@@ -259,7 +259,7 @@ export default function StudentHomeScreen() {
                 </View>
                 <Text
                   className="text-text-muted text-[10px]"
-                  style={{ fontFamily: "DMSans_700Bold", letterSpacing: 2 }}
+                  style={{ fontFamily: "Nunito_700Bold", letterSpacing: 2 }}
                 >
                   0 / 0
                 </Text>
@@ -276,10 +276,10 @@ export default function StudentHomeScreen() {
           >
             <Text className="text-2xl">⚠️</Text>
             <View className="flex-1">
-              <Text className="text-sm text-warning-500" style={{ fontFamily: "DMSans_700Bold" }}>
+              <Text className="text-sm text-warning-500" style={{ fontFamily: "Nunito_700Bold" }}>
                 Plano expira em {daysUntilExpiry} dia{daysUntilExpiry !== 1 ? "s" : ""}
               </Text>
-              <Text className="text-xs text-text-muted mt-0.5" style={{ fontFamily: "DMSans_400Regular" }}>
+              <Text className="text-xs text-text-muted mt-0.5" style={{ fontFamily: "Nunito_400Regular" }}>
                 Converse com seu personal para renovar.
               </Text>
             </View>
@@ -320,7 +320,7 @@ export default function StudentHomeScreen() {
           onPress={signOut}
           className="border border-surface-border rounded-2xl py-3.5 items-center mb-10 active:bg-surface-hover"
         >
-          <Text className="text-text-muted text-sm" style={{ fontFamily: "DMSans_700Bold", letterSpacing: 1 }}>
+          <Text className="text-text-muted text-sm" style={{ fontFamily: "Nunito_700Bold", letterSpacing: 1 }}>
             SAIR DA CONTA
           </Text>
         </Pressable>

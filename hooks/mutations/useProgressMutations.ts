@@ -15,6 +15,12 @@ interface AddMeasurementInput {
   thigh_right_cm?: number;
   calf_left_cm?: number;
   calf_right_cm?: number;
+  skinfold_triceps_mm?: number;
+  skinfold_subscapular_mm?: number;
+  skinfold_suprailiac_mm?: number;
+  skinfold_abdominal_mm?: number;
+  skinfold_thigh_mm?: number;
+  skinfold_chest_mm?: number;
   notes?: string;
 }
 
@@ -82,9 +88,7 @@ export async function uploadProgressPhoto(
 
   if (error) throw error;
 
-  const {
-    data: { publicUrl },
-  } = supabase.storage.from("progress-photos").getPublicUrl(fileName);
-
-  return publicUrl;
+  // Bucket privado: gravamos o PATH e resolvemos signed URL na leitura
+  // (ver lib/supabase/media.ts). getPublicUrl nao funciona aqui.
+  return fileName;
 }

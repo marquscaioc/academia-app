@@ -1,7 +1,9 @@
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link } from "expo-router";
+import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../../lib/auth/provider";
+import { supabase } from "../../lib/supabase/client";
 import { useStudentAdherenceList } from "../../hooks/queries/useStudentAdherence";
 import { StudentAdherenceRow } from "../../components/trainer/StudentAdherenceRow";
 
@@ -23,6 +25,28 @@ export default function TrainerDashboardScreen() {
   const { user, profile, signOut } = useAuth();
   const firstName = profile?.full_name?.split(" ")[0] ?? "Trainer";
   const { data: adherenceList } = useStudentAdherenceList(user?.id);
+
+  const { data: counts } = useQuery({
+    queryKey: ["trainer", "dashboard-counts", user?.id],
+    queryFn: async () => {
+      const [students, plans] = await Promise.all([
+        supabase
+          .from("trainer_students")
+          .select("*", { count: "exact", head: true })
+          .eq("trainer_id", user!.id)
+          .eq("status", "active"),
+        supabase
+          .from("workout_plans")
+          .select("*", { count: "exact", head: true })
+          .eq("trainer_id", user!.id),
+      ]);
+      return {
+        activeStudents: students.count ?? 0,
+        workoutPlans: plans.count ?? 0,
+      };
+    },
+    enabled: !!user,
+  });
 
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
@@ -74,8 +98,30 @@ export default function TrainerDashboardScreen() {
 
         {/* Metrics */}
         <View className="flex-row gap-3 mb-6">
-          <MetricCard value="0" label="Alunos ativos" icon="👥" color="text-violet-400" />
-          <MetricCard value="0" label="Treinos criados" icon="🏋️" color="text-ice-400" />
+          <MetricCard value={String(counts?.activeStudents ?? 0)} label="Alunos ativos" icon="👥" color="text-violet-400" />
+          <MetricCard value={String(counts?.workoutPlans ?? 0)} label="Treinos criados" icon="🏋️" color="text-ice-400" />
+        </View>
+
+        {/* Ferramentas (acesso direto, sobretudo no mobile onde nao ha sidebar) */}
+        <View className="mb-6">
+          <Text className="text-xs text-text-muted uppercase tracking-wider font-bold mb-3">Ferramentas</Text>
+          <View className="flex-row flex-wrap gap-2">
+            {[
+              { href: "/(trainer)/checkins/builder", icon: "📋", label: "Check-ins" },
+              { href: "/(trainer)/checkins/responses", icon: "📈", label: "Respostas" },
+              { href: "/(trainer)/whatsapp", icon: "💬", label: "WhatsApp" },
+              { href: "/(trainer)/courses", icon: "🎓", label: "Aulas" },
+              { href: "/(trainer)/checkins/branding", icon: "🎨", label: "Branding" },
+              { href: "/(trainer)/diet-builder/substitutions", icon: "🔄", label: "Substituições" },
+            ].map((t) => (
+              <Link key={t.href} href={t.href as never} asChild>
+                <Pressable className="bg-surface-card border border-surface-border rounded-2xl px-4 py-3 flex-row items-center gap-2 active:bg-surface-hover">
+                  <Text className="text-lg">{t.icon}</Text>
+                  <Text className="text-xs font-bold text-text-secondary">{t.label}</Text>
+                </Pressable>
+              </Link>
+            ))}
+          </View>
         </View>
 
         {/* Getting started */}

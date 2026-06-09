@@ -98,12 +98,26 @@ export function useRevenueStats(trainerId?: string) {
     queryFn: async () => {
       const { data: subs } = await supabase
         .from("subscriptions")
-        .select("plan:subscription_plans(price_cents)")
+        .select("plan:subscription_plans(price_cents, billing_interval)")
         .eq("trainer_id", trainerId!)
         .eq("status", "active");
 
-      const mrr = (subs ?? []).reduce(
-        (sum, s) => sum + ((s.plan as unknown as { price_cents: number })?.price_cents ?? 0), 0,
+      // Normaliza para receita MENSAL (MRR): planos trimestrais/anuais nao
+      // contam o valor cheio por mes.
+      const intervalToMonthly: Record<string, number> = {
+        monthly: 1,
+        quarterly: 1 / 3,
+        yearly: 1 / 12,
+      };
+      const mrr = Math.round(
+        (subs ?? []).reduce((sum, s) => {
+          const plan = s.plan as unknown as
+            | { price_cents: number; billing_interval: string }
+            | null;
+          if (!plan) return sum;
+          const factor = intervalToMonthly[plan.billing_interval] ?? 1;
+          return sum + (plan.price_cents ?? 0) * factor;
+        }, 0),
       );
 
       const { count: activeStudents } = await supabase

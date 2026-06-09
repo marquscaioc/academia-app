@@ -39,14 +39,14 @@ export function BigStat({
       <View className="flex-row items-baseline">
         <Text
           className={`${sz.num} ${TONE_MAP[tone]}`}
-          style={{ fontFamily: "ArchivoBlack_400Regular", letterSpacing: -2 }}
+          style={{ fontFamily: "Nunito_900Black", letterSpacing: -2 }}
         >
           {value}
         </Text>
         {suffix ? (
           <Text
             className={`${sz.suffix} ${TONE_MAP[tone]} ml-1 opacity-60`}
-            style={{ fontFamily: "ArchivoBlack_400Regular", letterSpacing: -0.5 }}
+            style={{ fontFamily: "Nunito_900Black", letterSpacing: -0.5 }}
           >
             {suffix}
           </Text>
@@ -54,7 +54,7 @@ export function BigStat({
       </View>
       <Text
         className="text-[10px] text-text-muted mt-1 uppercase"
-        style={{ fontFamily: "DMSans_700Bold", letterSpacing: 2 }}
+        style={{ fontFamily: "Nunito_700Bold", letterSpacing: 2 }}
       >
         {label}
       </Text>

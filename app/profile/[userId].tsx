@@ -5,6 +5,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import Animated, { FadeInDown, FadeIn } from "react-native-reanimated";
 import { useAuth } from "../../lib/auth/provider";
 import { useUserProfile, useIsFollowing, useUserAchievements } from "../../hooks/queries/useFeed";
+import { useProfileStats } from "../../hooks/queries/useProfileStats";
 import { useFollowUser, useUnfollowUser } from "../../hooks/mutations/useSocialMutations";
 import { Avatar } from "../../components/ui/Avatar";
 import { LoadingScreen } from "../../components/ui/LoadingScreen";
@@ -16,6 +17,7 @@ export default function PublicProfileScreen() {
   const { data: profile, isLoading } = useUserProfile(userId ?? "");
   const { data: isFollowing } = useIsFollowing(user?.id, userId);
   const { data: achievements } = useUserAchievements(userId);
+  const { data: stats } = useProfileStats(userId ?? "");
   const followUser = useFollowUser();
   const unfollowUser = useUnfollowUser();
 
@@ -57,13 +59,13 @@ export default function PublicProfileScreen() {
           <Animated.View entering={FadeIn.duration(400)} className="flex-row items-center justify-between mb-10">
             <Pressable onPress={() => router.back()} className="flex-row items-center gap-2">
               <Text className="text-text-muted text-lg">←</Text>
-              <Text className="text-text-muted text-[11px]" style={{ fontFamily: "DMSans_700Bold", letterSpacing: 2 }}>
+              <Text className="text-text-muted text-[11px]" style={{ fontFamily: "Nunito_700Bold", letterSpacing: 2 }}>
                 VOLTAR
               </Text>
             </Pressable>
             <View className="flex-row items-center gap-2.5">
               <Logo size="sm" />
-              <Text className="text-[10px] text-fuchsia-400" style={{ fontFamily: "DMSans_700Bold", letterSpacing: 3 }}>
+              <Text className="text-[10px] text-fuchsia-400" style={{ fontFamily: "Nunito_700Bold", letterSpacing: 3 }}>
                 PERFIL · {profile.role?.toUpperCase() ?? "ALUNO"}
               </Text>
             </View>
@@ -84,7 +86,7 @@ export default function PublicProfileScreen() {
             <Text
               className="text-text-primary"
               style={{
-                fontFamily: "ArchivoBlack_400Regular",
+                fontFamily: "Nunito_900Black",
                 fontSize: 48,
                 lineHeight: 48,
                 letterSpacing: -2,
@@ -98,7 +100,7 @@ export default function PublicProfileScreen() {
             <Animated.View entering={FadeInDown.delay(260).springify()}>
               <Text
                 className="text-base text-text-secondary leading-7 mb-8 max-w-[90%]"
-                style={{ fontFamily: "InstrumentSerif_400Regular_Italic" }}
+                style={{ fontFamily: "Nunito_400Regular_Italic" }}
               >
                 “{profile.bio}”
               </Text>
@@ -119,7 +121,7 @@ export default function PublicProfileScreen() {
                   <View className="border border-surface-border py-4 items-center">
                     <Text
                       className="text-text-secondary text-sm"
-                      style={{ fontFamily: "DMSans_700Bold", letterSpacing: 1.5 }}
+                      style={{ fontFamily: "Nunito_700Bold", letterSpacing: 1.5 }}
                     >
                       SEGUINDO
                     </Text>
@@ -131,7 +133,7 @@ export default function PublicProfileScreen() {
                     end={{ x: 1, y: 0 }}
                     style={{ paddingVertical: 16, alignItems: "center" }}
                   >
-                    <Text className="text-white text-sm" style={{ fontFamily: "DMSans_700Bold", letterSpacing: 1.5 }}>
+                    <Text className="text-white text-sm" style={{ fontFamily: "Nunito_700Bold", letterSpacing: 1.5 }}>
                       + SEGUIR
                     </Text>
                   </LinearGradient>
@@ -144,7 +146,7 @@ export default function PublicProfileScreen() {
               >
                 <Text
                   className="text-text-secondary text-sm"
-                  style={{ fontFamily: "DMSans_700Bold", letterSpacing: 1.5 }}
+                  style={{ fontFamily: "Nunito_700Bold", letterSpacing: 1.5 }}
                 >
                   EDITAR PERFIL
                 </Text>
@@ -163,6 +165,20 @@ export default function PublicProfileScreen() {
               <BigStat value={String(profile.following_count ?? 0)} label="Seguindo" tone="primary" size="lg" align="center" />
               <View className="w-px h-12 bg-surface-border mx-3" />
               <BigStat value={String(achievements?.length ?? 0)} label="Badges" tone="accent" size="lg" align="center" />
+            </View>
+          </Animated.View>
+
+          {/* Atividade */}
+          <Animated.View entering={FadeInDown.delay(390).springify()} className="mb-10">
+            <SectionLabel withRule className="mb-5">
+              Atividade
+            </SectionLabel>
+            <View className="flex-row items-end justify-between">
+              <BigStat value={String(stats?.workoutsThisMonth ?? 0)} label="Treinos/mês" tone="primary" size="lg" />
+              <View className="w-px h-12 bg-surface-border mx-3" />
+              <BigStat value={String(stats?.currentStreak ?? 0)} label="Streak" tone="accent" size="lg" align="center" />
+              <View className="w-px h-12 bg-surface-border mx-3" />
+              <BigStat value={String(stats?.totalPRs ?? 0)} label="PRs" tone="primary" size="lg" align="center" />
             </View>
           </Animated.View>
 
@@ -190,7 +206,7 @@ export default function PublicProfileScreen() {
                       <Text className="text-3xl mb-2">{a.achievement?.icon ?? "🏆"}</Text>
                       <Text
                         className="text-[10px] text-text-primary text-center"
-                        style={{ fontFamily: "DMSans_700Bold", letterSpacing: 0.3 }}
+                        style={{ fontFamily: "Nunito_700Bold", letterSpacing: 0.3 }}
                         numberOfLines={2}
                       >
                         {a.achievement?.name}
@@ -218,11 +234,11 @@ export default function PublicProfileScreen() {
 
           {/* Colophon */}
           <View className="flex-row items-center justify-between pb-10 pt-2">
-            <Text className="text-[10px] text-text-muted" style={{ fontFamily: "DMSans_700Bold", letterSpacing: 2 }}>
+            <Text className="text-[10px] text-text-muted" style={{ fontFamily: "Nunito_700Bold", letterSpacing: 2 }}>
               MEMBRO · {memberSince}
             </Text>
             <View className="flex-1 h-px bg-surface-border mx-3" />
-            <Text className="text-[10px] text-fuchsia-400/60" style={{ fontFamily: "DMSans_700Bold", letterSpacing: 2 }}>
+            <Text className="text-[10px] text-fuchsia-400/60" style={{ fontFamily: "Nunito_700Bold", letterSpacing: 2 }}>
               ROYAL AMETHYST
             </Text>
           </View>

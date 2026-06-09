@@ -20,20 +20,17 @@ export default function AdminOverviewScreen() {
   const { data: stats } = useQuery({
     queryKey: ["admin", "stats"],
     queryFn: async () => {
-      const { count: totalUsers } = await supabase.from("profiles").select("*", { count: "exact", head: true });
-      const { count: trainers } = await supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "trainer");
-      const { count: students } = await supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "student");
-      const { count: workoutSessions } = await supabase.from("workout_sessions").select("*", { count: "exact", head: true });
-      const { count: challenges } = await supabase.from("challenges").select("*", { count: "exact", head: true });
-      const { count: posts } = await supabase.from("feed_posts").select("*", { count: "exact", head: true });
-
-      return {
-        totalUsers: totalUsers ?? 0,
-        trainers: trainers ?? 0,
-        students: students ?? 0,
-        workoutSessions: workoutSessions ?? 0,
-        challenges: challenges ?? 0,
-        posts: posts ?? 0,
+      // RPC agrega as metricas bypassando a RLS (so para admin); contar direto
+      // do client retornava ~0 porque a RLS restringe a leitura por tenant.
+      const { data, error } = await supabase.rpc("admin_platform_stats");
+      if (error) throw error;
+      return (data ?? {}) as {
+        totalUsers: number;
+        trainers: number;
+        students: number;
+        workoutSessions: number;
+        challenges: number;
+        posts: number;
       };
     },
   });
