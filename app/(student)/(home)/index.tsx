@@ -15,6 +15,7 @@ import { useAuth } from "../../../lib/auth/provider";
 import { useAcceptInvite } from "../../../hooks/mutations/useInviteMutations";
 import { useWorkoutPlans } from "../../../hooks/queries/useWorkouts";
 import { useUnreadCount } from "../../../hooks/queries/useUnreadNotifications";
+import { useCheckIns } from "../../../hooks/queries/useCheckins";
 import { BigStat, DisplayHeading, GradientCard, Logo, SectionLabel } from "../../../components/ui";
 
 function QuickAction({ icon, label, href, index }: { icon: string; label: string; href: string; index: number }) {
@@ -54,6 +55,7 @@ export default function StudentHomeScreen() {
 
   const { data: workoutPlans } = useWorkoutPlans(user?.id);
   const { data: unreadCount } = useUnreadCount(user?.id);
+  const { data: pendingCheckins } = useCheckIns(user?.id, "pending");
   const activePlan = workoutPlans?.[0];
   const daysUntilExpiry = activePlan?.ends_at
     ? Math.ceil((new Date(activePlan.ends_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
@@ -145,6 +147,29 @@ export default function StudentHomeScreen() {
             {firstName.toUpperCase()}.
           </Text>
         </Animated.View>
+
+        {/* Check-ins pendentes */}
+        {pendingCheckins && pendingCheckins.length > 0 ? (
+          <Animated.View entering={FadeInDown.delay(200).springify()} className="mb-6">
+            <Pressable
+              onPress={() => router.push(`/(student)/(home)/checkin/${pendingCheckins[0].id}` as never)}
+              className="bg-warning-500/10 border border-warning-500/30 rounded-2xl p-4 flex-row items-center gap-3 active:opacity-80"
+            >
+              <View className="w-10 h-10 bg-warning-500/15 rounded-xl items-center justify-center">
+                <Text className="text-lg">📋</Text>
+              </View>
+              <View className="flex-1">
+                <Text className="text-sm text-text-primary" style={{ fontFamily: "Nunito_700Bold" }}>
+                  {pendingCheckins.length} check-in{pendingCheckins.length > 1 ? "s" : ""} pendente{pendingCheckins.length > 1 ? "s" : ""}
+                </Text>
+                <Text className="text-xs text-text-muted mt-0.5" style={{ fontFamily: "Nunito_400Regular" }}>
+                  {pendingCheckins[0].template?.title ?? "Responda para seu personal acompanhar"}
+                </Text>
+              </View>
+              <Text className="text-warning-500 text-sm" style={{ fontFamily: "Nunito_700Bold" }}>Responder →</Text>
+            </Pressable>
+          </Animated.View>
+        ) : null}
 
         {/* Invite — brief, compact */}
         {!inviteSuccess ? (
