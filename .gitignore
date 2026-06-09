@@ -45,3 +45,6 @@ yarn-error.*
 .claude/
 Obsidian Vault/
 supabase/.temp/
+
+# doc antigo (local)
+CODE_REVIEW.md
