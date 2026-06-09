@@ -14,6 +14,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import { useAuth } from "../../lib/auth/provider";
 import { DisplayHeading, Logo } from "../../components/ui";
+import { amethystGlow, font } from "../../lib/design/tokens";
 
 export default function LoginScreen() {
   const { signIn } = useAuth();
@@ -64,20 +65,12 @@ export default function LoginScreen() {
             </DisplayHeading>
           </Animated.View>
           <Animated.View entering={FadeInDown.delay(200).springify()} className="items-center mb-12">
+            <DisplayHeading size="2xl" tone="primary">
+              Academia.
+            </DisplayHeading>
             <Text
-              className="text-text-primary"
-              style={{
-                fontFamily: "Nunito_900Black",
-                fontSize: 44,
-                lineHeight: 44,
-                letterSpacing: -2,
-              }}
-            >
-              TREINO.
-            </Text>
-            <Text
-              className="text-fuchsia-400 mt-3"
-              style={{ fontFamily: "Nunito_700Bold", fontSize: 10, letterSpacing: 3 }}
+              className="text-fuchsia-400 mt-2"
+              style={{ fontFamily: font.semibold, fontSize: 10, letterSpacing: 3 }}
             >
               ROYAL AMETHYST · EST. 2026
             </Text>
@@ -89,7 +82,7 @@ export default function LoginScreen() {
               entering={FadeIn.duration(200)}
               className="bg-danger-500/10 border border-danger-500/20 rounded-2xl p-4 mb-5"
             >
-              <Text className="text-danger-500 text-center text-sm" style={{ fontFamily: "Nunito_500Medium" }}>
+              <Text className="text-danger-500 text-center text-sm" style={{ fontFamily: font.medium }}>
                 {error}
               </Text>
             </Animated.View>
@@ -99,20 +92,20 @@ export default function LoginScreen() {
           <Animated.View entering={FadeInDown.delay(280).springify()} className="gap-4">
             <View>
               <Text
-                className="text-[10px] text-text-muted mb-2 ml-1 uppercase"
-                style={{ fontFamily: "Nunito_700Bold", letterSpacing: 2 }}
+                className="text-[11px] text-text-muted mb-2 ml-0.5 uppercase"
+                style={{ fontFamily: font.semibold, letterSpacing: 1.5 }}
               >
                 Email
               </Text>
               <TextInput
-                className={`rounded-2xl px-5 py-4 text-base text-text-primary ${
+                className={`rounded-2xl px-4 py-3.5 text-[15px] text-text-primary ${
                   focusedField === "email"
-                    ? "bg-surface-elevated border-2 border-violet-500/50"
-                    : "bg-surface-card border-2 border-surface-border"
+                    ? "bg-surface-elevated border border-violet-400/80"
+                    : "bg-surface-card/80 border border-surface-border"
                 }`}
-                style={{ fontFamily: "Nunito_500Medium" }}
+                style={{ fontFamily: font.regular }}
                 placeholder="seu@email.com"
-                placeholderTextColor="#6E6580"
+                placeholderTextColor="#6E6382"
                 value={email}
                 onChangeText={setEmail}
                 onFocus={() => setFocusedField("email")}
@@ -125,20 +118,20 @@ export default function LoginScreen() {
 
             <View>
               <Text
-                className="text-[10px] text-text-muted mb-2 ml-1 uppercase"
-                style={{ fontFamily: "Nunito_700Bold", letterSpacing: 2 }}
+                className="text-[11px] text-text-muted mb-2 ml-0.5 uppercase"
+                style={{ fontFamily: font.semibold, letterSpacing: 1.5 }}
               >
                 Senha
               </Text>
               <TextInput
-                className={`rounded-2xl px-5 py-4 text-base text-text-primary ${
+                className={`rounded-2xl px-4 py-3.5 text-[15px] text-text-primary ${
                   focusedField === "password"
-                    ? "bg-surface-elevated border-2 border-violet-500/50"
-                    : "bg-surface-card border-2 border-surface-border"
+                    ? "bg-surface-elevated border border-violet-400/80"
+                    : "bg-surface-card/80 border border-surface-border"
                 }`}
-                style={{ fontFamily: "Nunito_500Medium" }}
+                style={{ fontFamily: font.regular }}
                 placeholder="Sua senha"
-                placeholderTextColor="#6E6580"
+                placeholderTextColor="#6E6382"
                 value={password}
                 onChangeText={setPassword}
                 onFocus={() => setFocusedField("password")}
@@ -150,7 +143,7 @@ export default function LoginScreen() {
 
             <Link href="/(auth)/forgot-password" asChild>
               <Pressable className="self-end py-1">
-                <Text className="text-text-muted text-xs" style={{ fontFamily: "Nunito_500Medium" }}>
+                <Text className="text-text-muted text-xs" style={{ fontFamily: font.medium }}>
                   Esqueceu a senha?
                 </Text>
               </Pressable>
@@ -161,21 +154,19 @@ export default function LoginScreen() {
               onPress={handleLogin}
               disabled={loading}
               className="rounded-2xl overflow-hidden mt-2"
+              style={loading ? undefined : amethystGlow}
             >
               <LinearGradient
                 colors={loading ? ["#50107D", "#86169E"] : ["#781BB6", "#C636E0"]}
                 start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={{ paddingVertical: 18, alignItems: "center" }}
+                end={{ x: 1, y: 0.9 }}
+                style={{ paddingVertical: 17, alignItems: "center" }}
               >
                 {loading ? (
                   <ActivityIndicator color="#FFFFFF" />
                 ) : (
-                  <Text
-                    className="text-white text-base"
-                    style={{ fontFamily: "Nunito_700Bold", letterSpacing: 2 }}
-                  >
-                    ENTRAR
+                  <Text className="text-white text-[15px]" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>
+                    Entrar
                   </Text>
                 )}
               </LinearGradient>
@@ -188,24 +179,18 @@ export default function LoginScreen() {
               <View className="flex-1 h-px bg-surface-border" />
               <Text
                 className="text-text-muted text-[10px] mx-4 uppercase"
-                style={{ fontFamily: "Nunito_700Bold", letterSpacing: 2 }}
+                style={{ fontFamily: font.semibold, letterSpacing: 2 }}
               >
                 ou
               </Text>
               <View className="flex-1 h-px bg-surface-border" />
             </View>
-            <Text
-              className="text-text-muted text-sm text-center"
-              style={{ fontFamily: "Nunito_400Regular" }}
-            >
+            <Text className="text-text-muted text-sm text-center" style={{ fontFamily: font.regular }}>
               Novo por aqui?
             </Text>
             <Link href="/(auth)/register" asChild>
               <Pressable className="mt-2 py-1">
-                <Text
-                  className="text-fuchsia-400 text-sm text-center"
-                  style={{ fontFamily: "Nunito_700Bold" }}
-                >
+                <Text className="text-fuchsia-400 text-sm text-center" style={{ fontFamily: font.semibold }}>
                   Criar conta →
                 </Text>
               </Pressable>

@@ -27,6 +27,7 @@ import {
 import { AuthProvider } from "../lib/auth/provider";
 import { LoadingScreen } from "../components/ui/LoadingScreen";
 import { useNotificationObserver } from "../lib/notifications/useNotificationObserver";
+import { font } from "../lib/design/tokens";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -46,17 +47,17 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
     <SafeAreaProvider>
       <SafeAreaView className="flex-1 bg-dark-400 items-center justify-center px-8">
         <View className="items-center max-w-[420px] w-full">
-          <Text className="text-2xl font-black text-text-primary text-center" style={{ fontFamily: "Nunito_900Black" }}>
+          <Text className="text-text-primary text-center" style={{ fontFamily: font.display, fontSize: 34, letterSpacing: -0.4 }}>
             Algo deu errado
           </Text>
-          <Text className="text-sm text-text-secondary text-center mt-3 mb-6" style={{ fontFamily: "Nunito_400Regular" }}>
+          <Text className="text-sm text-text-secondary text-center mt-3 mb-6" style={{ fontFamily: font.regular }}>
             Tivemos um problema ao carregar esta tela. Tente novamente.
           </Text>
           {__DEV__ ? (
             <Text className="text-xs text-danger-500 text-center mb-6">{error.message}</Text>
           ) : null}
           <Pressable onPress={retry} className="bg-violet-500 rounded-2xl px-6 py-3">
-            <Text className="text-white font-bold text-sm" style={{ fontFamily: "Nunito_700Bold" }}>
+            <Text className="text-white text-sm" style={{ fontFamily: font.semibold }}>
               Tentar novamente
             </Text>
           </Pressable>

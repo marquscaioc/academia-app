@@ -1,12 +1,13 @@
 import { router } from "expo-router";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { font } from "../lib/design/tokens";
 
 function P({ children }: { children: React.ReactNode }) {
-  return <Text className="text-sm text-text-secondary leading-6 mb-3" style={{ fontFamily: "Nunito_400Regular" }}>{children}</Text>;
+  return <Text className="text-sm text-text-secondary leading-6 mb-3" style={{ fontFamily: font.regular }}>{children}</Text>;
 }
 function H({ children }: { children: React.ReactNode }) {
-  return <Text className="text-base font-black text-text-primary mt-5 mb-2" style={{ fontFamily: "Nunito_700Bold" }}>{children}</Text>;
+  return <Text className="text-xl text-text-primary mt-6 mb-2" style={{ fontFamily: font.display, letterSpacing: -0.2 }}>{children}</Text>;
 }
 
 export default function TermsScreen() {
@@ -16,11 +17,13 @@ export default function TermsScreen() {
         <Pressable onPress={() => router.back()} className="mb-4">
           <Text className="text-violet-400 font-medium text-sm">← Voltar</Text>
         </Pressable>
-        <Text className="text-2xl font-black text-text-primary mb-1">Termos de Uso</Text>
-        <Text className="text-xs text-text-muted mb-4">Academia App · Última atualização: a definir</Text>
+        <Text className="text-4xl text-text-primary mb-1" style={{ fontFamily: font.display, letterSpacing: -0.4 }}>
+          Termos de Uso
+        </Text>
+        <Text className="text-xs text-text-muted mb-4" style={{ fontFamily: font.regular }}>Academia · Última atualização: a definir</Text>
 
-        <View className="bg-warning-500/10 border border-warning-500/30 rounded-xl p-3 mb-4">
-          <Text className="text-xs text-warning-500" style={{ fontFamily: "Nunito_600SemiBold" }}>
+        <View className="bg-warning-500/10 border border-warning-500/30 rounded-2xl p-3.5 mb-4">
+          <Text className="text-xs text-warning-500" style={{ fontFamily: font.semibold }}>
             RASCUNHO — substituir pelo texto final revisado juridicamente antes do lançamento.
           </Text>
         </View>
