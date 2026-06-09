@@ -7,18 +7,19 @@ interface CardProps {
   className?: string;
 }
 
-export function Card({ children, onPress, variant = "default", className = "" }: CardProps) {
-  const variantStyles = {
-    default: "bg-surface-card rounded-2xl p-5",
-    elevated: "bg-surface-elevated rounded-2xl p-5",
-    outlined: "bg-surface-card border border-surface-border rounded-2xl p-5",
-  };
+// Editorial Amethyst: hairline-defined surfaces, generous radius, quiet depth.
+const variantStyles = {
+  default: "bg-surface-card border border-surface-border/70 rounded-3xl p-5",
+  elevated: "bg-surface-elevated border border-surface-border rounded-3xl p-5",
+  outlined: "bg-transparent border border-surface-border rounded-3xl p-5",
+};
 
+export function Card({ children, onPress, variant = "default", className = "" }: CardProps) {
   const style = `${variantStyles[variant]} ${className}`;
 
   if (onPress) {
     return (
-      <Pressable onPress={onPress} className={`${style} active:bg-surface-hover`}>
+      <Pressable onPress={onPress} className={`${style} active:bg-surface-hover active:border-violet-500/40`}>
         {children}
       </Pressable>
     );

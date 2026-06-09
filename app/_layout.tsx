@@ -13,6 +13,17 @@ import {
   Nunito_700Bold,
   Nunito_900Black,
 } from "@expo-google-fonts/nunito";
+import {
+  InstrumentSerif_400Regular,
+  InstrumentSerif_400Regular_Italic,
+} from "@expo-google-fonts/instrument-serif";
+import {
+  DMSans_400Regular,
+  DMSans_500Medium,
+  DMSans_600SemiBold,
+  DMSans_700Bold,
+  DMSans_900Black,
+} from "@expo-google-fonts/dm-sans";
 import { AuthProvider } from "../lib/auth/provider";
 import { LoadingScreen } from "../components/ui/LoadingScreen";
 import { useNotificationObserver } from "../lib/notifications/useNotificationObserver";
@@ -57,6 +68,16 @@ export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
+    // Editorial display
+    InstrumentSerif_400Regular,
+    InstrumentSerif_400Regular_Italic,
+    // Body / UI
+    DMSans_400Regular,
+    DMSans_500Medium,
+    DMSans_600SemiBold,
+    DMSans_700Bold,
+    DMSans_900Black,
+    // Legacy (screens not yet migrated to the new system)
     Nunito_400Regular,
     Nunito_400Regular_Italic,
     Nunito_500Medium,

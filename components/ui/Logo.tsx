@@ -1,5 +1,6 @@
 import { Image } from "expo-image";
 import { Text, View } from "react-native";
+import { font } from "../../lib/design/tokens";
 
 const LOGO_SRC = require("../../assets/logosemfundo.png");
 
@@ -40,21 +41,21 @@ export function Logo({ size = "md", withWordmark = false, wordmarkTone = "primar
         <Text
           className={wordmarkTone === "primary" ? "text-text-primary" : "text-text-muted"}
           style={{
-            fontFamily: "Nunito_900Black",
-            fontSize: dim * 0.55,
-            lineHeight: dim * 0.6,
-            letterSpacing: -0.8,
+            fontFamily: font.display,
+            fontSize: dim * 0.62,
+            lineHeight: dim * 0.64,
+            letterSpacing: -0.5,
           }}
         >
-          TREINO
+          Academia
         </Text>
         <Text
           className="text-fuchsia-400"
           style={{
-            fontFamily: "Nunito_700Bold",
-            fontSize: Math.max(8, dim * 0.18),
+            fontFamily: font.semibold,
+            fontSize: Math.max(8, dim * 0.16),
             letterSpacing: 3,
-            marginTop: -2,
+            marginTop: 1,
           }}
         >
           ROYAL AMETHYST
