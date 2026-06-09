@@ -67,11 +67,6 @@ export default function SocialFeedScreen() {
     setShowComposer(false);
   };
 
-  const handleLike = (postId: string) => {
-    if (!user) return;
-    toggleReaction.mutate({ post_id: postId, user_id: user.id, reaction_type: "like" });
-  };
-
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
       {/* Header */}
@@ -194,7 +189,13 @@ export default function SocialFeedScreen() {
               likesCount={item.likes_count}
               commentsCount={item.comments_count}
               createdAt={item.created_at}
-              onLike={() => handleLike(item.id)}
+              reactions={["like", "fire", "strong", "clap"].map((type) => ({
+                type,
+                active: item.my_reaction === type,
+                onPress: () => {
+                  if (user) toggleReaction.mutate({ post_id: item.id, user_id: user.id, reaction_type: type });
+                },
+              }))}
               onProfile={() => router.push(`/profile/${item.author_id}`)}
             />
           )}

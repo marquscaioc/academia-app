@@ -1,9 +1,11 @@
 import { router } from "expo-router";
-import { ActivityIndicator, FlatList, Pressable, Text, View } from "react-native";
+import { useState } from "react";
+import { ActivityIndicator, FlatList, Pressable, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../../../lib/auth/provider";
 import { supabase } from "../../../lib/supabase/client";
+import { useReviewCheckIn } from "../../../hooks/mutations/useCheckinMutations";
 import { Avatar } from "../../../components/ui/Avatar";
 
 interface CheckInWithDetails {
@@ -21,6 +23,8 @@ interface CheckInWithDetails {
 
 export default function CheckInResponsesScreen() {
   const { user } = useAuth();
+  const reviewCheckIn = useReviewCheckIn();
+  const [notes, setNotes] = useState<Record<string, string>>({});
 
   const { data: checkIns, isLoading } = useQuery({
     queryKey: ["trainer", "checkin-responses", user?.id],
@@ -118,6 +122,32 @@ export default function CheckInResponsesScreen() {
                           ) : null}
                         </View>
                       ))}
+                    </View>
+                  ) : null}
+
+                  {/* Revisão do coach */}
+                  {item.status === "submitted" ? (
+                    <View className="mt-3">
+                      <TextInput
+                        className="bg-dark-300 border border-surface-border rounded-xl px-4 py-3 text-sm text-text-primary"
+                        placeholder="Feedback para o aluno (opcional)"
+                        placeholderTextColor="#6E6580"
+                        value={notes[item.id] ?? ""}
+                        onChangeText={(t) => setNotes((n) => ({ ...n, [item.id]: t }))}
+                        multiline
+                      />
+                      <Pressable
+                        onPress={() => reviewCheckIn.mutate({ check_in_id: item.id, trainer_notes: notes[item.id]?.trim() || undefined })}
+                        disabled={reviewCheckIn.isPending}
+                        className="bg-success-500 rounded-xl py-2.5 items-center mt-2 active:bg-success-600"
+                      >
+                        <Text className="text-white font-black text-xs">Marcar como revisado</Text>
+                      </Pressable>
+                    </View>
+                  ) : item.status === "reviewed" && item.trainer_notes ? (
+                    <View className="mt-3 bg-success-500/5 border border-success-500/20 rounded-xl p-3">
+                      <Text className="text-[10px] text-success-500 font-bold uppercase mb-1">Feedback do coach</Text>
+                      <Text className="text-sm text-text-secondary">{item.trainer_notes}</Text>
                     </View>
                   ) : null}
 

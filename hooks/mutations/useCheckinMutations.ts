@@ -65,6 +65,27 @@ export function useSendCheckIn() {
   });
 }
 
+export function useReviewCheckIn() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: { check_in_id: string; trainer_notes?: string }) => {
+      const { error } = await supabase
+        .from("check_ins")
+        .update({
+          status: "reviewed",
+          trainer_notes: input.trainer_notes ?? null,
+          reviewed_at: new Date().toISOString(),
+        })
+        .eq("id", input.check_in_id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["trainer", "checkin-responses"] });
+      queryClient.invalidateQueries({ queryKey: ["checkins"] });
+    },
+  });
+}
+
 export function useSubmitCheckIn() {
   const queryClient = useQueryClient();
   return useMutation({

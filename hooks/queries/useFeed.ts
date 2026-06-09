@@ -28,8 +28,9 @@ export function useFeedPosts(mode: "public" | "following" = "public", userId?: s
   return useQuery({
     queryKey: ["feed", "posts", mode, userId],
     queryFn: async () => {
+      let data: FeedPost[] = [];
+
       if (mode === "following" && userId) {
-        // Get followed user IDs
         const { data: follows } = await supabase
           .from("user_follows")
           .select("following_id")
@@ -37,24 +38,38 @@ export function useFeedPosts(mode: "public" | "following" = "public", userId?: s
         const followedIds = follows?.map((f) => f.following_id) ?? [];
         if (followedIds.length === 0) return [];
 
-        const { data, error } = await supabase
+        const { data: rows, error } = await supabase
           .from("feed_posts")
           .select("*, author:profiles!author_id(full_name, avatar_url, display_name)")
           .in("author_id", followedIds)
           .order("created_at", { ascending: false })
           .limit(50);
         if (error) throw error;
-        return data as FeedPost[];
+        data = (rows ?? []) as FeedPost[];
+      } else {
+        const { data: rows, error } = await supabase
+          .from("feed_posts")
+          .select("*, author:profiles!author_id(full_name, avatar_url, display_name)")
+          .eq("visibility", "public")
+          .order("created_at", { ascending: false })
+          .limit(50);
+        if (error) throw error;
+        data = (rows ?? []) as FeedPost[];
       }
 
-      const { data, error } = await supabase
-        .from("feed_posts")
-        .select("*, author:profiles!author_id(full_name, avatar_url, display_name)")
-        .eq("visibility", "public")
-        .order("created_at", { ascending: false })
-        .limit(50);
-      if (error) throw error;
-      return data as FeedPost[];
+      // Enriquece com a reacao do usuario atual (para destacar o botao ativo)
+      if (userId && data.length) {
+        const postIds = data.map((p) => p.id);
+        const { data: myReactions } = await supabase
+          .from("feed_reactions")
+          .select("post_id, reaction_type")
+          .eq("user_id", userId)
+          .in("post_id", postIds);
+        const map = new Map((myReactions ?? []).map((r) => [r.post_id, r.reaction_type as string]));
+        data = data.map((p) => ({ ...p, my_reaction: map.get(p.id) ?? null }));
+      }
+
+      return data;
     },
   });
 }
