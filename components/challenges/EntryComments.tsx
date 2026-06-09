@@ -3,6 +3,7 @@ import { ActivityIndicator, Pressable, Text, TextInput, View } from "react-nativ
 import { useAuth } from "../../lib/auth/provider";
 import { useEntryComments, useAddEntryComment, useDeleteEntryComment } from "../../hooks/mutations/useEntryComments";
 import { Avatar } from "../ui/Avatar";
+import { AppIcon } from "../ui";
 
 interface EntryCommentsProps {
   entryId: string;
@@ -62,7 +63,7 @@ export function EntryComments({ entryId }: EntryCommentsProps) {
                       <Text className="text-[9px] text-text-muted">{timeAgo(c.created_at)}</Text>
                       {c.author_id === user?.id ? (
                         <Pressable onPress={() => deleteComment.mutate({ id: c.id, entry_id: entryId })}>
-                          <Text className="text-danger-500 text-[9px] font-bold">✕</Text>
+                          <AppIcon name="close" size={12} color="#F43F5E" strokeWidth={2} />
                         </Pressable>
                       ) : null}
                     </View>
@@ -90,7 +91,7 @@ export function EntryComments({ entryId }: EntryCommentsProps) {
                 text.trim() ? "bg-violet-500" : "bg-surface-border"
               }`}
             >
-              <Text className={`text-xs font-bold ${text.trim() ? "text-white" : "text-text-muted"}`}>↑</Text>
+              <AppIcon name="send" size={16} color={text.trim() ? "#FFFFFF" : "#6E6382"} strokeWidth={2} />
             </Pressable>
           </View>
         </>

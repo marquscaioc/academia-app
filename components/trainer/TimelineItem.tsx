@@ -1,12 +1,13 @@
 import { Text, View } from "react-native";
 import { TimelineEvent } from "../../hooks/queries/useStudentTimeline";
+import { AppIcon, type IconName } from "../ui";
 
-const typeConfig: Record<string, { icon: string; color: string }> = {
-  workout: { icon: "🏋️", color: "bg-violet-500/15" },
-  checkin: { icon: "📋", color: "bg-ice-400/15" },
-  measurement: { icon: "📏", color: "bg-success-500/15" },
-  photo: { icon: "📸", color: "bg-warning-500/15" },
-  note: { icon: "📝", color: "bg-fuchsia-400/15" },
+const typeConfig: Record<string, { icon: IconName; color: string; iconColor: string }> = {
+  workout: { icon: "workout", color: "bg-violet-500/15", iconColor: "#8B5CF6" },
+  checkin: { icon: "clipboard", color: "bg-ice-400/15", iconColor: "#38BDF8" },
+  measurement: { icon: "ruler", color: "bg-success-500/15", iconColor: "#22C55E" },
+  photo: { icon: "camera", color: "bg-warning-500/15", iconColor: "#F59E0B" },
+  note: { icon: "notebook", color: "bg-fuchsia-400/15", iconColor: "#E879F9" },
 };
 
 interface TimelineItemProps {
@@ -24,7 +25,7 @@ export function TimelineItem({ event }: TimelineItemProps) {
       {/* Timeline line + icon */}
       <View className="items-center w-10">
         <View className={`w-10 h-10 rounded-xl items-center justify-center ${config.color}`}>
-          <Text className="text-lg">{config.icon}</Text>
+          <AppIcon name={config.icon} size={20} color={config.iconColor} strokeWidth={2} />
         </View>
         <View className="w-0.5 flex-1 bg-surface-border mt-1" />
       </View>

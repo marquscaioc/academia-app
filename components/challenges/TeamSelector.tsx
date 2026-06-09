@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Modal, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { ChallengeTeam } from "../../hooks/queries/useChallengeTeams";
+import { AppIcon } from "../ui";
 
 interface TeamSelectorProps {
   visible: boolean;
@@ -22,14 +23,14 @@ export function TeamSelector({ visible, teams, onJoinTeam, onCreateTeam, onClose
           <View className="flex-row items-center justify-between mb-5">
             <Text className="text-lg font-black text-text-primary">Escolher Equipe</Text>
             <Pressable onPress={onClose}>
-              <Text className="text-text-muted text-lg">✕</Text>
+              <AppIcon name="close" size={20} color="#6E6382" strokeWidth={2} />
             </Pressable>
           </View>
 
           {showCreate ? (
             <View className="gap-4">
               <TextInput
-                className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary"
+                className="bg-surface-card border border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary"
                 placeholder="Nome da equipe"
                 placeholderTextColor="#6E6580"
                 value={newTeamName}

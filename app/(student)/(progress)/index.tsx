@@ -6,6 +6,8 @@ import { useAuth } from "../../../lib/auth/provider";
 import { useBodyMeasurements, useProgressPhotos } from "../../../hooks/queries/useProgress";
 import { useAdherenceScore } from "../../../hooks/queries/useCheckins";
 import { Card } from "../../../components/ui/Card";
+import { AppIcon, DisplayHeading, SectionLabel } from "../../../components/ui";
+import { font } from "../../../lib/design/tokens";
 import { SimpleLineChart } from "../../../components/progress/SimpleLineChart";
 import { AdherenceRing } from "../../../components/progress/AdherenceRing";
 import { PhotoComparison } from "../../../components/progress/PhotoComparison";
@@ -47,21 +49,24 @@ export default function ProgressScreen() {
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1 px-6 pt-6">
-        <Text className="text-2xl font-black text-text-primary mb-6">Meu Progresso</Text>
+        <DisplayHeading size="xl" className="mb-6">Meu progresso.</DisplayHeading>
 
         {/* Weight + Variation cards */}
         <View className="flex-row gap-3 mb-6">
           <Card variant="outlined" className="flex-1">
-            <Text className="text-xs text-text-muted mb-1 uppercase tracking-wider font-bold">Peso atual</Text>
-            <Text className="text-2xl font-black text-text-primary">
+            <SectionLabel className="mb-1">Peso atual</SectionLabel>
+            <Text className="text-3xl text-text-primary" style={{ fontFamily: font.display, letterSpacing: -0.5 }}>
               {latestWeight ? `${latestWeight}kg` : "--"}
             </Text>
           </Card>
           <Card variant="outlined" className="flex-1">
-            <Text className="text-xs text-text-muted mb-1 uppercase tracking-wider font-bold">Variacao</Text>
-            <Text className={`text-2xl font-black ${
-              weightDiff === null ? "text-text-muted" : weightDiff <= 0 ? "text-success-500" : "text-warning-500"
-            }`}>
+            <SectionLabel className="mb-1">Variacao</SectionLabel>
+            <Text
+              className={`text-3xl ${
+                weightDiff === null ? "text-text-muted" : weightDiff <= 0 ? "text-success-500" : "text-warning-500"
+              }`}
+              style={{ fontFamily: font.display, letterSpacing: -0.5 }}
+            >
               {weightDiff !== null ? `${weightDiff > 0 ? "+" : ""}${weightDiff.toFixed(1)}kg` : "--"}
             </Text>
           </Card>
@@ -69,7 +74,7 @@ export default function ProgressScreen() {
 
         {/* Adherence rings */}
         {adherence ? (
-          <View className="flex-row justify-around mb-6 bg-surface-card border border-surface-border rounded-2xl py-6">
+          <View className="flex-row justify-around mb-6 bg-surface-card border border-surface-border rounded-3xl py-6">
             <AdherenceRing score={adherence.workoutScore} label="Treino" />
             <AdherenceRing score={adherence.checkinScore} label="Check-ins" />
             <AdherenceRing score={adherence.overallScore} label="Geral" />
@@ -80,20 +85,26 @@ export default function ProgressScreen() {
         <View className="flex-row gap-3 mb-6">
           <Link href="/(student)/(progress)/add-measurement" asChild>
             <Pressable className="flex-1 bg-surface-card border border-surface-border rounded-2xl py-4 items-center active:bg-surface-hover">
-              <Text className="text-xl mb-1">📏</Text>
-              <Text className="text-xs font-bold text-text-secondary">Registrar medidas</Text>
+              <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-2">
+                <AppIcon name="ruler" size={18} color="#9B40D8" strokeWidth={2} />
+              </View>
+              <Text className="text-xs text-text-secondary" style={{ fontFamily: font.semibold }}>Registrar medidas</Text>
             </Pressable>
           </Link>
           <Link href="/(student)/(progress)/add-photo" asChild>
             <Pressable className="flex-1 bg-surface-card border border-surface-border rounded-2xl py-4 items-center active:bg-surface-hover">
-              <Text className="text-xl mb-1">📸</Text>
-              <Text className="text-xs font-bold text-text-secondary">Tirar foto</Text>
+              <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-2">
+                <AppIcon name="camera" size={18} color="#9B40D8" strokeWidth={2} />
+              </View>
+              <Text className="text-xs text-text-secondary" style={{ fontFamily: font.semibold }}>Tirar foto</Text>
             </Pressable>
           </Link>
           <Link href="/(student)/(progress)/export-report" asChild>
             <Pressable className="flex-1 bg-surface-card border border-surface-border rounded-2xl py-4 items-center active:bg-surface-hover">
-              <Text className="text-xl mb-1">📄</Text>
-              <Text className="text-xs font-bold text-text-secondary">Exportar PDF</Text>
+              <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-2">
+                <AppIcon name="file" size={18} color="#9B40D8" strokeWidth={2} />
+              </View>
+              <Text className="text-xs text-text-secondary" style={{ fontFamily: font.semibold }}>Exportar PDF</Text>
             </Pressable>
           </Link>
         </View>
@@ -114,18 +125,21 @@ export default function ProgressScreen() {
         {achievements && achievements.length > 0 ? (
           <View className="mb-6">
             <View className="flex-row items-center justify-between mb-3">
-              <Text className="text-xs font-bold text-text-muted uppercase tracking-wider">Minhas Conquistas</Text>
+              <SectionLabel>Minhas conquistas</SectionLabel>
               <Link href="/(student)/(progress)/badges" asChild>
-                <Pressable>
-                  <Text className="text-violet-400 text-xs font-bold">Ver todas</Text>
+                <Pressable className="flex-row items-center gap-1">
+                  <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>Ver todas</Text>
+                  <AppIcon name="chevron-right" size={14} color="#9B40D8" strokeWidth={2} />
                 </Pressable>
               </Link>
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} className="gap-3">
               {achievements.slice(0, 5).map((a) => (
                 <View key={a.id} className="bg-violet-500/10 border border-violet-500/30 rounded-2xl px-4 py-3 items-center mr-3" style={{ minWidth: 80 }}>
-                  <Text className="text-2xl mb-1">🏆</Text>
-                  <Text className="text-[10px] font-bold text-text-primary text-center" numberOfLines={1}>
+                  <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-2">
+                    <AppIcon name="trophy" size={18} color="#C636E0" strokeWidth={2} />
+                  </View>
+                  <Text className="text-[10px] text-text-primary text-center" style={{ fontFamily: font.semibold }} numberOfLines={1}>
                     {a.achievement?.name ?? "Conquista"}
                   </Text>
                 </View>
@@ -137,7 +151,7 @@ export default function ProgressScreen() {
         {/* Check-in score chart */}
         {checkinHistory && checkinHistory.length > 0 ? (
           <View className="mb-6">
-            <Text className="text-xs font-bold text-text-muted mb-3 uppercase tracking-wider">Score de Check-in</Text>
+            <SectionLabel className="mb-3">Score de check-in</SectionLabel>
             <Card variant="outlined">
               <CheckinScoreChart data={checkinHistory} />
             </Card>
@@ -146,22 +160,27 @@ export default function ProgressScreen() {
 
         {/* Recent measurements */}
         <View className="mb-6">
-          <Text className="text-xs font-bold text-text-muted mb-3 uppercase tracking-wider">Medidas recentes</Text>
+          <SectionLabel className="mb-3">Medidas recentes</SectionLabel>
           {!measurements?.length ? (
             <Card variant="outlined">
-              <Text className="text-sm text-text-muted text-center">Nenhuma medida registrada.</Text>
+              <View className="items-center py-4">
+                <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-3">
+                  <AppIcon name="ruler" size={28} color="#9B40D8" strokeWidth={2} />
+                </View>
+                <Text className="text-sm text-text-muted text-center" style={{ fontFamily: font.regular }}>Nenhuma medida registrada.</Text>
+              </View>
             </Card>
           ) : (
             <View className="gap-2">
               {measurements.slice(0, 5).map((m) => (
                 <Card key={m.id} variant="outlined">
                   <View className="flex-row justify-between items-center">
-                    <Text className="text-sm font-medium text-text-secondary">
+                    <Text className="text-sm text-text-secondary" style={{ fontFamily: font.medium }}>
                       {new Date(m.measured_at).toLocaleDateString("pt-BR")}
                     </Text>
                     <View className="flex-row gap-4">
-                      {m.weight_kg ? <Text className="text-sm text-text-primary font-black">{m.weight_kg}kg</Text> : null}
-                      {m.body_fat_pct ? <Text className="text-sm text-text-muted">{m.body_fat_pct}%BF</Text> : null}
+                      {m.weight_kg ? <Text className="text-sm text-text-primary" style={{ fontFamily: font.bold }}>{m.weight_kg}kg</Text> : null}
+                      {m.body_fat_pct ? <Text className="text-sm text-text-muted" style={{ fontFamily: font.regular }}>{m.body_fat_pct}%BF</Text> : null}
                     </View>
                   </View>
                 </Card>
@@ -173,7 +192,7 @@ export default function ProgressScreen() {
         {/* Before/After comparison */}
         {photos && photos.length >= 2 ? (
           <View className="mb-6">
-            <Text className="text-xs font-bold text-text-muted mb-3 uppercase tracking-wider">Comparativo</Text>
+            <SectionLabel className="mb-3">Comparativo</SectionLabel>
             <PhotoComparison
               beforeUrl={photoSigned[photos[photos.length - 1].photo_url] ?? ""}
               afterUrl={photoSigned[photos[0].photo_url] ?? ""}
@@ -185,10 +204,15 @@ export default function ProgressScreen() {
 
         {/* Progress photos */}
         <View className="mb-10">
-          <Text className="text-xs font-bold text-text-muted mb-3 uppercase tracking-wider">Fotos de progresso</Text>
+          <SectionLabel className="mb-3">Fotos de progresso</SectionLabel>
           {!photos?.length ? (
             <Card variant="outlined">
-              <Text className="text-sm text-text-muted text-center">Nenhuma foto ainda.</Text>
+              <View className="items-center py-4">
+                <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-3">
+                  <AppIcon name="camera" size={28} color="#9B40D8" strokeWidth={2} />
+                </View>
+                <Text className="text-sm text-text-muted text-center" style={{ fontFamily: font.regular }}>Nenhuma foto ainda.</Text>
+              </View>
             </Card>
           ) : (
             <View className="flex-row flex-wrap gap-2">
@@ -199,7 +223,7 @@ export default function ProgressScreen() {
                     style={{ width: "100%", height: "100%", borderRadius: 12 }}
                     contentFit="cover"
                   />
-                  <Text className="text-[10px] text-text-muted text-center mt-1">
+                  <Text className="text-[10px] text-text-muted text-center mt-1" style={{ fontFamily: font.regular }}>
                     {new Date(photo.taken_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })}
                   </Text>
                 </View>

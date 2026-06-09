@@ -14,7 +14,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import { useAuth } from "../../lib/auth/provider";
-import { Logo } from "../../components/ui";
+import { AppIcon, DisplayHeading, Logo } from "../../components/ui";
+import { amethystGlow, font } from "../../lib/design/tokens";
 
 export default function RegisterScreen() {
   const { signUp } = useAuth();
@@ -25,6 +26,7 @@ export default function RegisterScreen() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
+  const [accepted, setAccepted] = useState(false);
 
   const handleRegister = async () => {
     if (!fullName || !email || !password || !confirmPassword) {
@@ -37,6 +39,10 @@ export default function RegisterScreen() {
     }
     if (password !== confirmPassword) {
       setError("As senhas nao conferem");
+      return;
+    }
+    if (!accepted) {
+      setError("Você precisa aceitar os Termos e a Política de Privacidade");
       return;
     }
     setError("");
@@ -52,10 +58,10 @@ export default function RegisterScreen() {
   };
 
   const inputClass = (field: string) =>
-    `rounded-2xl px-5 py-4 text-base text-text-primary ${
+    `rounded-2xl px-4 py-3.5 text-[15px] text-text-primary ${
       focusedField === field
-        ? "bg-surface-elevated border-2 border-violet-500/50"
-        : "bg-surface-card border-2 border-surface-border"
+        ? "bg-surface-elevated border border-violet-400/80"
+        : "bg-surface-card/80 border border-surface-border"
     }`;
 
   return (
@@ -92,26 +98,15 @@ export default function RegisterScreen() {
             <Logo size="sm" />
           </Animated.View>
           <Animated.View entering={FadeInDown.delay(80).springify()} className="mb-10">
-            <Text
-              className="text-text-muted"
-              style={{ fontFamily: "Nunito_400Regular_Italic", fontSize: 28, letterSpacing: -0.5 }}
-            >
+            <DisplayHeading size="md" italic tone="muted">
               Comece sua
-            </Text>
-            <Text
-              className="text-text-primary mt-1"
-              style={{
-                fontFamily: "Nunito_900Black",
-                fontSize: 44,
-                lineHeight: 44,
-                letterSpacing: -2,
-              }}
-            >
-              JORNADA.
-            </Text>
+            </DisplayHeading>
+            <DisplayHeading size="2xl" tone="primary" className="mt-0.5">
+              Jornada.
+            </DisplayHeading>
             <Text
               className="text-fuchsia-400 mt-3"
-              style={{ fontFamily: "Nunito_700Bold", fontSize: 10, letterSpacing: 3 }}
+              style={{ fontFamily: font.semibold, fontSize: 10, letterSpacing: 3 }}
             >
               CADASTRO · ROYAL AMETHYST
             </Text>
@@ -131,7 +126,8 @@ export default function RegisterScreen() {
               <TextInput
                 className={inputClass("name")}
                 placeholder="Seu nome"
-                placeholderTextColor="#6E6580"
+                placeholderTextColor="#6E6382"
+                style={{ fontFamily: font.regular }}
                 value={fullName}
                 onChangeText={setFullName}
                 onFocus={() => setFocusedField("name")}
@@ -147,7 +143,8 @@ export default function RegisterScreen() {
               <TextInput
                 className={inputClass("email")}
                 placeholder="seu@email.com"
-                placeholderTextColor="#6E6580"
+                placeholderTextColor="#6E6382"
+                style={{ fontFamily: font.regular }}
                 value={email}
                 onChangeText={setEmail}
                 onFocus={() => setFocusedField("email")}
@@ -165,7 +162,8 @@ export default function RegisterScreen() {
               <TextInput
                 className={inputClass("password")}
                 placeholder="Minimo 6 caracteres"
-                placeholderTextColor="#6E6580"
+                placeholderTextColor="#6E6382"
+                style={{ fontFamily: font.regular }}
                 value={password}
                 onChangeText={setPassword}
                 onFocus={() => setFocusedField("password")}
@@ -182,7 +180,8 @@ export default function RegisterScreen() {
               <TextInput
                 className={inputClass("confirm")}
                 placeholder="Repita a senha"
-                placeholderTextColor="#6E6580"
+                placeholderTextColor="#6E6382"
+                style={{ fontFamily: font.regular }}
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
                 onFocus={() => setFocusedField("confirm")}
@@ -193,24 +192,46 @@ export default function RegisterScreen() {
             </View>
 
             <Pressable
+              onPress={() => setAccepted((v) => !v)}
+              className="flex-row items-start gap-3 mt-1 px-1"
+            >
+              <View
+                className={`w-5 h-5 rounded-md border-2 items-center justify-center mt-0.5 ${
+                  accepted ? "bg-violet-500 border-violet-500" : "border-surface-border"
+                }`}
+              >
+                {accepted ? <AppIcon name="check" size={12} color="#FFFFFF" strokeWidth={3} /> : null}
+              </View>
+              <Text className="flex-1 text-text-muted text-xs leading-5">
+                Li e aceito os{" "}
+                <Link href="/termos" asChild>
+                  <Text className="text-violet-300 font-bold">Termos de Uso</Text>
+                </Link>{" "}
+                e a{" "}
+                <Link href="/privacidade" asChild>
+                  <Text className="text-violet-300 font-bold">Política de Privacidade</Text>
+                </Link>
+                , e declaro ter 16 anos ou mais.
+              </Text>
+            </Pressable>
+
+            <Pressable
               onPress={handleRegister}
               disabled={loading}
               className="rounded-2xl overflow-hidden mt-3"
+              style={loading ? undefined : amethystGlow}
             >
               <LinearGradient
                 colors={loading ? ["#50107D", "#86169E"] : ["#781BB6", "#C636E0"]}
                 start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={{ paddingVertical: 18, alignItems: "center" }}
+                end={{ x: 1, y: 0.9 }}
+                style={{ paddingVertical: 17, alignItems: "center" }}
               >
                 {loading ? (
                   <ActivityIndicator color="#FFFFFF" />
                 ) : (
-                  <Text
-                    className="text-white text-base"
-                    style={{ fontFamily: "Nunito_700Bold", letterSpacing: 2 }}
-                  >
-                    CRIAR CONTA
+                  <Text className="text-white text-[15px]" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>
+                    Criar conta
                   </Text>
                 )}
               </LinearGradient>

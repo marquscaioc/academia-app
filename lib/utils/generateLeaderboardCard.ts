@@ -54,7 +54,7 @@ export function generateLeaderboardHtml(data: LeaderboardCardData): string {
   <div class="subtitle">Ranking</div>
   ${rows}
   ${userRow}
-  <div class="footer">Academia App</div>
+  <div class="footer">Projeto Gaab</div>
 </body></html>`;
 }
 

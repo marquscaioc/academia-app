@@ -145,7 +145,7 @@ export function generateProgressHtml(data: ProgressReportData): string {
   <div class="photo-grid">${photoGrid}</div>` : ""}
 
   <div class="footer">
-    Gerado por Academia App em ${new Date().toLocaleDateString("pt-BR")}
+    Gerado por Projeto Gaab em ${new Date().toLocaleDateString("pt-BR")}
   </div>
 </body>
 </html>`;

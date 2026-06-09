@@ -7,6 +7,8 @@ import { useAuth } from "../../../lib/auth/provider";
 import { useCourses } from "../../../hooks/queries/useCourses";
 import { useCreateCourse, useTogglePublishCourse } from "../../../hooks/mutations/useCourseMutations";
 import { EmptyState } from "../../../components/ui/EmptyState";
+import { AppIcon } from "../../../components/ui";
+import { font } from "../../../lib/design/tokens";
 
 export default function TrainerCoursesScreen() {
   const { user } = useAuth();
@@ -33,43 +35,49 @@ export default function TrainerCoursesScreen() {
     <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1 px-6 pt-6">
         <View className="flex-row items-center justify-between mb-4">
-          <Pressable onPress={() => router.back()}>
-            <Text className="text-text-muted font-medium text-sm">← Voltar</Text>
+          <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5">
+            <AppIcon name="chevron-left" size={18} color="#6E6382" strokeWidth={2} />
+            <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>Voltar</Text>
           </Pressable>
-          <Text className="text-2xl font-black text-text-primary">Aulas</Text>
-          <Pressable onPress={() => setShowNew(!showNew)} className="bg-violet-500 px-3 py-1.5 rounded-xl">
-            <Text className="text-white font-black text-xs">+ Curso</Text>
+          <View className="items-center">
+            <Text className="text-text-muted uppercase mb-0.5" style={{ fontFamily: font.semibold, fontSize: 10, letterSpacing: 2 }}>Conteudo</Text>
+            <Text className="text-2xl text-text-primary" style={{ fontFamily: font.display }}>Aulas</Text>
+          </View>
+          <Pressable onPress={() => setShowNew(!showNew)} className="flex-row items-center gap-1.5 bg-violet-500 px-3 py-1.5 rounded-xl">
+            <AppIcon name="plus" size={16} color="#FFFFFF" strokeWidth={2} />
+            <Text className="text-white text-xs" style={{ fontFamily: font.bold }}>Curso</Text>
           </Pressable>
         </View>
 
         {showNew ? (
-          <View className="bg-surface-card border border-violet-500/30 rounded-2xl p-5 mb-4">
-            <Text className="text-xs font-bold text-violet-400 mb-3 uppercase tracking-wider">Novo Curso</Text>
+          <View className="bg-surface-card border border-surface-border rounded-3xl p-5 mb-4">
+            <Text className="text-violet-400 mb-3 uppercase" style={{ fontFamily: font.semibold, fontSize: 11, letterSpacing: 2 }}>Novo curso</Text>
             <TextInput
-              className="bg-dark-300 border border-surface-border rounded-xl px-4 py-3 text-sm text-text-primary mb-3"
+              className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary mb-3"
               placeholder="Titulo do curso"
-              placeholderTextColor="#6E6580"
+              placeholderTextColor="#6E6382"
               value={title}
               onChangeText={setTitle}
+              style={{ fontFamily: font.regular }}
             />
             <TextInput
-              className="bg-dark-300 border border-surface-border rounded-xl px-4 py-3 text-sm text-text-primary mb-3"
+              className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary mb-3"
               placeholder="Descricao"
-              placeholderTextColor="#6E6580"
+              placeholderTextColor="#6E6382"
               value={description}
               onChangeText={setDescription}
               multiline
-              style={{ minHeight: 60, textAlignVertical: "top" }}
+              style={{ minHeight: 60, textAlignVertical: "top", fontFamily: font.regular }}
             />
             <Pressable
               onPress={handleCreate}
               disabled={!title.trim() || create.isPending}
-              className={`rounded-xl py-3 items-center ${title.trim() ? "bg-violet-500" : "bg-surface-border"}`}
+              className={`rounded-2xl py-3 items-center ${title.trim() ? "bg-violet-500" : "bg-surface-border"}`}
             >
               {create.isPending ? (
                 <ActivityIndicator color="#fff" size="small" />
               ) : (
-                <Text className={`font-black text-sm ${title.trim() ? "text-white" : "text-text-muted"}`}>Criar Curso</Text>
+                <Text className={`text-sm ${title.trim() ? "text-white" : "text-text-muted"}`} style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Criar curso</Text>
               )}
             </Pressable>
           </View>
@@ -79,7 +87,7 @@ export default function TrainerCoursesScreen() {
           <View className="items-center py-10"><ActivityIndicator size="large" color="#781BB6" /></View>
         ) : !courses?.length ? (
           <EmptyState
-            icon="🎓"
+            iconName="courses"
             title="Nenhum curso ainda"
             description="Crie cursos com videoaulas para seus alunos assistirem. Inclua tecnicas, dicas de execucao, ou conteudo teorico."
           />
@@ -93,28 +101,31 @@ export default function TrainerCoursesScreen() {
               >
                 <View className="flex-row items-start gap-4">
                   {c.cover_url ? (
-                    <Image source={{ uri: c.cover_url }} style={{ width: 64, height: 64, borderRadius: 12 }} contentFit="cover" />
+                    <Image source={{ uri: c.cover_url }} style={{ width: 64, height: 64, borderRadius: 16 }} contentFit="cover" />
                   ) : (
-                    <View className="w-16 h-16 bg-surface-elevated rounded-xl items-center justify-center">
-                      <Text className="text-2xl">🎓</Text>
+                    <View className="w-16 h-16 bg-violet-500/15 border border-violet-500/25 rounded-2xl items-center justify-center">
+                      <AppIcon name="courses" size={24} color="#9B40D8" strokeWidth={2} />
                     </View>
                   )}
                   <View className="flex-1">
                     <View className="flex-row items-center gap-2 mb-1">
-                      <Text className="text-base font-bold text-text-primary flex-1">{c.title}</Text>
+                      <Text className="text-base text-text-primary flex-1" style={{ fontFamily: font.semibold }}>{c.title}</Text>
                       <View className={`px-2 py-1 rounded-full ${c.is_published ? "bg-success-500/15" : "bg-surface-elevated"}`}>
-                        <Text className={`text-[10px] font-bold ${c.is_published ? "text-success-500" : "text-text-muted"}`}>
+                        <Text className={`text-[10px] ${c.is_published ? "text-success-500" : "text-text-muted"}`} style={{ fontFamily: font.bold }}>
                           {c.is_published ? "Publicado" : "Rascunho"}
                         </Text>
                       </View>
                     </View>
                     {c.description ? (
-                      <Text className="text-xs text-text-muted mb-2" numberOfLines={2}>{c.description}</Text>
+                      <Text className="text-xs text-text-muted mb-2" numberOfLines={2} style={{ fontFamily: font.regular }}>{c.description}</Text>
                     ) : null}
                     <View className="flex-row items-center justify-between">
-                      <Text className="text-xs text-text-muted">
-                        {c.lessons?.length ?? 0} aula{(c.lessons?.length ?? 0) !== 1 ? "s" : ""}
-                      </Text>
+                      <View className="flex-row items-center gap-1.5">
+                        <AppIcon name="video" size={14} color="#6E6382" strokeWidth={2} />
+                        <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>
+                          {c.lessons?.length ?? 0} aula{(c.lessons?.length ?? 0) !== 1 ? "s" : ""}
+                        </Text>
+                      </View>
                       <Pressable
                         onPress={(e) => {
                           e.stopPropagation();
@@ -122,7 +133,7 @@ export default function TrainerCoursesScreen() {
                         }}
                         className="bg-violet-500/10 px-3 py-1 rounded-lg"
                       >
-                        <Text className="text-violet-400 text-xs font-bold">
+                        <Text className="text-violet-400 text-xs" style={{ fontFamily: font.bold }}>
                           {c.is_published ? "Despublicar" : "Publicar"}
                         </Text>
                       </Pressable>

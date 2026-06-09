@@ -59,7 +59,7 @@ Deno.serve(async (req) => {
     const name = profile.full_name?.split(" ")[0] ?? "Atleta";
 
     const templates: Record<string, string> = {
-      welcome: `Oi ${name}! 👋\n\nBem-vindo ao Academia App! Aqui voce vai receber lembretes de treino, check-ins e novidades.\n\n💪 Bora comecar!`,
+      welcome: `Oi ${name}! 👋\n\nBem-vindo ao Projeto Gaab! Aqui voce vai receber lembretes de treino, check-ins e novidades.\n\n💪 Bora comecar!`,
       checkin_reminder: `Oi ${name}! 📋\n\nSeu check-in esta pendente. Responda pelo app para seu personal acompanhar seu progresso.\n\n👉 Acesse o app agora!`,
       daily_workout: `Bom dia ${name}! 💪\n\nVoce tem treino programado para hoje. Bora comecar?\n\n🏋️ Abra o app e veja seu treino!`,
       plan_expiring: `${name}, atencao! ⚠️\n\nSeu plano ${payload.params?.planName ? `"${payload.params.planName}" ` : ""}expira em breve!\n\nConverse com seu personal para renovar.`,

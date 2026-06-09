@@ -1,12 +1,13 @@
 {
   "expo": {
-    "name": "Academia App",
+    "name": "Projeto Gaab",
     "slug": "academia-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
+    "runtimeVersion": { "policy": "appVersion" },
     "scheme": "academia-app",
     "splash": {
       "image": "./assets/splash-icon.png",
@@ -34,7 +35,25 @@
       "expo-router",
       "expo-secure-store",
       "expo-font",
-      "expo-notifications"
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "O Projeto Gaab usa a câmera para check-ins de desafio e fotos de progresso.",
+          "microphonePermission": "O Projeto Gaab usa o microfone ao gravar vídeos curtos."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "O Projeto Gaab acessa suas fotos para avatar, feed, progresso e dieta."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#781BB6"
+        }
+      ]
     ]
   }
 }

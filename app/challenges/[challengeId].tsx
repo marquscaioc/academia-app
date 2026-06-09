@@ -1,6 +1,7 @@
 import { useLocalSearchParams, router } from "expo-router";
 import { ActivityIndicator, Alert, FlatList, Modal, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../lib/auth/provider";
 import { useChallengeDetail, useLeaderboard, useChallengeEntries, useMyParticipation } from "../../hooks/queries/useChallenges";
@@ -19,11 +20,14 @@ import { PhotoCaptureModal } from "../../components/challenges/PhotoCaptureModal
 import { PointRuleSelector } from "../../components/challenges/PointRuleSelector";
 import { MostImprovedLeaderboard } from "../../components/challenges/MostImprovedLeaderboard";
 import { BulkCheckinModal } from "../../components/challenges/BulkCheckinModal";
+import { AppIcon } from "../../components/ui";
 import { Badge } from "../../components/ui/Badge";
 import { Card } from "../../components/ui/Card";
+import { DisplayHeading } from "../../components/ui/DisplayHeading";
 import { LoadingScreen } from "../../components/ui/LoadingScreen";
 import { shareLeaderboardCard } from "../../lib/utils/generateLeaderboardCard";
 import { supabase } from "../../lib/supabase/client";
+import { font, amethystGlow } from "../../lib/design/tokens";
 import { useState } from "react";
 import { PointRule } from "../../hooks/queries/useChallengePointRules";
 
@@ -207,14 +211,15 @@ export default function ChallengeDetailScreen() {
     <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1">
         <View className="px-6 pt-6">
-          <Pressable onPress={() => router.back()} className="mb-4">
-            <Text className="text-violet-400 font-medium">← Voltar</Text>
+          <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5 mb-4 self-start">
+            <AppIcon name="arrow-left" size={18} color="#9B40D8" strokeWidth={2} />
+            <Text className="text-violet-400" style={{ fontFamily: font.medium }}>Voltar</Text>
           </Pressable>
 
           <View className="flex-row items-start justify-between mb-2">
-            <Text className="text-2xl font-black text-text-primary flex-1 mr-3">
+            <DisplayHeading size="md" className="flex-1 mr-3">
               {challenge.title}
-            </Text>
+            </DisplayHeading>
             <Badge
               label={isActive ? "Ativo" : isEnded ? "Encerrado" : "Em breve"}
               variant={isActive ? "success" : "default"}
@@ -223,23 +228,32 @@ export default function ChallengeDetailScreen() {
           </View>
 
           {challenge.description ? (
-            <Text className="text-sm text-text-muted mb-4">{challenge.description}</Text>
+            <Text className="text-sm text-text-muted mb-4" style={{ fontFamily: font.regular }}>{challenge.description}</Text>
           ) : null}
 
           {/* Stats */}
           <View className="flex-row gap-3 mb-6">
             <Card className="flex-1 items-center py-3">
-              <Text className="text-xl font-black text-text-primary">{leaderboard?.length ?? 0}</Text>
-              <Text className="text-[10px] text-text-muted">Participantes</Text>
+              <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-2">
+                <AppIcon name="social" size={18} color="#9B40D8" strokeWidth={2} />
+              </View>
+              <Text className="text-3xl text-text-primary" style={{ fontFamily: font.display, letterSpacing: -0.5 }}>{leaderboard?.length ?? 0}</Text>
+              <Text className="text-[10px] text-text-muted mt-1 uppercase" style={{ fontFamily: font.semibold, letterSpacing: 1.5 }}>Participantes</Text>
             </Card>
             <Card className="flex-1 items-center py-3">
-              <Text className="text-xl font-black text-violet-400">{daysLeft}</Text>
-              <Text className="text-[10px] text-text-muted">Dias restantes</Text>
+              <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-2">
+                <AppIcon name="calendar" size={18} color="#9B40D8" strokeWidth={2} />
+              </View>
+              <Text className="text-3xl text-violet-400" style={{ fontFamily: font.display, letterSpacing: -0.5 }}>{daysLeft}</Text>
+              <Text className="text-[10px] text-text-muted mt-1 uppercase" style={{ fontFamily: font.semibold, letterSpacing: 1.5 }}>Dias restantes</Text>
             </Card>
             {isJoined ? (
               <Card className="flex-1 items-center py-3">
-                <Text className="text-xl font-black text-ice-400">{participation?.total_score ?? 0}</Text>
-                <Text className="text-[10px] text-text-muted">Meu score</Text>
+                <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-2">
+                  <AppIcon name="trophy" size={18} color="#9B40D8" strokeWidth={2} />
+                </View>
+                <Text className="text-3xl text-ice-400" style={{ fontFamily: font.display, letterSpacing: -0.5 }}>{participation?.total_score ?? 0}</Text>
+                <Text className="text-[10px] text-text-muted mt-1 uppercase" style={{ fontFamily: font.semibold, letterSpacing: 1.5 }}>Meu score</Text>
               </Card>
             ) : null}
           </View>
@@ -249,11 +263,19 @@ export default function ChallengeDetailScreen() {
             <Pressable
               onPress={handleJoin}
               disabled={joinChallenge.isPending}
-              className="bg-violet-500 rounded-2xl py-4 items-center mb-4 active:bg-violet-600"
+              className="rounded-2xl mb-4 overflow-hidden"
+              style={amethystGlow}
             >
-              {joinChallenge.isPending ? <ActivityIndicator color="#fff" /> : (
-                <Text className="text-white font-black text-base">Participar do Desafio</Text>
-              )}
+              <LinearGradient
+                colors={joinChallenge.isPending ? ["#50107D", "#86169E"] : ["#781BB6", "#C636E0"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0.9 }}
+                style={{ paddingVertical: 16, alignItems: "center" }}
+              >
+                {joinChallenge.isPending ? <ActivityIndicator color="#fff" /> : (
+                  <Text className="text-white text-base" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Participar do desafio</Text>
+                )}
+              </LinearGradient>
             </Pressable>
           ) : isJoined && isActive ? (
             <Pressable
@@ -262,8 +284,8 @@ export default function ChallengeDetailScreen() {
               className="bg-success-500 rounded-2xl py-4 items-center mb-4 active:bg-success-600"
             >
               {submitEntry.isPending ? <ActivityIndicator color="#fff" /> : (
-                <Text className="text-white font-black text-base">
-                  {hasCustomPoints ? "Registrar Atividade" : "Fazer Check-in"}
+                <Text className="text-white text-base" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>
+                  {hasCustomPoints ? "Registrar atividade" : "Fazer check-in"}
                 </Text>
               )}
             </Pressable>
@@ -275,7 +297,7 @@ export default function ChallengeDetailScreen() {
               onPress={() => setShowBulk(true)}
               className="bg-surface-card border border-violet-500/30 rounded-2xl py-3 items-center mb-4 active:bg-surface-hover"
             >
-              <Text className="text-violet-400 font-bold text-sm">Registrar várias atividades</Text>
+              <Text className="text-violet-400 text-sm" style={{ fontFamily: font.semibold }}>Registrar várias atividades</Text>
             </Pressable>
           ) : null}
 
@@ -286,16 +308,17 @@ export default function ChallengeDetailScreen() {
               disabled={convertToGroup.isPending}
               className="bg-violet-500/10 border border-violet-500/30 rounded-2xl py-3.5 items-center mb-4"
             >
-              <Text className="text-violet-400 font-bold text-sm">
-                {convertToGroup.isPending ? "Convertendo..." : "Converter em Grupo"}
+              <Text className="text-violet-400 text-sm" style={{ fontFamily: font.semibold }}>
+                {convertToGroup.isPending ? "Convertendo..." : "Converter em grupo"}
               </Text>
             </Pressable>
           ) : null}
 
           {/* Share leaderboard */}
           {leaderboard && leaderboard.length > 0 ? (
-            <Pressable onPress={handleShareLeaderboard} className="mb-4">
-              <Text className="text-violet-400 text-xs font-bold text-center">Compartilhar Ranking</Text>
+            <Pressable onPress={handleShareLeaderboard} className="flex-row items-center justify-center gap-1.5 mb-4">
+              <AppIcon name="share" size={14} color="#9B40D8" strokeWidth={2} />
+              <Text className="text-violet-400 text-xs text-center uppercase" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>Compartilhar ranking</Text>
             </Pressable>
           ) : null}
 
@@ -305,7 +328,7 @@ export default function ChallengeDetailScreen() {
               onPress={() => setTab("leaderboard")}
               className={`flex-1 py-3 items-center border-b-2 ${tab === "leaderboard" ? "border-violet-500" : "border-transparent"}`}
             >
-              <Text className={`font-bold text-sm ${tab === "leaderboard" ? "text-violet-400" : "text-text-muted"}`}>
+              <Text className={`text-sm ${tab === "leaderboard" ? "text-violet-400" : "text-text-muted"}`} style={{ fontFamily: font.semibold }}>
                 {challenge.team_mode ? "Equipes" : "Ranking"}
               </Text>
             </Pressable>
@@ -313,7 +336,7 @@ export default function ChallengeDetailScreen() {
               onPress={() => setTab("feed")}
               className={`flex-1 py-3 items-center border-b-2 ${tab === "feed" ? "border-violet-500" : "border-transparent"}`}
             >
-              <Text className={`font-bold text-sm ${tab === "feed" ? "text-violet-400" : "text-text-muted"}`}>
+              <Text className={`text-sm ${tab === "feed" ? "text-violet-400" : "text-text-muted"}`} style={{ fontFamily: font.semibold }}>
                 Atividade
               </Text>
             </Pressable>
@@ -321,7 +344,7 @@ export default function ChallengeDetailScreen() {
               onPress={() => setTab("improved")}
               className={`flex-1 py-3 items-center border-b-2 ${tab === "improved" ? "border-violet-500" : "border-transparent"}`}
             >
-              <Text className={`font-bold text-sm ${tab === "improved" ? "text-violet-400" : "text-text-muted"}`}>
+              <Text className={`text-sm ${tab === "improved" ? "text-violet-400" : "text-text-muted"}`} style={{ fontFamily: font.semibold }}>
                 Evolução
               </Text>
             </Pressable>
@@ -348,7 +371,12 @@ export default function ChallengeDetailScreen() {
                 ))}
               </View>
             ) : (
-              <Text className="text-sm text-text-muted text-center py-8">Nenhum participante ainda.</Text>
+              <View className="items-center py-10">
+                <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
+                  <AppIcon name="trophy" size={28} color="#9B40D8" strokeWidth={2} />
+                </View>
+                <Text className="text-sm text-text-muted text-center" style={{ fontFamily: font.regular }}>Nenhum participante ainda.</Text>
+              </View>
             )
           ) : tab === "improved" ? (
             <MostImprovedLeaderboard entries={improved ?? []} />
@@ -356,14 +384,17 @@ export default function ChallengeDetailScreen() {
             <View className="gap-3">
               {entries.map((entry) => (
                 <Card key={entry.id} variant="outlined">
-                  <View className="flex-row items-center gap-2 mb-2">
-                    <Text className="text-sm font-bold text-text-primary">
+                  <View className="flex-row items-center gap-2.5 mb-2">
+                    <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+                      <AppIcon name="activity" size={18} color="#9B40D8" strokeWidth={2} />
+                    </View>
+                    <Text className="flex-1 text-sm text-text-primary" style={{ fontFamily: font.semibold }}>
                       {entry.profile?.full_name ?? "Usuario"}
                     </Text>
-                    <Text className="text-xs text-violet-400 font-bold">+{entry.points} pts</Text>
+                    <Text className="text-xs text-violet-400" style={{ fontFamily: font.bold }}>+{entry.points} pts</Text>
                   </View>
                   {entry.caption ? (
-                    <Text className="text-sm text-text-secondary">{entry.caption}</Text>
+                    <Text className="text-sm text-text-secondary" style={{ fontFamily: font.regular }}>{entry.caption}</Text>
                   ) : null}
                   {entry.photo_url ? (
                     <Image
@@ -372,15 +403,23 @@ export default function ChallengeDetailScreen() {
                       contentFit="cover"
                     />
                   ) : null}
-                  <Text className="text-xs text-text-muted mt-2">
-                    {new Date(entry.created_at).toLocaleString("pt-BR")}
-                  </Text>
+                  <View className="flex-row items-center gap-1.5 mt-2">
+                    <AppIcon name="clock" size={14} color="#6E6382" strokeWidth={2} />
+                    <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>
+                      {new Date(entry.created_at).toLocaleString("pt-BR")}
+                    </Text>
+                  </View>
                   <EntryComments entryId={entry.id} />
                 </Card>
               ))}
             </View>
           ) : (
-            <Text className="text-sm text-text-muted text-center py-8">Nenhuma atividade ainda.</Text>
+            <View className="items-center py-10">
+              <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
+                <AppIcon name="activity" size={28} color="#9B40D8" strokeWidth={2} />
+              </View>
+              <Text className="text-sm text-text-muted text-center" style={{ fontFamily: font.regular }}>Nenhuma atividade ainda.</Text>
+            </View>
           )}
         </View>
       </ScrollView>
@@ -421,7 +460,7 @@ export default function ChallengeDetailScreen() {
             onSelect={handlePointRuleSelect}
           />
           <Pressable onPress={() => setShowPointSelector(false)} className="mt-4 items-center">
-            <Text className="text-text-muted font-bold">Cancelar</Text>
+            <Text className="text-text-muted" style={{ fontFamily: font.semibold }}>Cancelar</Text>
           </Pressable>
         </View>
       ) : null}
@@ -438,26 +477,44 @@ export default function ChallengeDetailScreen() {
         <View className="flex-1 justify-end">
           <Pressable className="flex-1" onPress={() => setShowMetric(false)} />
           <View className="bg-dark-200 border-t border-surface-border rounded-t-3xl px-6 pt-6 pb-10">
-            <Text className="text-lg font-black text-text-primary mb-1">Registrar atividade</Text>
-            <Text className="text-xs text-text-muted mb-4">
+            <DisplayHeading size="sm" className="mb-1">Registrar atividade</DisplayHeading>
+            <Text className="text-xs text-text-muted mb-4" style={{ fontFamily: font.regular }}>
               {challenge.scoring_mode === "active_minutes" ? "Quantos minutos de atividade?" : "Qual o volume total (kg)?"}
             </Text>
             <TextInput
-              className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary mb-4"
+              className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary mb-4"
+              style={{ fontFamily: font.regular }}
               placeholder={challenge.scoring_mode === "active_minutes" ? "Ex: 45" : "Ex: 5000"}
-              placeholderTextColor="#6E6580"
+              placeholderTextColor="#6E6382"
               keyboardType="numeric"
               value={metricValue}
               onChangeText={setMetricValue}
               autoFocus
             />
-            <Pressable
-              onPress={confirmMetric}
-              disabled={!metricValue.trim()}
-              className={`rounded-2xl py-4 items-center ${metricValue.trim() ? "bg-violet-500" : "bg-surface-border"}`}
-            >
-              <Text className={`font-black ${metricValue.trim() ? "text-white" : "text-text-muted"}`}>Confirmar</Text>
-            </Pressable>
+            {metricValue.trim() ? (
+              <Pressable
+                onPress={confirmMetric}
+                className="rounded-2xl overflow-hidden"
+                style={amethystGlow}
+              >
+                <LinearGradient
+                  colors={["#781BB6", "#C636E0"]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0.9 }}
+                  style={{ paddingVertical: 16, alignItems: "center" }}
+                >
+                  <Text className="text-white" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Confirmar</Text>
+                </LinearGradient>
+              </Pressable>
+            ) : (
+              <Pressable
+                onPress={confirmMetric}
+                disabled
+                className="rounded-2xl py-4 items-center bg-surface-border"
+              >
+                <Text className="text-text-muted" style={{ fontFamily: font.semibold }}>Confirmar</Text>
+              </Pressable>
+            )}
           </View>
         </View>
       </Modal>

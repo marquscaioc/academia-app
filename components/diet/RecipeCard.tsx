@@ -1,5 +1,6 @@
 import { Pressable, Text, View } from "react-native";
 import { Image } from "expo-image";
+import { AppIcon } from "../ui";
 
 interface RecipeCardProps {
   name: string;
@@ -20,13 +21,13 @@ export function RecipeCard({
         <Image source={{ uri: imageUrl }} style={{ width: "100%", height: 120 }} contentFit="cover" />
       ) : (
         <View className="w-full h-24 bg-surface-elevated items-center justify-center">
-          <Text className="text-3xl">🍽️</Text>
+          <AppIcon name="food" size={32} color="#6E6382" strokeWidth={2} />
         </View>
       )}
       <View className="p-3">
         <View className="flex-row items-start justify-between">
           <Text className="text-sm font-bold text-text-primary flex-1 mr-2" numberOfLines={2}>{name}</Text>
-          {isFavorite ? <Text className="text-sm">❤️</Text> : null}
+          {isFavorite ? <AppIcon name="heart" size={16} fill="#FB7185" color="#FB7185" strokeWidth={2} /> : null}
         </View>
         <View className="flex-row gap-2 mt-2">
           {calories ? (

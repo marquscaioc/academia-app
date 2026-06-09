@@ -11,8 +11,11 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
 import { useAuth } from "../../../lib/auth/provider";
 import { useAddMeasurement } from "../../../hooks/mutations/useProgressMutations";
+import { AppIcon, DisplayHeading } from "../../../components/ui";
+import { amethystGlow, font } from "../../../lib/design/tokens";
 
 interface MeasurementField {
   key: string;
@@ -119,36 +122,71 @@ export default function AddMeasurementScreen() {
           className="flex-1 px-6 pt-6"
           keyboardShouldPersistTaps="handled"
         >
-          <View className="flex-row items-center justify-between mb-6">
-            <Pressable onPress={() => router.back()}>
-              <Text className="text-violet-400 font-medium">Cancelar</Text>
+          <View className="flex-row items-center justify-between mb-5">
+            <Pressable
+              onPress={() => router.back()}
+              className="flex-row items-center gap-1"
+            >
+              <AppIcon
+                name="chevron-left"
+                size={18}
+                color="#9B40D8"
+                strokeWidth={2}
+              />
+              <Text
+                className="text-violet-400"
+                style={{ fontFamily: font.medium }}
+              >
+                Cancelar
+              </Text>
             </Pressable>
-            <Text className="text-lg font-bold text-text-primary">
-              Registrar Medidas
-            </Text>
             <View className="w-16" />
           </View>
 
-          <Text className="text-sm text-text-muted mb-6">
+          <View className="w-12 h-12 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
+            <AppIcon name="ruler" size={22} color="#9B40D8" strokeWidth={2} />
+          </View>
+
+          <Text
+            className="text-fuchsia-400 mb-2 uppercase"
+            style={{ fontFamily: font.semibold, fontSize: 11, letterSpacing: 2 }}
+          >
+            Progresso
+          </Text>
+          <DisplayHeading size="lg" tone="primary">
+            Registrar medidas.
+          </DisplayHeading>
+
+          <Text
+            className="text-sm text-text-muted mt-2 mb-6"
+            style={{ fontFamily: font.regular }}
+          >
             Preencha apenas as medidas que deseja registrar.
           </Text>
 
           <View className="gap-4">
             {fields.map((field) => (
               <View key={field.key} className="flex-row items-center gap-3">
-                <Text className="flex-1 text-sm text-text-secondary">
+                <Text
+                  className="flex-1 text-sm text-text-secondary"
+                  style={{ fontFamily: font.regular }}
+                >
                   {field.label}
                 </Text>
                 <View className="flex-row items-center">
                   <TextInput
-                    className="border border-surface-border rounded-lg px-3 py-2 text-base text-text-primary bg-surface-card w-24 text-right"
+                    className="border border-surface-border rounded-2xl px-4 py-3 text-[15px] text-text-primary bg-surface-card/80 w-24 text-right"
+                    style={{ fontFamily: font.regular }}
                     placeholder={field.placeholder}
-                    placeholderTextColor="#6E6580"
+                    placeholderTextColor="#6E6382"
                     value={values[field.key] ?? ""}
                     onChangeText={(v) => updateValue(field.key, v)}
                     keyboardType="decimal-pad"
                   />
-                  <Text className="text-sm text-text-muted ml-2 w-6">
+                  <Text
+                    className="text-sm text-text-muted ml-2 w-6"
+                    style={{ fontFamily: font.medium }}
+                  >
                     {field.unit}
                   </Text>
                 </View>
@@ -156,30 +194,66 @@ export default function AddMeasurementScreen() {
             ))}
 
             <View className="mt-2">
-              <Text className="text-sm font-medium text-text-secondary mb-1">
-                Observacoes
-              </Text>
+              <View className="flex-row items-center gap-1.5 mb-2 ml-0.5">
+                <AppIcon
+                  name="clipboard"
+                  size={14}
+                  color="#6E6382"
+                  strokeWidth={2}
+                />
+                <Text
+                  className="text-[11px] text-text-muted uppercase"
+                  style={{ fontFamily: font.semibold, letterSpacing: 1.5 }}
+                >
+                  Observacoes
+                </Text>
+              </View>
               <TextInput
-                className="border border-surface-border rounded-xl px-4 py-3 text-base text-text-primary bg-surface-card"
+                className="border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary bg-surface-card/80"
                 placeholder="Notas opcionais..."
-                placeholderTextColor="#6E6580"
+                placeholderTextColor="#6E6382"
                 value={notes}
                 onChangeText={setNotes}
                 multiline
-                style={{ minHeight: 60, textAlignVertical: "top" }}
+                style={{ fontFamily: font.regular, minHeight: 60, textAlignVertical: "top" }}
               />
             </View>
 
             <Pressable
               onPress={handleSave}
               disabled={addMeasurement.isPending}
-              className="bg-violet-500 rounded-xl py-4 items-center mt-4 mb-10 active:bg-violet-600"
+              className="rounded-2xl overflow-hidden mt-4 mb-10"
+              style={addMeasurement.isPending ? undefined : amethystGlow}
             >
-              {addMeasurement.isPending ? (
-                <ActivityIndicator color="#fff" />
-              ) : (
-                <Text className="text-white font-bold text-base">Salvar</Text>
-              )}
+              <LinearGradient
+                colors={
+                  addMeasurement.isPending
+                    ? ["#50107D", "#86169E"]
+                    : ["#781BB6", "#C636E0"]
+                }
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0.9 }}
+                style={{ paddingVertical: 17, alignItems: "center" }}
+              >
+                {addMeasurement.isPending ? (
+                  <ActivityIndicator color="#FFFFFF" />
+                ) : (
+                  <View className="flex-row items-center gap-2">
+                    <AppIcon
+                      name="check"
+                      size={18}
+                      color="#FFFFFF"
+                      strokeWidth={2}
+                    />
+                    <Text
+                      className="text-white text-[15px]"
+                      style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
+                    >
+                      Salvar
+                    </Text>
+                  </View>
+                )}
+              </LinearGradient>
             </Pressable>
           </View>
         </ScrollView>

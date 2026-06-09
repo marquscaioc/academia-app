@@ -1,7 +1,12 @@
+import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { AppIcon } from "../../../components/ui";
+import { DisplayHeading } from "../../../components/ui/DisplayHeading";
+import { SectionLabel } from "../../../components/ui/SectionLabel";
+import { amethystGlow, font } from "../../../lib/design/tokens";
 import { useAuth } from "../../../lib/auth/provider";
 import { useCreateSubscriptionPlan } from "../../../hooks/mutations/useFinancialMutations";
 
@@ -47,72 +52,91 @@ export default function CreatePlanScreen() {
     <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1 px-6 pt-6" keyboardShouldPersistTaps="handled">
         <View className="flex-row items-center justify-between mb-6">
-          <Pressable onPress={() => router.back()}>
-            <Text className="text-text-muted font-medium text-sm">← Cancelar</Text>
+          <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5">
+            <AppIcon name="arrow-left" size={16} color="#6E6382" strokeWidth={2} />
+            <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>Cancelar</Text>
           </Pressable>
-          <Text className="text-lg font-black text-text-primary">Novo Plano</Text>
+          <DisplayHeading size="sm">Novo plano.</DisplayHeading>
           <View className="w-16" />
         </View>
 
+        <View className="flex-row items-center gap-3 mb-6">
+          <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+            <AppIcon name="money" size={18} color="#9B40D8" strokeWidth={2} />
+          </View>
+          <Text className="flex-1 text-text-secondary text-sm leading-5" style={{ fontFamily: font.regular }}>
+            Defina nome, valor e periodo para cobrar seus alunos por assinatura.
+          </Text>
+        </View>
+
         {error ? (
-          <View className="bg-danger-500/10 border border-danger-500/20 rounded-2xl p-4 mb-5">
-            <Text className="text-danger-500 text-center text-sm font-medium">{error}</Text>
+          <View className="flex-row items-center gap-2.5 bg-danger-500/10 border border-danger-500/20 rounded-2xl p-4 mb-5">
+            <AppIcon name="alert" size={18} color="#FB7185" strokeWidth={2} />
+            <Text className="flex-1 text-danger-500 text-sm" style={{ fontFamily: font.medium }}>{error}</Text>
           </View>
         ) : null}
 
         <View className="gap-5">
           <View>
-            <Text className="text-xs font-bold text-text-muted mb-2 ml-1 tracking-wider uppercase">Nome do plano *</Text>
+            <SectionLabel className="mb-2 ml-1">Nome do plano *</SectionLabel>
             <TextInput
-              className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary"
+              className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
               placeholder="Ex: Treino + Dieta Mensal"
-              placeholderTextColor="#6E6580"
+              placeholderTextColor="#6E6382"
               value={name}
               onChangeText={setName}
+              style={{ fontFamily: font.regular }}
             />
           </View>
 
           <View>
-            <Text className="text-xs font-bold text-text-muted mb-2 ml-1 tracking-wider uppercase">Descricao</Text>
+            <SectionLabel className="mb-2 ml-1">Descricao</SectionLabel>
             <TextInput
-              className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary"
+              className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
               placeholder="O que esta incluso no plano"
-              placeholderTextColor="#6E6580"
+              placeholderTextColor="#6E6382"
               value={description}
               onChangeText={setDescription}
               multiline
-              style={{ minHeight: 80, textAlignVertical: "top" }}
+              style={{ minHeight: 80, textAlignVertical: "top", fontFamily: font.regular }}
             />
           </View>
 
           <View>
-            <Text className="text-xs font-bold text-text-muted mb-2 ml-1 tracking-wider uppercase">Valor (R$) *</Text>
+            <SectionLabel className="mb-2 ml-1">Valor (R$) *</SectionLabel>
             <TextInput
-              className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary"
+              className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
               placeholder="199,90"
-              placeholderTextColor="#6E6580"
+              placeholderTextColor="#6E6382"
               value={price}
               onChangeText={setPrice}
               keyboardType="decimal-pad"
+              style={{ fontFamily: font.regular }}
             />
           </View>
 
           <View>
-            <Text className="text-xs font-bold text-text-muted mb-2 ml-1 tracking-wider uppercase">Periodo de cobranca</Text>
+            <SectionLabel className="mb-2 ml-1">Periodo de cobranca</SectionLabel>
             <View className="flex-row gap-2">
               {intervals.map((i) => (
                 <Pressable
                   key={i.value}
                   onPress={() => setInterval(i.value)}
-                  className={`flex-1 py-3 rounded-xl border-2 items-center ${
+                  className={`flex-1 flex-row items-center justify-center gap-1.5 py-3 rounded-2xl border ${
                     interval === i.value
-                      ? "bg-violet-500/10 border-violet-500"
-                      : "bg-surface-card border-surface-border"
+                      ? "bg-violet-500/10 border-violet-400/80"
+                      : "bg-surface-card/80 border-surface-border"
                   }`}
                 >
-                  <Text className={`text-sm font-bold ${
-                    interval === i.value ? "text-violet-400" : "text-text-muted"
-                  }`}>
+                  {interval === i.value ? (
+                    <AppIcon name="check" size={16} color="#9B40D8" strokeWidth={2} />
+                  ) : null}
+                  <Text
+                    className={`text-sm ${
+                      interval === i.value ? "text-violet-400" : "text-text-muted"
+                    }`}
+                    style={{ fontFamily: font.semibold }}
+                  >
                     {i.label}
                   </Text>
                 </Pressable>
@@ -123,18 +147,26 @@ export default function CreatePlanScreen() {
           <Pressable
             onPress={handleCreate}
             disabled={createPlan.isPending}
-            className={`rounded-2xl items-center mt-4 mb-10 ${
-              createPlan.isPending ? "bg-violet-700" : "bg-violet-500 active:bg-violet-600"
-            }`}
-            style={{ paddingVertical: 18 }}
+            className="mt-4 mb-10 rounded-2xl overflow-hidden"
+            style={amethystGlow}
           >
-            {createPlan.isPending ? (
-              <ActivityIndicator color="#FFFFFF" />
-            ) : (
-              <Text className="text-white font-black text-base tracking-wide uppercase">
-                Criar Plano
-              </Text>
-            )}
+            <LinearGradient
+              colors={createPlan.isPending ? ["#50107D", "#86169E"] : ["#781BB6", "#C636E0"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0.9 }}
+              style={{ paddingVertical: 18, alignItems: "center" }}
+            >
+              {createPlan.isPending ? (
+                <ActivityIndicator color="#FFFFFF" />
+              ) : (
+                <View className="flex-row items-center gap-2">
+                  <AppIcon name="plus" size={18} color="#FFFFFF" strokeWidth={2} />
+                  <Text className="text-white text-base" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>
+                    Criar plano
+                  </Text>
+                </View>
+              )}
+            </LinearGradient>
           </Pressable>
         </View>
       </ScrollView>

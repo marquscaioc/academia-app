@@ -95,7 +95,7 @@ Deno.serve(async (_req) => {
     ${achievementNames.map((n) => `<p style="font-size:13px;margin:4px 0;">⭐ ${n}</p>`).join("")}
   </div>` : ""}
   <p style="text-align:center;font-size:13px;color:#555;">Continue assim! Cada treino conta. 💪</p>
-  <div class="footer">Academia App — ${new Date().toLocaleDateString("pt-BR")}</div>
+  <div class="footer">Projeto Gaab — ${new Date().toLocaleDateString("pt-BR")}</div>
 </body></html>`;
 
       // Send via Supabase Auth (uses configured SMTP)

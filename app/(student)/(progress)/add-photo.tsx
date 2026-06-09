@@ -14,6 +14,8 @@ import {
   useAddProgressPhoto,
   uploadProgressPhoto,
 } from "../../../hooks/mutations/useProgressMutations";
+import { font } from "../../../lib/design/tokens";
+import { AppIcon } from "../../../components/ui";
 
 const poses = [
   { value: "front" as const, label: "Frente" },
@@ -82,10 +84,18 @@ export default function AddPhotoScreen() {
       <View className="flex-1 px-6 pt-6">
         <View className="flex-row items-center justify-between mb-6">
           <Pressable onPress={() => router.back()}>
-            <Text className="text-violet-400 font-medium">Cancelar</Text>
+            <Text
+              className="text-violet-400"
+              style={{ fontFamily: font.medium }}
+            >
+              Cancelar
+            </Text>
           </Pressable>
-          <Text className="text-lg font-bold text-text-primary">
-            Foto de Progresso
+          <Text
+            className="text-xl text-text-primary"
+            style={{ fontFamily: font.display }}
+          >
+            Foto de progresso
           </Text>
           <View className="w-16" />
         </View>
@@ -105,24 +115,32 @@ export default function AddPhotoScreen() {
               />
             </View>
 
-            <Text className="text-sm font-medium text-text-secondary mb-2">
-              Pose
+            <Text
+              className="text-text-muted mb-2"
+              style={{
+                fontFamily: font.semibold,
+                fontSize: 11,
+                letterSpacing: 2,
+              }}
+            >
+              POSE
             </Text>
             <View className="flex-row gap-2 mb-6">
               {poses.map((p) => (
                 <Pressable
                   key={p.value}
                   onPress={() => setSelectedPose(p.value)}
-                  className={`flex-1 py-2.5 rounded-lg border items-center ${
+                  className={`flex-1 py-2.5 rounded-2xl border items-center ${
                     selectedPose === p.value
                       ? "bg-violet-500 border-violet-500"
                       : "bg-surface-card border-surface-border"
                   }`}
                 >
                   <Text
-                    className={`text-xs font-medium ${
+                    className={`text-xs ${
                       selectedPose === p.value ? "text-white" : "text-text-secondary"
                     }`}
+                    style={{ fontFamily: font.medium }}
                   >
                     {p.label}
                   </Text>
@@ -133,45 +151,74 @@ export default function AddPhotoScreen() {
             <View className="flex-row gap-3 mb-6">
               <Pressable
                 onPress={() => setImageUri(null)}
-                className="flex-1 border border-surface-border rounded-xl py-3 items-center"
+                className="flex-1 flex-row gap-2 border border-surface-border rounded-2xl py-3 items-center justify-center"
               >
-                <Text className="text-text-secondary font-medium">Trocar</Text>
+                <AppIcon name="repeat" size={18} color="#A99FBA" strokeWidth={2} />
+                <Text
+                  className="text-text-secondary"
+                  style={{ fontFamily: font.medium }}
+                >
+                  Trocar
+                </Text>
               </Pressable>
               <Pressable
                 onPress={handleSave}
                 disabled={uploading}
-                className="flex-1 bg-violet-500 rounded-xl py-3 items-center active:bg-violet-600"
+                className="flex-1 bg-violet-500 rounded-2xl py-3 items-center active:bg-violet-600"
               >
                 {uploading ? (
                   <ActivityIndicator color="#fff" />
                 ) : (
-                  <Text className="text-white font-bold">Salvar</Text>
+                  <Text
+                    className="text-white"
+                    style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
+                  >
+                    Salvar
+                  </Text>
                 )}
               </Pressable>
             </View>
           </View>
         ) : (
           <View className="flex-1 items-center justify-center gap-4">
-            <Text className="text-6xl mb-4">📸</Text>
-            <Text className="text-lg font-semibold text-text-secondary">
-              Adicione uma foto
+            <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
+              <AppIcon name="camera" size={28} color="#9B40D8" strokeWidth={2} />
+            </View>
+            <Text
+              className="text-2xl text-text-primary"
+              style={{ fontFamily: font.display }}
+            >
+              Adicione uma foto.
             </Text>
-            <Text className="text-sm text-text-muted text-center max-w-[280px] mb-4">
+            <Text
+              className="text-sm text-text-muted text-center max-w-[280px] mb-4"
+              style={{ fontFamily: font.regular }}
+            >
               Tire uma foto ou selecione da galeria para registrar seu progresso.
             </Text>
 
             <View className="w-full max-w-[280px] gap-3">
               <Pressable
                 onPress={takePhoto}
-                className="bg-violet-500 rounded-xl py-4 items-center active:bg-violet-600"
+                className="flex-row gap-2 bg-violet-500 rounded-2xl py-4 items-center justify-center active:bg-violet-600"
               >
-                <Text className="text-white font-semibold">Tirar foto</Text>
+                <AppIcon name="camera" size={18} color="#FFFFFF" strokeWidth={2} />
+                <Text
+                  className="text-white"
+                  style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
+                >
+                  Tirar foto
+                </Text>
               </Pressable>
               <Pressable
                 onPress={pickImage}
-                className="border border-surface-border rounded-xl py-4 items-center active:bg-surface-hover"
+                className="flex-row gap-2 border border-surface-border rounded-2xl py-4 items-center justify-center active:bg-surface-hover"
               >
-                <Text className="text-text-secondary font-semibold">
+                <AppIcon name="photos" size={18} color="#A99FBA" strokeWidth={2} />
+                <Text
+                  className="text-text-secondary"
+                  style={{ fontFamily: font.semibold }}
+                >
                   Escolher da galeria
                 </Text>
               </Pressable>

@@ -5,6 +5,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../../../lib/auth/provider";
 import { useRecipes, useRecipeFavorites } from "../../../../hooks/queries/useRecipes";
 import { RecipeCard } from "../../../../components/diet/RecipeCard";
+import { AppIcon } from "../../../../components/ui";
+import { font } from "../../../../lib/design/tokens";
 
 const tagFilters = [
   { value: "low_carb", label: "Low Carb" },
@@ -38,20 +40,27 @@ export default function RecipesScreen() {
       <View className="flex-1">
         <View className="px-6 pt-6 pb-3">
           <View className="flex-row items-center justify-between mb-4">
-            <Pressable onPress={() => router.back()}>
-              <Text className="text-violet-400 font-medium">← Voltar</Text>
+            <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5">
+              <AppIcon name="arrow-left" size={18} color="#9B40D8" strokeWidth={2} />
+              <Text className="text-violet-400" style={{ fontFamily: font.medium }}>Voltar</Text>
             </Pressable>
-            <Text className="text-lg font-black text-text-primary">Receitas</Text>
+            <Text className="text-[28px] text-text-primary" style={{ fontFamily: font.display }}>Receitas.</Text>
             <View className="w-16" />
           </View>
 
-          <TextInput
-            className="bg-surface-card border border-surface-border rounded-2xl px-4 py-3 text-sm text-text-primary mb-3"
-            placeholder="Buscar receita..."
-            placeholderTextColor="#6E6580"
-            value={search}
-            onChangeText={setSearch}
-          />
+          <View className="mb-3">
+            <View className="absolute left-4 top-0 bottom-0 z-10 justify-center">
+              <AppIcon name="search" size={18} color="#6E6382" strokeWidth={2} />
+            </View>
+            <TextInput
+              className="bg-surface-card/80 border border-surface-border rounded-2xl pl-11 pr-4 py-3.5 text-[15px] text-text-primary"
+              style={{ fontFamily: font.regular }}
+              placeholder="Buscar receita..."
+              placeholderTextColor="#6E6382"
+              value={search}
+              onChangeText={setSearch}
+            />
+          </View>
 
           <View className="flex-row flex-wrap gap-2">
             {tagFilters.map((t) => (
@@ -62,9 +71,12 @@ export default function RecipesScreen() {
                   selectedTags.includes(t.value) ? "bg-violet-500" : "bg-surface-card border border-surface-border"
                 }`}
               >
-                <Text className={`text-xs font-bold ${
-                  selectedTags.includes(t.value) ? "text-white" : "text-text-muted"
-                }`}>
+                <Text
+                  className={`text-xs ${
+                    selectedTags.includes(t.value) ? "text-white" : "text-text-muted"
+                  }`}
+                  style={{ fontFamily: font.semibold }}
+                >
                   {t.label}
                 </Text>
               </Pressable>
@@ -97,9 +109,22 @@ export default function RecipesScreen() {
               </View>
             )}
             ListEmptyComponent={
-              <View className="items-center py-10">
-                <Text className="text-3xl mb-3">🍽️</Text>
-                <Text className="text-text-muted text-sm">Nenhuma receita encontrada</Text>
+              <View className="items-center px-8 py-16">
+                <View className="w-16 h-16 rounded-3xl bg-surface-elevated border border-surface-border items-center justify-center mb-5">
+                  <AppIcon name="food" size={28} color="#9B40D8" strokeWidth={2} />
+                </View>
+                <Text
+                  className="text-2xl text-text-primary text-center"
+                  style={{ fontFamily: font.display, letterSpacing: -0.3 }}
+                >
+                  Nenhuma receita encontrada
+                </Text>
+                <Text
+                  className="text-text-secondary text-sm text-center mt-2 max-w-[280px] leading-5"
+                  style={{ fontFamily: font.regular }}
+                >
+                  Ajuste a busca ou os filtros para descobrir novas receitas.
+                </Text>
               </View>
             }
           />

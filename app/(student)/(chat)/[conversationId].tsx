@@ -14,6 +14,8 @@ import { useSendMessage, useMarkConversationRead } from "../../../hooks/mutation
 import { useRealtimeMessages } from "../../../lib/realtime/useRealtimeMessages";
 import { MessageBubble } from "../../../components/chat/MessageBubble";
 import { ChatInput } from "../../../components/chat/ChatInput";
+import { AppIcon } from "../../../components/ui";
+import { font } from "../../../lib/design/tokens";
 
 export default function ChatScreen() {
   const { conversationId } = useLocalSearchParams<{ conversationId: string }>();
@@ -44,8 +46,9 @@ export default function ChatScreen() {
     <SafeAreaView className="flex-1 bg-dark-400" edges={["top"]}>
       {/* Header */}
       <View className="flex-row items-center gap-3 px-4 py-3 border-b border-surface-border">
-        <Pressable onPress={() => router.back()} className="px-2 py-1">
-          <Text className="text-violet-400 font-bold text-sm">← Voltar</Text>
+        <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5 px-2 py-1">
+          <AppIcon name="arrow-left" size={18} color="#9B40D8" strokeWidth={2} />
+          <Text className="text-violet-400 text-sm" style={{ fontFamily: font.semibold }}>Voltar</Text>
         </Pressable>
       </View>
 
@@ -79,8 +82,11 @@ export default function ChatScreen() {
             );
           }}
           ListEmptyComponent={
-            <View className="flex-1 items-center justify-center py-20">
-              <Text className="text-text-muted text-sm">Nenhuma mensagem ainda. Diga oi!</Text>
+            <View className="flex-1 items-center justify-center py-20 gap-4">
+              <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+                <AppIcon name="chat" size={28} color="#9B40D8" strokeWidth={2} />
+              </View>
+              <Text className="text-text-secondary text-sm text-center" style={{ fontFamily: font.regular }}>Nenhuma mensagem ainda. Diga oi!</Text>
             </View>
           }
         />

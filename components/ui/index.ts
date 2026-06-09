@@ -11,3 +11,4 @@ export { GradientCard } from "./GradientCard";
 export { SectionLabel } from "./SectionLabel";
 export { DividerRule } from "./DividerRule";
 export { Logo } from "./Logo";
+export { AppIcon, Icon, ICONS, type IconName } from "./Icon";

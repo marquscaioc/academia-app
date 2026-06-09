@@ -15,9 +15,11 @@ import { useAuth } from "../../../lib/auth/provider";
 import { useAcceptInvite } from "../../../hooks/mutations/useInviteMutations";
 import { useWorkoutPlans } from "../../../hooks/queries/useWorkouts";
 import { useUnreadCount } from "../../../hooks/queries/useUnreadNotifications";
-import { BigStat, DisplayHeading, GradientCard, Logo, SectionLabel } from "../../../components/ui";
+import { useCheckIns } from "../../../hooks/queries/useCheckins";
+import { AppIcon, BigStat, DisplayHeading, GradientCard, Logo, SectionLabel, type IconName } from "../../../components/ui";
+import { font } from "../../../lib/design/tokens";
 
-function QuickAction({ icon, label, href, index }: { icon: string; label: string; href: string; index: number }) {
+function QuickAction({ icon, label, href, index }: { icon: IconName; label: string; href: string; index: number }) {
   return (
     <Animated.View entering={FadeInDown.delay(500 + index * 70).springify()} style={{ flex: 1 }}>
       <Link href={href as never} asChild>
@@ -29,8 +31,10 @@ function QuickAction({ icon, label, href, index }: { icon: string; label: string
             style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
             pointerEvents="none"
           />
-          <Text className="text-2xl mb-2">{icon}</Text>
-          <Text className="text-[11px] text-text-secondary" style={{ fontFamily: "Nunito_600SemiBold", letterSpacing: 0.5 }}>
+          <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-2.5">
+            <AppIcon name={icon} size={18} color="#9B40D8" strokeWidth={2} />
+          </View>
+          <Text className="text-[11px] text-text-secondary" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>
             {label}
           </Text>
         </Pressable>
@@ -54,6 +58,7 @@ export default function StudentHomeScreen() {
 
   const { data: workoutPlans } = useWorkoutPlans(user?.id);
   const { data: unreadCount } = useUnreadCount(user?.id);
+  const { data: pendingCheckins } = useCheckIns(user?.id, "pending");
   const activePlan = workoutPlans?.[0];
   const daysUntilExpiry = activePlan?.ends_at
     ? Math.ceil((new Date(activePlan.ends_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
@@ -93,13 +98,13 @@ export default function StudentHomeScreen() {
             <View>
               <Text
                 className="text-[10px] text-fuchsia-400"
-                style={{ fontFamily: "Nunito_700Bold", letterSpacing: 3 }}
+                style={{ fontFamily: font.semibold, letterSpacing: 3 }}
               >
                 ED. {edition}
               </Text>
               <Text
                 className="text-[9px] text-text-muted mt-0.5"
-                style={{ fontFamily: "Nunito_700Bold", letterSpacing: 2 }}
+                style={{ fontFamily: font.semibold, letterSpacing: 2 }}
               >
                 ROYAL AMETHYST
               </Text>
@@ -108,10 +113,10 @@ export default function StudentHomeScreen() {
           <View className="flex-row gap-2">
             <Link href="/notifications" asChild>
               <Pressable className="w-10 h-10 bg-surface-card border border-surface-border rounded-xl items-center justify-center">
-                <Text className="text-sm">🔔</Text>
+                <AppIcon name="bell" size={18} color="#A99FBA" strokeWidth={2} />
                 {(unreadCount ?? 0) > 0 ? (
                   <View className="absolute -top-1 -right-1 bg-fuchsia-500 rounded-full min-w-[18px] h-[18px] items-center justify-center px-1">
-                    <Text className="text-white text-[9px]" style={{ fontFamily: "Nunito_700Bold" }}>
+                    <Text className="text-white text-[9px]" style={{ fontFamily: font.bold }}>
                       {unreadCount! > 99 ? "99+" : unreadCount}
                     </Text>
                   </View>
@@ -120,7 +125,7 @@ export default function StudentHomeScreen() {
             </Link>
             <Link href="/profile/edit" asChild>
               <Pressable className="w-10 h-10 bg-surface-card border border-surface-border rounded-xl items-center justify-center">
-                <Text className="text-sm">⚙️</Text>
+                <AppIcon name="settings" size={18} color="#A99FBA" strokeWidth={2} />
               </Pressable>
             </Link>
           </View>
@@ -136,15 +141,38 @@ export default function StudentHomeScreen() {
           <Text
             className="text-text-primary"
             style={{
-              fontFamily: "Nunito_900Black",
+              fontFamily: font.display,
               fontSize: 56,
-              lineHeight: 56,
-              letterSpacing: -2.5,
+              lineHeight: 58,
+              letterSpacing: -1,
             }}
           >
-            {firstName.toUpperCase()}.
+            {firstName}.
           </Text>
         </Animated.View>
+
+        {/* Check-ins pendentes */}
+        {pendingCheckins && pendingCheckins.length > 0 ? (
+          <Animated.View entering={FadeInDown.delay(200).springify()} className="mb-6">
+            <Pressable
+              onPress={() => router.push(`/(student)/(home)/checkin/${pendingCheckins[0].id}` as never)}
+              className="bg-warning-500/10 border border-warning-500/30 rounded-2xl p-4 flex-row items-center gap-3 active:opacity-80"
+            >
+              <View className="w-10 h-10 rounded-2xl bg-warning-500/15 border border-warning-500/25 items-center justify-center">
+                <AppIcon name="clipboard-check" size={18} color="#FBBF24" strokeWidth={2} />
+              </View>
+              <View className="flex-1">
+                <Text className="text-sm text-text-primary" style={{ fontFamily: font.semibold }}>
+                  {pendingCheckins.length} check-in{pendingCheckins.length > 1 ? "s" : ""} pendente{pendingCheckins.length > 1 ? "s" : ""}
+                </Text>
+                <Text className="text-xs text-text-muted mt-0.5" style={{ fontFamily: font.regular }}>
+                  {pendingCheckins[0].template?.title ?? "Responda para seu personal acompanhar"}
+                </Text>
+              </View>
+              <AppIcon name="chevron-right" size={18} color="#FBBF24" strokeWidth={2} />
+            </Pressable>
+          </Animated.View>
+        ) : null}
 
         {/* Invite — brief, compact */}
         {!inviteSuccess ? (
@@ -154,20 +182,18 @@ export default function StudentHomeScreen() {
                 onPress={() => setShowInvite(true)}
                 className="border border-dashed border-violet-500/40 rounded-2xl p-4 flex-row items-center gap-3 active:bg-surface-hover"
               >
-                <View className="w-10 h-10 bg-violet-500/15 rounded-xl items-center justify-center">
-                  <Text className="text-lg">🎟️</Text>
+                <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+                  <AppIcon name="user-add" size={18} color="#9B40D8" strokeWidth={2} />
                 </View>
                 <View className="flex-1">
-                  <Text className="text-sm text-text-primary" style={{ fontFamily: "Nunito_600SemiBold" }}>
+                  <Text className="text-sm text-text-primary" style={{ fontFamily: font.semibold }}>
                     Tem um código de convite?
                   </Text>
-                  <Text className="text-xs text-text-muted mt-0.5" style={{ fontFamily: "Nunito_400Regular" }}>
+                  <Text className="text-xs text-text-muted mt-0.5" style={{ fontFamily: font.regular }}>
                     Conecte-se ao seu personal trainer
                   </Text>
                 </View>
-                <Text className="text-fuchsia-400 text-sm" style={{ fontFamily: "Nunito_700Bold" }}>
-                  Inserir →
-                </Text>
+                <AppIcon name="chevron-right" size={18} color="#C636E0" strokeWidth={2} />
               </Pressable>
             ) : (
               <View className="bg-surface-card border border-violet-500/30 rounded-2xl p-5">
@@ -176,14 +202,14 @@ export default function StudentHomeScreen() {
                 </SectionLabel>
                 {inviteError ? (
                   <View className="bg-danger-500/10 rounded-xl p-3 mb-3">
-                    <Text className="text-danger-500 text-xs text-center" style={{ fontFamily: "Nunito_500Medium" }}>
+                    <Text className="text-danger-500 text-xs text-center" style={{ fontFamily: font.medium }}>
                       {inviteError}
                     </Text>
                   </View>
                 ) : null}
                 <TextInput
-                  className="bg-dark-300 border-2 border-surface-border rounded-xl px-4 py-3 text-center text-3xl text-violet-300"
-                  style={{ fontFamily: "Nunito_900Black", letterSpacing: 8 }}
+                  className="bg-dark-300 border border-surface-border rounded-xl px-4 py-3 text-center text-3xl text-violet-300"
+                  style={{ fontFamily: font.bold, letterSpacing: 8 }}
                   placeholder="ABCDEF"
                   placeholderTextColor="#2A2A30"
                   value={inviteCode}
@@ -196,7 +222,7 @@ export default function StudentHomeScreen() {
                     onPress={() => { setShowInvite(false); setInviteCode(""); setInviteError(""); }}
                     className="flex-1 border border-surface-border rounded-xl py-3 items-center"
                   >
-                    <Text className="text-text-muted text-sm" style={{ fontFamily: "Nunito_700Bold" }}>
+                    <Text className="text-text-muted text-sm" style={{ fontFamily: font.semibold }}>
                       Cancelar
                     </Text>
                   </Pressable>
@@ -212,7 +238,7 @@ export default function StudentHomeScreen() {
                     ) : (
                       <Text
                         className={`text-sm ${inviteCode.length >= 6 ? "text-white" : "text-text-muted"}`}
-                        style={{ fontFamily: "Nunito_700Bold", letterSpacing: 1 }}
+                        style={{ fontFamily: font.semibold, letterSpacing: 1 }}
                       >
                         CONECTAR
                       </Text>
@@ -227,8 +253,10 @@ export default function StudentHomeScreen() {
             entering={FadeInDown.springify()}
             className="bg-success-500/10 border border-success-500/20 rounded-2xl p-4 mb-6 flex-row items-center gap-3"
           >
-            <Text className="text-lg">✅</Text>
-            <Text className="text-sm text-success-500 flex-1" style={{ fontFamily: "Nunito_600SemiBold" }}>
+            <View className="w-10 h-10 rounded-2xl bg-success-500/15 border border-success-500/25 items-center justify-center">
+              <AppIcon name="check-circle" size={18} color="#34D399" strokeWidth={2} />
+            </View>
+            <Text className="text-sm text-success-500 flex-1" style={{ fontFamily: font.semibold }}>
               Conectado ao seu personal! Confira o chat.
             </Text>
           </Animated.View>
@@ -247,7 +275,7 @@ export default function StudentHomeScreen() {
               </DisplayHeading>
               <Text
                 className="text-sm text-text-secondary mt-3 leading-6"
-                style={{ fontFamily: "Nunito_400Regular" }}
+                style={{ fontFamily: font.regular }}
               >
                 Peça ao seu personal para criar um plano de treino personalizado para os seus objetivos.
               </Text>
@@ -259,7 +287,7 @@ export default function StudentHomeScreen() {
                 </View>
                 <Text
                   className="text-text-muted text-[10px]"
-                  style={{ fontFamily: "Nunito_700Bold", letterSpacing: 2 }}
+                  style={{ fontFamily: font.bold, letterSpacing: 2 }}
                 >
                   0 / 0
                 </Text>
@@ -274,12 +302,14 @@ export default function StudentHomeScreen() {
             entering={FadeInDown.delay(340).springify()}
             className="bg-warning-500/10 border border-warning-500/30 rounded-2xl p-4 mb-6 flex-row items-center gap-3"
           >
-            <Text className="text-2xl">⚠️</Text>
+            <View className="w-10 h-10 rounded-2xl bg-warning-500/15 border border-warning-500/25 items-center justify-center">
+              <AppIcon name="warning" size={18} color="#FBBF24" strokeWidth={2} />
+            </View>
             <View className="flex-1">
-              <Text className="text-sm text-warning-500" style={{ fontFamily: "Nunito_700Bold" }}>
+              <Text className="text-sm text-warning-500" style={{ fontFamily: font.semibold }}>
                 Plano expira em {daysUntilExpiry} dia{daysUntilExpiry !== 1 ? "s" : ""}
               </Text>
-              <Text className="text-xs text-text-muted mt-0.5" style={{ fontFamily: "Nunito_400Regular" }}>
+              <Text className="text-xs text-text-muted mt-0.5" style={{ fontFamily: font.regular }}>
                 Converse com seu personal para renovar.
               </Text>
             </View>
@@ -310,9 +340,9 @@ export default function StudentHomeScreen() {
           Ações rápidas
         </SectionLabel>
         <View className="flex-row gap-3 mb-10">
-          <QuickAction icon="📏" label="Medidas" href="/(student)/(progress)/add-measurement" index={0} />
-          <QuickAction icon="📸" label="Foto" href="/(student)/(progress)/add-photo" index={1} />
-          <QuickAction icon="🏆" label="Desafios" href="/challenges" index={2} />
+          <QuickAction icon="ruler" label="Medidas" href="/(student)/(progress)/add-measurement" index={0} />
+          <QuickAction icon="camera" label="Foto" href="/(student)/(progress)/add-photo" index={1} />
+          <QuickAction icon="trophy" label="Desafios" href="/challenges" index={2} />
         </View>
 
         {/* Sign out */}
@@ -320,7 +350,7 @@ export default function StudentHomeScreen() {
           onPress={signOut}
           className="border border-surface-border rounded-2xl py-3.5 items-center mb-10 active:bg-surface-hover"
         >
-          <Text className="text-text-muted text-sm" style={{ fontFamily: "Nunito_700Bold", letterSpacing: 1 }}>
+          <Text className="text-text-muted text-sm" style={{ fontFamily: font.semibold, letterSpacing: 1 }}>
             SAIR DA CONTA
           </Text>
         </Pressable>

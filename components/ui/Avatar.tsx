@@ -1,5 +1,6 @@
 import { Image } from "expo-image";
 import { Text, View } from "react-native";
+import { font } from "../../lib/design/tokens";
 
 interface AvatarProps {
   uri?: string | null;
@@ -37,9 +38,9 @@ export function Avatar({ uri, name, size = "md" }: AvatarProps) {
 
   return (
     <View
-      className={`${s.container} rounded-full bg-primary-100 items-center justify-center`}
+      className={`${s.container} rounded-full bg-violet-500/15 border border-violet-500/25 items-center justify-center`}
     >
-      <Text className={`${s.text} font-bold text-primary-700`}>
+      <Text className={`${s.text} text-violet-200`} style={{ fontFamily: font.bold }}>
         {getInitials(name)}
       </Text>
     </View>

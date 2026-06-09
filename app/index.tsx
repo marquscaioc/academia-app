@@ -24,7 +24,7 @@ export default function Index() {
         <Logo size="xl" />
         <Text
           className="text-fuchsia-400 mt-5 mb-6"
-          style={{ fontFamily: "Nunito_700Bold", fontSize: 10, letterSpacing: 3 }}
+          style={{ fontFamily: "DMSans_600SemiBold", fontSize: 10, letterSpacing: 3 }}
         >
           ROYAL AMETHYST
         </Text>

@@ -4,6 +4,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../lib/auth/provider";
 import { supabase } from "../../lib/supabase/client";
+import { font } from "../../lib/design/tokens";
+import { DisplayHeading } from "../../components/ui/DisplayHeading";
+import { AppIcon, type IconName } from "../../components/ui";
 
 interface Notification {
   id: string;
@@ -15,15 +18,15 @@ interface Notification {
   data: Record<string, unknown> | null;
 }
 
-const typeIcons: Record<string, string> = {
-  new_workout: "🏋️",
-  check_in_due: "📋",
-  message: "💬",
-  challenge_update: "🏆",
-  achievement: "🎖️",
-  payment: "💰",
-  invite_accepted: "👥",
-  default: "🔔",
+const typeIcons: Record<string, IconName> = {
+  new_workout: "workout",
+  check_in_due: "clipboard-check",
+  message: "chat",
+  challenge_update: "trophy",
+  achievement: "award",
+  payment: "money",
+  invite_accepted: "social",
+  default: "bell",
 };
 
 function timeAgo(dateStr: string): string {
@@ -84,19 +87,30 @@ export default function NotificationsScreen() {
       <View className="flex-1">
         <View className="flex-row items-center justify-between px-6 pt-6 pb-4">
           <View className="flex-row items-center gap-3">
-            <Pressable onPress={() => router.back()}>
-              <Text className="text-text-muted font-medium text-sm">← Voltar</Text>
+            <Pressable
+              onPress={() => router.back()}
+              className="w-10 h-10 rounded-2xl bg-surface-card border border-surface-border items-center justify-center"
+            >
+              <AppIcon name="arrow-left" size={18} color="#6E6382" strokeWidth={2} />
             </Pressable>
-            <Text className="text-xl font-black text-text-primary">Notificacoes</Text>
+            <DisplayHeading size="sm">Notificações.</DisplayHeading>
             {unreadCount > 0 ? (
               <View className="bg-violet-500 rounded-full px-2 py-0.5">
-                <Text className="text-white text-[10px] font-black">{unreadCount}</Text>
+                <Text className="text-white text-[10px]" style={{ fontFamily: font.bold }}>
+                  {unreadCount}
+                </Text>
               </View>
             ) : null}
           </View>
           {unreadCount > 0 ? (
-            <Pressable onPress={() => markAllRead.mutate()}>
-              <Text className="text-violet-400 text-xs font-bold">Marcar todas como lidas</Text>
+            <Pressable
+              onPress={() => markAllRead.mutate()}
+              className="flex-row items-center gap-1.5"
+            >
+              <AppIcon name="check-all" size={16} color="#9B40D8" strokeWidth={2} />
+              <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>
+                Marcar todas como lidas
+              </Text>
             </Pressable>
           ) : null}
         </View>
@@ -106,9 +120,14 @@ export default function NotificationsScreen() {
             <ActivityIndicator size="large" color="#781BB6" />
           </View>
         ) : !notifications?.length ? (
-          <View className="flex-1 items-center justify-center">
-            <Text className="text-4xl mb-3">🔔</Text>
-            <Text className="text-text-muted text-sm">Nenhuma notificacao ainda.</Text>
+          <View className="flex-1 items-center justify-center px-6">
+            <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-5">
+              <AppIcon name="bell" size={28} color="#9B40D8" strokeWidth={2} />
+            </View>
+            <DisplayHeading size="sm">Tudo em dia.</DisplayHeading>
+            <Text className="text-text-secondary text-sm text-center mt-2" style={{ fontFamily: font.regular }}>
+              Nenhuma notificacao ainda.
+            </Text>
           </View>
         ) : (
           <FlatList
@@ -122,20 +141,34 @@ export default function NotificationsScreen() {
                   !item.is_read ? "bg-surface-card" : ""
                 }`}
               >
-                <View className="w-10 h-10 bg-surface-elevated rounded-xl items-center justify-center mt-0.5">
-                  <Text className="text-lg">{typeIcons[item.type] ?? typeIcons.default}</Text>
+                <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mt-0.5">
+                  <AppIcon
+                    name={typeIcons[item.type] ?? typeIcons.default}
+                    size={18}
+                    color="#9B40D8"
+                    strokeWidth={2}
+                  />
                 </View>
                 <View className="flex-1">
                   <View className="flex-row items-center gap-2">
-                    <Text className="text-sm font-bold text-text-primary flex-1">{item.title}</Text>
+                    <Text
+                      className="text-sm text-text-primary flex-1"
+                      style={{ fontFamily: item.is_read ? font.medium : font.semibold }}
+                    >
+                      {item.title}
+                    </Text>
                     {!item.is_read ? (
                       <View className="w-2 h-2 bg-violet-500 rounded-full" />
                     ) : null}
                   </View>
                   {item.body ? (
-                    <Text className="text-xs text-text-muted mt-1 leading-4">{item.body}</Text>
+                    <Text className="text-xs text-text-secondary mt-1 leading-4" style={{ fontFamily: font.regular }}>
+                      {item.body}
+                    </Text>
                   ) : null}
-                  <Text className="text-[10px] text-text-muted mt-1.5">{timeAgo(item.created_at)}</Text>
+                  <Text className="text-[10px] text-text-muted mt-1.5" style={{ fontFamily: font.regular }}>
+                    {timeAgo(item.created_at)}
+                  </Text>
                 </View>
               </Pressable>
             )}

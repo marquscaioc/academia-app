@@ -21,6 +21,9 @@ import { FeedPost } from "../../../components/social/FeedPost";
 import { CommentThread } from "../../../components/social/CommentThread";
 import { EmptyState } from "../../../components/ui/EmptyState";
 import { Avatar } from "../../../components/ui/Avatar";
+import { DisplayHeading } from "../../../components/ui/DisplayHeading";
+import { AppIcon } from "../../../components/ui";
+import { font, amethystGlow } from "../../../lib/design/tokens";
 
 function CommentsSheet({ postId, userId, onClose }: { postId: string; userId?: string; onClose: () => void }) {
   const { data: comments } = usePostComments(postId);
@@ -31,9 +34,9 @@ function CommentsSheet({ postId, userId, onClose }: { postId: string; userId?: s
         <Pressable className="flex-1" onPress={onClose} />
         <View className="bg-dark-200 border-t border-surface-border rounded-t-3xl px-6 pt-6 pb-10 max-h-[80%]">
           <View className="flex-row items-center justify-between mb-4">
-            <Text className="text-lg font-black text-text-primary">Comentários</Text>
-            <Pressable onPress={onClose}>
-              <Text className="text-text-muted text-lg">✕</Text>
+            <DisplayHeading size="sm" className="text-text-primary">Comentários</DisplayHeading>
+            <Pressable onPress={onClose} className="w-9 h-9 rounded-2xl bg-surface-card border border-surface-border items-center justify-center">
+              <AppIcon name="close" size={18} color="#6E6382" strokeWidth={2} />
             </Pressable>
           </View>
           <ScrollView keyboardShouldPersistTaps="handled">
@@ -109,25 +112,33 @@ export default function SocialFeedScreen() {
       {/* Header */}
       <View className="px-6 pt-6 pb-3 border-b border-surface-border">
         <View className="flex-row items-center justify-between mb-3">
-          <Text className="text-2xl font-black text-text-primary">Feed</Text>
+          <DisplayHeading size="md" className="text-text-primary">Feed</DisplayHeading>
           <View className="flex-row gap-2">
-            <Pressable onPress={() => router.push("/groups")} className="bg-surface-card border border-surface-border px-3 py-1.5 rounded-lg">
-              <Text className="text-text-muted font-bold text-xs">👥 Grupos</Text>
+            <Pressable onPress={() => router.push("/groups")} className="flex-row items-center gap-1.5 bg-surface-card border border-surface-border px-3 py-1.5 rounded-full">
+              <AppIcon name="social" size={14} color="#A99FBA" strokeWidth={2} />
+              <Text className="text-text-muted text-xs" style={{ fontFamily: font.semibold }}>Grupos</Text>
             </Pressable>
-            <Pressable onPress={() => router.push("/challenges")} className="bg-violet-500/10 px-3 py-1.5 rounded-lg">
-              <Text className="text-violet-400 font-bold text-xs">🏆 Desafios</Text>
+            <Pressable onPress={() => router.push("/challenges")} className="flex-row items-center gap-1.5 bg-violet-500/10 border border-violet-500/25 px-3 py-1.5 rounded-full">
+              <AppIcon name="trophy" size={14} color="#9B40D8" strokeWidth={2} />
+              <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>Desafios</Text>
             </Pressable>
           </View>
         </View>
         {/* Feed mode tabs */}
         <View className="flex-row gap-4">
           <Pressable onPress={() => setFeedMode("public")}>
-            <Text className={`text-sm font-bold pb-1 ${feedMode === "public" ? "text-violet-400 border-b-2 border-violet-500" : "text-text-muted"}`}>
+            <Text
+              className={`text-sm pb-1 ${feedMode === "public" ? "text-violet-400 border-b-2 border-violet-500" : "text-text-muted"}`}
+              style={{ fontFamily: font.semibold }}
+            >
               Todos
             </Text>
           </Pressable>
           <Pressable onPress={() => setFeedMode("following")}>
-            <Text className={`text-sm font-bold pb-1 ${feedMode === "following" ? "text-violet-400 border-b-2 border-violet-500" : "text-text-muted"}`}>
+            <Text
+              className={`text-sm pb-1 ${feedMode === "following" ? "text-violet-400 border-b-2 border-violet-500" : "text-text-muted"}`}
+              style={{ fontFamily: font.semibold }}
+            >
               Seguindo
             </Text>
           </Pressable>
@@ -140,21 +151,21 @@ export default function SocialFeedScreen() {
         className="px-6 py-3 flex-row items-center gap-3 border-b border-surface-border"
       >
         <Avatar uri={profile?.avatar_url} name={profile?.full_name} size="sm" />
-        <Text className="text-sm text-text-muted flex-1">No que voce esta pensando?</Text>
+        <Text className="text-sm text-text-muted flex-1" style={{ fontFamily: font.regular }}>No que voce esta pensando?</Text>
       </Pressable>
 
       {/* Composer */}
       {showComposer ? (
         <View className="px-6 py-4 border-b border-surface-border bg-surface-card">
           <TextInput
-            className="text-base text-text-primary min-h-[60px]"
+            className="text-[15px] text-text-primary min-h-[60px]"
             placeholder="Compartilhe seu treino, progresso ou motivacao..."
-            placeholderTextColor="#6E6580"
+            placeholderTextColor="#6E6382"
             value={newPostContent}
             onChangeText={setNewPostContent}
             multiline
             autoFocus
-            style={{ textAlignVertical: "top" }}
+            style={{ textAlignVertical: "top", fontFamily: font.regular }}
           />
 
           {/* Media preview */}
@@ -165,32 +176,36 @@ export default function SocialFeedScreen() {
                   <Image source={{ uri }} style={{ width: "100%", height: "100%" }} contentFit="cover" />
                 </View>
               ))}
-              <Pressable onPress={() => setMediaUris([])} className="w-16 h-16 bg-dark-300 rounded-xl items-center justify-center">
-                <Text className="text-danger-500 text-xs font-bold">✕</Text>
+              <Pressable onPress={() => setMediaUris([])} className="w-16 h-16 bg-dark-300 border border-surface-border rounded-xl items-center justify-center">
+                <AppIcon name="trash" size={18} color="#FB7185" strokeWidth={2} />
               </Pressable>
             </View>
           ) : null}
 
           <View className="flex-row items-center justify-between mt-3">
-            <Pressable onPress={pickMedia} className="flex-row items-center gap-2 bg-dark-300 px-3 py-2 rounded-lg">
-              <Text className="text-sm">📷</Text>
-              <Text className="text-text-muted text-xs font-bold">Foto</Text>
+            <Pressable onPress={pickMedia} className="flex-row items-center gap-2 bg-dark-300 border border-surface-border px-3 py-2 rounded-full">
+              <AppIcon name="camera" size={16} color="#A99FBA" strokeWidth={2} />
+              <Text className="text-text-muted text-xs" style={{ fontFamily: font.semibold }}>Foto</Text>
             </Pressable>
-            <View className="flex-row gap-2">
+            <View className="flex-row gap-2 items-center">
               <Pressable onPress={() => { setShowComposer(false); setMediaUris([]); setNewPostContent(""); }} className="px-4 py-2">
-                <Text className="text-text-muted text-sm">Cancelar</Text>
+                <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>Cancelar</Text>
               </Pressable>
               <Pressable
                 onPress={handlePost}
                 disabled={(!newPostContent.trim() && !mediaUris.length) || createPost.isPending}
-                className={`px-5 py-2 rounded-lg ${
+                style={newPostContent.trim() || mediaUris.length ? amethystGlow : undefined}
+                className={`px-5 py-2 rounded-full ${
                   newPostContent.trim() || mediaUris.length ? "bg-violet-500" : "bg-surface-border"
                 }`}
               >
                 {createPost.isPending ? (
                   <ActivityIndicator color="#0B080F" size="small" />
                 ) : (
-                  <Text className={`font-black text-sm ${newPostContent.trim() || mediaUris.length ? "text-white" : "text-text-muted"}`}>
+                  <Text
+                    className={`text-sm ${newPostContent.trim() || mediaUris.length ? "text-white" : "text-text-muted"}`}
+                    style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
+                  >
                     Publicar
                   </Text>
                 )}
@@ -207,7 +222,7 @@ export default function SocialFeedScreen() {
         </View>
       ) : !posts?.length ? (
         <EmptyState
-          icon="👥"
+          iconName="social"
           title="Nenhuma publicacao"
           description="Seja o primeiro a compartilhar algo! Publique seu treino ou conquista."
         />

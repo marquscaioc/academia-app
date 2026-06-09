@@ -1,25 +1,25 @@
 import { Tabs } from "expo-router";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { BrandingProvider, useBranding } from "../../lib/branding/BrandingProvider";
+import { RoleGuard } from "../../components/auth/RoleGuard";
+import { WebFrame } from "../../components/layout/WebFrame";
+import { AppIcon, type IconName } from "../../components/ui";
 
-function TabIcon({ name, focused }: { name: string; focused: boolean }) {
-  const icons: Record<string, string> = {
-    home: "🏠",
-    workouts: "🏋️",
-    diet: "🥗",
-    progress: "📊",
-    social: "👥",
-    chat: "💬",
-    courses: "🎓",
-  };
+const TAB_ICON: Record<string, IconName> = {
+  home: "home",
+  workouts: "workout",
+  diet: "diet",
+  progress: "progress",
+  social: "social",
+  chat: "chat",
+  courses: "courses",
+};
+
+function TabIcon({ name, focused, color }: { name: string; focused: boolean; color: string }) {
   return (
     <View className="items-center">
-      <Text style={{ fontSize: 20, opacity: focused ? 1 : 0.4 }}>
-        {icons[name] ?? "●"}
-      </Text>
-      {focused ? (
-        <View className="w-1.5 h-1.5 bg-violet-500 rounded-full mt-1" />
-      ) : null}
+      <AppIcon name={TAB_ICON[name] ?? "home"} size={22} color={color} strokeWidth={focused ? 2.4 : 1.8} />
+      {focused ? <View className="w-1.5 h-1.5 bg-violet-500 rounded-full mt-1" /> : null}
     </View>
   );
 }
@@ -52,49 +52,49 @@ function StudentTabs() {
         name="(home)"
         options={{
           title: "Inicio",
-          tabBarIcon: ({ focused }) => <TabIcon name="home" focused={focused} />,
+          tabBarIcon: ({ focused, color }) => <TabIcon name="home" focused={focused} color={color} />,
         }}
       />
       <Tabs.Screen
         name="(workouts)"
         options={{
           title: "Treinos",
-          tabBarIcon: ({ focused }) => <TabIcon name="workouts" focused={focused} />,
+          tabBarIcon: ({ focused, color }) => <TabIcon name="workouts" focused={focused} color={color} />,
         }}
       />
       <Tabs.Screen
         name="(diet)"
         options={{
           title: "Dieta",
-          tabBarIcon: ({ focused }) => <TabIcon name="diet" focused={focused} />,
+          tabBarIcon: ({ focused, color }) => <TabIcon name="diet" focused={focused} color={color} />,
         }}
       />
       <Tabs.Screen
         name="(progress)"
         options={{
           title: "Progresso",
-          tabBarIcon: ({ focused }) => <TabIcon name="progress" focused={focused} />,
+          tabBarIcon: ({ focused, color }) => <TabIcon name="progress" focused={focused} color={color} />,
         }}
       />
       <Tabs.Screen
         name="(social)"
         options={{
           title: "Social",
-          tabBarIcon: ({ focused }) => <TabIcon name="social" focused={focused} />,
+          tabBarIcon: ({ focused, color }) => <TabIcon name="social" focused={focused} color={color} />,
         }}
       />
       <Tabs.Screen
         name="(chat)"
         options={{
           title: "Chat",
-          tabBarIcon: ({ focused }) => <TabIcon name="chat" focused={focused} />,
+          tabBarIcon: ({ focused, color }) => <TabIcon name="chat" focused={focused} color={color} />,
         }}
       />
       <Tabs.Screen
         name="(courses)"
         options={{
           title: "Aulas",
-          tabBarIcon: ({ focused }) => <TabIcon name="courses" focused={focused} />,
+          tabBarIcon: ({ focused, color }) => <TabIcon name="courses" focused={focused} color={color} />,
         }}
       />
     </Tabs>
@@ -103,8 +103,12 @@ function StudentTabs() {
 
 export default function StudentLayout() {
   return (
-    <BrandingProvider>
-      <StudentTabs />
-    </BrandingProvider>
+    <RoleGuard allow="student">
+      <BrandingProvider>
+        <WebFrame>
+          <StudentTabs />
+        </WebFrame>
+      </BrandingProvider>
+    </RoleGuard>
   );
 }

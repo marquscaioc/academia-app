@@ -1,4 +1,6 @@
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { amethystGradient, amethystGlow, font } from "../../lib/design/tokens";
 
 interface ButtonProps {
   title: string;
@@ -11,39 +13,13 @@ interface ButtonProps {
   fullWidth?: boolean;
 }
 
-const variantStyles = {
-  primary: {
-    container: "bg-violet-500 active:bg-violet-600",
-    text: "text-white",
-    loader: "#ffffff",
-  },
-  secondary: {
-    container: "bg-surface-elevated active:bg-surface-hover",
-    text: "text-text-primary",
-    loader: "#F2EEF8",
-  },
-  outline: {
-    container: "border border-surface-border bg-transparent active:bg-surface-hover",
-    text: "text-text-secondary",
-    loader: "#A99FBA",
-  },
-  ghost: {
-    container: "bg-transparent active:bg-surface-hover",
-    text: "text-text-secondary",
-    loader: "#A99FBA",
-  },
-  danger: {
-    container: "bg-danger-500 active:bg-danger-600",
-    text: "text-white",
-    loader: "#ffffff",
-  },
+const sizeStyles = {
+  sm: { container: "py-2.5 px-4 rounded-xl", text: "text-sm", pad: 10 },
+  md: { container: "py-3.5 px-6 rounded-2xl", text: "text-[15px]", pad: 15 },
+  lg: { container: "py-4 px-8 rounded-2xl", text: "text-base", pad: 18 },
 };
 
-const sizeStyles = {
-  sm: { container: "py-2.5 px-4 rounded-xl", text: "text-sm" },
-  md: { container: "py-3.5 px-6 rounded-2xl", text: "text-base" },
-  lg: { container: "py-4.5 px-8 rounded-2xl", text: "text-lg" },
-};
+const TEXT_STYLE = { fontFamily: font.semibold, letterSpacing: 0.4 } as const;
 
 export function Button({
   title,
@@ -55,26 +31,66 @@ export function Button({
   icon,
   fullWidth = true,
 }: ButtonProps) {
-  const v = variantStyles[variant];
   const s = sizeStyles[size];
   const isDisabled = disabled || loading;
+  const widthCls = fullWidth ? "w-full" : "";
+
+  const Label = ({ color }: { color: string }) =>
+    loading ? (
+      <ActivityIndicator color={color} size="small" />
+    ) : (
+      <View className="flex-row items-center justify-center gap-2">
+        {icon}
+        <Text className={s.text} style={[TEXT_STYLE, { color }]}>
+          {title}
+        </Text>
+      </View>
+    );
+
+  // Gradient variants (primary / danger) — the signature amethyst treatment.
+  if (variant === "primary" || variant === "danger") {
+    const colors =
+      variant === "primary" ? amethystGradient : (["#FB7185", "#F43F5E"] as const);
+    return (
+      <Pressable
+        onPress={onPress}
+        disabled={isDisabled}
+        className={`${widthCls} ${isDisabled ? "opacity-50" : ""}`}
+        style={variant === "primary" && !isDisabled ? amethystGlow : undefined}
+      >
+        <LinearGradient
+          colors={colors}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0.9 }}
+          style={{
+            paddingVertical: s.pad,
+            borderRadius: size === "sm" ? 12 : 16,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Label color="#FFFFFF" />
+        </LinearGradient>
+      </Pressable>
+    );
+  }
+
+  // Flat variants
+  const flat = {
+    secondary: { box: "bg-surface-elevated border border-surface-border active:bg-surface-hover", color: "#F2EEF8" },
+    outline: { box: "border border-surface-border bg-transparent active:bg-surface-hover", color: "#C78FEF" },
+    ghost: { box: "bg-transparent active:bg-surface-hover", color: "#A99FBA" },
+  }[variant];
 
   return (
     <Pressable
       onPress={onPress}
       disabled={isDisabled}
-      className={`flex-row items-center justify-center ${s.container} ${v.container} ${
-        fullWidth ? "w-full" : ""
-      } ${isDisabled ? "opacity-50" : ""}`}
+      className={`flex-row items-center justify-center ${s.container} ${flat.box} ${widthCls} ${
+        isDisabled ? "opacity-50" : ""
+      }`}
     >
-      {loading ? (
-        <ActivityIndicator color={v.loader} size="small" />
-      ) : (
-        <View className="flex-row items-center gap-2">
-          {icon}
-          <Text className={`font-bold tracking-wide ${s.text} ${v.text}`}>{title}</Text>
-        </View>
-      )}
+      <Label color={flat.color} />
     </Pressable>
   );
 }

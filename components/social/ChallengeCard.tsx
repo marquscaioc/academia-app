@@ -1,5 +1,6 @@
 import { Pressable, Text, View } from "react-native";
 import { Badge } from "../ui/Badge";
+import { AppIcon } from "../ui";
 
 interface ChallengeCardProps {
   title: string;
@@ -70,7 +71,10 @@ export function ChallengeCard({
           {scoringLabels[scoringMode] ?? scoringMode}
         </Text>
         {requirePhoto ? (
-          <Text className="text-xs text-text-muted">📷 Foto obrigatoria</Text>
+          <View className="flex-row items-center gap-1">
+            <AppIcon name="camera" size={14} color="#6E6382" strokeWidth={2} />
+            <Text className="text-xs text-text-muted">Foto obrigatoria</Text>
+          </View>
         ) : null}
       </View>
 

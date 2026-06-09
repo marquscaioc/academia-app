@@ -13,7 +13,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import { supabase } from "../../lib/supabase/client";
-import { Logo } from "../../components/ui";
+import { AppIcon, DisplayHeading, Logo } from "../../components/ui";
+import { amethystGlow, font } from "../../lib/design/tokens";
 
 export default function ResetPasswordScreen() {
   const [password, setPassword] = useState("");
@@ -83,19 +84,13 @@ export default function ResetPasswordScreen() {
       <SafeAreaView className="flex-1 bg-dark-400">
         <View className="flex-1 justify-center items-center px-8 max-w-[440px] w-full self-center">
           <Animated.View entering={FadeIn.duration(400)} className="items-center">
-            <View className="w-20 h-20 bg-success-500/15 rounded-3xl items-center justify-center mb-6">
-              <Text className="text-4xl">✅</Text>
+            <View className="w-20 h-20 bg-success-500/15 border border-success-500/25 rounded-3xl items-center justify-center mb-6">
+              <AppIcon name="check-circle" size={32} color="#34D399" strokeWidth={1.8} />
             </View>
-            <Text
-              className="text-text-primary text-center"
-              style={{ fontFamily: "Nunito_900Black", fontSize: 32, letterSpacing: -1.5 }}
-            >
-              SENHA{"\n"}ATUALIZADA.
-            </Text>
-            <Text
-              className="text-text-muted text-sm text-center mt-4"
-              style={{ fontFamily: "Nunito_400Regular" }}
-            >
+            <DisplayHeading size="lg" tone="primary" className="text-center">
+              Senha atualizada.
+            </DisplayHeading>
+            <Text className="text-text-secondary text-sm text-center mt-4" style={{ fontFamily: font.regular }}>
               Redirecionando para o login...
             </Text>
           </Animated.View>
@@ -123,26 +118,11 @@ export default function ResetPasswordScreen() {
           </Animated.View>
 
           <Animated.View entering={FadeInDown.delay(80).springify()} className="mb-8">
-            <Text
-              className="text-text-muted"
-              style={{ fontFamily: "Nunito_400Regular_Italic", fontSize: 26, letterSpacing: -0.5 }}
-            >
-              Defina sua
-            </Text>
-            <Text
-              className="text-text-primary mt-1"
-              style={{
-                fontFamily: "Nunito_900Black",
-                fontSize: 40,
-                lineHeight: 40,
-                letterSpacing: -2,
-              }}
-            >
-              NOVA SENHA.
-            </Text>
+            <DisplayHeading size="md" italic tone="muted">Defina sua</DisplayHeading>
+            <DisplayHeading size="2xl" tone="primary" className="mt-0.5">Nova senha.</DisplayHeading>
             <Text
               className="text-fuchsia-400 mt-3"
-              style={{ fontFamily: "Nunito_700Bold", fontSize: 10, letterSpacing: 3 }}
+              style={{ fontFamily: font.semibold, fontSize: 10, letterSpacing: 3 }}
             >
               RECUPERAÇÃO DE ACESSO
             </Text>
@@ -150,7 +130,7 @@ export default function ResetPasswordScreen() {
 
           {!sessionReady ? (
             <View className="bg-warning-500/10 border border-warning-500/20 rounded-2xl p-4 mb-5">
-              <Text className="text-warning-500 text-sm text-center" style={{ fontFamily: "Nunito_500Medium" }}>
+              <Text className="text-warning-500 text-sm text-center" style={{ fontFamily: font.medium }}>
                 Validando link de recuperação...
               </Text>
             </View>
@@ -161,7 +141,7 @@ export default function ResetPasswordScreen() {
               entering={FadeIn.duration(200)}
               className="bg-danger-500/10 border border-danger-500/20 rounded-2xl p-4 mb-5"
             >
-              <Text className="text-danger-500 text-center text-sm" style={{ fontFamily: "Nunito_500Medium" }}>
+              <Text className="text-danger-500 text-center text-sm" style={{ fontFamily: font.medium }}>
                 {error}
               </Text>
             </Animated.View>
@@ -170,20 +150,20 @@ export default function ResetPasswordScreen() {
           <Animated.View entering={FadeInDown.delay(160).springify()} className="gap-4">
             <View>
               <Text
-                className="text-[10px] text-text-muted mb-2 ml-1 uppercase"
-                style={{ fontFamily: "Nunito_700Bold", letterSpacing: 2 }}
+                className="text-[11px] text-text-muted mb-2 ml-0.5 uppercase"
+                style={{ fontFamily: font.semibold, letterSpacing: 1.5 }}
               >
                 Nova senha
               </Text>
               <TextInput
-                className={`rounded-2xl px-5 py-4 text-base text-text-primary ${
+                className={`rounded-2xl px-4 py-3.5 text-[15px] text-text-primary ${
                   focused === "pwd"
-                    ? "bg-surface-elevated border-2 border-violet-500/50"
-                    : "bg-surface-card border-2 border-surface-border"
+                    ? "bg-surface-elevated border border-violet-400/80"
+                    : "bg-surface-card/80 border border-surface-border"
                 }`}
-                style={{ fontFamily: "Nunito_500Medium" }}
+                style={{ fontFamily: font.regular }}
                 placeholder="Mínimo 6 caracteres"
-                placeholderTextColor="#6E6580"
+                placeholderTextColor="#6E6382"
                 value={password}
                 onChangeText={setPassword}
                 onFocus={() => setFocused("pwd")}
@@ -195,20 +175,20 @@ export default function ResetPasswordScreen() {
 
             <View>
               <Text
-                className="text-[10px] text-text-muted mb-2 ml-1 uppercase"
-                style={{ fontFamily: "Nunito_700Bold", letterSpacing: 2 }}
+                className="text-[11px] text-text-muted mb-2 ml-0.5 uppercase"
+                style={{ fontFamily: font.semibold, letterSpacing: 1.5 }}
               >
                 Confirmar senha
               </Text>
               <TextInput
-                className={`rounded-2xl px-5 py-4 text-base text-text-primary ${
+                className={`rounded-2xl px-4 py-3.5 text-[15px] text-text-primary ${
                   focused === "confirm"
-                    ? "bg-surface-elevated border-2 border-violet-500/50"
-                    : "bg-surface-card border-2 border-surface-border"
+                    ? "bg-surface-elevated border border-violet-400/80"
+                    : "bg-surface-card/80 border border-surface-border"
                 }`}
-                style={{ fontFamily: "Nunito_500Medium" }}
+                style={{ fontFamily: font.regular }}
                 placeholder="Repita a senha"
-                placeholderTextColor="#6E6580"
+                placeholderTextColor="#6E6382"
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
                 onFocus={() => setFocused("confirm")}
@@ -222,21 +202,19 @@ export default function ResetPasswordScreen() {
               onPress={handleSubmit}
               disabled={loading || !sessionReady}
               className="rounded-2xl overflow-hidden mt-2"
+              style={loading || !sessionReady ? undefined : amethystGlow}
             >
               <LinearGradient
                 colors={loading || !sessionReady ? ["#50107D", "#86169E"] : ["#781BB6", "#C636E0"]}
                 start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={{ paddingVertical: 18, alignItems: "center" }}
+                end={{ x: 1, y: 0.9 }}
+                style={{ paddingVertical: 17, alignItems: "center" }}
               >
                 {loading ? (
                   <ActivityIndicator color="#FFFFFF" />
                 ) : (
-                  <Text
-                    className="text-white text-base"
-                    style={{ fontFamily: "Nunito_700Bold", letterSpacing: 2 }}
-                  >
-                    ATUALIZAR SENHA
+                  <Text className="text-white text-[15px]" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>
+                    Atualizar senha
                   </Text>
                 )}
               </LinearGradient>

@@ -7,6 +7,9 @@ import { supabase } from "../../../lib/supabase/client";
 import { useRevenueStats, useSubscriptionPlans, usePaymentRecords } from "../../../hooks/queries/useFinancial";
 import { useMarkPaymentPaid, useCreateSubscription, useRecordPayment } from "../../../hooks/mutations/useFinancialMutations";
 import { Card } from "../../../components/ui/Card";
+import { DisplayHeading } from "../../../components/ui/DisplayHeading";
+import { AppIcon } from "../../../components/ui";
+import { font } from "../../../lib/design/tokens";
 import { useState } from "react";
 
 function formatCurrency(cents: number): string {
@@ -63,16 +66,16 @@ function AssignPlanModal({
         <Pressable className="flex-1" onPress={onClose} />
         <View className="bg-dark-200 border-t border-surface-border rounded-t-3xl px-6 pt-6 pb-10 max-h-[70%]">
           <View className="flex-row items-center justify-between mb-1">
-            <Text className="text-lg font-black text-text-primary">Atribuir plano</Text>
-            <Pressable onPress={onClose}>
-              <Text className="text-text-muted text-lg">✕</Text>
+            <Text className="text-lg text-text-primary" style={{ fontFamily: font.bold }}>Atribuir plano</Text>
+            <Pressable onPress={onClose} className="w-9 h-9 rounded-full items-center justify-center active:bg-surface-hover">
+              <AppIcon name="close" size={20} color="#A99FBA" strokeWidth={2} />
             </Pressable>
           </View>
-          <Text className="text-xs text-text-muted mb-4">
+          <Text className="text-xs text-text-muted mb-4" style={{ fontFamily: font.regular }}>
             {plan.name} · {formatCurrency(plan.price_cents)}
           </Text>
           {!students?.length ? (
-            <Text className="text-sm text-text-muted text-center py-6">Nenhum aluno ativo.</Text>
+            <Text className="text-sm text-text-muted text-center py-6" style={{ fontFamily: font.regular }}>Nenhum aluno ativo.</Text>
           ) : (
             <ScrollView>
               {students.map((s) => (
@@ -80,10 +83,14 @@ function AssignPlanModal({
                   key={s.student_id}
                   onPress={() => assign(s.student_id)}
                   disabled={busy}
-                  className="flex-row items-center justify-between p-4 mb-2 rounded-2xl border border-surface-border bg-surface-card active:bg-surface-hover"
+                  className="flex-row items-center gap-3 p-4 mb-2 rounded-2xl border border-surface-border bg-surface-card active:bg-surface-hover"
                 >
-                  <Text className="text-sm font-bold text-text-primary">{s.student?.full_name ?? "Aluno"}</Text>
-                  <Text className="text-violet-400 font-bold text-xs">Atribuir</Text>
+                  <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+                    <AppIcon name="user" size={18} color="#9B40D8" strokeWidth={2} />
+                  </View>
+                  <Text className="flex-1 text-sm text-text-primary" style={{ fontFamily: font.semibold }}>{s.student?.full_name ?? "Aluno"}</Text>
+                  <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>Atribuir</Text>
+                  <AppIcon name="chevron-right" size={18} color="#6E6382" strokeWidth={2} />
                 </Pressable>
               ))}
             </ScrollView>
@@ -107,10 +114,11 @@ export default function FinancialScreen() {
     <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1 px-6 pt-6">
         <View className="flex-row items-center justify-between mb-6">
-          <Text className="text-2xl font-black text-text-primary">Financeiro</Text>
+          <DisplayHeading size="xl">Financeiro.</DisplayHeading>
           <Link href="/(trainer)/financial/create-plan" asChild>
-            <Pressable className="bg-violet-500 px-4 py-2 rounded-xl active:bg-violet-600">
-              <Text className="text-white font-black text-xs">+ Plano</Text>
+            <Pressable className="bg-violet-500 px-4 py-2 rounded-xl active:bg-violet-600 flex-row items-center gap-1.5">
+              <AppIcon name="plus" size={16} color="#FFFFFF" strokeWidth={2} />
+              <Text className="text-white text-xs" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Plano</Text>
             </Pressable>
           </Link>
         </View>
@@ -118,14 +126,24 @@ export default function FinancialScreen() {
         {/* Revenue cards */}
         <View className="flex-row gap-3 mb-6">
           <View className="flex-1 bg-surface-card border border-surface-border rounded-2xl p-5">
-            <Text className="text-xs text-text-muted uppercase tracking-wider font-bold mb-2">MRR</Text>
-            <Text className="text-2xl font-black text-violet-400">
+            <View className="flex-row items-center gap-2 mb-2">
+              <View className="w-8 h-8 rounded-xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+                <AppIcon name="money" size={16} color="#9B40D8" strokeWidth={2} />
+              </View>
+              <Text className="text-[10px] text-text-muted uppercase" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>MRR</Text>
+            </View>
+            <Text className="text-3xl text-violet-400" style={{ fontFamily: font.display, letterSpacing: -0.5 }}>
               {statsLoading ? "..." : formatCurrency(stats?.mrr ?? 0)}
             </Text>
           </View>
           <View className="flex-1 bg-surface-card border border-surface-border rounded-2xl p-5">
-            <Text className="text-xs text-text-muted uppercase tracking-wider font-bold mb-2">Alunos</Text>
-            <Text className="text-2xl font-black text-ice-400">
+            <View className="flex-row items-center gap-2 mb-2">
+              <View className="w-8 h-8 rounded-xl bg-ice-500/15 border border-ice-500/25 items-center justify-center">
+                <AppIcon name="social" size={16} color="#A99FBA" strokeWidth={2} />
+              </View>
+              <Text className="text-[10px] text-text-muted uppercase" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>Alunos</Text>
+            </View>
+            <Text className="text-3xl text-ice-400" style={{ fontFamily: font.display, letterSpacing: -0.5 }}>
               {statsLoading ? "..." : stats?.activeStudents}
             </Text>
           </View>
@@ -133,8 +151,10 @@ export default function FinancialScreen() {
 
         {stats?.pendingPayments ? (
           <View className="bg-warning-500/10 border border-warning-500/20 rounded-2xl p-4 mb-6 flex-row items-center gap-3">
-            <Text className="text-lg">⚠️</Text>
-            <Text className="text-sm text-warning-500 font-bold flex-1">
+            <View className="w-10 h-10 rounded-2xl bg-warning-500/15 border border-warning-500/25 items-center justify-center">
+              <AppIcon name="warning" size={18} color="#FBBF24" strokeWidth={2} />
+            </View>
+            <Text className="text-sm text-warning-500 flex-1" style={{ fontFamily: font.semibold }}>
               {stats.pendingPayments} pagamento(s) pendente(s)
             </Text>
           </View>
@@ -150,9 +170,10 @@ export default function FinancialScreen() {
                 tab === t ? "border-violet-500" : "border-transparent"
               }`}
             >
-              <Text className={`font-bold text-xs uppercase tracking-wider ${
-                tab === t ? "text-violet-400" : "text-text-muted"
-              }`}>
+              <Text
+                className={`text-[10px] uppercase ${tab === t ? "text-violet-400" : "text-text-muted"}`}
+                style={{ fontFamily: font.semibold, letterSpacing: 2 }}
+              >
                 {t === "overview" ? "Resumo" : t === "plans" ? "Planos" : "Pagamentos"}
               </Text>
             </Pressable>
@@ -163,13 +184,16 @@ export default function FinancialScreen() {
         {tab === "overview" ? (
           <View className="gap-3 mb-10">
             <Card variant="outlined">
-              <Text className="text-xs text-text-muted uppercase tracking-wider font-bold mb-3">
-                Receita prevista (mensal)
-              </Text>
-              <Text className="text-3xl font-black text-text-primary">
+              <View className="flex-row items-center gap-2 mb-3">
+                <AppIcon name="trend" size={14} color="#6E6382" strokeWidth={2} />
+                <Text className="text-[10px] text-text-muted uppercase" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>
+                  Receita prevista (mensal)
+                </Text>
+              </View>
+              <Text className="text-4xl text-text-primary" style={{ fontFamily: font.display, letterSpacing: -0.5 }}>
                 {formatCurrency(stats?.mrr ?? 0)}
               </Text>
-              <Text className="text-xs text-text-muted mt-1">
+              <Text className="text-xs text-text-muted mt-1" style={{ fontFamily: font.regular }}>
                 Baseado em {stats?.activeStudents ?? 0} assinaturas ativas
               </Text>
             </Card>
@@ -178,33 +202,47 @@ export default function FinancialScreen() {
           <View className="gap-3 mb-10">
             {!plans?.length ? (
               <Card variant="outlined">
-                <Text className="text-sm text-text-muted text-center py-4">
-                  Nenhum plano criado. Crie seu primeiro plano!
-                </Text>
+                <View className="items-center py-6">
+                  <View className="w-16 h-16 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
+                    <AppIcon name="banknote" size={28} color="#9B40D8" strokeWidth={2} />
+                  </View>
+                  <Text className="text-lg text-text-primary text-center" style={{ fontFamily: font.display }}>
+                    Nenhum plano criado
+                  </Text>
+                  <Text className="text-sm text-text-secondary text-center mt-1" style={{ fontFamily: font.regular }}>
+                    Crie seu primeiro plano!
+                  </Text>
+                </View>
               </Card>
             ) : (
               plans.map((plan) => (
                 <Card key={plan.id} variant="outlined">
                   <View className="flex-row items-center justify-between mb-2">
-                    <Text className="text-base font-bold text-text-primary">{plan.name}</Text>
+                    <View className="flex-row items-center gap-3 flex-1">
+                      <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+                        <AppIcon name="banknote" size={18} color="#9B40D8" strokeWidth={2} />
+                      </View>
+                      <Text className="text-base text-text-primary" style={{ fontFamily: font.semibold }}>{plan.name}</Text>
+                    </View>
                     <View className={`px-2 py-1 rounded-full ${plan.is_active ? "bg-violet-500/10" : "bg-surface-elevated"}`}>
-                      <Text className={`text-[10px] font-bold ${plan.is_active ? "text-violet-400" : "text-text-muted"}`}>
+                      <Text className={`text-[10px] ${plan.is_active ? "text-violet-400" : "text-text-muted"}`} style={{ fontFamily: font.semibold }}>
                         {plan.is_active ? "Ativo" : "Inativo"}
                       </Text>
                     </View>
                   </View>
-                  <Text className="text-xl font-black text-violet-400">
+                  <Text className="text-xl text-violet-400" style={{ fontFamily: font.bold }}>
                     {formatCurrency(plan.price_cents)}
-                    <Text className="text-xs text-text-muted font-normal">/{plan.billing_interval === "monthly" ? "mes" : plan.billing_interval}</Text>
+                    <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>/{plan.billing_interval === "monthly" ? "mes" : plan.billing_interval}</Text>
                   </Text>
                   {plan.description ? (
-                    <Text className="text-xs text-text-muted mt-2">{plan.description}</Text>
+                    <Text className="text-xs text-text-muted mt-2" style={{ fontFamily: font.regular }}>{plan.description}</Text>
                   ) : null}
                   <Pressable
                     onPress={() => setAssignPlan({ id: plan.id, name: plan.name, price_cents: plan.price_cents })}
-                    className="border border-violet-500/30 rounded-xl py-2.5 items-center mt-3 active:bg-violet-500/10"
+                    className="border border-violet-500/30 rounded-xl py-2.5 items-center mt-3 active:bg-violet-500/10 flex-row justify-center gap-2"
                   >
-                    <Text className="text-violet-400 font-bold text-xs">Atribuir a aluno</Text>
+                    <AppIcon name="user-add" size={16} color="#9B40D8" strokeWidth={2} />
+                    <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>Atribuir a aluno</Text>
                   </Pressable>
                 </Card>
               ))
@@ -214,9 +252,17 @@ export default function FinancialScreen() {
           <View className="gap-2 mb-10">
             {!payments?.length ? (
               <Card variant="outlined">
-                <Text className="text-sm text-text-muted text-center py-4">
-                  Nenhum pagamento registrado ainda.
-                </Text>
+                <View className="items-center py-6">
+                  <View className="w-16 h-16 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
+                    <AppIcon name="banknote" size={28} color="#9B40D8" strokeWidth={2} />
+                  </View>
+                  <Text className="text-lg text-text-primary text-center" style={{ fontFamily: font.display }}>
+                    Nenhum pagamento
+                  </Text>
+                  <Text className="text-sm text-text-secondary text-center mt-1" style={{ fontFamily: font.regular }}>
+                    Nenhum pagamento registrado ainda.
+                  </Text>
+                </View>
               </Card>
             ) : (
               payments.map((p) => (
@@ -225,20 +271,32 @@ export default function FinancialScreen() {
                   onPress={() => p.status === "pending" && markPaid.mutate(p.id)}
                   className="bg-surface-card border border-surface-border rounded-2xl p-4 flex-row items-center gap-3"
                 >
-                  <View className={`w-3 h-3 rounded-full ${
-                    p.status === "paid" ? "bg-success-500" : p.status === "pending" ? "bg-warning-500" : "bg-danger-500"
-                  }`} />
+                  <View className={`w-10 h-10 rounded-2xl border items-center justify-center ${
+                    p.status === "paid"
+                      ? "bg-success-500/15 border-success-500/25"
+                      : p.status === "pending"
+                      ? "bg-warning-500/15 border-warning-500/25"
+                      : "bg-danger-500/15 border-danger-500/25"
+                  }`}>
+                    <AppIcon
+                      name={p.status === "paid" ? "check-circle" : p.status === "pending" ? "clock" : "x-circle"}
+                      size={18}
+                      color={p.status === "paid" ? "#34D399" : p.status === "pending" ? "#FBBF24" : "#FB7185"}
+                      strokeWidth={2}
+                    />
+                  </View>
                   <View className="flex-1">
-                    <Text className="text-sm font-bold text-text-primary">{p.student?.full_name}</Text>
-                    <Text className="text-xs text-text-muted">
+                    <Text className="text-sm text-text-primary" style={{ fontFamily: font.semibold }}>{p.student?.full_name}</Text>
+                    <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>
                       {p.due_date ? new Date(p.due_date).toLocaleDateString("pt-BR") : ""}
                     </Text>
                   </View>
                   <View className="items-end">
-                    <Text className="text-sm font-black text-text-primary">{formatCurrency(p.amount_cents)}</Text>
-                    <Text className={`text-[10px] font-bold ${
-                      p.status === "paid" ? "text-success-500" : p.status === "pending" ? "text-warning-500" : "text-danger-500"
-                    }`}>
+                    <Text className="text-sm text-text-primary" style={{ fontFamily: font.bold }}>{formatCurrency(p.amount_cents)}</Text>
+                    <Text
+                      className={`text-[10px] ${p.status === "paid" ? "text-success-500" : p.status === "pending" ? "text-warning-500" : "text-danger-500"}`}
+                      style={{ fontFamily: font.semibold }}
+                    >
                       {p.status === "paid" ? "Pago" : p.status === "pending" ? "Pendente" : "Falhou"}
                     </Text>
                   </View>

@@ -8,6 +8,9 @@ import { supabase } from "../../../lib/supabase/client";
 import { useUpdateStudentStatus } from "../../../hooks/mutations/useStudentStatus";
 import { Avatar } from "../../../components/ui/Avatar";
 import { EmptyState } from "../../../components/ui/EmptyState";
+import { AppIcon } from "../../../components/ui";
+import { font, amethystGlow, amethystGradient } from "../../../lib/design/tokens";
+import { LinearGradient } from "expo-linear-gradient";
 
 interface StudentRelation {
   id: string;
@@ -82,10 +85,18 @@ export default function StudentsScreen() {
     <SafeAreaView className="flex-1 bg-dark-400">
       <View className="flex-1 px-6 pt-6">
         <View className="flex-row items-center justify-between mb-4">
-          <Text className="text-2xl font-black text-text-primary">Alunos</Text>
+          <Text className="text-3xl text-text-primary" style={{ fontFamily: font.display }}>Alunos.</Text>
           <Link href="/(trainer)/students/invite" asChild>
-            <Pressable className="bg-violet-500 px-4 py-2 rounded-xl active:bg-violet-600">
-              <Text className="text-white font-black text-xs">+ Convidar</Text>
+            <Pressable style={amethystGlow} className="active:opacity-90">
+              <LinearGradient
+                colors={amethystGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0.9 }}
+                className="px-4 py-2 rounded-xl flex-row items-center gap-1.5"
+              >
+                <AppIcon name="user-add" size={16} color="#FFFFFF" strokeWidth={2} />
+                <Text className="text-white text-xs" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Convidar</Text>
+              </LinearGradient>
             </Pressable>
           </Link>
         </View>
@@ -104,7 +115,10 @@ export default function StudentsScreen() {
                 filter === t.value ? "bg-violet-500" : "bg-surface-card border border-surface-border"
               }`}
             >
-              <Text className={`text-xs font-bold ${filter === t.value ? "text-white" : "text-text-muted"}`}>
+              <Text
+                className={`text-xs ${filter === t.value ? "text-white" : "text-text-muted"}`}
+                style={{ fontFamily: font.semibold }}
+              >
                 {t.label}{t.count != null ? ` (${t.count})` : ""}
               </Text>
             </Pressable>
@@ -117,7 +131,7 @@ export default function StudentsScreen() {
           </View>
         ) : !students?.length ? (
           <EmptyState
-            icon="👥"
+            iconName="social"
             title="Nenhum aluno"
             description={filter === "active" ? "Convide alunos com codigo de convite." : "Nenhum aluno inativo."}
           />
@@ -130,7 +144,7 @@ export default function StudentsScreen() {
             renderItem={({ item }) => {
               const isActive = item.status === "active";
               return (
-                <View className={`bg-surface-card border rounded-2xl p-4 ${
+                <View className={`bg-surface-card border rounded-3xl p-4 ${
                   isActive ? "border-surface-border" : "border-warning-500/30"
                 }`}>
                   <Pressable
@@ -143,20 +157,27 @@ export default function StudentsScreen() {
                   >
                     <Avatar uri={item.student?.avatar_url} name={item.student?.full_name} size="lg" />
                     <View className="flex-1">
-                      <Text className="text-sm font-bold text-text-primary">{item.student?.full_name}</Text>
-                      <Text className="text-xs text-text-muted mt-0.5">
-                        Desde {new Date(item.started_at).toLocaleDateString("pt-BR")}
-                      </Text>
+                      <Text className="text-sm text-text-primary" style={{ fontFamily: font.semibold }}>{item.student?.full_name}</Text>
+                      <View className="flex-row items-center gap-1.5 mt-0.5">
+                        <AppIcon name="calendar" size={12} color="#6E6382" strokeWidth={2} />
+                        <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>
+                          Desde {new Date(item.started_at).toLocaleDateString("pt-BR")}
+                        </Text>
+                      </View>
                     </View>
                     <View className={`px-2 py-1 rounded-full ${
                       isActive ? "bg-violet-500/10" : item.status === "paused" ? "bg-warning-500/15" : "bg-danger-500/15"
                     }`}>
-                      <Text className={`text-[10px] font-bold ${
-                        isActive ? "text-violet-400" : item.status === "paused" ? "text-warning-500" : "text-danger-500"
-                      }`}>
+                      <Text
+                        className={`text-[10px] ${
+                          isActive ? "text-violet-400" : item.status === "paused" ? "text-warning-500" : "text-danger-500"
+                        }`}
+                        style={{ fontFamily: font.semibold }}
+                      >
                         {isActive ? "Ativo" : item.status === "paused" ? "Pausado" : "Cancelado"}
                       </Text>
                     </View>
+                    <AppIcon name="chevron-right" size={18} color="#6E6382" strokeWidth={2} />
                   </Pressable>
 
                   {/* Action buttons */}
@@ -164,18 +185,19 @@ export default function StudentsScreen() {
                     <Pressable
                       onPress={() => handleReactivate(item.student_id)}
                       disabled={updateStatus.isPending}
-                      className="bg-success-500 rounded-xl py-2.5 items-center mt-3 active:bg-success-600 flex-row justify-center gap-2"
+                      className="bg-success-500 rounded-2xl py-2.5 items-center mt-3 active:bg-success-600 flex-row justify-center gap-2"
                     >
-                      <Text className="text-white text-sm">↻</Text>
-                      <Text className="text-white font-black text-xs">Reativar aluno</Text>
+                      <AppIcon name="refresh" size={16} color="#FFFFFF" strokeWidth={2} />
+                      <Text className="text-white text-xs" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Reativar aluno</Text>
                     </Pressable>
                   ) : (
                     <Pressable
                       onPress={() => handlePause(item.student_id)}
                       disabled={updateStatus.isPending}
-                      className="border border-surface-border rounded-xl py-2 items-center mt-3 active:bg-surface-hover"
+                      className="border border-surface-border rounded-2xl py-2 items-center mt-3 active:bg-surface-hover flex-row justify-center gap-2"
                     >
-                      <Text className="text-text-muted font-bold text-xs">Pausar acompanhamento</Text>
+                      <AppIcon name="pause" size={14} color="#6E6382" strokeWidth={2} />
+                      <Text className="text-text-muted text-xs" style={{ fontFamily: font.semibold }}>Pausar acompanhamento</Text>
                     </Pressable>
                   )}
                 </View>
@@ -188,15 +210,24 @@ export default function StudentsScreen() {
       {/* Water goal modal */}
       <Modal visible={!!waterModal} animationType="fade" transparent>
         <View className="flex-1 items-center justify-center bg-black/60 px-6">
-          <View className="bg-dark-200 rounded-3xl p-6 w-full max-w-sm">
-            <Text className="text-lg font-black text-text-primary mb-1">Meta de Agua</Text>
-            <Text className="text-sm text-text-muted mb-5">{waterModal?.name}</Text>
+          <View className="bg-dark-200 border border-surface-border rounded-3xl p-6 w-full max-w-sm">
+            <View className="w-12 h-12 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
+              <AppIcon name="water" size={22} color="#9B40D8" strokeWidth={2} />
+            </View>
+            <Text className="text-2xl text-text-primary mb-1" style={{ fontFamily: font.display }}>Meta de agua.</Text>
+            <Text className="text-sm text-text-muted mb-5" style={{ fontFamily: font.regular }}>{waterModal?.name}</Text>
 
-            <Text className="text-xs font-bold text-text-muted mb-2 ml-1 tracking-wider uppercase">Meta diaria (ml)</Text>
+            <Text
+              className="text-text-muted mb-2 ml-1 uppercase"
+              style={{ fontFamily: font.semibold, fontSize: 10, letterSpacing: 2 }}
+            >
+              Meta diaria (ml)
+            </Text>
             <TextInput
-              className="bg-surface-card border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary mb-5"
+              className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary mb-5"
+              style={{ fontFamily: font.regular }}
               placeholder="2500"
-              placeholderTextColor="#6E6580"
+              placeholderTextColor="#6E6382"
               value={waterGoal}
               onChangeText={setWaterGoal}
               keyboardType="numeric"
@@ -207,7 +238,7 @@ export default function StudentsScreen() {
                 onPress={() => setWaterModal(null)}
                 className="flex-1 bg-surface-elevated rounded-2xl py-3.5 items-center active:bg-surface-hover"
               >
-                <Text className="text-text-secondary font-bold">Cancelar</Text>
+                <Text className="text-text-secondary" style={{ fontFamily: font.semibold }}>Cancelar</Text>
               </Pressable>
               <Pressable
                 onPress={() => {
@@ -216,11 +247,19 @@ export default function StudentsScreen() {
                   }
                 }}
                 disabled={!waterGoal || updateWaterGoal.isPending}
-                className="flex-1 bg-violet-500 rounded-2xl py-3.5 items-center active:bg-violet-600"
+                style={amethystGlow}
+                className="flex-1 active:opacity-90"
               >
-                <Text className="text-white font-bold">
-                  {updateWaterGoal.isPending ? "Salvando..." : "Salvar"}
-                </Text>
+                <LinearGradient
+                  colors={updateWaterGoal.isPending ? ["#50107D", "#86169E"] : amethystGradient}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0.9 }}
+                  className="rounded-2xl py-3.5 items-center"
+                >
+                  <Text className="text-white" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>
+                    {updateWaterGoal.isPending ? "Salvando..." : "Salvar"}
+                  </Text>
+                </LinearGradient>
               </Pressable>
             </View>
           </View>

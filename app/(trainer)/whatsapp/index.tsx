@@ -15,6 +15,8 @@ import type { ConnectionState } from "../../../lib/whatsapp/types";
 import { useAuth } from "../../../lib/auth/provider";
 import { useTrainerWhatsAppInstance } from "../../../hooks/queries/useTrainerWhatsAppInstance";
 import { useSetWhatsAppInstance } from "../../../hooks/mutations/useSetWhatsAppInstance";
+import { font } from "../../../lib/design/tokens";
+import { AppIcon, SectionLabel } from "../../../components/ui";
 
 export default function WhatsAppScreen() {
   const { user } = useAuth();
@@ -30,7 +32,7 @@ export default function WhatsAppScreen() {
   const [error, setError] = useState<string | null>(null);
 
   const [testNumber, setTestNumber] = useState("");
-  const [testMessage, setTestMessage] = useState("Teste do Academia App! 💪");
+  const [testMessage, setTestMessage] = useState("Teste do Projeto Gaab! 💪");
   const [sending, setSending] = useState(false);
   const [sendResult, setSendResult] = useState<"success" | "error" | null>(null);
 
@@ -124,45 +126,49 @@ export default function WhatsAppScreen() {
       <ScrollView className="flex-1 px-6 pt-6">
         {/* Header */}
         <View className="flex-row items-center gap-4 mb-8">
-          <View className="w-14 h-14 bg-success-500/15 rounded-2xl items-center justify-center">
-            <Text className="text-3xl">💬</Text>
+          <View className="w-14 h-14 bg-success-500/15 border border-success-500/25 rounded-2xl items-center justify-center">
+            <AppIcon name="chat" size={28} color="#34D399" strokeWidth={2} />
           </View>
           <View className="flex-1">
-            <Text className="text-2xl font-black text-text-primary">WhatsApp</Text>
-            <Text className="text-xs text-text-muted">Evolution API v1.8</Text>
+            <Text className="text-3xl text-text-primary" style={{ fontFamily: font.display }}>WhatsApp</Text>
+            <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>Evolution API v1.8</Text>
           </View>
           <View className={`flex-row items-center gap-2 px-3 py-2 rounded-full ${b.bg}`}>
             <View className={`w-2.5 h-2.5 rounded-full ${b.dot}`} />
-            <Text className={`text-xs font-bold ${b.color}`}>{b.label}</Text>
+            <Text className={`text-xs ${b.color}`} style={{ fontFamily: font.semibold }}>{b.label}</Text>
           </View>
         </View>
 
         {loading ? (
           <View className="items-center py-20">
             <ActivityIndicator size="large" color="#781BB6" />
-            <Text className="text-text-muted text-sm mt-4">Verificando conexao...</Text>
+            <Text className="text-text-muted text-sm mt-4" style={{ fontFamily: font.regular }}>Verificando conexao...</Text>
           </View>
         ) : error ? (
           <View className="bg-danger-500/10 border border-danger-500/20 rounded-3xl p-6 items-center">
-            <Text className="text-4xl mb-4">⚠️</Text>
-            <Text className="text-base font-bold text-text-primary text-center mb-2">Evolution API nao acessivel</Text>
-            <Text className="text-sm text-text-muted text-center mb-6 leading-5">{error}</Text>
+            <View className="w-16 h-16 rounded-2xl bg-danger-500/15 border border-danger-500/25 items-center justify-center mb-4">
+              <AppIcon name="warning" size={28} color="#FB7185" strokeWidth={2} />
+            </View>
+            <Text className="text-lg text-text-primary text-center mb-2" style={{ fontFamily: font.display }}>Evolution API nao acessivel</Text>
+            <Text className="text-sm text-text-muted text-center mb-6 leading-5" style={{ fontFamily: font.regular }}>{error}</Text>
             <View className="bg-surface-card rounded-2xl p-4 w-full mb-4">
               <Text className="text-xs text-text-muted font-mono leading-5">docker compose -f docker-compose.evolution.yml up -d</Text>
             </View>
             <Pressable onPress={fetchState} className="bg-violet-500 rounded-2xl px-6 py-3 active:bg-violet-600">
-              <Text className="text-white font-bold text-sm">Tentar novamente</Text>
+              <Text className="text-white text-sm" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Tentar novamente</Text>
             </Pressable>
           </View>
         ) : state === "no_instance" ? (
           <View className="bg-surface-card border border-surface-border rounded-3xl p-6 items-center">
-            <Text className="text-4xl mb-4">📱</Text>
-            <Text className="text-lg font-black text-text-primary mb-2">Configurar WhatsApp</Text>
-            <Text className="text-sm text-text-muted text-center mb-6 leading-5">
+            <View className="w-16 h-16 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
+              <AppIcon name="device" size={28} color="#9B40D8" strokeWidth={2} />
+            </View>
+            <Text className="text-2xl text-text-primary mb-2" style={{ fontFamily: font.display }}>Configurar WhatsApp</Text>
+            <Text className="text-sm text-text-muted text-center mb-6 leading-5" style={{ fontFamily: font.regular }}>
               Conecte um numero de WhatsApp para enviar{"\n"}lembretes automaticos aos seus alunos.
             </Text>
             <Pressable onPress={handleCreate} className="bg-violet-500 rounded-2xl px-8 py-4 active:bg-violet-600">
-              <Text className="text-white font-black text-base">Conectar WhatsApp</Text>
+              <Text className="text-white text-base" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Conectar WhatsApp</Text>
             </Pressable>
           </View>
         ) : state === "open" ? (
@@ -173,58 +179,61 @@ export default function WhatsAppScreen() {
                   <Image source={{ uri: profilePic }} style={{ width: 56, height: 56, borderRadius: 28 }} contentFit="cover" />
                 ) : (
                   <View className="w-14 h-14 bg-success-500/20 rounded-full items-center justify-center">
-                    <Text className="text-2xl">✅</Text>
+                    <AppIcon name="check-circle" size={28} color="#34D399" strokeWidth={2} />
                   </View>
                 )}
                 <View className="flex-1">
-                  <Text className="text-lg font-black text-text-primary">{profileName ?? "WhatsApp Conectado"}</Text>
-                  <Text className="text-xs text-text-muted mt-0.5">{fmtPhone(ownerPhone)}</Text>
+                  <Text className="text-lg text-text-primary" style={{ fontFamily: font.semibold }}>{profileName ?? "WhatsApp Conectado"}</Text>
+                  <Text className="text-xs text-text-muted mt-0.5" style={{ fontFamily: font.regular }}>{fmtPhone(ownerPhone)}</Text>
                 </View>
               </View>
               <View className="bg-success-500/10 rounded-xl p-3">
-                <Text className="text-xs text-success-500 font-bold text-center">Pronto para enviar mensagens automaticas</Text>
+                <Text className="text-xs text-success-500 text-center" style={{ fontFamily: font.semibold }}>Pronto para enviar mensagens automaticas</Text>
               </View>
             </View>
 
             <View className="bg-surface-card border border-surface-border rounded-3xl p-6 mb-6">
               <View className="flex-row items-center gap-3 mb-5">
-                <View className="w-10 h-10 bg-violet-500/15 rounded-xl items-center justify-center"><Text className="text-lg">🧪</Text></View>
-                <Text className="text-base font-black text-text-primary">Testar Envio</Text>
+                <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center"><AppIcon name="send" size={18} color="#9B40D8" strokeWidth={2} /></View>
+                <Text className="text-base text-text-primary" style={{ fontFamily: font.semibold }}>Testar Envio</Text>
               </View>
               <View className="gap-4">
                 <View>
-                  <Text className="text-xs font-bold text-text-muted mb-2 ml-1 tracking-wider uppercase">Numero (com DDD)</Text>
-                  <TextInput className="bg-dark-300 border-2 border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary" placeholder="11 99999-9999" placeholderTextColor="#6E6580" value={testNumber} onChangeText={(v) => { setTestNumber(v); setSendResult(null); }} keyboardType="phone-pad" />
+                  <Text className="text-xs text-text-muted mb-2 ml-1 uppercase" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>Numero (com DDD)</Text>
+                  <TextInput className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary" placeholder="11 99999-9999" placeholderTextColor="#6E6382" value={testNumber} onChangeText={(v) => { setTestNumber(v); setSendResult(null); }} keyboardType="phone-pad" style={{ fontFamily: font.regular }} />
                 </View>
                 <View>
-                  <Text className="text-xs font-bold text-text-muted mb-2 ml-1 tracking-wider uppercase">Mensagem</Text>
-                  <TextInput className="bg-dark-300 border-2 border-surface-border rounded-2xl px-5 py-4 text-sm text-text-primary" placeholder="Mensagem de teste..." placeholderTextColor="#6E6580" value={testMessage} onChangeText={setTestMessage} multiline style={{ minHeight: 80, textAlignVertical: "top" }} />
+                  <Text className="text-xs text-text-muted mb-2 ml-1 uppercase" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>Mensagem</Text>
+                  <TextInput className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary" placeholder="Mensagem de teste..." placeholderTextColor="#6E6382" value={testMessage} onChangeText={setTestMessage} multiline style={{ minHeight: 80, textAlignVertical: "top", fontFamily: font.regular }} />
                 </View>
                 <Pressable onPress={handleSendTest} disabled={sending || !testNumber.trim()} className={`rounded-2xl py-4 items-center ${testNumber.trim() ? "bg-violet-500 active:bg-violet-600" : "bg-surface-border"}`}>
-                  {sending ? <ActivityIndicator color="#fff" /> : <Text className={`font-black text-base ${testNumber.trim() ? "text-white" : "text-text-muted"}`}>Enviar Teste</Text>}
+                  {sending ? <ActivityIndicator color="#fff" /> : <Text className={`text-base ${testNumber.trim() ? "text-white" : "text-text-muted"}`} style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Enviar Teste</Text>}
                 </Pressable>
                 {sendResult === "success" ? (
-                  <View className="bg-success-500/10 border border-success-500/20 rounded-xl p-3"><Text className="text-success-500 text-sm font-bold text-center">Mensagem enviada!</Text></View>
+                  <View className="bg-success-500/10 border border-success-500/20 rounded-xl p-3"><Text className="text-success-500 text-sm text-center" style={{ fontFamily: font.semibold }}>Mensagem enviada!</Text></View>
                 ) : sendResult === "error" ? (
-                  <View className="bg-danger-500/10 border border-danger-500/20 rounded-xl p-3"><Text className="text-danger-500 text-sm font-bold text-center">Erro ao enviar. Verifique o numero.</Text></View>
+                  <View className="bg-danger-500/10 border border-danger-500/20 rounded-xl p-3"><Text className="text-danger-500 text-sm text-center" style={{ fontFamily: font.semibold }}>Erro ao enviar. Verifique o numero.</Text></View>
                 ) : null}
               </View>
             </View>
 
             <View className="flex-row gap-3 mb-6">
               <Pressable onPress={handleReconnect} className="flex-1 border border-surface-border rounded-2xl py-3.5 items-center active:bg-surface-hover">
-                <Text className="text-text-secondary font-bold text-sm">Reconectar</Text>
+                <Text className="text-text-secondary text-sm" style={{ fontFamily: font.semibold }}>Reconectar</Text>
               </Pressable>
               <Pressable onPress={handleLogout} className="flex-1 border border-danger-500/30 rounded-2xl py-3.5 items-center active:bg-danger-500/10">
-                <Text className="text-danger-500 font-bold text-sm">Desconectar</Text>
+                <Text className="text-danger-500 text-sm" style={{ fontFamily: font.semibold }}>Desconectar</Text>
               </Pressable>
             </View>
           </View>
         ) : (
           <View>
             <View className="bg-surface-card border border-surface-border rounded-3xl p-6 items-center mb-6">
-              <Text className="text-lg font-black text-text-primary mb-2">Conectar WhatsApp</Text>
-              <Text className="text-sm text-text-muted text-center mb-6 leading-5">
+              <View className="w-16 h-16 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
+                <AppIcon name="qr" size={28} color="#9B40D8" strokeWidth={2} />
+              </View>
+              <Text className="text-2xl text-text-primary mb-2" style={{ fontFamily: font.display }}>Conectar WhatsApp</Text>
+              <Text className="text-sm text-text-muted text-center mb-6 leading-5" style={{ fontFamily: font.regular }}>
                 Escaneie o QR Code com seu WhatsApp Business{"\n"}para conectar o envio automatico.
               </Text>
               {qrBase64 ? (
@@ -234,15 +243,15 @@ export default function WhatsAppScreen() {
               ) : (
                 <View className="w-[260px] h-[260px] bg-surface-elevated rounded-2xl items-center justify-center mb-4">
                   <ActivityIndicator size="large" color="#781BB6" />
-                  <Text className="text-text-muted text-xs mt-3">Gerando QR Code...</Text>
+                  <Text className="text-text-muted text-xs mt-3" style={{ fontFamily: font.regular }}>Gerando QR Code...</Text>
                 </View>
               )}
               <View className="bg-violet-500/10 rounded-xl p-4 w-full">
-                <Text className="text-xs text-violet-400 font-bold mb-2">Como conectar:</Text>
+                <Text className="text-xs text-violet-400 mb-2 uppercase" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>Como conectar:</Text>
                 {["Abra o WhatsApp no celular", "Menu → Aparelhos conectados", "Conectar aparelho → Escaneie o QR"].map((step, i) => (
                   <View key={i} className="flex-row gap-2 mt-1">
-                    <Text className="text-xs text-text-muted">{i + 1}.</Text>
-                    <Text className="text-xs text-text-secondary">{step}</Text>
+                    <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>{i + 1}.</Text>
+                    <Text className="text-xs text-text-secondary" style={{ fontFamily: font.regular }}>{step}</Text>
                   </View>
                 ))}
               </View>
@@ -250,7 +259,7 @@ export default function WhatsAppScreen() {
             <View className="items-center mb-6">
               <View className="flex-row items-center gap-2">
                 <ActivityIndicator size="small" color="#6E6382" />
-                <Text className="text-text-muted text-xs">Aguardando conexao...</Text>
+                <Text className="text-text-muted text-xs" style={{ fontFamily: font.regular }}>Aguardando conexao...</Text>
               </View>
             </View>
           </View>
@@ -262,32 +271,33 @@ export default function WhatsAppScreen() {
             onPress={() => router.push("/(trainer)/whatsapp/messages" as never)}
             className="flex-1 bg-surface-card border border-surface-border rounded-2xl py-4 items-center active:bg-surface-hover"
           >
-            <Text className="text-xl mb-1">📨</Text>
-            <Text className="text-xs font-bold text-text-secondary">Mensagens</Text>
+            <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-2"><AppIcon name="message" size={18} color="#9B40D8" strokeWidth={2} /></View>
+            <Text className="text-xs text-text-secondary" style={{ fontFamily: font.semibold }}>Mensagens</Text>
           </Pressable>
           <Pressable
             onPress={() => router.push("/(trainer)/whatsapp/settings" as never)}
             className="flex-1 bg-surface-card border border-surface-border rounded-2xl py-4 items-center active:bg-surface-hover"
           >
-            <Text className="text-xl mb-1">⚙️</Text>
-            <Text className="text-xs font-bold text-text-secondary">Configuracoes</Text>
+            <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-2"><AppIcon name="settings" size={18} color="#9B40D8" strokeWidth={2} /></View>
+            <Text className="text-xs text-text-secondary" style={{ fontFamily: font.semibold }}>Configuracoes</Text>
           </Pressable>
         </View>
 
         <View className="bg-surface-card border border-surface-border rounded-3xl p-6 mb-10">
-          <Text className="text-sm font-black text-text-primary mb-4">Mensagens Automaticas</Text>
+          <SectionLabel className="mb-1">Automacao</SectionLabel>
+          <Text className="text-xl text-text-primary mb-4" style={{ fontFamily: font.display }}>Mensagens Automaticas</Text>
           <View className="gap-3">
             {[
-              { icon: "📋", title: "Lembrete de Check-in", desc: "Quando check-in esta pendente" },
-              { icon: "🏋️", title: "Treino do Dia", desc: "Lembrete matinal de treino programado" },
-              { icon: "⚠️", title: "Plano Expirando", desc: "Aviso 7 e 1 dia antes do vencimento" },
-              { icon: "🔥", title: "Nudge de Volta", desc: "Quando aluno nao treina ha 3+ dias" },
+              { icon: "clipboard", color: "#9B40D8", title: "Lembrete de Check-in", desc: "Quando check-in esta pendente" },
+              { icon: "workout", color: "#9B40D8", title: "Treino do Dia", desc: "Lembrete matinal de treino programado" },
+              { icon: "warning", color: "#FBBF24", title: "Plano Expirando", desc: "Aviso 7 e 1 dia antes do vencimento" },
+              { icon: "streak", color: "#FB7185", title: "Nudge de Volta", desc: "Quando aluno nao treina ha 3+ dias" },
             ].map((item) => (
               <View key={item.title} className="flex-row items-center gap-3">
-                <View className="w-10 h-10 bg-surface-elevated rounded-xl items-center justify-center"><Text className="text-lg">{item.icon}</Text></View>
+                <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center"><AppIcon name={item.icon as never} size={18} color={item.color} strokeWidth={2} /></View>
                 <View className="flex-1">
-                  <Text className="text-sm font-bold text-text-primary">{item.title}</Text>
-                  <Text className="text-xs text-text-muted">{item.desc}</Text>
+                  <Text className="text-sm text-text-primary" style={{ fontFamily: font.semibold }}>{item.title}</Text>
+                  <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>{item.desc}</Text>
                 </View>
               </View>
             ))}

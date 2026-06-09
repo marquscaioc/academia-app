@@ -7,7 +7,8 @@ import Animated, { FadeInDown, FadeIn } from "react-native-reanimated";
 import { useAuth } from "../../../lib/auth/provider";
 import { useWorkoutPlans, useWorkoutSessions } from "../../../hooks/queries/useWorkouts";
 import { WorkoutCalendar } from "../../../components/progress/WorkoutCalendar";
-import { BigStat, DisplayHeading, Logo, SectionLabel } from "../../../components/ui";
+import { AppIcon, BigStat, DisplayHeading, Logo, SectionLabel } from "../../../components/ui";
+import { font } from "../../../lib/design/tokens";
 
 export default function WorkoutsScreen() {
   const { user } = useAuth();
@@ -54,14 +55,14 @@ export default function WorkoutsScreen() {
             <Logo size="sm" />
             <Text
               className="text-[10px] text-fuchsia-400"
-              style={{ fontFamily: "Nunito_700Bold", letterSpacing: 3 }}
+              style={{ fontFamily: font.semibold, letterSpacing: 3 }}
             >
               VOL. 01 · TRAINING
             </Text>
           </View>
           <Link href="/(student)/(workouts)/history" asChild>
             <Pressable className="bg-surface-card border border-surface-border px-3 py-1.5 rounded-lg">
-              <Text className="text-text-muted text-[11px]" style={{ fontFamily: "Nunito_700Bold", letterSpacing: 0.8 }}>
+              <Text className="text-text-muted text-[11px]" style={{ fontFamily: font.semibold, letterSpacing: 0.8 }}>
                 HISTÓRICO
               </Text>
             </Pressable>
@@ -78,13 +79,13 @@ export default function WorkoutsScreen() {
           <Text
             className="text-text-primary"
             style={{
-              fontFamily: "Nunito_900Black",
+              fontFamily: font.display,
               fontSize: 56,
               lineHeight: 56,
-              letterSpacing: -2.5,
+              letterSpacing: -1,
             }}
           >
-            TREINOS.
+            Treinos.
           </Text>
         </Animated.View>
 
@@ -125,13 +126,15 @@ export default function WorkoutsScreen() {
               style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
               pointerEvents="none"
             />
-            <Text className="text-4xl mb-4">🏋️</Text>
+            <View className="w-16 h-16 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-5">
+              <AppIcon name="workout" size={28} color="#9B40D8" strokeWidth={2} />
+            </View>
             <DisplayHeading size="sm" italic className="text-center mb-2">
               Nenhum treino ainda
             </DisplayHeading>
             <Text
               className="text-sm text-text-muted text-center max-w-[260px] leading-6"
-              style={{ fontFamily: "Nunito_400Regular" }}
+              style={{ fontFamily: font.regular }}
             >
               Seus planos aparecerão aqui assim que seu personal atribuí-los.
             </Text>
@@ -164,10 +167,10 @@ export default function WorkoutsScreen() {
                         <Text
                           className={idx === 0 ? "text-fuchsia-400" : "text-text-muted"}
                           style={{
-                            fontFamily: "Nunito_900Black",
+                            fontFamily: font.display,
                             fontSize: 36,
                             lineHeight: 36,
-                            letterSpacing: -1.5,
+                            letterSpacing: -1,
                           }}
                         >
                           {String(idx + 1).padStart(2, "0")}
@@ -177,27 +180,27 @@ export default function WorkoutsScreen() {
                       <View className="flex-1">
                         <Text
                           className="text-[10px] text-text-muted mb-1.5"
-                          style={{ fontFamily: "Nunito_700Bold", letterSpacing: 2 }}
+                          style={{ fontFamily: font.semibold, letterSpacing: 2 }}
                         >
                           {w.planName?.toUpperCase()}
                         </Text>
                         <Text
                           className="text-lg text-text-primary mb-2"
-                          style={{ fontFamily: "Nunito_700Bold", letterSpacing: -0.3 }}
+                          style={{ fontFamily: font.semibold, letterSpacing: -0.3 }}
                         >
                           {w.name}
                         </Text>
                         <View className="flex-row items-center gap-4">
                           <View className="flex-row items-center gap-1.5">
-                            <View className="w-1 h-1 rounded-full bg-violet-400" />
-                            <Text className="text-[11px] text-violet-300" style={{ fontFamily: "Nunito_600SemiBold" }}>
+                            <AppIcon name="list" size={14} color="#9B40D8" strokeWidth={2} />
+                            <Text className="text-[11px] text-violet-300" style={{ fontFamily: font.semibold }}>
                               {w.exercises?.length ?? 0} exercícios
                             </Text>
                           </View>
                           {w.estimated_duration_minutes ? (
                             <View className="flex-row items-center gap-1.5">
-                              <View className="w-1 h-1 rounded-full bg-ice-400" />
-                              <Text className="text-[11px] text-ice-400" style={{ fontFamily: "Nunito_600SemiBold" }}>
+                              <AppIcon name="clock" size={14} color="#7FD3E0" strokeWidth={2} />
+                              <Text className="text-[11px] text-ice-400" style={{ fontFamily: font.semibold }}>
                                 ~{w.estimated_duration_minutes}min
                               </Text>
                             </View>
@@ -205,7 +208,9 @@ export default function WorkoutsScreen() {
                         </View>
                       </View>
 
-                      <Text className="text-text-muted text-lg mt-1">→</Text>
+                      <View className="self-center">
+                        <AppIcon name="chevron-right" size={18} color="#6E6382" strokeWidth={2} />
+                      </View>
                     </View>
                   </Pressable>
                 </Link>

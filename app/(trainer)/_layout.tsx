@@ -1,23 +1,26 @@
 import { Tabs } from "expo-router";
-import { Platform, Text, View } from "react-native";
+import { Platform, View } from "react-native";
 import { TrainerSidebar } from "../../components/layout/TrainerSidebar";
+import { RoleGuard } from "../../components/auth/RoleGuard";
+import { AppIcon, type IconName } from "../../components/ui";
 
-function TabIcon({ name, focused }: { name: string; focused: boolean }) {
-  const icons: Record<string, string> = {
-    dashboard: "📊",
-    students: "👥",
-    exercises: "🏋️",
-    financial: "💰",
-  };
+const TAB_ICON: Record<string, IconName> = {
+  dashboard: "dashboard",
+  students: "social",
+  exercises: "workout",
+  financial: "financial",
+};
+
+function TabIcon({ name, focused, color }: { name: string; focused: boolean; color: string }) {
   return (
     <View className="items-center">
-      <Text style={{ fontSize: 20, opacity: focused ? 1 : 0.4 }}>{icons[name] ?? "●"}</Text>
+      <AppIcon name={TAB_ICON[name] ?? "dashboard"} size={22} color={color} strokeWidth={focused ? 2.4 : 1.8} />
       {focused ? <View className="w-1.5 h-1.5 bg-violet-500 rounded-full mt-1" /> : null}
     </View>
   );
 }
 
-export default function TrainerLayout() {
+function TrainerTabs() {
   const isWeb = Platform.OS === "web";
 
   return (
@@ -45,10 +48,10 @@ export default function TrainerLayout() {
             },
           }}
         >
-          <Tabs.Screen name="dashboard" options={{ title: "Dashboard", tabBarIcon: ({ focused }) => <TabIcon name="dashboard" focused={focused} /> }} />
-          <Tabs.Screen name="students" options={{ title: "Alunos", tabBarIcon: ({ focused }) => <TabIcon name="students" focused={focused} /> }} />
-          <Tabs.Screen name="exercises" options={{ title: "Exercicios", tabBarIcon: ({ focused }) => <TabIcon name="exercises" focused={focused} /> }} />
-          <Tabs.Screen name="financial" options={{ title: "Financeiro", tabBarIcon: ({ focused }) => <TabIcon name="financial" focused={focused} /> }} />
+          <Tabs.Screen name="dashboard" options={{ title: "Dashboard", tabBarIcon: ({ focused, color }) => <TabIcon name="dashboard" focused={focused} color={color} /> }} />
+          <Tabs.Screen name="students" options={{ title: "Alunos", tabBarIcon: ({ focused, color }) => <TabIcon name="students" focused={focused} color={color} /> }} />
+          <Tabs.Screen name="exercises" options={{ title: "Exercicios", tabBarIcon: ({ focused, color }) => <TabIcon name="exercises" focused={focused} color={color} /> }} />
+          <Tabs.Screen name="financial" options={{ title: "Financeiro", tabBarIcon: ({ focused, color }) => <TabIcon name="financial" focused={focused} color={color} /> }} />
           <Tabs.Screen name="checkins" options={{ href: null }} />
           <Tabs.Screen name="workout-builder" options={{ href: null }} />
           <Tabs.Screen name="diet-builder" options={{ href: null }} />
@@ -57,5 +60,13 @@ export default function TrainerLayout() {
         </Tabs>
       </View>
     </View>
+  );
+}
+
+export default function TrainerLayout() {
+  return (
+    <RoleGuard allow="trainer">
+      <TrainerTabs />
+    </RoleGuard>
   );
 }
