@@ -48,3 +48,6 @@ supabase/.temp/
 
 # doc antigo (local)
 CODE_REVIEW.md
+
+# seed data (large dataset, not versioned)
+scripts/data/
