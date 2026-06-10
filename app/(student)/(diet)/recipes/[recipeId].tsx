@@ -3,7 +3,7 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../../../lib/auth/provider";
-import { useRecipeDetail, useRecipeFavorites } from "../../../../hooks/queries/useRecipes";
+import { useRecipeDetail, useRecipeFavorites, useRecipeMacros } from "../../../../hooks/queries/useRecipes";
 import { useToggleFavorite } from "../../../../hooks/mutations/useRecipeMutations";
 import { AppIcon } from "../../../../components/ui";
 import { Card } from "../../../../components/ui/Card";
@@ -16,6 +16,7 @@ export default function RecipeDetailScreen() {
   const { user } = useAuth();
   const { data: recipe, isLoading } = useRecipeDetail(recipeId);
   const { data: favorites } = useRecipeFavorites(user?.id);
+  const { data: rpcMacros } = useRecipeMacros(recipeId);
   const toggleFavorite = useToggleFavorite();
 
   if (isLoading || !recipe) {
@@ -53,22 +54,30 @@ export default function RecipeDetailScreen() {
             <Text className="text-sm text-text-muted mb-4" style={{ fontFamily: font.regular }}>{recipe.description}</Text>
           ) : null}
 
-          {/* Macros */}
+          {/* Macros — authoritative totals from RPC (falls back to stored per-serving values) */}
           <View className="flex-row gap-2 mb-6">
             <Card className="flex-1 items-center py-3">
-              <Text className="text-lg text-violet-400" style={{ fontFamily: font.bold }}>{Math.round(recipe.calories_per_serving ?? 0)}</Text>
+              <Text className="text-lg text-violet-400" style={{ fontFamily: font.bold }}>
+                {Math.round(rpcMacros?.kcal ?? recipe.calories_per_serving ?? 0)}
+              </Text>
               <Text className="text-[10px] text-text-muted" style={{ fontFamily: font.semibold, letterSpacing: 1 }}>kcal</Text>
             </Card>
             <Card className="flex-1 items-center py-3">
-              <Text className="text-lg text-ice-400" style={{ fontFamily: font.bold }}>{Math.round(recipe.protein_per_serving ?? 0)}g</Text>
+              <Text className="text-lg text-ice-400" style={{ fontFamily: font.bold }}>
+                {Math.round(rpcMacros?.protein_g ?? recipe.protein_per_serving ?? 0)}g
+              </Text>
               <Text className="text-[10px] text-text-muted" style={{ fontFamily: font.semibold, letterSpacing: 1 }}>Prot</Text>
             </Card>
             <Card className="flex-1 items-center py-3">
-              <Text className="text-lg text-warning-500" style={{ fontFamily: font.bold }}>{Math.round(recipe.carbs_per_serving ?? 0)}g</Text>
+              <Text className="text-lg text-warning-500" style={{ fontFamily: font.bold }}>
+                {Math.round(rpcMacros?.carbs_g ?? recipe.carbs_per_serving ?? 0)}g
+              </Text>
               <Text className="text-[10px] text-text-muted" style={{ fontFamily: font.semibold, letterSpacing: 1 }}>Carbs</Text>
             </Card>
             <Card className="flex-1 items-center py-3">
-              <Text className="text-lg text-text-secondary" style={{ fontFamily: font.bold }}>{Math.round(recipe.fat_per_serving ?? 0)}g</Text>
+              <Text className="text-lg text-text-secondary" style={{ fontFamily: font.bold }}>
+                {Math.round(rpcMacros?.fat_g ?? recipe.fat_per_serving ?? 0)}g
+              </Text>
               <Text className="text-[10px] text-text-muted" style={{ fontFamily: font.semibold, letterSpacing: 1 }}>Gord</Text>
             </Card>
           </View>

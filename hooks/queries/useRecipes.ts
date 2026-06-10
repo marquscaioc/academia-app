@@ -105,6 +105,27 @@ export function useRecipeDetail(recipeId?: string) {
   });
 }
 
+export interface RecipeMacros {
+  kcal: number;
+  protein_g: number;
+  carbs_g: number;
+  fat_g: number;
+}
+
+export function useRecipeMacros(recipeId?: string) {
+  return useQuery({
+    queryKey: ["recipes", "macros", recipeId],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("recipe_macros", { p_recipe_id: recipeId! });
+      if (error) throw error;
+      // RPC returns an array with one row
+      const row = Array.isArray(data) ? data[0] : data;
+      return (row ?? null) as RecipeMacros | null;
+    },
+    enabled: !!recipeId,
+  });
+}
+
 export function useRecipeFavorites(userId?: string) {
   return useQuery({
     queryKey: ["recipes", "favorites", userId],
