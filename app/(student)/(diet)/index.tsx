@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Modal, Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Modal, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { useAuth } from "../../../lib/auth/provider";
@@ -22,12 +22,12 @@ function getTodayDate() {
 export default function DietScreen() {
   const { user, profile } = useAuth();
   const today = getTodayDate();
-  const { data: plans } = useDietPlans(user?.id);
-  const { data: mealLogs } = useMealLogs(user?.id, today);
+  const { data: plans, isLoading: plansLoading, isError: plansError, refetch: plansRefetch } = useDietPlans(user?.id);
+  const { data: mealLogs, isLoading: mealLogsLoading, isError: mealLogsError } = useMealLogs(user?.id, today);
   const { data: waterLogs } = useWaterLogs(user?.id, today);
   const logMeal = useLogMeal();
   const logWater = useLogWater();
-  const { data: foodLogs } = useFoodLogs(user?.id, today);
+  const { data: foodLogs, isLoading: foodLogsLoading, isError: foodLogsError } = useFoodLogs(user?.id, today);
   const logFood = useLogFood();
   const deleteFoodLog = useDeleteFoodLog();
 
@@ -92,24 +92,87 @@ export default function DietScreen() {
     );
   };
 
-  // Calculate daily macros
-  let totalCal = 0, totalProt = 0, totalCarb = 0, totalFat = 0;
+  // ─── META (goal) ────────────────────────────────────────────────────────────
+  // Use the plan's explicit target_* fields when available, otherwise fall back
+  // to summing all planned meal items.
+  let planItemCal = 0, planItemProt = 0, planItemCarb = 0, planItemFat = 0;
   for (const meal of meals) {
     for (const item of meal.items ?? []) {
-      totalCal += item.calories ?? 0;
-      totalProt += item.protein_g ?? 0;
-      totalCarb += item.carbs_g ?? 0;
-      totalFat += item.fat_g ?? 0;
+      planItemCal += item.calories ?? 0;
+      planItemProt += item.protein_g ?? 0;
+      planItemCarb += item.carbs_g ?? 0;
+      planItemFat += item.fat_g ?? 0;
     }
   }
+  const metaCal  = activePlan?.target_calories  ?? planItemCal;
+  const metaProt = activePlan?.target_protein_g ?? planItemProt;
+  const metaCarb = activePlan?.target_carbs_g   ?? planItemCarb;
+  const metaFat  = activePlan?.target_fat_g     ?? planItemFat;
 
-  const extraCal = (foodLogs ?? []).reduce((s, f) => s + (f.calories ?? 0), 0);
-  const extraProt = (foodLogs ?? []).reduce((s, f) => s + (f.protein_g ?? 0), 0);
+  // ─── CONSUMIDO (consumed today) ─────────────────────────────────────────────
+  // = macros of plan meals that the student LOGGED today + free-form food_logs
+  let loggedMealCal = 0, loggedMealProt = 0, loggedMealCarb = 0, loggedMealFat = 0;
+  for (const meal of meals) {
+    if (!loggedMealIds.has(meal.id)) continue;
+    for (const item of meal.items ?? []) {
+      loggedMealCal  += item.calories   ?? 0;
+      loggedMealProt += item.protein_g  ?? 0;
+      loggedMealCarb += item.carbs_g    ?? 0;
+      loggedMealFat  += item.fat_g      ?? 0;
+    }
+  }
+  const extraCal  = (foodLogs ?? []).reduce((s, f) => s + (f.calories   ?? 0), 0);
+  const extraProt = (foodLogs ?? []).reduce((s, f) => s + (f.protein_g  ?? 0), 0);
+  const extraCarb = (foodLogs ?? []).reduce((s, f) => s + (f.carbs_g    ?? 0), 0);
+  const extraFat  = (foodLogs ?? []).reduce((s, f) => s + (f.fat_g      ?? 0), 0);
+
+  const consumedCal  = loggedMealCal  + extraCal;
+  const consumedProt = loggedMealProt + extraProt;
+  const consumedCarb = loggedMealCarb + extraCarb;
+  const consumedFat  = loggedMealFat  + extraFat;
+
+  // Keep totalCal etc. for the existing summary cards (plan total, unchanged)
+  const totalCal  = planItemCal;
+  const totalProt = planItemProt;
+  const totalCarb = planItemCarb;
+  const totalFat  = planItemFat;
 
   const tacoMatches =
     showAddFood && fName.trim().length >= 2 && (!selectedFood || selectedFood.name !== fName)
       ? TACO_FOODS.filter((f) => f.name.toLowerCase().includes(fName.toLowerCase())).slice(0, 6)
       : [];
+
+  const isLoading = plansLoading || mealLogsLoading || foodLogsLoading;
+  const isError   = plansError   || mealLogsError   || foodLogsError;
+
+  if (isLoading) {
+    return (
+      <SafeAreaView className="flex-1 bg-dark-400 items-center justify-center">
+        <ActivityIndicator size="large" color="#9B40D8" />
+        <Text className="text-text-muted text-sm mt-3" style={{ fontFamily: font.regular }}>Carregando dieta…</Text>
+      </SafeAreaView>
+    );
+  }
+
+  if (isError) {
+    return (
+      <SafeAreaView className="flex-1 bg-dark-400 items-center justify-center px-8">
+        <AppIcon name="warning" size={32} color="#FB7185" strokeWidth={1.5} />
+        <Text className="text-text-primary text-base mt-3 mb-1 text-center" style={{ fontFamily: font.semibold }}>
+          Erro ao carregar dieta
+        </Text>
+        <Text className="text-text-muted text-sm text-center mb-5" style={{ fontFamily: font.regular }}>
+          Verifique sua conexão e tente novamente.
+        </Text>
+        <Pressable
+          onPress={() => plansRefetch()}
+          className="bg-violet-500/15 border border-violet-500/30 rounded-2xl px-6 py-3"
+        >
+          <Text className="text-violet-400 text-sm" style={{ fontFamily: font.semibold }}>Tentar novamente</Text>
+        </Pressable>
+      </SafeAreaView>
+    );
+  }
 
   if (!activePlan) {
     return (
@@ -135,9 +198,9 @@ export default function DietScreen() {
         <DisplayHeading size="md" className="mb-1">Dieta.</DisplayHeading>
         <Text className="text-sm text-text-secondary mb-6" style={{ fontFamily: font.regular }}>{activePlan.name}</Text>
 
-        {/* Macro summary */}
-        <SectionLabel className="mb-2.5">Macros de hoje</SectionLabel>
-        <View className="flex-row gap-2 mb-6">
+        {/* Macro summary — plan totals (quick reference chips) */}
+        <SectionLabel className="mb-2.5">Macros do plano</SectionLabel>
+        <View className="flex-row gap-2 mb-4">
           <Card className="flex-1 items-center py-3 px-2">
             <Text className="text-lg text-text-primary" style={{ fontFamily: font.bold }}>{Math.round(totalCal)}</Text>
             <Text className="text-[10px] uppercase text-text-muted mt-0.5" style={{ fontFamily: font.semibold, letterSpacing: 1.5 }}>kcal</Text>
@@ -155,6 +218,35 @@ export default function DietScreen() {
             <Text className="text-[10px] uppercase text-text-muted mt-0.5" style={{ fontFamily: font.semibold, letterSpacing: 1.5 }}>Gordura</Text>
           </Card>
         </View>
+
+        {/* Consumido vs meta — progress bars */}
+        <SectionLabel className="mb-2.5">Consumido hoje</SectionLabel>
+        <Card variant="outlined" className="mb-6 gap-3 py-4">
+          {[
+            { label: "Calorias", consumed: consumedCal,  goal: metaCal,  unit: "kcal", color: "#9B40D8", textColor: "text-violet-400" },
+            { label: "Proteina", consumed: consumedProt, goal: metaProt, unit: "g",    color: "#A78BFA", textColor: "text-violet-300" },
+            { label: "Carbos",   consumed: consumedCarb, goal: metaCarb, unit: "g",    color: "#67E8F9", textColor: "text-cyan-300"   },
+            { label: "Gordura",  consumed: consumedFat,  goal: metaFat,  unit: "g",    color: "#FCD34D", textColor: "text-warning-400"},
+          ].map(({ label, consumed, goal, unit, color, textColor }) => {
+            const pct = goal > 0 ? Math.min((consumed / goal) * 100, 100) : 0;
+            return (
+              <View key={label}>
+                <View className="flex-row justify-between items-baseline mb-1">
+                  <Text className="text-xs text-text-muted" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>{label}</Text>
+                  <Text className={`text-xs ${textColor}`} style={{ fontFamily: font.semibold }}>
+                    {Math.round(consumed)}{unit !== "kcal" ? "g" : ""} / {Math.round(goal)}{unit !== "kcal" ? "g" : ""} {unit === "kcal" ? "kcal" : ""}
+                  </Text>
+                </View>
+                <View className="h-2 bg-surface-border rounded-full overflow-hidden">
+                  <View
+                    className="h-full rounded-full"
+                    style={{ width: `${pct}%`, backgroundColor: color }}
+                  />
+                </View>
+              </View>
+            );
+          })}
+        </Card>
 
         {/* Adherence + water */}
         <View className="flex-row gap-4 mb-6">
@@ -293,6 +385,16 @@ export default function DietScreen() {
             </View>
           )}
         </View>
+        {/* Data-source attribution footer */}
+        <Pressable
+          onPress={() => router.push("/sobre-dados" as never)}
+          className="flex-row items-center justify-center gap-1.5 py-3 mb-6"
+        >
+          <AppIcon name="info" size={13} color="#6E6382" strokeWidth={2} />
+          <Text className="text-[11px] text-text-muted" style={{ fontFamily: font.regular }}>
+            Dados: TACO (NEPA/UNICAMP) · Open Food Facts (ODbL)
+          </Text>
+        </Pressable>
         </WebContainer>
       </ScrollView>
       <SubstitutionSheet

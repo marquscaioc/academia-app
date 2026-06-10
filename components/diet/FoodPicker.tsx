@@ -99,6 +99,18 @@ export function FoodPicker({
                 <ActivityIndicator className="mt-4" color="#781BB6" />
               ) : null}
 
+              {/* Empty state */}
+              {!local.isLoading && !offLoading && term.trim().length >= 2 && list.length === 0 ? (
+                <View className="mt-6 items-center px-4">
+                  <Text className="text-text-muted text-sm text-center" style={{ fontFamily: font.regular }}>
+                    Nenhum alimento encontrado — tente buscar em produtos embalados
+                  </Text>
+                  <Pressable onPress={searchOff} className="mt-3 bg-violet-500/10 border border-violet-500/20 rounded-2xl px-5 py-2.5">
+                    <Text className="text-violet-400 text-sm" style={{ fontFamily: font.semibold }}>Buscar em produtos embalados</Text>
+                  </Pressable>
+                </View>
+              ) : null}
+
               {/* Results list */}
               <FlatList
                 data={list}
