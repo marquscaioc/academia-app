@@ -54,29 +54,31 @@ export default function RecipeDetailScreen() {
             <Text className="text-sm text-text-muted mb-4" style={{ fontFamily: font.regular }}>{recipe.description}</Text>
           ) : null}
 
-          {/* Macros — authoritative totals from RPC (falls back to stored per-serving values) */}
+          {/* Macros POR PORÇÃO — o RPC recipe_macros devolve o TOTAL da receita; dividimos pelo nº de
+              porções. Fallback nos valores por-porção já salvos enquanto o RPC carrega. */}
+          <Text className="text-[10px] text-text-muted mb-2" style={{ fontFamily: font.semibold, letterSpacing: 1.5 }}>POR PORÇÃO</Text>
           <View className="flex-row gap-2 mb-6">
             <Card className="flex-1 items-center py-3">
               <Text className="text-lg text-violet-400" style={{ fontFamily: font.bold }}>
-                {Math.round(rpcMacros?.kcal ?? recipe.calories_per_serving ?? 0)}
+                {rpcMacros ? Math.round(rpcMacros.kcal / Math.max(recipe.servings ?? 1, 1)) : Math.round(recipe.calories_per_serving ?? 0)}
               </Text>
               <Text className="text-[10px] text-text-muted" style={{ fontFamily: font.semibold, letterSpacing: 1 }}>kcal</Text>
             </Card>
             <Card className="flex-1 items-center py-3">
               <Text className="text-lg text-ice-400" style={{ fontFamily: font.bold }}>
-                {Math.round(rpcMacros?.protein_g ?? recipe.protein_per_serving ?? 0)}g
+                {rpcMacros ? Math.round(rpcMacros.protein_g / Math.max(recipe.servings ?? 1, 1)) : Math.round(recipe.protein_per_serving ?? 0)}g
               </Text>
               <Text className="text-[10px] text-text-muted" style={{ fontFamily: font.semibold, letterSpacing: 1 }}>Prot</Text>
             </Card>
             <Card className="flex-1 items-center py-3">
               <Text className="text-lg text-warning-500" style={{ fontFamily: font.bold }}>
-                {Math.round(rpcMacros?.carbs_g ?? recipe.carbs_per_serving ?? 0)}g
+                {rpcMacros ? Math.round(rpcMacros.carbs_g / Math.max(recipe.servings ?? 1, 1)) : Math.round(recipe.carbs_per_serving ?? 0)}g
               </Text>
               <Text className="text-[10px] text-text-muted" style={{ fontFamily: font.semibold, letterSpacing: 1 }}>Carbs</Text>
             </Card>
             <Card className="flex-1 items-center py-3">
               <Text className="text-lg text-text-secondary" style={{ fontFamily: font.bold }}>
-                {Math.round(rpcMacros?.fat_g ?? recipe.fat_per_serving ?? 0)}g
+                {rpcMacros ? Math.round(rpcMacros.fat_g / Math.max(recipe.servings ?? 1, 1)) : Math.round(recipe.fat_per_serving ?? 0)}g
               </Text>
               <Text className="text-[10px] text-text-muted" style={{ fontFamily: font.semibold, letterSpacing: 1 }}>Gord</Text>
             </Card>
