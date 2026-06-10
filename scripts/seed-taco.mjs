@@ -80,8 +80,7 @@ for (let i = 0; i < values.length; i += CHUNK) {
   await run(
     `insert into public.foods (name,category,source,source_ref,kcal_100g,protein_g_100g,carbs_g_100g,fat_g_100g,fiber_g_100g,sodium_mg_100g)
      values ${chunk.join(",")}
-     on conflict (source,source_ref) where source_ref is not null
-     do update set
+     on conflict (source,source_ref) do update set
        name=excluded.name,
        category=excluded.category,
        kcal_100g=excluded.kcal_100g,
