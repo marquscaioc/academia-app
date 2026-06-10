@@ -1,5 +1,6 @@
 import { Tabs } from "expo-router";
-import { Platform, View } from "react-native";
+import { View } from "react-native";
+import { useIsDesktop } from "../../lib/layout/useIsDesktop";
 import { BrandingProvider, useBranding } from "../../lib/branding/BrandingProvider";
 import { RoleGuard } from "../../components/auth/RoleGuard";
 import { AppSidebar, STUDENT_NAV } from "../../components/layout/AppSidebar";
@@ -26,18 +27,18 @@ function TabIcon({ name, focused, color }: { name: string; focused: boolean; col
 
 function StudentTabs() {
   const { primaryColor } = useBranding();
-  const isWeb = Platform.OS === "web";
+  const isDesktop = useIsDesktop();
 
   return (
     <View className="flex-1 flex-row">
-      {isWeb ? <AppSidebar items={STUDENT_NAV} subtitle="Aluno" /> : null}
+      {isDesktop ? <AppSidebar items={STUDENT_NAV} subtitle="Aluno" /> : null}
       <View className="flex-1">
         <Tabs
           screenOptions={{
             headerShown: false,
             tabBarActiveTintColor: primaryColor,
             tabBarInactiveTintColor: "#6E6382",
-            tabBarStyle: isWeb
+            tabBarStyle: isDesktop
               ? { display: "none" as const }
               : {
                   backgroundColor: "#14101B",

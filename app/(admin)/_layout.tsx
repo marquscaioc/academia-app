@@ -1,5 +1,6 @@
 import { Tabs } from "expo-router";
-import { Platform, View } from "react-native";
+import { View } from "react-native";
+import { useIsDesktop } from "../../lib/layout/useIsDesktop";
 import { RoleGuard } from "../../components/auth/RoleGuard";
 import { AppSidebar, ADMIN_NAV } from "../../components/layout/AppSidebar";
 import { AppIcon, type IconName } from "../../components/ui";
@@ -20,17 +21,17 @@ function TabIcon({ name, focused, color }: { name: string; focused: boolean; col
 }
 
 function AdminTabs() {
-  const isWeb = Platform.OS === "web";
+  const isDesktop = useIsDesktop();
   return (
     <View className="flex-1 flex-row">
-      {isWeb ? <AppSidebar items={ADMIN_NAV} subtitle="Admin" /> : null}
+      {isDesktop ? <AppSidebar items={ADMIN_NAV} subtitle="Admin" /> : null}
       <View className="flex-1">
         <Tabs
           screenOptions={{
             headerShown: false,
             tabBarActiveTintColor: "#781BB6",
             tabBarInactiveTintColor: "#6E6382",
-            tabBarStyle: isWeb
+            tabBarStyle: isDesktop
               ? { display: "none" as const }
               : {
                   backgroundColor: "#14101B",
