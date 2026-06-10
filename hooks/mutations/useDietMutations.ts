@@ -22,13 +22,14 @@ interface AddMealInput {
 
 interface AddMealItemInput {
   meal_id: string;
+  food_id?: string | null;
   food_name: string;
   quantity?: number;
   unit?: string;
-  calories?: number;
-  protein_g?: number;
-  carbs_g?: number;
-  fat_g?: number;
+  calories?: number | null;
+  protein_g?: number | null;
+  carbs_g?: number | null;
+  fat_g?: number | null;
   notes?: string;
   sort_order: number;
 }

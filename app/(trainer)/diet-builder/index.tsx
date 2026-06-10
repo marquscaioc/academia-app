@@ -21,6 +21,8 @@ import { DisplayHeading } from "../../../components/ui/DisplayHeading";
 import { SectionLabel } from "../../../components/ui/SectionLabel";
 import { AppIcon } from "../../../components/ui";
 import { font, amethystGlow } from "../../../lib/design/tokens";
+import { FoodPicker } from "../../../components/diet/FoodPicker";
+import type { FoodPick } from "../../../components/diet/FoodPicker";
 
 interface MealDraft {
   name: string;
@@ -29,6 +31,7 @@ interface MealDraft {
 }
 
 interface MealItemDraft {
+  food_id?: string | null;
   food_name: string;
   quantity: string;
   unit: string;
@@ -66,6 +69,7 @@ export default function DietBuilderScreen() {
   ]);
   const [saving, setSaving] = useState(false);
   const [editingMealIdx, setEditingMealIdx] = useState<number | null>(null);
+  const [pickerMealIdx, setPickerMealIdx] = useState<number | null>(null);
 
   const { data: students } = useQuery({
     queryKey: ["trainer", "students", user?.id],
@@ -93,7 +97,8 @@ export default function DietBuilderScreen() {
     setMeals(updated);
   };
 
-  const updateItem = (mealIdx: number, itemIdx: number, field: keyof MealItemDraft, value: string) => {
+  type StringMealItemField = { [K in keyof MealItemDraft]-?: MealItemDraft[K] extends string ? K : never }[keyof MealItemDraft];
+  const updateItem = (mealIdx: number, itemIdx: number, field: StringMealItemField, value: string) => {
     const updated = [...meals];
     updated[mealIdx].items[itemIdx] = { ...updated[mealIdx].items[itemIdx], [field]: value };
     setMeals(updated);
@@ -105,6 +110,22 @@ export default function DietBuilderScreen() {
 
   const removeMeal = (idx: number) => {
     setMeals(meals.filter((_, i) => i !== idx));
+  };
+
+  const handleFoodPicked = (mealIdx: number, pick: FoodPick) => {
+    const updated = [...meals];
+    updated[mealIdx].items.push({
+      food_id: pick.food.id,
+      food_name: pick.food.name,
+      quantity: String(pick.quantity),
+      unit: pick.unit,
+      calories: String(pick.macros.calories),
+      protein_g: String(pick.macros.protein_g),
+      carbs_g: String(pick.macros.carbs_g),
+      fat_g: String(pick.macros.fat_g),
+    });
+    setMeals(updated);
+    setPickerMealIdx(null);
   };
 
   const totalMacros = meals.reduce(
@@ -155,13 +176,14 @@ export default function DietBuilderScreen() {
           if (!item.food_name.trim()) continue;
           await addMealItem.mutateAsync({
             meal_id: mealData.id,
+            food_id: item.food_id ?? null,
             food_name: item.food_name.trim(),
             quantity: parseNonNegative(item.quantity, 10000),
             unit: item.unit || "g",
-            calories: parseNonNegative(item.calories, 10000),
-            protein_g: parseNonNegative(item.protein_g, 1000),
-            carbs_g: parseNonNegative(item.carbs_g, 1000),
-            fat_g: parseNonNegative(item.fat_g, 1000),
+            calories: parseNonNegative(item.calories, 10000) ?? null,
+            protein_g: parseNonNegative(item.protein_g, 1000) ?? null,
+            carbs_g: parseNonNegative(item.carbs_g, 1000) ?? null,
+            fat_g: parseNonNegative(item.fat_g, 1000) ?? null,
             sort_order: ii,
           });
         }
@@ -353,10 +375,16 @@ export default function DietBuilderScreen() {
                   </View>
                 ))}
 
-                <Pressable onPress={() => addItemToMeal(mi)} className="border border-dashed border-surface-border rounded-xl py-2.5 flex-row items-center justify-center gap-1.5">
-                  <AppIcon name="plus" size={15} color="#6E6382" strokeWidth={2} />
-                  <Text className="text-text-muted text-xs" style={{ fontFamily: font.semibold }}>Adicionar alimento</Text>
-                </Pressable>
+                <View className="flex-row gap-2 mt-1">
+                  <Pressable onPress={() => setPickerMealIdx(mi)} className="flex-1 border border-dashed border-violet-500/40 rounded-xl py-2.5 flex-row items-center justify-center gap-1.5">
+                    <AppIcon name="plus" size={15} color="#9B40D8" strokeWidth={2} />
+                    <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>Adicionar alimento</Text>
+                  </Pressable>
+                  <Pressable onPress={() => addItemToMeal(mi)} className="border border-dashed border-surface-border rounded-xl px-3 py-2.5 flex-row items-center justify-center gap-1">
+                    <AppIcon name="pencil" size={13} color="#6E6382" strokeWidth={2} />
+                    <Text className="text-text-muted text-xs" style={{ fontFamily: font.semibold }}>Manual</Text>
+                  </Pressable>
+                </View>
               </View>
             ))}
 
@@ -456,6 +484,13 @@ export default function DietBuilderScreen() {
           </View>
         </ScrollView>
       ) : null}
+      <FoodPicker
+        visible={pickerMealIdx !== null}
+        onClose={() => setPickerMealIdx(null)}
+        onConfirm={(pick) => {
+          if (pickerMealIdx !== null) handleFoodPicked(pickerMealIdx, pick);
+        }}
+      />
     </SafeAreaView>
   );
 }
