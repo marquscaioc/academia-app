@@ -2,7 +2,7 @@ import { Tabs } from "expo-router";
 import { View } from "react-native";
 import { useIsDesktop } from "../../lib/layout/useIsDesktop";
 import { RoleGuard } from "../../components/auth/RoleGuard";
-import { AppSidebar, ADMIN_NAV } from "../../components/layout/AppSidebar";
+import { AppSidebar, ADMIN_CADASTRO_SECTIONS } from "../../components/layout/AppSidebar";
 import { AppIcon, type IconName } from "../../components/ui";
 
 const TAB_ICON: Record<string, IconName> = {
@@ -24,7 +24,7 @@ function AdminTabs() {
   const isDesktop = useIsDesktop();
   return (
     <View className="flex-1 flex-row">
-      {isDesktop ? <AppSidebar items={ADMIN_NAV} subtitle="Admin" /> : null}
+      {isDesktop ? <AppSidebar sections={ADMIN_CADASTRO_SECTIONS} subtitle="Admin" /> : null}
       <View className="flex-1">
         <Tabs
           screenOptions={{
@@ -46,6 +46,7 @@ function AdminTabs() {
           <Tabs.Screen name="overview" options={{ title: "Overview", tabBarIcon: ({ focused, color }) => <TabIcon name="overview" focused={focused} color={color} /> }} />
           <Tabs.Screen name="users" options={{ title: "Usuarios", tabBarIcon: ({ focused, color }) => <TabIcon name="users" focused={focused} color={color} /> }} />
           <Tabs.Screen name="moderation" options={{ title: "Moderacao", tabBarIcon: ({ focused, color }) => <TabIcon name="moderation" focused={focused} color={color} /> }} />
+          <Tabs.Screen name="cadastro" options={{ href: null }} />
         </Tabs>
       </View>
     </View>
