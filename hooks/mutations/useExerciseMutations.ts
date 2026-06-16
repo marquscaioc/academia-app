@@ -60,6 +60,7 @@ interface AddWorkoutExerciseInput {
   superset_group?: number;
   rest_seconds?: number;
   notes?: string;
+  technique_id?: string;
 }
 
 export function useCreateWorkoutPlan() {

@@ -4,6 +4,7 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
+  Modal,
   Pressable,
   ScrollView,
   Text,
@@ -26,6 +27,17 @@ import {
   useAddWorkoutExercise,
 } from "../../../hooks/mutations/useExerciseMutations";
 import { Avatar } from "../../../components/ui/Avatar";
+import {
+  useTrainingTechniques,
+  useCreateTechnique,
+  type TrainingTechnique,
+} from "../../../hooks/queries/useTrainingTechniques";
+
+const PRESET_COLORS = [
+  "#EF4444", "#F97316", "#EAB308", "#22C55E",
+  "#14B8A6", "#3B82F6", "#8B5CF6", "#A855F7",
+  "#EC4899", "#6B7280",
+];
 
 interface SelectedExercise {
   exercise_id: string;
@@ -37,6 +49,7 @@ interface SelectedExercise {
   rpe: string;
   tempo: string;
   supersetGroup: number | null;
+  techniqueId: string | null;
 }
 
 type Step = "select-student" | "plan-info" | "add-exercises" | "review";
@@ -53,9 +66,18 @@ export default function WorkoutBuilderScreen() {
   const [searchExercise, setSearchExercise] = useState("");
   const [saving, setSaving] = useState(false);
 
+  // Technique picker state
+  const [techniquePickerIdx, setTechniquePickerIdx] = useState<number | null>(null);
+  const [showCreateTechnique, setShowCreateTechnique] = useState(false);
+  const [newTechniqueName, setNewTechniqueName] = useState("");
+  const [newTechniqueColor, setNewTechniqueColor] = useState(PRESET_COLORS[0]);
+  const [creatingTechnique, setCreatingTechnique] = useState(false);
+
   const createPlan = useCreateWorkoutPlan();
   const addWorkout = useAddWorkout();
   const addExercise = useAddWorkoutExercise();
+  const { data: techniques = [] } = useTrainingTechniques();
+  const createTechnique = useCreateTechnique();
 
   const { data: students } = useQuery({
     queryKey: ["trainer", "students", user?.id],
@@ -77,9 +99,32 @@ export default function WorkoutBuilderScreen() {
   const addExerciseToList = (ex: { id: string; name: string }) => {
     setExercises([
       ...exercises,
-      { exercise_id: ex.id, name: ex.name, sets: 3, reps: "10-12", weight: "", rest: 60, rpe: "", tempo: "", supersetGroup: null },
+      { exercise_id: ex.id, name: ex.name, sets: 3, reps: "10-12", weight: "", rest: 60, rpe: "", tempo: "", supersetGroup: null, techniqueId: null },
     ]);
     setSearchExercise("");
+  };
+
+  const handleCreateTechnique = async () => {
+    if (!newTechniqueName.trim()) return;
+    setCreatingTechnique(true);
+    try {
+      const created = await createTechnique.mutateAsync({
+        name: newTechniqueName.trim(),
+        color: newTechniqueColor,
+      });
+      if (techniquePickerIdx !== null) {
+        const updated = [...exercises];
+        updated[techniquePickerIdx] = { ...updated[techniquePickerIdx], techniqueId: created.id };
+        setExercises(updated);
+      }
+      setShowCreateTechnique(false);
+      setNewTechniqueName("");
+      setNewTechniqueColor(PRESET_COLORS[0]);
+    } catch {
+      Alert.alert("Erro", "Nao foi possivel criar a tecnica.");
+    } finally {
+      setCreatingTechnique(false);
+    }
   };
 
   const removeExercise = (idx: number) => {
@@ -140,6 +185,7 @@ export default function WorkoutBuilderScreen() {
           tempo: ex.tempo.trim() || undefined,
           superset_group: ex.supersetGroup ?? undefined,
           rest_seconds: ex.rest,
+          technique_id: ex.techniqueId ?? undefined,
         });
       }
 
@@ -421,6 +467,47 @@ export default function WorkoutBuilderScreen() {
                         <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>Superset com o exercício acima</Text>
                       </Pressable>
                     ) : null}
+
+                    {/* Técnica avançada */}
+                    <View className="mt-2 flex-row items-center gap-2">
+                      <AppIcon name="energy" size={14} color="#6E6382" strokeWidth={2} />
+                      <Pressable
+                        onPress={() => setTechniquePickerIdx(idx)}
+                        className="flex-row items-center gap-1.5 rounded-xl px-3 py-1.5 border"
+                        style={{
+                          backgroundColor: ex.techniqueId
+                            ? (techniques.find((t) => t.id === ex.techniqueId)?.color ?? "#9B40D8") + "22"
+                            : "transparent",
+                          borderColor: ex.techniqueId
+                            ? (techniques.find((t) => t.id === ex.techniqueId)?.color ?? "#9B40D8") + "55"
+                            : "#3D3348",
+                        }}
+                      >
+                        {ex.techniqueId ? (
+                          <>
+                            <View
+                              className="w-2 h-2 rounded-full"
+                              style={{ backgroundColor: techniques.find((t) => t.id === ex.techniqueId)?.color ?? "#9B40D8" }}
+                            />
+                            <Text className="text-xs" style={{ fontFamily: font.semibold, color: techniques.find((t) => t.id === ex.techniqueId)?.color ?? "#9B40D8" }}>
+                              {techniques.find((t) => t.id === ex.techniqueId)?.name}
+                            </Text>
+                            <Pressable
+                              onPress={() => {
+                                const updated = [...exercises];
+                                updated[idx] = { ...updated[idx], techniqueId: null };
+                                setExercises(updated);
+                              }}
+                              hitSlop={8}
+                            >
+                              <AppIcon name="close" size={10} color="#6E6382" strokeWidth={2.5} />
+                            </Pressable>
+                          </>
+                        ) : (
+                          <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>+ Técnica avançada</Text>
+                        )}
+                      </Pressable>
+                    </View>
                   </View>
                 ))}
               </View>
@@ -520,6 +607,201 @@ export default function WorkoutBuilderScreen() {
           </View>
         </ScrollView>
       ) : null}
+      {/* Technique Picker Modal */}
+      <Modal
+        visible={techniquePickerIdx !== null && !showCreateTechnique}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setTechniquePickerIdx(null)}
+      >
+        <Pressable
+          className="flex-1 bg-black/60"
+          onPress={() => setTechniquePickerIdx(null)}
+        />
+        <View className="bg-dark-300 rounded-t-3xl border-t border-surface-border pb-8">
+          <View className="flex-row items-center justify-between px-6 pt-5 pb-4 border-b border-surface-border">
+            <Text className="text-base text-text-primary" style={{ fontFamily: font.semibold }}>Técnica avançada</Text>
+            <Pressable onPress={() => setTechniquePickerIdx(null)}>
+              <AppIcon name="close" size={18} color="#6E6382" strokeWidth={2} />
+            </Pressable>
+          </View>
+
+          <ScrollView className="max-h-80 px-4 py-3" showsVerticalScrollIndicator={false}>
+            {/* Sem técnica */}
+            <Pressable
+              onPress={() => {
+                if (techniquePickerIdx !== null) {
+                  const updated = [...exercises];
+                  updated[techniquePickerIdx] = { ...updated[techniquePickerIdx], techniqueId: null };
+                  setExercises(updated);
+                }
+                setTechniquePickerIdx(null);
+              }}
+              className="flex-row items-center gap-3 p-3 rounded-2xl mb-1 border border-surface-border"
+            >
+              <View className="w-3 h-3 rounded-full bg-surface-border" />
+              <Text className="text-sm text-text-muted flex-1" style={{ fontFamily: font.regular }}>Sem técnica</Text>
+              {techniquePickerIdx !== null && !exercises[techniquePickerIdx]?.techniqueId ? (
+                <AppIcon name="check" size={14} color="#9B40D8" strokeWidth={2.5} />
+              ) : null}
+            </Pressable>
+
+            {/* Platform techniques */}
+            {techniques.filter((t) => t.created_by === null).length > 0 && (
+              <Text className="text-[10px] text-text-muted uppercase tracking-widest mb-2 mt-2 ml-1" style={{ fontFamily: font.medium }}>
+                Técnicas padrão
+              </Text>
+            )}
+            {techniques.filter((t) => t.created_by === null).map((t) => (
+              <Pressable
+                key={t.id}
+                onPress={() => {
+                  if (techniquePickerIdx !== null) {
+                    const updated = [...exercises];
+                    updated[techniquePickerIdx] = { ...updated[techniquePickerIdx], techniqueId: t.id };
+                    setExercises(updated);
+                  }
+                  setTechniquePickerIdx(null);
+                }}
+                className="flex-row items-center gap-3 p-3 rounded-2xl mb-1"
+                style={{
+                  backgroundColor: techniques.find((x) => techniquePickerIdx !== null && exercises[techniquePickerIdx]?.techniqueId === t.id)
+                    ? t.color + "22"
+                    : "transparent",
+                }}
+              >
+                <View className="w-3 h-3 rounded-full" style={{ backgroundColor: t.color }} />
+                <View className="flex-1">
+                  <Text className="text-sm text-text-primary" style={{ fontFamily: font.semibold, color: t.color }}>{t.name}</Text>
+                  {t.description ? (
+                    <Text className="text-xs text-text-muted mt-0.5" numberOfLines={1} style={{ fontFamily: font.regular }}>{t.description}</Text>
+                  ) : null}
+                </View>
+                {techniquePickerIdx !== null && exercises[techniquePickerIdx]?.techniqueId === t.id ? (
+                  <AppIcon name="check" size={14} color={t.color} strokeWidth={2.5} />
+                ) : null}
+              </Pressable>
+            ))}
+
+            {/* Custom techniques */}
+            {techniques.filter((t) => t.created_by !== null).length > 0 && (
+              <Text className="text-[10px] text-text-muted uppercase tracking-widest mb-2 mt-3 ml-1" style={{ fontFamily: font.medium }}>
+                Minhas técnicas
+              </Text>
+            )}
+            {techniques.filter((t) => t.created_by !== null).map((t) => (
+              <Pressable
+                key={t.id}
+                onPress={() => {
+                  if (techniquePickerIdx !== null) {
+                    const updated = [...exercises];
+                    updated[techniquePickerIdx] = { ...updated[techniquePickerIdx], techniqueId: t.id };
+                    setExercises(updated);
+                  }
+                  setTechniquePickerIdx(null);
+                }}
+                className="flex-row items-center gap-3 p-3 rounded-2xl mb-1"
+              >
+                <View className="w-3 h-3 rounded-full" style={{ backgroundColor: t.color }} />
+                <Text className="text-sm flex-1" style={{ fontFamily: font.semibold, color: t.color }}>{t.name}</Text>
+                {techniquePickerIdx !== null && exercises[techniquePickerIdx]?.techniqueId === t.id ? (
+                  <AppIcon name="check" size={14} color={t.color} strokeWidth={2.5} />
+                ) : null}
+              </Pressable>
+            ))}
+          </ScrollView>
+
+          <Pressable
+            onPress={() => setShowCreateTechnique(true)}
+            className="mx-4 mt-2 border border-dashed border-violet-500/40 rounded-2xl py-3 flex-row items-center justify-center gap-2"
+          >
+            <AppIcon name="plus" size={16} color="#9B40D8" strokeWidth={2} />
+            <Text className="text-sm text-violet-400" style={{ fontFamily: font.semibold }}>Criar nova técnica</Text>
+          </Pressable>
+        </View>
+      </Modal>
+
+      {/* Create Technique Modal */}
+      <Modal
+        visible={showCreateTechnique}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowCreateTechnique(false)}
+      >
+        <Pressable
+          className="flex-1 bg-black/60"
+          onPress={() => setShowCreateTechnique(false)}
+        />
+        <View className="bg-dark-300 rounded-t-3xl border-t border-surface-border pb-8">
+          <View className="flex-row items-center justify-between px-6 pt-5 pb-4 border-b border-surface-border">
+            <Text className="text-base text-text-primary" style={{ fontFamily: font.semibold }}>Nova técnica</Text>
+            <Pressable onPress={() => setShowCreateTechnique(false)}>
+              <AppIcon name="close" size={18} color="#6E6382" strokeWidth={2} />
+            </Pressable>
+          </View>
+
+          <View className="px-6 py-4 gap-4">
+            <View>
+              <SectionLabel className="mb-2">Nome da técnica</SectionLabel>
+              <TextInput
+                className="bg-surface-card border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
+                placeholder="Ex: 1 e ½ Rep"
+                placeholderTextColor="#6E6382"
+                value={newTechniqueName}
+                onChangeText={setNewTechniqueName}
+                style={{ fontFamily: font.regular }}
+                autoFocus
+              />
+            </View>
+
+            <View>
+              <SectionLabel className="mb-2">Cor</SectionLabel>
+              <View className="flex-row flex-wrap gap-2">
+                {PRESET_COLORS.map((color) => (
+                  <Pressable
+                    key={color}
+                    onPress={() => setNewTechniqueColor(color)}
+                    className="w-9 h-9 rounded-xl items-center justify-center"
+                    style={{ backgroundColor: color + "33", borderWidth: newTechniqueColor === color ? 2 : 0, borderColor: color }}
+                  >
+                    <View className="w-5 h-5 rounded-lg" style={{ backgroundColor: color }} />
+                  </Pressable>
+                ))}
+              </View>
+            </View>
+
+            {/* Preview */}
+            <View className="flex-row items-center gap-2 p-3 rounded-2xl border" style={{ backgroundColor: newTechniqueColor + "15", borderColor: newTechniqueColor + "40" }}>
+              <View className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: newTechniqueColor }} />
+              <Text style={{ fontFamily: font.semibold, color: newTechniqueColor, fontSize: 13 }}>
+                {newTechniqueName.trim() || "Nome da técnica"}
+              </Text>
+            </View>
+
+            <Pressable
+              onPress={handleCreateTechnique}
+              disabled={!newTechniqueName.trim() || creatingTechnique}
+              className="rounded-2xl overflow-hidden"
+              style={newTechniqueName.trim() ? amethystGlow : undefined}
+            >
+              <LinearGradient
+                colors={newTechniqueName.trim() ? ["#781BB6", "#C636E0"] : ["#201B2A", "#201B2A"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0.9 }}
+                style={{ paddingVertical: 16, alignItems: "center", flexDirection: "row", justifyContent: "center", gap: 8 }}
+              >
+                {creatingTechnique ? (
+                  <ActivityIndicator color="#FFFFFF" />
+                ) : (
+                  <Text className={newTechniqueName.trim() ? "text-white" : "text-text-muted"} style={{ fontFamily: font.semibold }}>
+                    Criar técnica
+                  </Text>
+                )}
+              </LinearGradient>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
