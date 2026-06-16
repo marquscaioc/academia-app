@@ -76,6 +76,24 @@ export default function SobreDadosScreen() {
             </View>
           </View>
 
+          {/* Imagens dos alimentos (Wikimedia) */}
+          <View className="bg-surface-card border border-surface-border rounded-3xl p-5 mb-4">
+            <View className="flex-row items-center gap-2 mb-3">
+              <View className="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-500/25 items-center justify-center">
+                <AppIcon name="image" size={16} color="#34D399" strokeWidth={2} />
+              </View>
+              <Text className="text-base text-text-primary" style={{ fontFamily: font.semibold }}>Imagens dos alimentos</Text>
+            </View>
+            <Row label="Fonte" value="Wikimedia Commons / Wikipédia" />
+            <Row label="Licença" value="CC BY-SA / Domínio Público (varia por imagem)" />
+            <View className="flex-row justify-between py-2">
+              <Text className="text-sm text-text-muted" style={{ fontFamily: font.regular }}>Mais informações</Text>
+              <Pressable onPress={() => Linking.openURL("https://commons.wikimedia.org/")}>
+                <Text className="text-sm text-violet-400 underline" style={{ fontFamily: font.medium }}>commons.wikimedia.org</Text>
+              </Pressable>
+            </View>
+          </View>
+
           {/* ODbL notice */}
           <View className="bg-surface-elevated border border-surface-border rounded-2xl p-4 mb-10">
             <Text className="text-xs text-text-muted leading-5" style={{ fontFamily: font.regular }}>

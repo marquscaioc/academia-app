@@ -24,7 +24,6 @@ export default function EditProfileScreen() {
   const [fullName, setFullName] = useState(profile?.full_name ?? "");
   const [displayName, setDisplayName] = useState(profile?.display_name ?? "");
   const [bio, setBio] = useState(profile?.bio ?? "");
-  const [whatsapp, setWhatsapp] = useState(profile?.whatsapp_number ?? "");
   const [loading, setLoading] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [error, setError] = useState("");
@@ -57,7 +56,6 @@ export default function EditProfileScreen() {
         full_name: fullName.trim(),
         display_name: displayName.trim() || null,
         bio: bio.trim() || null,
-        whatsapp_number: whatsapp.trim() || null,
       })
       .eq("id", user.id);
 
@@ -194,46 +192,6 @@ export default function EditProfileScreen() {
               <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>Perfil</Text>
               <Text className="text-xs text-violet-400 capitalize" style={{ fontFamily: font.semibold }}>{profile?.role}</Text>
             </View>
-          </View>
-
-          {/* WhatsApp */}
-          <View className="bg-surface-card border border-surface-border rounded-3xl p-4 mt-4">
-            <View className="flex-row items-center gap-2 mb-3">
-              <AppIcon name="chat" size={16} color="#6E6382" strokeWidth={2} />
-              <Text className="text-[10px] text-text-muted uppercase" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>WhatsApp</Text>
-            </View>
-            <TextInput
-              className="bg-dark-300 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary mb-3"
-              placeholder="55 11 99999-9999"
-              placeholderTextColor="#6E6382"
-              keyboardType="phone-pad"
-              value={whatsapp}
-              onChangeText={setWhatsapp}
-              style={{ fontFamily: font.regular }}
-            />
-            <Pressable
-              onPress={async () => {
-                if (!user) return;
-                const { data: p, error: fetchErr } = await supabase
-                  .from("profiles")
-                  .select("whatsapp_opt_in")
-                  .eq("id", user.id)
-                  .maybeSingle();
-                if (fetchErr || !p) { setError("Erro ao atualizar preferencia"); return; }
-                const { error: updErr } = await supabase
-                  .from("profiles")
-                  .update({ whatsapp_opt_in: !p.whatsapp_opt_in })
-                  .eq("id", user.id);
-                if (updErr) { setError("Erro ao atualizar preferencia"); return; }
-                refreshProfile();
-              }}
-              className="flex-row items-center justify-between"
-            >
-              <Text className="text-sm text-text-secondary" style={{ fontFamily: font.regular }}>Receber lembretes via WhatsApp</Text>
-              <View className={`w-12 h-7 rounded-full p-0.5 ${profile?.whatsapp_opt_in ? "bg-violet-500" : "bg-surface-border"}`}>
-                <View className={`w-6 h-6 bg-white rounded-full ${profile?.whatsapp_opt_in ? "ml-auto" : ""}`} />
-              </View>
-            </Pressable>
           </View>
 
           {/* Notification preferences */}

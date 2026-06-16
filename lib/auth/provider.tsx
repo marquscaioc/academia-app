@@ -23,8 +23,6 @@ interface Profile {
   current_streak: number;
   longest_streak: number;
   notify_follower_workouts: boolean;
-  whatsapp_number: string | null;
-  whatsapp_opt_in: boolean;
 }
 
 interface AuthContextType {
@@ -38,6 +36,7 @@ interface AuthContextType {
     email: string,
     password: string,
     fullName: string,
+    meta?: { date_of_birth?: string; terms_version?: string },
   ) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
@@ -54,7 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Try full select first, fallback to basic if new columns don't exist yet
     const { data, error } = await supabase
       .from("profiles")
-      .select("id, role, full_name, display_name, avatar_url, bio, onboarding_completed, water_goal_ml, current_streak, longest_streak, notify_follower_workouts, whatsapp_number, whatsapp_opt_in")
+      .select("id, role, full_name, display_name, avatar_url, bio, onboarding_completed, water_goal_ml, current_streak, longest_streak, notify_follower_workouts")
       .eq("id", userId)
       .maybeSingle();
 
@@ -77,8 +76,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         current_streak: 0,
         longest_streak: 0,
         notify_follower_workouts: false,
-        whatsapp_number: null,
-        whatsapp_opt_in: false,
       } as Profile);
       return;
     }
@@ -145,11 +142,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error: error as Error | null };
   };
 
-  const signUp = async (email: string, password: string, fullName: string) => {
+  const signUp = async (
+    email: string,
+    password: string,
+    fullName: string,
+    meta?: { date_of_birth?: string; terms_version?: string },
+  ) => {
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { full_name: fullName } },
+      options: {
+        data: {
+          full_name: fullName,
+          ...(meta?.date_of_birth ? { date_of_birth: meta.date_of_birth } : {}),
+          ...(meta?.terms_version
+            ? { terms_version: meta.terms_version, terms_accepted_at: new Date().toISOString() }
+            : {}),
+        },
+      },
     });
     return { error: error as Error | null };
   };

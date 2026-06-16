@@ -60,12 +60,12 @@ export default function LoginScreen() {
             <Logo size="xl" />
           </Animated.View>
           <Animated.View entering={FadeInDown.delay(120).springify()} className="items-center mb-2">
-            <DisplayHeading size="md" italic tone="muted">
+            <DisplayHeading size="md" italic tone="muted" className="text-center">
               Bem-vindo ao
             </DisplayHeading>
           </Animated.View>
           <Animated.View entering={FadeInDown.delay(200).springify()} className="items-center mb-12">
-            <DisplayHeading size="2xl" tone="primary">
+            <DisplayHeading size="2xl" tone="primary" className="text-center">
               Projeto Gaab.
             </DisplayHeading>
           </Animated.View>

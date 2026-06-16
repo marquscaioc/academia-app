@@ -17,6 +17,24 @@ import { useAuth } from "../../lib/auth/provider";
 import { AppIcon, DisplayHeading, Logo } from "../../components/ui";
 import { amethystGlow, font } from "../../lib/design/tokens";
 
+const TERMS_VERSION = "2026-06-16";
+
+function parseDob(input: string): { iso: string; age: number } | null {
+  const m = input.trim().match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if (!m) return null;
+  const day = Number(m[1]);
+  const month = Number(m[2]);
+  const year = Number(m[3]);
+  const d = new Date(year, month - 1, day);
+  if (d.getFullYear() !== year || d.getMonth() !== month - 1 || d.getDate() !== day) return null;
+  const now = new Date();
+  let age = now.getFullYear() - year;
+  const hadBirthday =
+    now.getMonth() > month - 1 || (now.getMonth() === month - 1 && now.getDate() >= day);
+  if (!hadBirthday) age -= 1;
+  return { iso: `${m[3]}-${m[2]}-${m[1]}`, age };
+}
+
 export default function RegisterScreen() {
   const { signUp } = useAuth();
   const [fullName, setFullName] = useState("");
@@ -27,6 +45,15 @@ export default function RegisterScreen() {
   const [loading, setLoading] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [accepted, setAccepted] = useState(false);
+  const [dob, setDob] = useState("");
+
+  const onChangeDob = (t: string) => {
+    const digits = t.replace(/\D/g, "").slice(0, 8);
+    let out = digits;
+    if (digits.length > 4) out = `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+    else if (digits.length > 2) out = `${digits.slice(0, 2)}/${digits.slice(2)}`;
+    setDob(out);
+  };
 
   const handleRegister = async () => {
     if (!fullName || !email || !password || !confirmPassword) {
@@ -41,13 +68,25 @@ export default function RegisterScreen() {
       setError("As senhas nao conferem");
       return;
     }
+    const parsedDob = parseDob(dob);
+    if (!parsedDob) {
+      setError("Informe uma data de nascimento válida (dd/mm/aaaa)");
+      return;
+    }
+    if (parsedDob.age < 16) {
+      setError("Você precisa ter 16 anos ou mais para usar o app.");
+      return;
+    }
     if (!accepted) {
       setError("Você precisa aceitar os Termos e a Política de Privacidade");
       return;
     }
     setError("");
     setLoading(true);
-    const { error: signUpError } = await signUp(email, password, fullName);
+    const { error: signUpError } = await signUp(email, password, fullName, {
+      date_of_birth: parsedDob.iso,
+      terms_version: TERMS_VERSION,
+    });
     if (signUpError) {
       setLoading(false);
       setError("Erro ao criar conta. Tente novamente.");
@@ -108,7 +147,7 @@ export default function RegisterScreen() {
               className="text-fuchsia-400 mt-3"
               style={{ fontFamily: font.semibold, fontSize: 10, letterSpacing: 3 }}
             >
-              CADASTRO · ROYAL AMETHYST
+              CADASTRO
             </Text>
           </Animated.View>
 
@@ -188,6 +227,24 @@ export default function RegisterScreen() {
                 onBlur={() => setFocusedField(null)}
                 secureTextEntry
                 autoComplete="new-password"
+              />
+            </View>
+
+            <View>
+              <Text className="text-xs font-bold text-text-muted mb-2 ml-1 tracking-wider uppercase">
+                Data de nascimento
+              </Text>
+              <TextInput
+                className={inputClass("dob")}
+                placeholder="dd/mm/aaaa"
+                placeholderTextColor="#6E6382"
+                style={{ fontFamily: font.regular }}
+                value={dob}
+                onChangeText={onChangeDob}
+                onFocus={() => setFocusedField("dob")}
+                onBlur={() => setFocusedField(null)}
+                keyboardType="number-pad"
+                maxLength={10}
               />
             </View>
 

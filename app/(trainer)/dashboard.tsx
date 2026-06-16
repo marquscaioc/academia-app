@@ -107,9 +107,9 @@ export default function TrainerDashboardScreen() {
           <SectionLabel className="mb-3">Ferramentas</SectionLabel>
           <View className="flex-row flex-wrap gap-2">
             {([
+              { href: "/(trainer)/chat", icon: "message", label: "Mensagens" },
               { href: "/(trainer)/checkins/builder", icon: "clipboard", label: "Check-ins" },
               { href: "/(trainer)/checkins/responses", icon: "trend", label: "Respostas" },
-              { href: "/(trainer)/whatsapp", icon: "chat", label: "WhatsApp" },
               { href: "/(trainer)/courses", icon: "courses", label: "Aulas" },
               { href: "/(trainer)/checkins/branding", icon: "sparkles", label: "Branding" },
               { href: "/(trainer)/diet-builder/substitutions", icon: "repeat", label: "Substituições" },

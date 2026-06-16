@@ -233,10 +233,7 @@ export default function PublicProfileScreen() {
             <Text className="text-[10px] text-text-muted" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>
               MEMBRO · {memberSince}
             </Text>
-            <View className="flex-1 h-px bg-surface-border mx-3" />
-            <Text className="text-[10px] text-fuchsia-400/60" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>
-              ROYAL AMETHYST
-            </Text>
+            <View className="flex-1 h-px bg-surface-border ml-3" />
           </View>
         </View>
         </WebContainer>
