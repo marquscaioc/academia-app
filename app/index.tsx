@@ -18,26 +18,28 @@ export default function Index() {
     return <Redirect href="/(auth)/reset-password" />;
   }
 
-  if (isLoading) {
-    return (
-      <View className="flex-1 items-center justify-center bg-dark-400">
-        <Logo size="xl" />
-        <Text
-          className="text-fuchsia-400 mt-5 mb-6"
-          style={{ fontFamily: "DMSans_600SemiBold", fontSize: 10, letterSpacing: 3 }}
-        >
-          ROYAL AMETHYST
-        </Text>
-        <ActivityIndicator size="small" color="#781BB6" />
-      </View>
-    );
-  }
+  const loader = (
+    <View className="flex-1 items-center justify-center bg-dark-400">
+      <Logo size="xl" />
+      <View className="h-7" />
+      <ActivityIndicator size="small" color="#781BB6" />
+    </View>
+  );
+
+  if (isLoading) return loader;
 
   if (!session) {
     return <Redirect href="/(auth)/login" />;
   }
 
-  if (!profile?.onboarding_completed) {
+  // Session present but the profile hasn't resolved yet — right after login the
+  // profile fetch is deferred a tick (provider releases the auth lock first), so
+  // `profile` is briefly null. Wait here instead of falling through to the
+  // onboarding redirect, which would strand already-onboarded users on the
+  // "choose a profile" screen.
+  if (!profile) return loader;
+
+  if (!profile.onboarding_completed) {
     return <Redirect href="/(auth)/onboarding" />;
   }
 
