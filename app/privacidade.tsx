@@ -38,7 +38,6 @@ export default function PrivacyScreen() {
         <P>• Saúde e composição corporal: peso, medidas, dobras cutâneas, fotos de progresso.</P>
         <P>• Atividade: treinos, dietas, check-ins, registros alimentares e de água.</P>
         <P>• Técnicos: token de notificação push e dados de uso do app.</P>
-        <P>• Opcional: número de WhatsApp (mediante consentimento) para lembretes.</P>
 
         <H>2. Como usamos</H>
         <P>

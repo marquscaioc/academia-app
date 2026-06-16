@@ -18,7 +18,6 @@ const items: SidebarItem[] = [
   { href: "/(trainer)/financial", icon: "financial", label: "Financeiro", match: "financial" },
   { href: "/(trainer)/checkins/builder", icon: "clipboard", label: "Check-ins", match: "checkins" },
   { href: "/(trainer)/checkins/branding", icon: "sparkles", label: "Branding", match: "branding" },
-  { href: "/(trainer)/whatsapp", icon: "chat", label: "WhatsApp", match: "whatsapp" },
   { href: "/(trainer)/courses", icon: "courses", label: "Aulas", match: "courses" },
 ];
 
