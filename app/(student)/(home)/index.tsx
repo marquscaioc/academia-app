@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -13,7 +13,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import Animated, { FadeInDown, FadeIn } from "react-native-reanimated";
 import { useAuth } from "../../../lib/auth/provider";
 import { useAcceptInvite } from "../../../hooks/mutations/useInviteMutations";
-import { useWorkoutPlans } from "../../../hooks/queries/useWorkouts";
+import { useWorkoutPlans, useWorkoutSessions } from "../../../hooks/queries/useWorkouts";
 import { useUnreadCount } from "../../../hooks/queries/useUnreadNotifications";
 import { useCheckIns } from "../../../hooks/queries/useCheckins";
 import { AppIcon, BigStat, DisplayHeading, GradientCard, Logo, SectionLabel, type IconName } from "../../../components/ui";
@@ -60,10 +60,30 @@ export default function StudentHomeScreen() {
   const { data: workoutPlans } = useWorkoutPlans(user?.id);
   const { data: unreadCount } = useUnreadCount(user?.id);
   const { data: pendingCheckins } = useCheckIns(user?.id, "pending");
+  const { data: sessions } = useWorkoutSessions(user?.id);
   const activePlan = workoutPlans?.[0];
   const daysUntilExpiry = activePlan?.ends_at
     ? Math.ceil((new Date(activePlan.ends_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
     : null;
+
+  const planWorkouts = useMemo(
+    () => (activePlan?.workouts ?? []).slice().sort((a, b) => a.sort_order - b.sort_order),
+    [activePlan],
+  );
+  const todayWorkout = useMemo(() => {
+    if (!planWorkouts.length) return null;
+    const dow = new Date().getDay();
+    return planWorkouts.find((w) => w.day_of_week?.includes(dow)) ?? planWorkouts[0];
+  }, [planWorkouts]);
+  const todayExerciseCount = todayWorkout?.exercises?.length ?? 0;
+
+  const finishedThisWeek = useMemo(() => {
+    const now = new Date();
+    const weekStart = new Date(now);
+    weekStart.setDate(now.getDate() - now.getDay());
+    weekStart.setHours(0, 0, 0, 0);
+    return (sessions ?? []).filter((s) => s.finished_at && new Date(s.started_at) >= weekStart).length;
+  }, [sessions]);
 
   const handleAcceptInvite = async () => {
     if (!inviteCode.trim() || !user) return;
@@ -267,34 +287,81 @@ export default function StudentHomeScreen() {
         {/* Feature block — "Treino de hoje" — gradient border hero */}
         <Animated.View entering={FadeInDown.delay(300).springify()} className="mb-8">
           <GradientCard variant="border" tone="amethyst" rounded="3xl" padding={false}>
-            <View className="p-7">
-              <View className="flex-row items-center gap-2 mb-4">
-                <View className="w-1.5 h-1.5 rounded-full bg-fuchsia-400" />
-                <SectionLabel tone="accent">Treino de hoje</SectionLabel>
-              </View>
-              <DisplayHeading size="md" italic className="mb-2">
-                Nenhum treino{"\n"}atribuído ainda.
-              </DisplayHeading>
-              <Text
-                className="text-sm text-text-secondary mt-3 leading-6"
-                style={{ fontFamily: font.regular }}
-              >
-                Peça ao seu personal para criar um plano de treino personalizado para os seus objetivos.
-              </Text>
-
-              {/* Ornamental progress bar */}
-              <View className="mt-6 flex-row items-center gap-3">
-                <View className="flex-1 h-[3px] bg-surface-border rounded-full overflow-hidden">
-                  <View className="h-full w-0 bg-fuchsia-400" />
+            {todayWorkout ? (
+              <Link href={`/(student)/(workouts)/${todayWorkout.id}` as never} asChild>
+                <Pressable className="p-7 active:opacity-90">
+                  <View className="flex-row items-center gap-2 mb-4">
+                    <View className="w-1.5 h-1.5 rounded-full bg-fuchsia-400" />
+                    <SectionLabel tone="accent">Treino de hoje</SectionLabel>
+                  </View>
+                  {activePlan?.name ? (
+                    <Text
+                      className="text-[10px] text-text-muted mb-1.5"
+                      style={{ fontFamily: font.semibold, letterSpacing: 2 }}
+                    >
+                      {activePlan.name.toUpperCase()}
+                    </Text>
+                  ) : null}
+                  <DisplayHeading size="md" italic className="mb-2">
+                    {todayWorkout.name}
+                  </DisplayHeading>
+                  <View className="flex-row items-center gap-4 mt-2">
+                    <View className="flex-row items-center gap-1.5">
+                      <AppIcon name="list" size={14} color="#9B40D8" strokeWidth={2} />
+                      <Text className="text-[12px] text-violet-300" style={{ fontFamily: font.semibold }}>
+                        {todayExerciseCount} exercícios
+                      </Text>
+                    </View>
+                    {todayWorkout.estimated_duration_minutes ? (
+                      <View className="flex-row items-center gap-1.5">
+                        <AppIcon name="clock" size={14} color="#7FD3E0" strokeWidth={2} />
+                        <Text className="text-[12px] text-ice-400" style={{ fontFamily: font.semibold }}>
+                          ~{todayWorkout.estimated_duration_minutes}min
+                        </Text>
+                      </View>
+                    ) : null}
+                  </View>
+                  <View className="mt-6 flex-row items-center justify-between">
+                    <View className="flex-row items-center gap-2">
+                      <AppIcon name="play" size={16} color="#C636E0" strokeWidth={2} />
+                      <Text className="text-fuchsia-400 text-sm" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>
+                        Começar treino
+                      </Text>
+                    </View>
+                    <AppIcon name="chevron-right" size={18} color="#C636E0" strokeWidth={2} />
+                  </View>
+                </Pressable>
+              </Link>
+            ) : (
+              <View className="p-7">
+                <View className="flex-row items-center gap-2 mb-4">
+                  <View className="w-1.5 h-1.5 rounded-full bg-fuchsia-400" />
+                  <SectionLabel tone="accent">Treino de hoje</SectionLabel>
                 </View>
+                <DisplayHeading size="md" italic className="mb-2">
+                  Nenhum treino{"\n"}atribuído ainda.
+                </DisplayHeading>
                 <Text
-                  className="text-text-muted text-[10px]"
-                  style={{ fontFamily: font.bold, letterSpacing: 2 }}
+                  className="text-sm text-text-secondary mt-3 leading-6"
+                  style={{ fontFamily: font.regular }}
                 >
-                  0 / 0
+                  Peça ao seu personal para criar um plano de treino personalizado para os seus objetivos.
                 </Text>
+
+                {/* Ornamental progress bar */}
+                <View className="mt-6 flex-row items-center gap-3">
+                  <View className="flex-1 h-[3px] bg-surface-border rounded-full overflow-hidden">
+                    <View className="h-full w-0 bg-fuchsia-400" />
+                  </View>
+                  <Text
+                    className="text-text-muted text-[10px]"
+                    style={{ fontFamily: font.bold, letterSpacing: 2 }}
+                  >
+                    0 / 0
+                  </Text>
+                </View>
               </View>
-            </View>
+            )}
           </GradientCard>
         </Animated.View>
 
@@ -324,7 +391,7 @@ export default function StudentHomeScreen() {
             Esta semana
           </SectionLabel>
           <View className="flex-row items-end justify-between">
-            <BigStat value="0" label="Treinos" tone="accent" size="xl" />
+            <BigStat value={String(finishedThisWeek)} label="Treinos" tone="accent" size="xl" />
             <View className="w-px h-14 bg-surface-border mx-4" />
             <BigStat
               value={String(profile?.current_streak ?? 0)}

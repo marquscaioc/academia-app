@@ -38,6 +38,7 @@ interface AuthContextType {
     email: string,
     password: string,
     fullName: string,
+    meta?: { date_of_birth?: string; terms_version?: string },
   ) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
@@ -145,11 +146,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error: error as Error | null };
   };
 
-  const signUp = async (email: string, password: string, fullName: string) => {
+  const signUp = async (
+    email: string,
+    password: string,
+    fullName: string,
+    meta?: { date_of_birth?: string; terms_version?: string },
+  ) => {
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { full_name: fullName } },
+      options: {
+        data: {
+          full_name: fullName,
+          ...(meta?.date_of_birth ? { date_of_birth: meta.date_of_birth } : {}),
+          ...(meta?.terms_version
+            ? { terms_version: meta.terms_version, terms_accepted_at: new Date().toISOString() }
+            : {}),
+        },
+      },
     });
     return { error: error as Error | null };
   };

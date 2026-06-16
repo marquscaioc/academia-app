@@ -13,6 +13,7 @@ interface SidebarItem {
 const items: SidebarItem[] = [
   { href: "/(trainer)/dashboard", icon: "dashboard", label: "Dashboard", match: "dashboard" },
   { href: "/(trainer)/students", icon: "social", label: "Alunos", match: "students" },
+  { href: "/(trainer)/chat", icon: "message", label: "Mensagens", match: "/chat" },
   { href: "/(trainer)/exercises", icon: "workout", label: "Exercícios", match: "exercises" },
   { href: "/(trainer)/financial", icon: "financial", label: "Financeiro", match: "financial" },
   { href: "/(trainer)/checkins/builder", icon: "clipboard", label: "Check-ins", match: "checkins" },

@@ -1,4 +1,4 @@
-import { EVOLUTION_CONFIG } from "./config";
+import { EVOLUTION_CONFIG, WHATSAPP_ENABLED } from "./config";
 import type {
   ConnectionState,
   ConnectionStateResponse,
@@ -19,6 +19,13 @@ const headers = {
 };
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
+  // Hard guard: never call Evolution (and never exercise the master key) unless
+  // the gateway is configured. Keeps the feature safely off for the launch build.
+  if (!WHATSAPP_ENABLED) {
+    throw new Error(
+      "WhatsApp/Evolution está desativado (EXPO_PUBLIC_EVOLUTION_URL não configurado).",
+    );
+  }
   const res = await fetch(`${BASE_URL}${path}`, {
     ...options,
     headers: { ...headers, ...options?.headers },
