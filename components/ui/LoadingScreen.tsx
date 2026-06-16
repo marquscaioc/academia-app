@@ -1,7 +1,7 @@
-import { ActivityIndicator, Text, View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
-import { font, glowWash } from "../../lib/design/tokens";
+import { glowWash } from "../../lib/design/tokens";
 import { Logo } from "./Logo";
 
 export function LoadingScreen() {
@@ -15,12 +15,7 @@ export function LoadingScreen() {
         pointerEvents="none"
       />
       <Logo size="xl" />
-      <Text
-        className="text-fuchsia-400 mt-5 mb-6"
-        style={{ fontFamily: font.semibold, fontSize: 10, letterSpacing: 3 }}
-      >
-        ROYAL AMETHYST
-      </Text>
+      <View className="h-7" />
       <ActivityIndicator size="small" color="#9B40D8" />
     </SafeAreaView>
   );

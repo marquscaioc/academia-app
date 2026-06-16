@@ -2,7 +2,7 @@ import { Image } from "expo-image";
 import { Text, View } from "react-native";
 import { font } from "../../lib/design/tokens";
 
-const LOGO_SRC = require("../../assets/logosemfundo.png");
+const LOGO_SRC = require("../../assets/logo-mark.png");
 
 type Size = "xs" | "sm" | "md" | "lg" | "xl";
 
@@ -48,17 +48,6 @@ export function Logo({ size = "md", withWordmark = false, wordmarkTone = "primar
           }}
         >
           Projeto Gaab
-        </Text>
-        <Text
-          className="text-fuchsia-400"
-          style={{
-            fontFamily: font.semibold,
-            fontSize: Math.max(8, dim * 0.16),
-            letterSpacing: 3,
-            marginTop: 1,
-          }}
-        >
-          ROYAL AMETHYST
         </Text>
       </View>
     </View>

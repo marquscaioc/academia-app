@@ -147,7 +147,7 @@ export default function RegisterScreen() {
               className="text-fuchsia-400 mt-3"
               style={{ fontFamily: font.semibold, fontSize: 10, letterSpacing: 3 }}
             >
-              CADASTRO · ROYAL AMETHYST
+              CADASTRO
             </Text>
           </Animated.View>
 

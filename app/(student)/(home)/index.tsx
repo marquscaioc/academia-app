@@ -124,12 +124,6 @@ export default function StudentHomeScreen() {
               >
                 ED. {edition}
               </Text>
-              <Text
-                className="text-[9px] text-text-muted mt-0.5"
-                style={{ fontFamily: font.semibold, letterSpacing: 2 }}
-              >
-                ROYAL AMETHYST
-              </Text>
             </View>
           </View>
           <View className="flex-row gap-2">
