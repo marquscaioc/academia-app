@@ -16,9 +16,9 @@ export function macrosForQuantity(
   else if (food.default_portion_g) grams = quantity * food.default_portion_g;
   const f = grams / 100;
   return {
-    calories: round2(food.kcal_100g * f),
-    protein_g: round2(food.protein_g_100g * f),
-    carbs_g: round2(food.carbs_g_100g * f),
-    fat_g: round2(food.fat_g_100g * f),
+    calories: round2((food.kcal_100g ?? 0) * f),
+    protein_g: round2((food.protein_g_100g ?? 0) * f),
+    carbs_g: round2((food.carbs_g_100g ?? 0) * f),
+    fat_g: round2((food.fat_g_100g ?? 0) * f),
   };
 }

@@ -1,0 +1,25 @@
+---
+description: Conecta este projeto à vault Obsidian central "Central de Projetos" (segundo cérebro do portfólio). Consultar ao começar; atualizar ao terminar.
+alwaysApply: true
+---
+
+# 🧠 Vault central do portfólio (segundo cérebro)
+
+Este projeto faz parte do portfólio do Caio, documentado numa **vault Obsidian central**:
+`C:\Users\Caio\Desktop\Vaults Obsidian\Central de Projetos`
+
+Este projeto = a nota **`Projetos/Academia App.md`** (wikilink `[[Academia App]]`).
+
+## Ao COMEÇAR (antes de mexer em algo relevante)
+- Leia o perfil do projeto na vault: `Projetos/Academia App.md` (arquitetura, stack, status, pontos de atenção) e os dossiês `Academia App — *`.
+- Antes de implementar/decidir, **consulte a vault pra reaproveitar** (cross-pollination): `Padrões/`, `Bugs/` (bug→solução já resolvidos), `Receitas/`, `Comparações/`, `Segurança/`, `ADR/`, `Diagramas/`. Fontes de referência ⭐: **Rotina Diária V2** (gold standard) → **Academia App** → **Água BacOnline** — copie padrões dessas em vez de reinventar.
+
+## Ao FINALIZAR (encerrando a sessão) — só se houve mudança RELEVANTE
+Atualize a vault (não faça churn por mudança trivial):
+1. **Perfil**: adicione/atualize a seção `## 🔄 Atualização (AAAA-MM-DD)` no fim de `Projetos/Academia App.md` (antes do footer) com o que mudou (features, status, decisões).
+2. **Bug corrigido** → nova nota em `Bugs/` (frontmatter `type: bug / status / tech / projeto / severidade`; seções Sintoma / Causa raiz / Solução / Onde apareceu; footer `#bug #tech/<slug>`). Se o bug já existir, marque `status: resolvido` + seção `## Resolução`.
+3. **Aprendizado/anti-padrão** → `Lições/` · **Decisão de arquitetura** → `ADR/` (nº livre, confira o `_Index ADR`) · **Padrão reutilizável** → `Padrões/` · **Vuln/risco** → `Segurança/` · **Serviço externo** → `Integrações/`.
+4. Linke com `[[wikilinks]]` (nomes canônicos: Academia App, Next.js, Prisma, Supabase, etc.) e **espelhe o formato** de uma nota existente da pasta-alvo (frontmatter/header/footer).
+5. NÃO edite `_Index*`, `00 — Dashboard`, `_Changelog` (são regenerados depois). Crie a nota; avise que o índice precisa regenerar.
+
+> Escreva em UTF-8. A vault é o registro vivo do portfólio — mantenha-a fiel ao código.

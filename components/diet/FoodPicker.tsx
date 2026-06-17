@@ -131,13 +131,16 @@ export function FoodPicker({
                       >
                         {item.name}
                       </Text>
-                      <Text
-                        className="text-text-muted text-xs mt-0.5"
-                        style={{ fontFamily: font.regular }}
-                      >
-                        {Math.round(item.kcal_100g)} kcal/100g ·{" "}
-                        {item.source === "taco" ? "TACO" : (item.brand ?? "OFF")}
-                      </Text>
+                      {item.has_macros ? (
+                        <Text className="text-text-muted text-xs mt-0.5" style={{ fontFamily: font.regular }}>
+                          {Math.round(item.kcal_100g ?? 0)} kcal/100g ·{" "}
+                          {item.source === "taco" ? "TACO" : (item.brand ?? item.source.toUpperCase())}
+                        </Text>
+                      ) : (
+                        <Text className="text-warning-500/80 text-xs mt-0.5" style={{ fontFamily: font.regular }}>
+                          Sem dados nutricionais
+                        </Text>
+                      )}
                     </View>
                   </Pressable>
                 )}
@@ -185,8 +188,18 @@ export function FoodPicker({
                 ))}
               </View>
 
-              {/* Live macro preview */}
-              {preview ? (
+              {/* Live macro preview or no-macros warning */}
+              {!picked.has_macros ? (
+                <View className="bg-warning-500/10 border border-warning-500/30 rounded-2xl p-4">
+                  <Text className="text-warning-500 text-xs font-semibold mb-1" style={{ fontFamily: font.semibold }}>
+                    Sem dados nutricionais
+                  </Text>
+                  <Text className="text-text-muted text-xs" style={{ fontFamily: font.regular }}>
+                    Este alimento não possui informações de calorias e macronutrientes no momento.
+                    Você pode adicioná-lo mesmo assim — ele não contará para as metas do dia.
+                  </Text>
+                </View>
+              ) : preview ? (
                 <View className="bg-surface-card border border-surface-border rounded-2xl p-4">
                   <Text
                     className="text-text-muted text-xs uppercase mb-1"
@@ -195,28 +208,16 @@ export function FoodPicker({
                     Prévia nutricional
                   </Text>
                   <View className="flex-row gap-3 flex-wrap mt-1">
-                    <Text
-                      className="text-violet-400 text-sm"
-                      style={{ fontFamily: font.semibold }}
-                    >
+                    <Text className="text-violet-400 text-sm" style={{ fontFamily: font.semibold }}>
                       {preview.calories} kcal
                     </Text>
-                    <Text
-                      className="text-text-muted text-sm"
-                      style={{ fontFamily: font.regular }}
-                    >
+                    <Text className="text-text-muted text-sm" style={{ fontFamily: font.regular }}>
                       P {preview.protein_g}g
                     </Text>
-                    <Text
-                      className="text-text-muted text-sm"
-                      style={{ fontFamily: font.regular }}
-                    >
+                    <Text className="text-text-muted text-sm" style={{ fontFamily: font.regular }}>
                       C {preview.carbs_g}g
                     </Text>
-                    <Text
-                      className="text-text-muted text-sm"
-                      style={{ fontFamily: font.regular }}
-                    >
+                    <Text className="text-text-muted text-sm" style={{ fontFamily: font.regular }}>
                       G {preview.fat_g}g
                     </Text>
                   </View>
@@ -226,12 +227,11 @@ export function FoodPicker({
               {/* Confirm button */}
               <Pressable
                 onPress={() => {
-                  if (preview) {
-                    onConfirm({ food: picked, quantity, unit, macros: preview });
-                    reset();
-                  }
+                  const macros = preview ?? { calories: 0, protein_g: 0, carbs_g: 0, fat_g: 0 };
+                  onConfirm({ food: picked, quantity, unit, macros });
+                  reset();
                 }}
-                disabled={!preview || quantity <= 0}
+                disabled={quantity <= 0}
                 className="bg-violet-500 rounded-2xl py-3.5 items-center mt-1"
               >
                 <Text className="text-white" style={{ fontFamily: font.semibold }}>

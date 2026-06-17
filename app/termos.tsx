@@ -20,52 +20,65 @@ export default function TermsScreen() {
         <Text className="text-4xl text-text-primary mb-1" style={{ fontFamily: font.display, letterSpacing: -0.4 }}>
           Termos de Uso
         </Text>
-        <Text className="text-xs text-text-muted mb-4" style={{ fontFamily: font.regular }}>Projeto Gaab · Última atualização: a definir</Text>
-
-        <View className="bg-warning-500/10 border border-warning-500/30 rounded-2xl p-3.5 mb-4">
-          <Text className="text-xs text-warning-500" style={{ fontFamily: font.semibold }}>
-            RASCUNHO — substituir pelo texto final revisado juridicamente antes do lançamento.
-          </Text>
-        </View>
+        <Text className="text-xs text-text-muted mb-6" style={{ fontFamily: font.regular }}>Projeto Gaab · Última atualização: 16 de junho de 2026</Text>
 
         <P>
-          Ao criar uma conta no Projeto Gaab, você concorda com estes Termos. O app conecta personal trainers e
-          nutricionistas a seus alunos para prescrição e acompanhamento de treino e dieta.
+          Ao criar uma conta no Projeto Gaab, aplicativo de gestão de treino e nutrição operado por <Text style={{ fontFamily: font.semibold }}>[ RAZÃO SOCIAL ]</Text>, CNPJ <Text style={{ fontFamily: font.semibold }}>[ CNPJ ]</Text> ("nós"), você declara ter lido, compreendido e aceito integralmente estes Termos de Uso. Se não concordar, não utilize o serviço.
         </P>
 
-        <H>1. Uso do serviço</H>
+        <H>1. O serviço</H>
         <P>
-          Você é responsável pela veracidade dos dados e pelo uso adequado da conta. É proibido uso indevido,
-          tentativa de acesso a dados de outros usuários ou violação de leis aplicáveis.
+          O Projeto Gaab é uma plataforma SaaS que conecta profissionais de educação física e nutrição (personal trainers, nutricionistas) aos seus alunos e pacientes para prescrição, acompanhamento e registro de treinos e dietas. O acesso é mediante convite do profissional ou cadastro aprovado.
         </P>
 
-        <H>2. Disclaimer médico</H>
+        <H>2. Elegibilidade e conta</H>
+        <P>• Você deve ter no mínimo 18 anos ou ser emancipado legalmente para criar uma conta.</P>
+        <P>• Você é responsável pela veracidade das informações fornecidas no cadastro e por manter sua senha confidencial.</P>
+        <P>• Cada pessoa pode manter uma única conta ativa. Contas compartilhadas são vedadas.</P>
+        <P>• Reservamo-nos o direito de suspender contas que violem estes Termos.</P>
+
+        <H>3. Uso permitido e proibições</H>
+        <P>É vedado: (i) tentar acessar dados de outros usuários; (ii) realizar engenharia reversa do app; (iii) utilizar o serviço para fins ilegais; (iv) enviar conteúdo ofensivo, spam ou malware; (v) revender ou sublicenciar o acesso.</P>
+
+        <H>4. Disclaimer de saúde</H>
         <P>
-          O conteúdo (treinos, dietas, recomendações) é fornecido por profissionais e tem caráter informativo. Não
-          substitui avaliação médica. Consulte um médico antes de iniciar qualquer programa. Em caso de mal-estar,
-          interrompa e procure atendimento.
+          O conteúdo disponibilizado (treinos, planos alimentares, orientações) é elaborado por profissionais habilitados e tem caráter informativo e de suporte à prática profissional. <Text style={{ fontFamily: font.semibold }}>Não substitui avaliação ou acompanhamento médico.</Text> Consulte um médico antes de iniciar qualquer programa de exercícios ou mudança alimentar. Em caso de sintomas adversos, interrompa imediatamente e procure atendimento de emergência.
         </P>
 
-        <H>3. Conta e responsabilidades do profissional</H>
+        <H>5. Responsabilidades do profissional</H>
         <P>
-          Profissionais são responsáveis pela adequação das prescrições aos seus alunos e por suas obrigações
-          legais e de conselho de classe (ex.: CREF/CRN).
+          Profissionais (personal trainers, nutricionistas) são os únicos responsáveis pela adequação técnica das prescrições a cada aluno, pelo cumprimento dos códigos de ética e das obrigações legais perante seus conselhos de classe (CREF, CRN, CRM, etc.), e por obter o consentimento informado dos alunos para o tratamento de dados de saúde.
         </P>
 
-        <H>4. Pagamentos</H>
+        <H>6. Conteúdo do usuário</H>
         <P>
-          Planos e cobranças entre profissional e aluno, quando aplicáveis, são de responsabilidade das partes.
-          (Detalhar conforme o modelo de cobrança adotado.)
+          Você mantém a propriedade do conteúdo que inserir (fotos, registros, anotações). Ao inserir conteúdo, concede a nós uma licença não exclusiva, gratuita e limitada para armazená-lo e exibi-lo exclusivamente para a prestação do serviço. Não utilizamos seu conteúdo para treinamento de modelos de IA.
         </P>
 
-        <H>5. Cancelamento e exclusão</H>
-        <P>Você pode encerrar sua conta a qualquer momento em Perfil → Excluir conta.</P>
+        <H>7. Pagamentos e assinaturas</H>
+        <P>
+          Funcionalidades premium podem exigir assinatura paga. Valores, periodicidade e condições de cancelamento serão exibidos no momento da contratação. Reembolsos seguem a política descrita no ato da compra e as regras das lojas de aplicativos (App Store / Google Play).
+        </P>
 
-        <H>6. Limitação de responsabilidade</H>
-        <P>O app é fornecido "como está". Não nos responsabilizamos por lesões decorrentes do uso indevido. (Revisar com jurídico.)</P>
+        <H>8. Suspensão e encerramento</H>
+        <P>Você pode excluir sua conta a qualquer momento em <Text style={{ fontFamily: font.semibold }}>Perfil → Excluir conta</Text>. Podemos suspender ou encerrar contas que violem estes Termos, mediante aviso prévio quando possível.</P>
 
-        <H>7. Contato</H>
-        <P>suporte@academiaapp.com (definir).</P>
+        <H>9. Limitação de responsabilidade</H>
+        <P>
+          O serviço é fornecido "no estado em que se encontra". Na máxima extensão permitida em lei, não nos responsabilizamos por danos indiretos, lucros cessantes ou lesões decorrentes do uso indevido das prescrições. Nossa responsabilidade total fica limitada ao valor pago pelo usuário nos últimos 12 meses.
+        </P>
+
+        <H>10. Propriedade intelectual</H>
+        <P>O app, marca "Projeto Gaab", design e código-fonte são de nossa propriedade exclusiva ou licenciados a nós. O uso do serviço não transfere nenhum direito de propriedade intelectual ao usuário.</P>
+
+        <H>11. Alterações nos Termos</H>
+        <P>Podemos alterar estes Termos a qualquer momento. Notificaremos mudanças relevantes com pelo menos 10 dias de antecedência. O uso continuado após a vigência das alterações configura aceite.</P>
+
+        <H>12. Lei aplicável e foro</H>
+        <P>Estes Termos são regidos pelas leis da República Federativa do Brasil. Fica eleito o foro da comarca de <Text style={{ fontFamily: font.semibold }}>[ CIDADE DO FORO ]</Text> para dirimir eventuais litígios, com renúncia a qualquer outro.</P>
+
+        <H>13. Contato</H>
+        <P>Dúvidas sobre estes Termos: <Text style={{ fontFamily: font.semibold }}>[ E-MAIL DPO ]</Text></P>
 
         <View className="h-16" />
       </ScrollView>
