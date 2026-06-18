@@ -8,6 +8,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
+    "icons": "node scripts/gen-app-icons.mjs",
     "build": "npx expo export --platform web --clear && node scripts/patch-web-html.mjs"
   },
   "dependencies": {
@@ -56,6 +57,7 @@
   "devDependencies": {
     "@types/react": "~19.1.0",
     "babel-preset-expo": "^55.0.17",
+    "sharp": "^0.35.1",
     "typescript": "~5.9.2"
   },
   "private": true
