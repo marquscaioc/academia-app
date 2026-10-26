@@ -1,4 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import * as Crypto from "expo-crypto";
+import { toast } from "../../stores/useToastStore";
 import { supabase } from "../../lib/supabase/client";
 
 interface CreateChallengeInput {
@@ -46,6 +48,7 @@ export function useJoinChallenge() {
       if (error) throw error;
       return data;
     },
+    onError: (error) => toast.error("Não foi possível participar", error.message),
     onSuccess: (_, vars) => {
       queryClient.invalidateQueries({ queryKey: ["challenges"] });
       queryClient.invalidateQueries({ queryKey: ["challenges", "my-participation", vars.challenge_id] });
@@ -77,43 +80,32 @@ export function useSubmitChallengeEntry() {
       user_id: string;
       photo_url?: string;
       caption?: string;
-      points?: number;
+      point_rule_id?: string;
+      workout_session_id?: string;
+      id?: string;
     }) => {
+      // Preserve the request ID if TanStack retries after an uncertain response.
+      input.id ??= Crypto.randomUUID();
+      const { data: existing, error: lookupError } = await supabase
+        .from("challenge_entries").select("*").eq("id", input.id).maybeSingle();
+      if (lookupError) throw lookupError;
+      if (existing) return existing;
       const { data, error } = await supabase
         .from("challenge_entries")
-        .insert({ ...input, points: input.points ?? 1 })
+        .insert(input)
         .select()
         .single();
       if (error) throw error;
 
-      // Update participant score
-      await supabase.rpc("increment_challenge_score", {
-        p_challenge_id: input.challenge_id,
-        p_user_id: input.user_id,
-        p_points: input.points ?? 1,
-      });
-
-      // Se o participante esta numa equipe, incrementa tambem o score do time
-      const { data: participant } = await supabase
-        .from("challenge_participants")
-        .select("team_id")
-        .eq("challenge_id", input.challenge_id)
-        .eq("user_id", input.user_id)
-        .maybeSingle();
-      if (participant?.team_id) {
-        await supabase.rpc("increment_team_score", {
-          p_team_id: participant.team_id,
-          p_points: input.points ?? 1,
-        });
-      }
-
       return data;
     },
+    onError: (error) => toast.error("Não foi possível registrar", error.message),
     onSuccess: (_, vars) => {
       queryClient.invalidateQueries({ queryKey: ["challenges", "entries", vars.challenge_id] });
       queryClient.invalidateQueries({ queryKey: ["challenges", "leaderboard", vars.challenge_id] });
       queryClient.invalidateQueries({ queryKey: ["challenges", "my-participation", vars.challenge_id] });
       queryClient.invalidateQueries({ queryKey: ["challenges", "teams", vars.challenge_id] });
+      queryClient.invalidateQueries({ queryKey: ["challenges", "sessions", vars.challenge_id] });
     },
   });
 }
