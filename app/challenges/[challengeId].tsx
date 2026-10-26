@@ -1,5 +1,5 @@
 import { useLocalSearchParams, router } from "expo-router";
-import { ActivityIndicator, Alert, FlatList, Modal, Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, FlatList, Modal, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -31,6 +31,7 @@ import { supabase } from "../../lib/supabase/client";
 import { font, amethystGlow } from "../../lib/design/tokens";
 import { useState } from "react";
 import { PointRule } from "../../hooks/queries/useChallengePointRules";
+import { toast } from "../../stores/useToastStore";
 
 export default function ChallengeDetailScreen() {
   const { challengeId } = useLocalSearchParams<{ challengeId: string }>();
@@ -118,7 +119,7 @@ export default function ChallengeDetailScreen() {
         .gte("created_at", start.toISOString())
         .limit(1);
       if (today && today.length) {
-        Alert.alert("Já registrado", "Você já fez seu check-in de hoje neste desafio.");
+        toast.info("Já registrado", "Você já fez seu check-in de hoje neste desafio.");
         return;
       }
       submitOrPhoto(1, "Dia ativo");

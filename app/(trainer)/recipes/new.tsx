@@ -2,7 +2,6 @@ import { router } from "expo-router";
 import { useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   Pressable,
   ScrollView,
   Text,
@@ -20,6 +19,7 @@ import { WebContainer } from "../../../components/layout/WebContainer";
 import { AppIcon } from "../../../components/ui";
 import { font, amethystGlow } from "../../../lib/design/tokens";
 import { SectionLabel } from "../../../components/ui/SectionLabel";
+import { toast } from "../../../stores/useToastStore";
 
 const TAG_OPTIONS = [
   { value: "high_protein", label: "High Protein" },
@@ -101,7 +101,7 @@ export default function NewRecipeScreen() {
       });
       router.back();
     } catch {
-      Alert.alert("Erro", "Não foi possível salvar a receita. Tente novamente.");
+      toast.error("Erro", "Não foi possível salvar a receita. Tente novamente.");
     } finally {
       setSaving(false);
     }

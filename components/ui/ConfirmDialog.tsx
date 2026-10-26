@@ -15,7 +15,8 @@ interface ConfirmDialogProps {
 }
 
 /**
- * Cross-platform confirmation (Alert.alert does not render on react-native-web).
+ * Cross-platform confirmation (Alert.alert does not render on react-native-web). For non-blocking
+ * feedback use `toast` from stores/useToastStore.
  */
 export function ConfirmDialog({
   visible,

@@ -2,7 +2,6 @@ import { router } from "expo-router";
 import { useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   FlatList,
   Pressable,
   ScrollView,
@@ -23,6 +22,7 @@ import { AppIcon } from "../../../components/ui";
 import { font, amethystGlow } from "../../../lib/design/tokens";
 import { FoodPicker } from "../../../components/diet/FoodPicker";
 import type { FoodPick } from "../../../components/diet/FoodPicker";
+import { toast } from "../../../stores/useToastStore";
 
 interface MealDraft {
   name: string;
@@ -191,7 +191,7 @@ export default function DietBuilderScreen() {
 
       router.back();
     } catch (e) {
-      Alert.alert("Erro", "Não foi possível salvar o plano. Tente novamente.");
+      toast.error("Erro", "Não foi possível salvar o plano. Tente novamente.");
     } finally {
       setSaving(false);
     }

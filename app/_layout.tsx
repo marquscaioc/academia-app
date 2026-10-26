@@ -25,6 +25,7 @@ import {
   DMSans_900Black,
 } from "@expo-google-fonts/dm-sans";
 import { AuthProvider } from "../lib/auth/provider";
+import { ToastHost } from "../components/ui/ToastHost";
 import { LoadingScreen } from "../components/ui/LoadingScreen";
 import { useNotificationObserver } from "../lib/notifications/useNotificationObserver";
 import { font } from "../lib/design/tokens";
@@ -103,6 +104,7 @@ export default function RootLayout() {
         <AuthProvider>
           <StatusBar style="light" />
           <Slot />
+          <ToastHost />
         </AuthProvider>
       </QueryClientProvider>
     </SafeAreaProvider>

@@ -1,7 +1,7 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Alert, Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../../lib/auth/provider";
 import { useBodyMeasurements, useProgressPhotos } from "../../../hooks/queries/useProgress";
@@ -16,6 +16,7 @@ import { DisplayHeading } from "../../../components/ui/DisplayHeading";
 import { SectionLabel } from "../../../components/ui/SectionLabel";
 import { WebContainer } from "../../../components/layout/WebContainer";
 import { amethystGlow, font } from "../../../lib/design/tokens";
+import { toast } from "../../../stores/useToastStore";
 
 type Period = 30 | 60 | 90;
 
@@ -85,7 +86,7 @@ export default function ExportReportScreen() {
       };
       await exportProgressReport(data);
     } catch (e) {
-      Alert.alert("Erro ao exportar", "Não foi possível gerar o relatório. Tente novamente.");
+      toast.error("Erro ao exportar", "Não foi possível gerar o relatório. Tente novamente.");
     } finally {
       setExporting(false);
     }

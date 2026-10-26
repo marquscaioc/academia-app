@@ -2,7 +2,6 @@ import { router } from "expo-router";
 import { useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   FlatList,
   Pressable,
   ScrollView,
@@ -27,6 +26,7 @@ import {
 } from "../../../hooks/mutations/useExerciseMutations";
 import { Avatar } from "../../../components/ui/Avatar";
 import { pluralize } from "../../../lib/utils/plural";
+import { toast } from "../../../stores/useToastStore";
 
 interface SelectedExercise {
   exercise_id: string;
@@ -146,7 +146,7 @@ export default function WorkoutBuilderScreen() {
 
       router.back();
     } catch (e) {
-      Alert.alert("Erro", "Não foi possível salvar o plano. Tente novamente.");
+      toast.error("Erro", "Não foi possível salvar o plano. Tente novamente.");
     } finally {
       setSaving(false);
     }
