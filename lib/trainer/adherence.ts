@@ -28,6 +28,25 @@ export function workoutAdherence(sessions30d: number, plannedDaysPerWeek: number
   return Math.min(100, Math.round((sessions30d / expected) * 100));
 }
 
+/** Distinct scheduled weekdays across a plan's workouts (same rule as trainer_student_overview()). null if none. */
+export function plannedDaysPerWeek(workouts: { day_of_week: number[] | null }[]): number | null {
+  const days = new Set(workouts.flatMap((w) => w.day_of_week ?? []));
+  return days.size > 0 ? days.size : null;
+}
+
+/** Share of check-ins requested in the window that were answered. null when none was requested. */
+export function checkinAdherence(submitted: number, requested: number): number | null {
+  if (requested <= 0) return null;
+  return Math.round((Math.min(submitted, requested) / requested) * 100);
+}
+
+/** Average of the scores that exist; null when none does (never fills a gap with 0 or 100). */
+export function overallAdherence(scores: (number | null)[]): number | null {
+  const known = scores.filter((s): s is number => s !== null);
+  if (known.length === 0) return null;
+  return Math.round(known.reduce((a, b) => a + b, 0) / known.length);
+}
+
 /** active: trained in the last 7 days · slipping: 8–14 days · inactive: > 14 days · never: no session. */
 export function activityStatus(lastSessionAt: string | null, now: Date = new Date()): ActivityStatus {
   if (!lastSessionAt) return "never";

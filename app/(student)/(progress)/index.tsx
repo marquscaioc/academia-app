@@ -1,4 +1,5 @@
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
+import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
@@ -16,6 +17,9 @@ import { useCheckinScoreHistory } from "../../../hooks/queries/useCheckinScoreHi
 import { useUserAchievements } from "../../../hooks/queries/useFeed";
 import { useSignedUrls } from "../../../lib/supabase/media";
 import { WebContainer } from "../../../components/layout/WebContainer";
+import { useTrainedExercises } from "../../../hooks/queries/useExerciseEvolution";
+import { formatKg } from "../../../lib/workout/metrics";
+import { pluralize } from "../../../lib/utils/plural";
 
 export default function ProgressScreen() {
   const { user } = useAuth();
@@ -25,6 +29,9 @@ export default function ProgressScreen() {
   const { data: adherence } = useAdherenceScore(user?.id);
   const { data: checkinHistory } = useCheckinScoreHistory(user?.id);
   const { data: achievements } = useUserAchievements(user?.id);
+  const { data: trained } = useTrainedExercises(user?.id);
+  const [showAllExercises, setShowAllExercises] = useState(false);
+  const visibleExercises = showAllExercises ? trained : trained?.slice(0, 5);
 
   const latestWeight = measurements?.[0]?.weight_kg;
   const firstWeight = measurements?.[measurements.length - 1]?.weight_kg;
@@ -62,11 +69,10 @@ export default function ProgressScreen() {
             </Text>
           </Card>
           <Card variant="outlined" className="flex-1">
-            <SectionLabel className="mb-1">Variacao</SectionLabel>
+            <SectionLabel className="mb-1">Variação</SectionLabel>
+            {/* Neutral on purpose: up or down is only "good" relative to the student's own goal. */}
             <Text
-              className={`text-3xl ${
-                weightDiff === null ? "text-text-muted" : weightDiff <= 0 ? "text-success-500" : "text-warning-500"
-              }`}
+              className={`text-3xl ${weightDiff === null ? "text-text-muted" : "text-text-primary"}`}
               style={{ fontFamily: font.display, letterSpacing: -0.5 }}
             >
               {weightDiff !== null ? `${weightDiff > 0 ? "+" : ""}${weightDiff.toFixed(1)}kg` : "--"}
@@ -77,9 +83,9 @@ export default function ProgressScreen() {
         {/* Adherence rings */}
         {adherence ? (
           <View className="flex-row justify-around mb-6 bg-surface-card border border-surface-border rounded-3xl py-6">
-            <AdherenceRing score={adherence.workoutScore} label="Treino" />
-            <AdherenceRing score={adherence.checkinScore} label="Check-ins" />
-            <AdherenceRing score={adherence.overallScore} label="Geral" />
+            <AdherenceRing score={adherence.workoutScore} label="Treino" emptyHint="Plano sem dias definidos" />
+            <AdherenceRing score={adherence.checkinScore} label="Check-ins" emptyHint="Nenhum solicitado" />
+            <AdherenceRing score={adherence.overallScore} label="Geral" emptyHint="Sem dados" />
           </View>
         ) : null}
 
@@ -122,6 +128,48 @@ export default function ProgressScreen() {
             <SimpleLineChart data={waistData} title="Cintura" unit="cm" color="#67E8F9" />
           </View>
         ) : null}
+
+        {/* Per-exercise evolution (real logged sets only) */}
+        <View className="mb-6">
+          <SectionLabel className="mb-3">Evolução por exercício</SectionLabel>
+          {trained && trained.length > 0 ? (
+            <View className="gap-2">
+              {visibleExercises?.map((e) => (
+                <Pressable
+                  key={e.exerciseId}
+                  onPress={() => router.push(`/(student)/(progress)/evolucao/${e.exerciseId}` as never)}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Evolução de ${e.name}`}
+                  className="bg-surface-card border border-surface-border rounded-2xl px-4 py-3 flex-row items-center gap-3 active:bg-surface-hover"
+                >
+                  <View className="w-9 h-9 rounded-xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+                    <AppIcon name="trend" size={16} color="#9B40D8" strokeWidth={2} />
+                  </View>
+                  <View className="flex-1">
+                    <Text className="text-sm text-text-primary" style={{ fontFamily: font.semibold }} numberOfLines={1}>{e.name}</Text>
+                    <Text className="text-xs text-text-muted mt-0.5" style={{ fontFamily: font.regular }}>
+                      {pluralize(e.sessions, "sessão", "sessões")} · carga máx. {formatKg(e.maxWeightKg)}
+                    </Text>
+                  </View>
+                  <AppIcon name="chevron-right" size={16} color="#6E6382" strokeWidth={2} />
+                </Pressable>
+              ))}
+              {trained.length > 5 ? (
+                <Pressable onPress={() => setShowAllExercises((v) => !v)} accessibilityRole="button" className="py-2 items-center">
+                  <Text className="text-xs text-violet-400" style={{ fontFamily: font.semibold }}>
+                    {showAllExercises ? "Mostrar menos" : `Ver todos (${trained.length})`}
+                  </Text>
+                </Pressable>
+              ) : null}
+            </View>
+          ) : (
+            <View className="bg-surface-card border border-surface-border rounded-2xl p-5">
+              <Text className="text-sm text-text-muted" style={{ fontFamily: font.regular }}>
+                Finalize treinos registrando carga e repetições para ver a evolução de cada exercício.
+              </Text>
+            </View>
+          )}
+        </View>
 
         {/* Achievements */}
         {achievements && achievements.length > 0 ? (

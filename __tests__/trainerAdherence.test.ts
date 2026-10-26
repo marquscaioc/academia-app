@@ -1,5 +1,8 @@
 import {
   activityStatus,
+  checkinAdherence,
+  overallAdherence,
+  plannedDaysPerWeek,
   dashboardSummary,
   daysSince,
   sortByAttention,
@@ -86,5 +89,23 @@ describe("sortByAttention", () => {
       now,
     );
     expect(sorted.map((r) => r.student_id)).toEqual(["never", "inactive", "slipping", "active"]);
+  });
+});
+
+describe("student adherence helpers", () => {
+  it("counts distinct scheduled weekdays", () => {
+    expect(plannedDaysPerWeek([{ day_of_week: [1, 3] }, { day_of_week: [3, 5] }, { day_of_week: null }])).toBe(3);
+    expect(plannedDaysPerWeek([{ day_of_week: null }])).toBeNull();
+    expect(plannedDaysPerWeek([])).toBeNull();
+  });
+  it("check-in adherence is unknown when nothing was requested", () => {
+    expect(checkinAdherence(0, 0)).toBeNull();
+    expect(checkinAdherence(1, 4)).toBe(25);
+    expect(checkinAdherence(5, 4)).toBe(100);
+  });
+  it("overall averages only known scores", () => {
+    expect(overallAdherence([40, null])).toBe(40);
+    expect(overallAdherence([40, 61])).toBe(51);
+    expect(overallAdherence([null, null])).toBeNull();
   });
 });

@@ -75,20 +75,26 @@ const { data: existingPlan } = await admin
   .eq("student_id", studentId)
   .eq("name", "Hipertrofia (demo)")
   .maybeSingle();
+if (existingPlan) {
+  // Older seeds created the workouts without a schedule.
+  await admin.from("workouts").update({ day_of_week: [1, 4] }).eq("plan_id", existingPlan.id).eq("name", "Treino A — Superiores").is("day_of_week", null);
+  await admin.from("workouts").update({ day_of_week: [2, 5] }).eq("plan_id", existingPlan.id).eq("name", "Treino B — Inferiores").is("day_of_week", null);
+}
 if (!existingPlan) {
   const { data: plan } = await admin
     .from("workout_plans")
     .insert({ trainer_id: trainerId, student_id: studentId, name: "Hipertrofia (demo)" })
     .select("id")
     .single();
+  // [name, exercise indexes in catalog, weekdays (0 = Sunday)]
   const days = [
-    ["Treino A — Superiores", [0, 1, 3]],
-    ["Treino B — Inferiores", [2]],
+    ["Treino A — Superiores", [0, 1, 3], [1, 4]],
+    ["Treino B — Inferiores", [2], [2, 5]],
   ];
-  for (const [i, [name, exIdx]] of days.entries()) {
+  for (const [i, [name, exIdx, weekdays]] of days.entries()) {
     const { data: w } = await admin
       .from("workouts")
-      .insert({ plan_id: plan.id, name, sort_order: i, estimated_duration_minutes: 50, notes: "Foque na técnica antes da carga." })
+      .insert({ plan_id: plan.id, name, day_of_week: weekdays, sort_order: i, estimated_duration_minutes: 50, notes: "Foque na técnica antes da carga." })
       .select("id")
       .single();
     await admin.from("workout_exercises").insert(

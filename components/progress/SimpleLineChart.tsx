@@ -11,7 +11,17 @@ interface SimpleLineChartProps {
   color?: string;
   unit?: string;
   title?: string;
+  /**
+   * How to color the change since the first point. "neutral" (default) for body metrics: the app does not
+   * assume whether going up or down is good for the student's goal. "higher-is-better" for strength marks.
+   */
+  trend?: "neutral" | "higher-is-better";
+  /** Bars start at 0 so differences are not exaggerated. Off for body metrics, where small changes matter. */
+  zeroBaseline?: boolean;
 }
+
+/** pt-BR decimal comma. */
+const fmt = (v: number) => v.toFixed(1).replace(".", ",");
 
 export function SimpleLineChart({
   data,
@@ -19,6 +29,8 @@ export function SimpleLineChart({
   color = "#781BB6",
   unit = "",
   title,
+  trend = "neutral",
+  zeroBaseline = false,
 }: SimpleLineChartProps) {
   if (!data.length) {
     return (
@@ -33,8 +45,8 @@ export function SimpleLineChart({
   const max = Math.max(...values);
   const range = max - min || 1;
   const padding = range * 0.1;
-  const effectiveMin = min - padding;
-  const effectiveRange = range + padding * 2;
+  const effectiveMin = zeroBaseline ? 0 : min - padding;
+  const effectiveRange = zeroBaseline ? max * 1.05 || 1 : range + padding * 2;
 
   const latest = values[values.length - 1];
   const first = values[0];
@@ -47,11 +59,15 @@ export function SimpleLineChart({
           <Text className="text-xs font-bold text-text-muted uppercase tracking-wider">{title}</Text>
           <View className="flex-row items-center gap-2">
             <Text className="text-lg font-black text-text-primary">
-              {latest.toFixed(1)}{unit}
+              {fmt(latest)}{unit}
             </Text>
             {data.length > 1 ? (
-              <Text className={`text-xs font-bold ${diff <= 0 ? "text-success-500" : "text-warning-500"}`}>
-                {diff > 0 ? "+" : ""}{diff.toFixed(1)}
+              <Text
+                className={`text-xs font-bold ${
+                  trend === "neutral" || diff === 0 ? "text-text-secondary" : diff > 0 ? "text-success-500" : "text-warning-500"
+                }`}
+              >
+                {diff > 0 ? "+" : ""}{fmt(diff)}
               </Text>
             ) : null}
           </View>
@@ -70,7 +86,7 @@ export function SimpleLineChart({
               {/* Value label on top for last/max */}
               {(isLast || isMax) && data.length > 1 ? (
                 <Text className="text-[8px] text-text-muted font-bold mb-1">
-                  {point.value.toFixed(1)}
+                  {fmt(point.value)}
                 </Text>
               ) : null}
 
@@ -101,8 +117,8 @@ export function SimpleLineChart({
       {/* Min/Max reference */}
       {data.length > 1 ? (
         <View className="flex-row justify-between mt-3">
-          <Text className="text-[10px] text-text-muted">Min: {min.toFixed(1)}{unit}</Text>
-          <Text className="text-[10px] text-text-muted">Max: {max.toFixed(1)}{unit}</Text>
+          <Text className="text-[10px] text-text-muted">Mín: {fmt(min)}{unit}</Text>
+          <Text className="text-[10px] text-text-muted">Máx: {fmt(max)}{unit}</Text>
         </View>
       ) : null}
     </View>

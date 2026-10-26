@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "../../lib/supabase/client";
+import { checkinAdherence, overallAdherence, plannedDaysPerWeek, workoutAdherence } from "../../lib/trainer/adherence";
 
 export interface QuestionnaireTemplate {
   id: string;
@@ -116,18 +117,26 @@ export function useAdherenceScore(userId?: string) {
         .eq("user_id", userId!)
         .gte("created_at", thirtyDaysAgo);
 
-      // Calculate scores
-      const workoutTarget = 12; // ~3x per week
-      const workoutScore = Math.min(100, ((workoutCount ?? 0) / workoutTarget) * 100);
-      const checkinScore = totalCheckins ? ((submittedCheckins ?? 0) / totalCheckins) * 100 : 100;
-      const overallScore = Math.round((workoutScore + checkinScore) / 2);
+      // Target comes from the student's latest active plan schedule, never from an invented number.
+      const { data: plan } = await supabase
+        .from("workout_plans")
+        .select("workouts(day_of_week)")
+        .eq("student_id", userId!)
+        .eq("is_active", true)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      // null = not enough information (no scheduled days / no check-in requested): shown as "sem dados".
+      const workoutScore = workoutAdherence(workoutCount ?? 0, plannedDaysPerWeek(plan?.workouts ?? []));
+      const checkinScore = checkinAdherence(submittedCheckins ?? 0, totalCheckins ?? 0);
 
       return {
         workoutCount: workoutCount ?? 0,
-        workoutScore: Math.round(workoutScore),
+        workoutScore,
         mealLogCount: mealLogCount ?? 0,
-        checkinScore: Math.round(checkinScore),
-        overallScore,
+        checkinScore,
+        overallScore: overallAdherence([workoutScore, checkinScore]),
       };
     },
     enabled: !!userId,

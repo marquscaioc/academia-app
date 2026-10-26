@@ -36,7 +36,8 @@ export interface ProgressReportData {
   prs?: PRData[];
   photos?: PhotoData[];
   workoutCount: number;
-  adherenceScore: number;
+  /** null = not enough data (no plan schedule, no check-ins requested). */
+  adherenceScore: number | null;
 }
 
 export function generateProgressHtml(data: ProgressReportData): string {
@@ -108,8 +109,8 @@ export function generateProgressHtml(data: ProgressReportData): string {
       <div class="stat-label">Treinos</div>
     </div>
     <div class="stat">
-      <div class="stat-value">${data.adherenceScore}%</div>
-      <div class="stat-label">Adesao</div>
+      <div class="stat-value">${data.adherenceScore === null ? "—" : `${data.adherenceScore}%`}</div>
+      <div class="stat-label">Adesão</div>
     </div>
     <div class="stat">
       <div class="stat-value">${data.measurements.length}</div>

@@ -82,7 +82,7 @@ export default function ExportReportScreen() {
           pose: p.pose ?? "frente",
         })),
         workoutCount: filteredSessions.length,
-        adherenceScore: Math.round(adherence?.overallScore ?? 0),
+        adherenceScore: adherence?.overallScore ?? null,
       };
       await exportProgressReport(data);
     } catch (e) {
@@ -172,9 +172,9 @@ export default function ExportReportScreen() {
             <View className="flex-row items-center justify-between">
               <View className="flex-row items-center gap-3">
                 <AppIcon name="target" size={18} color="#9B40D8" strokeWidth={2} />
-                <Text className="text-sm text-text-muted" style={{ fontFamily: font.regular }}>Score de adesao</Text>
+                <Text className="text-sm text-text-muted" style={{ fontFamily: font.regular }}>Score de adesão</Text>
               </View>
-              <Text className="text-sm text-violet-400" style={{ fontFamily: font.bold }}>{Math.round(adherence?.overallScore ?? 0)}%</Text>
+              <Text className="text-sm text-violet-400" style={{ fontFamily: font.bold }}>{adherence?.overallScore == null ? "—" : `${adherence.overallScore}%`}</Text>
             </View>
           </View>
         </Card>
