@@ -18,11 +18,11 @@ const TONE_MAP: Record<NonNullable<Props["tone"]>, string> = {
   warning: "text-warning-500",
 };
 
-// Editorial hero numerals in Instrument Serif — pull-stat feel, not data-table.
+// Tabular-size figures for readable, restrained dashboard metrics.
 const SIZE_MAP: Record<NonNullable<Props["size"]>, { num: string; suffix: string }> = {
-  md: { num: "text-5xl leading-[50px]", suffix: "text-lg" },
-  lg: { num: "text-6xl leading-[62px]", suffix: "text-xl" },
-  xl: { num: "text-7xl leading-[74px]", suffix: "text-2xl" },
+  md: { num: "text-[36px] leading-[44px]", suffix: "text-lg" },
+  lg: { num: "text-[44px] leading-[52px]", suffix: "text-xl" },
+  xl: { num: "text-[52px] leading-[60px]", suffix: "text-2xl" },
 };
 
 export function BigStat({
@@ -50,7 +50,7 @@ export function BigStat({
       </View>
       <Text
         className="text-[10px] text-text-muted mt-1.5 uppercase"
-        style={{ fontFamily: font.semibold, letterSpacing: 2 }}
+        style={{ fontFamily: font.semibold, letterSpacing: 0.8 }}
       >
         {label}
       </Text>

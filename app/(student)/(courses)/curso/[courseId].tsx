@@ -7,7 +7,7 @@ import { useCourseDetail } from "../../../../hooks/queries/useCourses";
 import { useMarkLessonComplete } from "../../../../hooks/mutations/useCourseMutations";
 import { LoadingScreen } from "../../../../components/ui/LoadingScreen";
 import { AppIcon } from "../../../../components/ui";
-import { font, amethystGlow } from "../../../../lib/design/tokens";
+import { font, surfaceShadow } from "../../../../lib/design/tokens";
 import { WebContainer } from "../../../../components/layout/WebContainer";
 import { LessonVideo } from "../../../../components/courses/LessonVideo";
 import { toast } from "../../../../stores/useToastStore";
@@ -41,7 +41,7 @@ export default function StudentCourseDetailScreen() {
       <ScrollView className="flex-1 px-6 pt-6">
         <WebContainer maxWidth={640}>
         <Pressable onPress={() => router.back()} className="mb-4 flex-row items-center gap-1.5 self-start">
-          <AppIcon name="arrow-left" size={16} color="#6E6382" strokeWidth={2} />
+          <AppIcon name="arrow-left" size={16} color="#71717A" strokeWidth={2} />
           <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>Voltar</Text>
         </Pressable>
 
@@ -65,7 +65,7 @@ export default function StudentCourseDetailScreen() {
           <View className="flex-row items-center justify-between mb-3">
             <View className="flex-row items-center gap-2.5">
               <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
-                <AppIcon name="progress" size={18} color="#9B40D8" strokeWidth={2} />
+                <AppIcon name="progress" size={18} color="#3F3F46" strokeWidth={2} />
               </View>
               <Text
                 className="text-xs text-text-muted uppercase"
@@ -105,9 +105,9 @@ export default function StudentCourseDetailScreen() {
                 {activeLesson.title}
               </Text>
               {!activeLesson.progress?.completed ? (
-                <Pressable onPress={handleComplete} disabled={markComplete.isPending} style={amethystGlow} className="rounded-2xl overflow-hidden">
+                <Pressable onPress={handleComplete} disabled={markComplete.isPending} style={surfaceShadow} className="rounded-2xl overflow-hidden">
                   <LinearGradient
-                    colors={["#781BB6", "#C636E0"]}
+                    colors={["#27272A", "#27272A"]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0.9 }}
                     style={{ paddingHorizontal: 16, paddingVertical: 9, borderRadius: 16 }}
@@ -122,7 +122,7 @@ export default function StudentCourseDetailScreen() {
                 </Pressable>
               ) : (
                 <View className="bg-success-500/15 px-3 py-1.5 rounded-xl flex-row items-center gap-1.5">
-                  <AppIcon name="check" size={14} color="#34D399" strokeWidth={2.5} />
+                  <AppIcon name="check" size={14} color="#52525B" strokeWidth={2.5} />
                   <Text className="text-success-500 text-xs" style={{ fontFamily: font.bold }}>
                     Concluída
                   </Text>
@@ -180,7 +180,7 @@ export default function StudentCourseDetailScreen() {
                   </Text>
                   {l.duration_seconds ? (
                     <View className="flex-row items-center gap-1 mt-0.5">
-                      <AppIcon name="clock" size={12} color="#6E6382" strokeWidth={2} />
+                      <AppIcon name="clock" size={12} color="#71717A" strokeWidth={2} />
                       <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>
                         {Math.floor(l.duration_seconds / 60)}min
                       </Text>
@@ -189,7 +189,7 @@ export default function StudentCourseDetailScreen() {
                 </View>
                 {l.video_url || l.document_url ? (
                   <View className="w-8 h-8 rounded-xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
-                    <AppIcon name="play" size={15} color="#9B40D8" strokeWidth={2} />
+                    <AppIcon name="play" size={15} color="#3F3F46" strokeWidth={2} />
                   </View>
                 ) : null}
               </Pressable>

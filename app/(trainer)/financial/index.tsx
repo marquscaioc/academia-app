@@ -1,5 +1,5 @@
 import { Link } from "expo-router";
-import { ActivityIndicator, FlatList, Modal, Pressable, ScrollView, Text, View } from "react-native";
+import { Modal, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../../../lib/auth/provider";
@@ -68,7 +68,7 @@ function AssignPlanModal({
           <View className="flex-row items-center justify-between mb-1">
             <Text className="text-lg text-text-primary" style={{ fontFamily: font.bold }}>Atribuir plano</Text>
             <Pressable onPress={onClose} className="w-9 h-9 rounded-full items-center justify-center active:bg-surface-hover">
-              <AppIcon name="close" size={20} color="#A99FBA" strokeWidth={2} />
+              <AppIcon name="close" size={20} color="#52525B" strokeWidth={2} />
             </Pressable>
           </View>
           <Text className="text-xs text-text-muted mb-4" style={{ fontFamily: font.regular }}>
@@ -86,11 +86,11 @@ function AssignPlanModal({
                   className="flex-row items-center gap-3 p-4 mb-2 rounded-2xl border border-surface-border bg-surface-card active:bg-surface-hover"
                 >
                   <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
-                    <AppIcon name="user" size={18} color="#9B40D8" strokeWidth={2} />
+                    <AppIcon name="user" size={18} color="#3F3F46" strokeWidth={2} />
                   </View>
                   <Text className="flex-1 text-sm text-text-primary" style={{ fontFamily: font.semibold }}>{s.student?.full_name ?? "Aluno"}</Text>
                   <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>Atribuir</Text>
-                  <AppIcon name="chevron-right" size={18} color="#6E6382" strokeWidth={2} />
+                  <AppIcon name="chevron-right" size={18} color="#71717A" strokeWidth={2} />
                 </Pressable>
               ))}
             </ScrollView>
@@ -128,7 +128,7 @@ export default function FinancialScreen() {
           <View className="flex-1 bg-surface-card border border-surface-border rounded-2xl p-5">
             <View className="flex-row items-center gap-2 mb-2">
               <View className="w-8 h-8 rounded-xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
-                <AppIcon name="money" size={16} color="#9B40D8" strokeWidth={2} />
+                <AppIcon name="money" size={16} color="#3F3F46" strokeWidth={2} />
               </View>
               <Text className="text-[10px] text-text-muted uppercase" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>MRR</Text>
             </View>
@@ -139,7 +139,7 @@ export default function FinancialScreen() {
           <View className="flex-1 bg-surface-card border border-surface-border rounded-2xl p-5">
             <View className="flex-row items-center gap-2 mb-2">
               <View className="w-8 h-8 rounded-xl bg-ice-500/15 border border-ice-500/25 items-center justify-center">
-                <AppIcon name="social" size={16} color="#A99FBA" strokeWidth={2} />
+                <AppIcon name="social" size={16} color="#52525B" strokeWidth={2} />
               </View>
               <Text className="text-[10px] text-text-muted uppercase" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>Alunos</Text>
             </View>
@@ -152,7 +152,7 @@ export default function FinancialScreen() {
         {stats?.pendingPayments ? (
           <View className="bg-warning-500/10 border border-warning-500/20 rounded-2xl p-4 mb-6 flex-row items-center gap-3">
             <View className="w-10 h-10 rounded-2xl bg-warning-500/15 border border-warning-500/25 items-center justify-center">
-              <AppIcon name="warning" size={18} color="#FBBF24" strokeWidth={2} />
+              <AppIcon name="warning" size={18} color="#52525B" strokeWidth={2} />
             </View>
             <Text className="text-sm text-warning-500 flex-1" style={{ fontFamily: font.semibold }}>
               {stats.pendingPayments} pagamento(s) pendente(s)
@@ -185,7 +185,7 @@ export default function FinancialScreen() {
           <View className="gap-3 mb-10">
             <Card variant="outlined">
               <View className="flex-row items-center gap-2 mb-3">
-                <AppIcon name="trend" size={14} color="#6E6382" strokeWidth={2} />
+                <AppIcon name="trend" size={14} color="#71717A" strokeWidth={2} />
                 <Text className="text-[10px] text-text-muted uppercase" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>
                   Receita prevista (mensal)
                 </Text>
@@ -204,7 +204,7 @@ export default function FinancialScreen() {
               <Card variant="outlined">
                 <View className="items-center py-6">
                   <View className="w-16 h-16 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
-                    <AppIcon name="banknote" size={28} color="#9B40D8" strokeWidth={2} />
+                    <AppIcon name="banknote" size={28} color="#3F3F46" strokeWidth={2} />
                   </View>
                   <Text className="text-lg text-text-primary text-center" style={{ fontFamily: font.display }}>
                     Nenhum plano criado
@@ -220,7 +220,7 @@ export default function FinancialScreen() {
                   <View className="flex-row items-center justify-between mb-2">
                     <View className="flex-row items-center gap-3 flex-1">
                       <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
-                        <AppIcon name="banknote" size={18} color="#9B40D8" strokeWidth={2} />
+                        <AppIcon name="banknote" size={18} color="#3F3F46" strokeWidth={2} />
                       </View>
                       <Text className="text-base text-text-primary" style={{ fontFamily: font.semibold }}>{plan.name}</Text>
                     </View>
@@ -241,7 +241,7 @@ export default function FinancialScreen() {
                     onPress={() => setAssignPlan({ id: plan.id, name: plan.name, price_cents: plan.price_cents })}
                     className="border border-violet-500/30 rounded-xl py-2.5 items-center mt-3 active:bg-violet-500/10 flex-row justify-center gap-2"
                   >
-                    <AppIcon name="user-add" size={16} color="#9B40D8" strokeWidth={2} />
+                    <AppIcon name="user-add" size={16} color="#3F3F46" strokeWidth={2} />
                     <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>Atribuir a aluno</Text>
                   </Pressable>
                 </Card>
@@ -254,7 +254,7 @@ export default function FinancialScreen() {
               <Card variant="outlined">
                 <View className="items-center py-6">
                   <View className="w-16 h-16 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
-                    <AppIcon name="banknote" size={28} color="#9B40D8" strokeWidth={2} />
+                    <AppIcon name="banknote" size={28} color="#3F3F46" strokeWidth={2} />
                   </View>
                   <Text className="text-lg text-text-primary text-center" style={{ fontFamily: font.display }}>
                     Nenhum pagamento
@@ -281,7 +281,7 @@ export default function FinancialScreen() {
                     <AppIcon
                       name={p.status === "paid" ? "check-circle" : p.status === "pending" ? "clock" : "x-circle"}
                       size={18}
-                      color={p.status === "paid" ? "#34D399" : p.status === "pending" ? "#FBBF24" : "#FB7185"}
+                      color={p.status === "paid" ? "#52525B" : p.status === "pending" ? "#52525B" : "#3F3F46"}
                       strokeWidth={2}
                     />
                   </View>

@@ -6,7 +6,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import * as DocumentPicker from "expo-document-picker";
 import * as Crypto from "expo-crypto";
 import * as ImagePicker from "expo-image-picker";
-import { font, amethystGlow } from "../../../lib/design/tokens";
+import { font, surfaceShadow } from "../../../lib/design/tokens";
 import { useAuth } from "../../../lib/auth/provider";
 import { readUploadBody } from "../../../lib/supabase/uploadBody";
 import { supabase } from "../../../lib/supabase/client";
@@ -80,7 +80,7 @@ export default function CourseDetailScreen() {
     <SafeAreaView className="flex-1 bg-dark-400">
       <ScrollView className="flex-1 px-6 pt-6">
         <Pressable onPress={() => router.back()} className="mb-4 flex-row items-center gap-1.5 self-start">
-          <AppIcon name="arrow-left" size={18} color="#6E6382" strokeWidth={2} />
+          <AppIcon name="arrow-left" size={18} color="#71717A" strokeWidth={2} />
           <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>Voltar</Text>
         </Pressable>
 
@@ -94,7 +94,7 @@ export default function CourseDetailScreen() {
             Aulas ({course.lessons?.length ?? 0})
           </Text>
           <Pressable onPress={() => setShowNew(!showNew)} className="flex-row items-center gap-1.5 bg-violet-500/10 border border-violet-500/25 px-3 py-1.5 rounded-full">
-            <AppIcon name="plus" size={14} color="#9B40D8" strokeWidth={2} />
+            <AppIcon name="plus" size={14} color="#3F3F46" strokeWidth={2} />
             <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>Adicionar</Text>
           </Pressable>
         </View>
@@ -104,7 +104,7 @@ export default function CourseDetailScreen() {
             <TextInput
               className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary mb-3"
               placeholder="Título da aula"
-              placeholderTextColor="#6E6382"
+              placeholderTextColor="#71717A"
               value={title}
               onChangeText={setTitle}
               style={{ fontFamily: font.regular }}
@@ -114,7 +114,7 @@ export default function CourseDetailScreen() {
               onPress={pickVideo}
               className="flex-row items-center justify-center gap-2 bg-surface-card/80 border border-dashed border-surface-border rounded-2xl py-3 mb-3"
             >
-              <AppIcon name="video" size={18} color={videoUri ? "#9B40D8" : "#6E6382"} strokeWidth={2} />
+              <AppIcon name="video" size={18} color={videoUri ? "#3F3F46" : "#71717A"} strokeWidth={2} />
               <Text className={`text-xs ${videoUri ? "text-violet-400" : "text-text-muted"}`} style={{ fontFamily: font.semibold }}>
                 {videoUri ? "Video selecionado (toque para trocar)" : "Selecionar video"}
               </Text>
@@ -126,10 +126,10 @@ export default function CourseDetailScreen() {
             <Pressable
               onPress={handleAdd}
               disabled={!title.trim() || uploading || (!videoUri && !document)}
-              style={title.trim() ? amethystGlow : undefined}
+              style={title.trim() ? surfaceShadow : undefined}
             >
               <LinearGradient
-                colors={title.trim() ? ["#781BB6", "#C636E0"] : ["#2A2435", "#2A2435"]}
+                colors={title.trim() ? ["#27272A", "#27272A"] : ["#E4E4E7", "#E4E4E7"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0.9 }}
                 className="rounded-2xl py-3 items-center"
@@ -159,7 +159,7 @@ export default function CourseDetailScreen() {
                 <Text className="text-sm text-text-primary" style={{ fontFamily: font.semibold }}>{l.title}</Text>
                 {l.duration_seconds ? (
                   <View className="flex-row items-center gap-1 mt-0.5">
-                    <AppIcon name="clock" size={14} color="#6E6382" strokeWidth={2} />
+                    <AppIcon name="clock" size={14} color="#71717A" strokeWidth={2} />
                     <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>
                       {Math.floor(l.duration_seconds / 60)}min
                     </Text>
@@ -168,7 +168,7 @@ export default function CourseDetailScreen() {
               </View>
               {l.video_url || l.document_url ? (
                 <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
-                  <AppIcon name="play" size={18} color="#9B40D8" strokeWidth={2} />
+                  <AppIcon name="play" size={18} color="#3F3F46" strokeWidth={2} />
                 </View>
               ) : null}
             </View>

@@ -15,7 +15,7 @@ import { Card } from "../../../components/ui/Card";
 import { DisplayHeading } from "../../../components/ui/DisplayHeading";
 import { SectionLabel } from "../../../components/ui/SectionLabel";
 import { WebContainer } from "../../../components/layout/WebContainer";
-import { amethystGlow, font } from "../../../lib/design/tokens";
+import { surfaceShadow, font } from "../../../lib/design/tokens";
 import { toast } from "../../../stores/useToastStore";
 
 type Period = 30 | 60 | 90;
@@ -104,7 +104,7 @@ export default function ExportReportScreen() {
         <WebContainer maxWidth={640}>
         <View className="flex-row items-center justify-between mb-2">
           <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5">
-            <AppIcon name="arrow-left" size={18} color="#9B40D8" strokeWidth={2} />
+            <AppIcon name="arrow-left" size={18} color="#3F3F46" strokeWidth={2} />
             <Text className="text-violet-400" style={{ fontFamily: font.medium }}>Voltar</Text>
           </Pressable>
           <View className="w-16" />
@@ -136,42 +136,42 @@ export default function ExportReportScreen() {
         <Card variant="outlined" className="mb-4">
           <View className="flex-row items-center gap-3 mb-4">
             <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
-              <AppIcon name="file" size={18} color="#9B40D8" strokeWidth={2} />
+              <AppIcon name="file" size={18} color="#3F3F46" strokeWidth={2} />
             </View>
             <Text className="text-sm text-text-primary" style={{ fontFamily: font.semibold }}>O relatório incluira:</Text>
           </View>
           <View className="gap-3">
             <View className="flex-row items-center justify-between">
               <View className="flex-row items-center gap-3">
-                <AppIcon name="workout" size={18} color="#6E6382" strokeWidth={2} />
+                <AppIcon name="workout" size={18} color="#71717A" strokeWidth={2} />
                 <Text className="text-sm text-text-muted" style={{ fontFamily: font.regular }}>Treinos realizados</Text>
               </View>
               <Text className="text-sm text-text-primary" style={{ fontFamily: font.bold }}>{filteredSessions.length}</Text>
             </View>
             <View className="flex-row items-center justify-between">
               <View className="flex-row items-center gap-3">
-                <AppIcon name="ruler" size={18} color="#6E6382" strokeWidth={2} />
+                <AppIcon name="ruler" size={18} color="#71717A" strokeWidth={2} />
                 <Text className="text-sm text-text-muted" style={{ fontFamily: font.regular }}>Medidas registradas</Text>
               </View>
               <Text className="text-sm text-text-primary" style={{ fontFamily: font.bold }}>{filteredMeasurements.length}</Text>
             </View>
             <View className="flex-row items-center justify-between">
               <View className="flex-row items-center gap-3">
-                <AppIcon name="trophy" size={18} color="#6E6382" strokeWidth={2} />
+                <AppIcon name="trophy" size={18} color="#71717A" strokeWidth={2} />
                 <Text className="text-sm text-text-muted" style={{ fontFamily: font.regular }}>Recordes pessoais</Text>
               </View>
               <Text className="text-sm text-text-primary" style={{ fontFamily: font.bold }}>{prs?.length ?? 0}</Text>
             </View>
             <View className="flex-row items-center justify-between">
               <View className="flex-row items-center gap-3">
-                <AppIcon name="image" size={18} color="#6E6382" strokeWidth={2} />
+                <AppIcon name="image" size={18} color="#71717A" strokeWidth={2} />
                 <Text className="text-sm text-text-muted" style={{ fontFamily: font.regular }}>Fotos de progresso</Text>
               </View>
               <Text className="text-sm text-text-primary" style={{ fontFamily: font.bold }}>{filteredPhotos.length}</Text>
             </View>
             <View className="flex-row items-center justify-between">
               <View className="flex-row items-center gap-3">
-                <AppIcon name="target" size={18} color="#9B40D8" strokeWidth={2} />
+                <AppIcon name="target" size={18} color="#3F3F46" strokeWidth={2} />
                 <Text className="text-sm text-text-muted" style={{ fontFamily: font.regular }}>Score de adesão</Text>
               </View>
               <Text className="text-sm text-violet-400" style={{ fontFamily: font.bold }}>{adherence?.overallScore == null ? "—" : `${adherence.overallScore}%`}</Text>
@@ -183,10 +183,10 @@ export default function ExportReportScreen() {
           onPress={handleExport}
           disabled={exporting}
           className="mb-10 rounded-2xl overflow-hidden"
-          style={amethystGlow}
+          style={surfaceShadow}
         >
           <LinearGradient
-            colors={exporting ? ["#50107D", "#86169E"] : ["#781BB6", "#C636E0"]}
+            colors={exporting ? ["#18181B", "#3F3F46"] : ["#27272A", "#27272A"]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0.9 }}
             className="items-center py-4"

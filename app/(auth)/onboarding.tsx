@@ -1,13 +1,14 @@
+import { AuthShell } from "../../components/layout/AuthShell";
+import { Button } from "../../components/ui/Button";
 import { router } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { LinearGradient } from "expo-linear-gradient";
-import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
+import { Pressable, Text, View } from "react-native";
+
+import Animated, { FadeInDown } from "react-native-reanimated";
 import { supabase } from "../../lib/supabase/client";
 import { useAuth } from "../../lib/auth/provider";
-import { Logo, DisplayHeading, SectionLabel, AppIcon, type IconName } from "../../components/ui";
-import { font, amethystGlow } from "../../lib/design/tokens";
+import { DisplayHeading, SectionLabel, AppIcon, type IconName } from "../../components/ui";
+import { font, surfaceShadow } from "../../lib/design/tokens";
 
 type Role = "student" | "trainer";
 
@@ -17,14 +18,14 @@ const roles: { value: Role; icon: IconName; label: string; description: string; 
     icon: "workout",
     label: "Aluno",
     description: "Acompanhe treinos, dieta e evolução",
-    features: ["Treinos prescritos", "Dieta personalizada", "Acompanhamento de progresso", "Desafios e competicoes"],
+    features: ["Treinos prescritos", "Dieta personalizada", "Acompanhamento de progresso", "Desafios e comunidade"],
   },
   {
     value: "trainer",
     icon: "clipboard",
     label: "Personal Trainer",
     description: "Gerencie alunos, prescreva treinos e dietas",
-    features: ["Gestao de alunos", "Builder de treinos", "Acompanhamento de progresso", "Dashboard financeiro"],
+    features: ["Gestão de alunos", "Planejamento de treinos", "Acompanhamento de progresso", "Gestão financeira"],
   },
 ];
 
@@ -62,30 +63,17 @@ export default function OnboardingScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-dark-400">
-      <LinearGradient
-        colors={["rgba(120,27,182,0.28)", "transparent"]}
-        start={{ x: 0.2, y: 0 }}
-        end={{ x: 0.8, y: 1 }}
-        style={{ position: "absolute", top: 0, left: 0, right: 0, height: 420 }}
-        pointerEvents="none"
-      />
-      <View className="flex-1 justify-center px-8 max-w-[500px] w-full self-center">
-        <Animated.View entering={FadeIn.duration(400)} className="items-center mb-6">
-          <Logo size="lg" />
-        </Animated.View>
+    <AuthShell>
+
+
+
         <Animated.View entering={FadeInDown.delay(80).springify()} className="mb-10">
           <SectionLabel tone="accent" className="mb-3">
-            PASSO FINAL · ONBOARDING
+            PERSONALIZE SUA EXPERIÊNCIA
           </SectionLabel>
-          <DisplayHeading size="md" italic tone="muted">
-            Escolha
-          </DisplayHeading>
-          <DisplayHeading size="lg" className="mt-1">
-            um perfil.
-          </DisplayHeading>
+          <DisplayHeading size="md">Como você vai usar a plataforma?</DisplayHeading>
           <Text className="text-sm text-text-muted mt-4 leading-6" style={{ fontFamily: font.regular }}>
-            Você é <Text style={{ fontFamily: font.semibold }} className="text-text-primary">aluno</Text> ou <Text style={{ fontFamily: font.semibold }} className="text-text-primary">personal</Text> — não os dois. Essa decisão define toda a experiência no app.
+            Selecione o perfil que combina com sua rotina para começar.
           </Text>
         </Animated.View>
 
@@ -103,7 +91,7 @@ export default function OnboardingScreen() {
               <View key={role.value}>
                 <Pressable
                   onPress={() => setSelectedRole(role.value)}
-                  style={isSelected ? amethystGlow : undefined}
+                  style={isSelected ? surfaceShadow : undefined}
                   className={`rounded-3xl p-6 border ${
                     isSelected
                       ? "bg-surface-elevated border-violet-400/80"
@@ -116,7 +104,7 @@ export default function OnboardingScreen() {
                     <View className={`w-14 h-14 rounded-2xl items-center justify-center border ${
                       isSelected ? "bg-violet-500/20 border-violet-500/30" : "bg-surface-elevated border-surface-border"
                     }`}>
-                      <AppIcon name={role.icon} size={24} color={isSelected ? "#9B40D8" : "#A99FBA"} strokeWidth={2} />
+                      <AppIcon name={role.icon} size={24} color={isSelected ? "#3F3F46" : "#52525B"} strokeWidth={2} />
                     </View>
                     <View className="flex-1">
                       <Text
@@ -176,45 +164,8 @@ export default function OnboardingScreen() {
           })}
         </View>
 
-        <Pressable
-          onPress={handleContinue}
-          disabled={!selectedRole || loading}
-          className="rounded-2xl overflow-hidden mt-8"
-          style={selectedRole ? amethystGlow : undefined}
-        >
-          {selectedRole ? (
-            <LinearGradient
-              colors={loading ? ["#50107D", "#86169E"] : ["#781BB6", "#C636E0"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0.9 }}
-              style={{ paddingVertical: 18, alignItems: "center" }}
-            >
-              {loading ? (
-                <ActivityIndicator color="#FFFFFF" />
-              ) : (
-                <View className="flex-row items-center gap-2">
-                  <Text
-                    className="text-white text-base"
-                    style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
-                  >
-                    Continuar
-                  </Text>
-                  <AppIcon name="arrow-right" size={18} color="#FFFFFF" strokeWidth={2} />
-                </View>
-              )}
-            </LinearGradient>
-          ) : (
-            <View className="bg-surface-border items-center" style={{ paddingVertical: 18 }}>
-              <Text
-                className="text-text-muted text-base"
-                style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
-              >
-                Selecione um perfil
-              </Text>
-            </View>
-          )}
-        </Pressable>
-      </View>
-    </SafeAreaView>
+        <View className="mt-6"><Button title="Continuar" onPress={handleContinue} loading={loading} disabled={!selectedRole} size="lg" /></View>
+
+    </AuthShell>
   );
 }

@@ -38,7 +38,7 @@ export default function TrainerCoursesScreen() {
       <ScrollView className="flex-1 px-6 pt-6">
         <View className="flex-row items-center justify-between mb-4">
           <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5">
-            <AppIcon name="chevron-left" size={18} color="#6E6382" strokeWidth={2} />
+            <AppIcon name="chevron-left" size={18} color="#71717A" strokeWidth={2} />
             <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>Voltar</Text>
           </Pressable>
           <View className="items-center">
@@ -57,7 +57,7 @@ export default function TrainerCoursesScreen() {
             <TextInput
               className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary mb-3"
               placeholder="Título do curso"
-              placeholderTextColor="#6E6382"
+              placeholderTextColor="#71717A"
               value={title}
               onChangeText={setTitle}
               style={{ fontFamily: font.regular }}
@@ -65,7 +65,7 @@ export default function TrainerCoursesScreen() {
             <TextInput
               className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary mb-3"
               placeholder="Descrição"
-              placeholderTextColor="#6E6382"
+              placeholderTextColor="#71717A"
               value={description}
               onChangeText={setDescription}
               multiline
@@ -86,7 +86,7 @@ export default function TrainerCoursesScreen() {
         ) : null}
 
         {isLoading ? (
-          <View className="items-center py-10"><ActivityIndicator size="large" color="#781BB6" /></View>
+          <View className="items-center py-10"><ActivityIndicator size="large" color="#27272A" /></View>
         ) : error ? (
           <View className="items-center py-10 gap-3">
             <Text className="text-text-muted font-sans">Não foi possível carregar os cursos.</Text>
@@ -111,7 +111,7 @@ export default function TrainerCoursesScreen() {
                     <Image source={{ uri: c.cover_url }} style={{ width: 64, height: 64, borderRadius: 16 }} contentFit="cover" />
                   ) : (
                     <View className="w-16 h-16 bg-violet-500/15 border border-violet-500/25 rounded-2xl items-center justify-center">
-                      <AppIcon name="courses" size={24} color="#9B40D8" strokeWidth={2} />
+                      <AppIcon name="courses" size={24} color="#3F3F46" strokeWidth={2} />
                     </View>
                   )}
                   <View className="flex-1">
@@ -128,7 +128,7 @@ export default function TrainerCoursesScreen() {
                     ) : null}
                     <View className="flex-row items-center justify-between">
                       <View className="flex-row items-center gap-1.5">
-                        <AppIcon name="video" size={14} color="#6E6382" strokeWidth={2} />
+                        <AppIcon name="video" size={14} color="#71717A" strokeWidth={2} />
                         <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>
                           {c.lessons?.length ?? 0} aula{(c.lessons?.length ?? 0) !== 1 ? "s" : ""}
                         </Text>

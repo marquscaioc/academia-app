@@ -18,7 +18,7 @@ export default function ModerationScreen() {
         </Text>
         <View className="flex-1 items-center justify-center px-8 py-12">
           <View className="w-16 h-16 bg-violet-500/15 border border-violet-500/25 rounded-3xl items-center justify-center mb-6">
-            <AppIcon name="moderation" size={28} color="#9B40D8" strokeWidth={2} />
+            <AppIcon name="moderation" size={28} color="#3F3F46" strokeWidth={2} />
           </View>
           <Text
             className="text-3xl text-text-primary text-center"

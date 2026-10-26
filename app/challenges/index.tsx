@@ -9,7 +9,7 @@ import { AppIcon, SectionLabel } from "../../components/ui";
 import { DisplayHeading } from "../../components/ui/DisplayHeading";
 import { EmptyState } from "../../components/ui/EmptyState";
 import { useAuth } from "../../lib/auth/provider";
-import { amethystGlow, font } from "../../lib/design/tokens";
+import { surfaceShadow, font } from "../../lib/design/tokens";
 import { WebContainer } from "../../components/layout/WebContainer";
 
 type Filter = "active" | "upcoming" | "ended";
@@ -31,15 +31,15 @@ export default function ChallengesScreen() {
         <WebContainer maxWidth={1180}>
         <View className="flex-row items-center justify-between mb-2">
           <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5 py-1">
-            <AppIcon name="arrow-left" size={18} color="#6E6382" strokeWidth={2} />
+            <AppIcon name="arrow-left" size={18} color="#71717A" strokeWidth={2} />
             <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>
               Voltar
             </Text>
           </Pressable>
           <Link href="/challenges/create" asChild>
-            <Pressable className="rounded-full overflow-hidden" style={amethystGlow}>
+            <Pressable className="rounded-full overflow-hidden" style={surfaceShadow}>
               <LinearGradient
-                colors={["#781BB6", "#C636E0"]}
+                colors={["#27272A", "#27272A"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0.9 }}
                 style={{ paddingHorizontal: 16, paddingVertical: 8, flexDirection: "row", alignItems: "center", gap: 6 }}
@@ -86,7 +86,7 @@ export default function ChallengesScreen() {
 
         {isLoading ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" color="#9B40D8" />
+            <ActivityIndicator size="large" color="#3F3F46" />
           </View>
         ) : !challenges?.length ? (
           <EmptyState

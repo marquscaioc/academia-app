@@ -3,13 +3,13 @@ import { font } from "../../lib/design/tokens";
 
 type Size = "sm" | "md" | "lg" | "xl" | "2xl";
 
-// Instrument Serif renders best with airy leading; sizes tuned for the serif metrics.
+// Compact Geist Sans headings keep the hierarchy clear on small screens.
 const SIZE_MAP: Record<Size, string> = {
-  sm: "text-[26px] leading-[30px]",
-  md: "text-4xl leading-[42px]",
-  lg: "text-5xl leading-[54px]",
-  xl: "text-6xl leading-[64px]",
-  "2xl": "text-7xl leading-[74px]",
+  sm: "text-[22px] leading-[29px]",
+  md: "text-[28px] leading-[36px]",
+  lg: "text-[36px] leading-[44px]",
+  xl: "text-[44px] leading-[52px]",
+  "2xl": "text-[48px] leading-[56px]",
 };
 
 interface Props extends TextProps {

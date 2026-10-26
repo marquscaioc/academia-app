@@ -31,25 +31,26 @@ function TrainerTabs() {
         <Tabs
           screenOptions={{
             headerShown: false,
-            tabBarActiveTintColor: "#781BB6",
-            tabBarInactiveTintColor: "#6E6382",
+            tabBarActiveTintColor: "#27272A",
+            tabBarInactiveTintColor: "#71717A",
             tabBarStyle: isDesktop
               ? { display: "none" as const }
               : {
-                  backgroundColor: "#14101B",
+                  backgroundColor: "#FFFFFF",
                   borderTopWidth: 1,
-                  borderTopColor: "#2E2740",
+                  borderTopColor: "#E4E4E7",
                   paddingTop: 8,
                   height: 65,
                 },
             tabBarLabelStyle: {
+              fontFamily: "Geist_600SemiBold",
               fontSize: 10,
               fontWeight: "700",
               letterSpacing: 0.5,
             },
           }}
         >
-          <Tabs.Screen name="dashboard" options={{ title: "Dashboard", tabBarIcon: ({ focused, color }) => <TabIcon name="dashboard" focused={focused} color={color} /> }} />
+          <Tabs.Screen name="dashboard" options={{ title: "Visão geral", tabBarIcon: ({ focused, color }) => <TabIcon name="dashboard" focused={focused} color={color} /> }} />
           <Tabs.Screen name="students" options={{ title: "Alunos", tabBarIcon: ({ focused, color }) => <TabIcon name="students" focused={focused} color={color} /> }} />
           <Tabs.Screen name="exercises" options={{ title: "Exercícios", tabBarIcon: ({ focused, color }) => <TabIcon name="exercises" focused={focused} color={color} /> }} />
           <Tabs.Screen name="financial" options={{ title: "Financeiro", tabBarIcon: ({ focused, color }) => <TabIcon name="financial" focused={focused} color={color} /> }} />

@@ -1,21 +1,13 @@
+import { AuthShell } from "../../components/layout/AuthShell";
+import { Button } from "../../components/ui/Button";
 import { Link, router } from "expo-router";
 import { useState } from "react";
-import {
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  ScrollView,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { LinearGradient } from "expo-linear-gradient";
+import { Pressable, Text, TextInput, View } from "react-native";
+
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import { useAuth } from "../../lib/auth/provider";
-import { AppIcon, DisplayHeading, Logo } from "../../components/ui";
-import { amethystGlow, font } from "../../lib/design/tokens";
+import { AppIcon, DisplayHeading } from "../../components/ui";
+import { font } from "../../lib/design/tokens";
 
 const TERMS_VERSION = "2026-06-16";
 
@@ -104,45 +96,27 @@ export default function RegisterScreen() {
     }`;
 
   return (
-    <SafeAreaView className="flex-1 bg-dark-400">
-      <LinearGradient
-        colors={["rgba(120,27,182,0.24)", "transparent"]}
-        start={{ x: 0.2, y: 0 }}
-        end={{ x: 0.8, y: 1 }}
-        style={{ position: "absolute", top: 0, left: 0, right: 0, height: 380 }}
-        pointerEvents="none"
-      />
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        className="flex-1"
-      >
-        <ScrollView
-          className="flex-1"
-          contentContainerClassName="justify-center px-8 py-12 max-w-[440px] w-full self-center"
-          keyboardShouldPersistTaps="handled"
-        >
+    <AuthShell>
+
+
+
           {/* Header */}
           <Animated.View entering={FadeIn.duration(400)} className="flex-row items-center justify-between mb-10">
             <Link href="/(auth)/login" asChild>
               <Pressable className="flex-row items-center gap-2">
-                <Text className="text-text-muted text-lg">←</Text>
+                <Text className="text-text-muted text-lg font-sans">←</Text>
                 <Text
                   className="text-text-muted text-[11px]"
-                  style={{ fontFamily: "Nunito_700Bold", letterSpacing: 2 }}
+                  style={{ fontFamily: "Geist_700Bold", letterSpacing: 2 }}
                 >
                   VOLTAR
                 </Text>
               </Pressable>
             </Link>
-            <Logo size="sm" />
+
           </Animated.View>
           <Animated.View entering={FadeInDown.delay(80).springify()} className="mb-10">
-            <DisplayHeading size="md" italic tone="muted">
-              Comece sua
-            </DisplayHeading>
-            <DisplayHeading size="2xl" tone="primary" className="mt-0.5">
-              Jornada.
-            </DisplayHeading>
+            <DisplayHeading size="md">Crie sua conta</DisplayHeading>
             <Text
               className="text-fuchsia-400 mt-3"
               style={{ fontFamily: font.semibold, fontSize: 10, letterSpacing: 3 }}
@@ -165,7 +139,7 @@ export default function RegisterScreen() {
               <TextInput
                 className={inputClass("name")}
                 placeholder="Seu nome"
-                placeholderTextColor="#6E6382"
+                placeholderTextColor="#71717A"
                 style={{ fontFamily: font.regular }}
                 value={fullName}
                 onChangeText={setFullName}
@@ -182,7 +156,7 @@ export default function RegisterScreen() {
               <TextInput
                 className={inputClass("email")}
                 placeholder="seu@email.com"
-                placeholderTextColor="#6E6382"
+                placeholderTextColor="#71717A"
                 style={{ fontFamily: font.regular }}
                 value={email}
                 onChangeText={setEmail}
@@ -201,7 +175,7 @@ export default function RegisterScreen() {
               <TextInput
                 className={inputClass("password")}
                 placeholder="Mínimo 6 caracteres"
-                placeholderTextColor="#6E6382"
+                placeholderTextColor="#71717A"
                 style={{ fontFamily: font.regular }}
                 value={password}
                 onChangeText={setPassword}
@@ -219,7 +193,7 @@ export default function RegisterScreen() {
               <TextInput
                 className={inputClass("confirm")}
                 placeholder="Repita a senha"
-                placeholderTextColor="#6E6382"
+                placeholderTextColor="#71717A"
                 style={{ fontFamily: font.regular }}
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
@@ -237,7 +211,7 @@ export default function RegisterScreen() {
               <TextInput
                 className={inputClass("dob")}
                 placeholder="dd/mm/aaaa"
-                placeholderTextColor="#6E6382"
+                placeholderTextColor="#71717A"
                 style={{ fontFamily: font.regular }}
                 value={dob}
                 onChangeText={onChangeDob}
@@ -259,7 +233,7 @@ export default function RegisterScreen() {
               >
                 {accepted ? <AppIcon name="check" size={12} color="#FFFFFF" strokeWidth={3} /> : null}
               </View>
-              <Text className="flex-1 text-text-muted text-xs leading-5">
+              <Text className="flex-1 text-text-muted text-xs leading-5 font-sans">
                 Li e aceito os{" "}
                 <Link href="/termos" asChild>
                   <Text className="text-violet-300 font-bold">Termos de Uso</Text>
@@ -272,39 +246,19 @@ export default function RegisterScreen() {
               </Text>
             </Pressable>
 
-            <Pressable
-              onPress={handleRegister}
-              disabled={loading}
-              className="rounded-2xl overflow-hidden mt-3"
-              style={loading ? undefined : amethystGlow}
-            >
-              <LinearGradient
-                colors={loading ? ["#50107D", "#86169E"] : ["#781BB6", "#C636E0"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0.9 }}
-                style={{ paddingVertical: 17, alignItems: "center" }}
-              >
-                {loading ? (
-                  <ActivityIndicator color="#FFFFFF" />
-                ) : (
-                  <Text className="text-white text-[15px]" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>
-                    Criar conta
-                  </Text>
-                )}
-              </LinearGradient>
-            </Pressable>
+            <View className="mt-6"><Button title="Criar conta" onPress={handleRegister} loading={loading}  size="lg" /></View>
           </View>
 
           <View className="flex-row justify-center mt-8">
-            <Text className="text-text-muted text-sm">Já tem uma conta? </Text>
+            <Text className="text-text-muted text-sm font-sans">Já tem uma conta? </Text>
             <Link href="/(auth)/login" asChild>
               <Pressable>
                 <Text className="text-violet-300 font-bold text-sm">Entrar</Text>
               </Pressable>
             </Link>
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+
+
+    </AuthShell>
   );
 }

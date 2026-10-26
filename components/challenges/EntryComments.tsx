@@ -39,7 +39,7 @@ export function EntryComments({ entryId }: EntryCommentsProps) {
   return (
     <View className="mt-3 pt-3 border-t border-surface-border">
       {isLoading ? (
-        <ActivityIndicator size="small" color="#781BB6" />
+        <ActivityIndicator size="small" color="#27272A" />
       ) : (
         <>
           {hasMore && !showAll ? (
@@ -60,15 +60,15 @@ export function EntryComments({ entryId }: EntryCommentsProps) {
                       {c.author?.full_name ?? "Usuario"}
                     </Text>
                     <View className="flex-row items-center gap-2">
-                      <Text className="text-[9px] text-text-muted">{timeAgo(c.created_at)}</Text>
+                      <Text className="text-[9px] text-text-muted font-sans">{timeAgo(c.created_at)}</Text>
                       {c.author_id === user?.id ? (
                         <Pressable onPress={() => deleteComment.mutate({ id: c.id, entry_id: entryId })}>
-                          <AppIcon name="close" size={12} color="#F43F5E" strokeWidth={2} />
+                          <AppIcon name="close" size={12} color="#27272A" strokeWidth={2} />
                         </Pressable>
                       ) : null}
                     </View>
                   </View>
-                  <Text className="text-xs text-text-primary leading-4">{c.content}</Text>
+                  <Text className="text-xs text-text-primary leading-4 font-sans">{c.content}</Text>
                 </View>
               </View>
             ))}
@@ -77,9 +77,9 @@ export function EntryComments({ entryId }: EntryCommentsProps) {
           {/* Input */}
           <View className="flex-row gap-2">
             <TextInput
-              className="flex-1 bg-dark-300 border border-surface-border rounded-xl px-3 py-2 text-xs text-text-primary"
+              className="flex-1 bg-dark-300 border border-surface-border rounded-xl px-3 py-2 text-xs text-text-primary font-sans"
               placeholder="Comentar..."
-              placeholderTextColor="#6E6580"
+              placeholderTextColor="#71717A"
               value={text}
               onChangeText={setText}
               multiline
@@ -91,7 +91,7 @@ export function EntryComments({ entryId }: EntryCommentsProps) {
                 text.trim() ? "bg-violet-500" : "bg-surface-border"
               }`}
             >
-              <AppIcon name="send" size={16} color={text.trim() ? "#FFFFFF" : "#6E6382"} strokeWidth={2} />
+              <AppIcon name="send" size={16} color={text.trim() ? "#FFFFFF" : "#71717A"} strokeWidth={2} />
             </Pressable>
           </View>
         </>

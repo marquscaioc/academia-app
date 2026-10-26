@@ -32,7 +32,7 @@ export function LeaderboardRow({
     >
       <View className="w-8 items-center">
         {rankIcons[rank] ? (
-          <Text className="text-lg">{rankIcons[rank]}</Text>
+          <Text className="text-lg font-sans">{rankIcons[rank]}</Text>
         ) : (
           <Text className="text-sm font-bold text-gray-400">#{rank}</Text>
         )}
@@ -49,7 +49,7 @@ export function LeaderboardRow({
         >
           {name}
         </Text>
-        <Text className="text-xs text-gray-400">{checkIns} check-ins</Text>
+        <Text className="text-xs text-gray-400 font-sans">{checkIns} check-ins</Text>
       </View>
 
       <Text className={`text-lg font-bold ${isCurrentUser ? "text-primary-600" : "text-gray-900"}`}>

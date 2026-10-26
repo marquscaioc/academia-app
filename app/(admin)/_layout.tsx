@@ -29,18 +29,19 @@ function AdminTabs() {
         <Tabs
           screenOptions={{
             headerShown: false,
-            tabBarActiveTintColor: "#781BB6",
-            tabBarInactiveTintColor: "#6E6382",
+            tabBarActiveTintColor: "#27272A",
+            tabBarInactiveTintColor: "#71717A",
             tabBarStyle: isDesktop
               ? { display: "none" as const }
               : {
-                  backgroundColor: "#14101B",
+                  backgroundColor: "#FFFFFF",
                   borderTopWidth: 1,
-                  borderTopColor: "#2E2740",
+                  borderTopColor: "#E4E4E7",
                   paddingTop: 8,
                   height: 65,
                 },
-            tabBarLabelStyle: { fontSize: 10, fontWeight: "700", letterSpacing: 0.5 },
+            tabBarLabelStyle: {
+              fontFamily: "Geist_600SemiBold", fontSize: 10, fontWeight: "700", letterSpacing: 0.5 },
           }}
         >
           <Tabs.Screen name="overview" options={{ title: "Overview", tabBarIcon: ({ focused, color }) => <TabIcon name="overview" focused={focused} color={color} /> }} />

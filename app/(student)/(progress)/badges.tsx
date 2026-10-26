@@ -39,7 +39,7 @@ export default function BadgesScreen() {
         <WebContainer maxWidth={1180}>
         <View className="flex-row items-center justify-between mb-8">
           <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5">
-            <AppIcon name="arrow-left" size={18} color="#9B40D8" strokeWidth={2} />
+            <AppIcon name="arrow-left" size={18} color="#3F3F46" strokeWidth={2} />
             <Text className="text-violet-400" style={{ fontFamily: font.medium }}>Voltar</Text>
           </Pressable>
           <View className="w-16" />
@@ -49,7 +49,7 @@ export default function BadgesScreen() {
           <SectionLabel className="mb-2">Suas conquistas</SectionLabel>
           <View className="flex-row items-center gap-4">
             <View className="w-14 h-14 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
-              <AppIcon name="trophy" size={26} color="#9B40D8" strokeWidth={2} />
+              <AppIcon name="trophy" size={26} color="#3F3F46" strokeWidth={2} />
             </View>
             <View className="flex-1">
               <Text className="text-5xl text-text-primary" style={{ fontFamily: font.display, letterSpacing: -0.5 }}>Conquistas</Text>

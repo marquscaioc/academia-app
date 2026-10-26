@@ -1,5 +1,5 @@
 import { useLocalSearchParams } from "expo-router";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import { useQuery } from "@tanstack/react-query";
@@ -35,7 +35,7 @@ export default function TrainerPublicPage() {
     return (
       <SafeAreaView className="flex-1 bg-dark-400 items-center justify-center px-8">
         <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-5">
-          <AppIcon name="search" size={28} color="#9B40D8" strokeWidth={2} />
+          <AppIcon name="search" size={28} color="#3F3F46" strokeWidth={2} />
         </View>
         <Text className="text-2xl text-text-primary text-center" style={{ fontFamily: font.display }}>Profissional não encontrado</Text>
         <Text className="text-sm text-text-muted text-center mt-2" style={{ fontFamily: font.regular }}>Verifique o link e tente novamente.</Text>
@@ -44,7 +44,7 @@ export default function TrainerPublicPage() {
   }
 
   const profile = trainer.profile as unknown as { full_name: string; avatar_url: string | null; bio: string | null } | null;
-  const primaryColor = trainer.brand_primary_color ?? "#781BB6";
+  const primaryColor = trainer.brand_primary_color ?? "#27272A";
 
   return (
     <SafeAreaView className="flex-1 bg-dark-400">

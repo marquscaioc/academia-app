@@ -155,7 +155,7 @@ export default function AddPhotoScreen() {
                 onPress={() => setImageUri(null)}
                 className="flex-1 flex-row gap-2 border border-surface-border rounded-2xl py-3 items-center justify-center"
               >
-                <AppIcon name="repeat" size={18} color="#A99FBA" strokeWidth={2} />
+                <AppIcon name="repeat" size={18} color="#52525B" strokeWidth={2} />
                 <Text
                   className="text-text-secondary"
                   style={{ fontFamily: font.medium }}
@@ -184,7 +184,7 @@ export default function AddPhotoScreen() {
         ) : (
           <View className="flex-1 items-center justify-center gap-4">
             <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
-              <AppIcon name="camera" size={28} color="#9B40D8" strokeWidth={2} />
+              <AppIcon name="camera" size={28} color="#3F3F46" strokeWidth={2} />
             </View>
             <Text
               className="text-2xl text-text-primary"
@@ -216,7 +216,7 @@ export default function AddPhotoScreen() {
                 onPress={pickImage}
                 className="flex-row gap-2 border border-surface-border rounded-2xl py-4 items-center justify-center active:bg-surface-hover"
               >
-                <AppIcon name="photos" size={18} color="#A99FBA" strokeWidth={2} />
+                <AppIcon name="photos" size={18} color="#52525B" strokeWidth={2} />
                 <Text
                   className="text-text-secondary"
                   style={{ fontFamily: font.semibold }}

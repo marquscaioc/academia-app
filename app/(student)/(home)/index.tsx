@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link, router } from "expo-router";
-import { LinearGradient } from "expo-linear-gradient";
 import Animated, { FadeInDown, FadeIn } from "react-native-reanimated";
 import { useAuth } from "../../../lib/auth/provider";
 import { useAcceptInvite } from "../../../hooks/mutations/useInviteMutations";
@@ -28,15 +27,9 @@ function QuickAction({ icon, label, href, index }: { icon: IconName; label: stri
     <Animated.View entering={FadeInDown.delay(500 + index * 70).springify()} className="grow basis-[200px]" style={{ flex: 1 }}>
       <Link href={href as never} asChild>
         <Pressable className="bg-surface-card border border-surface-border rounded-2xl py-5 items-center active:bg-surface-hover overflow-hidden">
-          <LinearGradient
-            colors={["rgba(155,64,216,0.08)", "transparent"]}
-            start={{ x: 0.5, y: 0 }}
-            end={{ x: 0.5, y: 1 }}
-            style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
-            pointerEvents="none"
-          />
+
           <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-2.5">
-            <AppIcon name={icon} size={18} color="#9B40D8" strokeWidth={2} />
+            <AppIcon name={icon} size={18} color="#3F3F46" strokeWidth={2} />
           </View>
           <Text className="text-[11px] text-text-secondary" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>
             {label}
@@ -106,33 +99,27 @@ export default function StudentHomeScreen() {
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
       {/* Ambient gradient wash — top */}
-      <LinearGradient
-        colors={["rgba(120,27,182,0.18)", "transparent"]}
-        start={{ x: 0.1, y: 0 }}
-        end={{ x: 0.9, y: 1 }}
-        style={{ position: "absolute", top: 0, left: 0, right: 0, height: 380 }}
-        pointerEvents="none"
-      />
+
 
       <ScrollView className="flex-1 px-6 pt-4" showsVerticalScrollIndicator={false}>
         <WebContainer maxWidth={1180}>
-        {/* Masthead — magazine-style */}
+        {/* Application header */}
         <Animated.View entering={FadeIn.duration(500)} className="flex-row items-center justify-between mb-8">
-          <View className="flex-row items-center gap-3">
+          <View className="gap-1.5">
             <Logo size="sm" />
             <View>
               <Text
                 className="text-[10px] text-fuchsia-400"
-                style={{ fontFamily: font.semibold, letterSpacing: 3 }}
+                style={{ fontFamily: font.semibold, letterSpacing: 0.8 }}
               >
-                ED. {edition}
+                {edition}
               </Text>
             </View>
           </View>
           <View className="flex-row gap-2">
             <Link href="/notifications" asChild>
               <Pressable className="w-10 h-10 bg-surface-card border border-surface-border rounded-xl items-center justify-center">
-                <AppIcon name="bell" size={18} color="#A99FBA" strokeWidth={2} />
+                <AppIcon name="bell" size={18} color="#52525B" strokeWidth={2} />
                 {(unreadCount ?? 0) > 0 ? (
                   <View className="absolute -top-1 -right-1 bg-fuchsia-500 rounded-full min-w-[18px] h-[18px] items-center justify-center px-1">
                     <Text className="text-white text-[9px]" style={{ fontFamily: font.bold }}>
@@ -144,13 +131,13 @@ export default function StudentHomeScreen() {
             </Link>
             <Link href="/profile/edit" asChild>
               <Pressable className="w-10 h-10 bg-surface-card border border-surface-border rounded-xl items-center justify-center">
-                <AppIcon name="settings" size={18} color="#A99FBA" strokeWidth={2} />
+                <AppIcon name="settings" size={18} color="#52525B" strokeWidth={2} />
               </Pressable>
             </Link>
           </View>
         </Animated.View>
 
-        {/* Editorial greeting — serif italic */}
+        {/* Personal greeting */}
         <Animated.View entering={FadeInDown.delay(80).springify()} className="mb-2">
           <DisplayHeading size="md" italic tone="muted">
             {greeting},
@@ -161,12 +148,12 @@ export default function StudentHomeScreen() {
             className="text-text-primary"
             style={{
               fontFamily: font.display,
-              fontSize: 56,
-              lineHeight: 58,
+              fontSize: 40,
+              lineHeight: 48,
               letterSpacing: -1,
             }}
           >
-            {firstName}.
+            {firstName}
           </Text>
         </Animated.View>
 
@@ -178,7 +165,7 @@ export default function StudentHomeScreen() {
               className="bg-warning-500/10 border border-warning-500/30 rounded-2xl p-4 flex-row items-center gap-3 active:opacity-80"
             >
               <View className="w-10 h-10 rounded-2xl bg-warning-500/15 border border-warning-500/25 items-center justify-center">
-                <AppIcon name="clipboard-check" size={18} color="#FBBF24" strokeWidth={2} />
+                <AppIcon name="clipboard-check" size={18} color="#52525B" strokeWidth={2} />
               </View>
               <View className="flex-1">
                 <Text className="text-sm text-text-primary" style={{ fontFamily: font.semibold }}>
@@ -188,7 +175,7 @@ export default function StudentHomeScreen() {
                   {pendingCheckins[0].template?.title ?? "Responda para seu personal acompanhar"}
                 </Text>
               </View>
-              <AppIcon name="chevron-right" size={18} color="#FBBF24" strokeWidth={2} />
+              <AppIcon name="chevron-right" size={18} color="#52525B" strokeWidth={2} />
             </Pressable>
           </Animated.View>
         ) : null}
@@ -202,7 +189,7 @@ export default function StudentHomeScreen() {
                 className="border border-dashed border-violet-500/40 rounded-2xl p-4 flex-row items-center gap-3 active:bg-surface-hover"
               >
                 <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
-                  <AppIcon name="user-add" size={18} color="#9B40D8" strokeWidth={2} />
+                  <AppIcon name="user-add" size={18} color="#3F3F46" strokeWidth={2} />
                 </View>
                 <View className="flex-1">
                   <Text className="text-sm text-text-primary" style={{ fontFamily: font.semibold }}>
@@ -212,7 +199,7 @@ export default function StudentHomeScreen() {
                     Conecte-se ao seu personal trainer
                   </Text>
                 </View>
-                <AppIcon name="chevron-right" size={18} color="#C636E0" strokeWidth={2} />
+                <AppIcon name="chevron-right" size={18} color="#27272A" strokeWidth={2} />
               </Pressable>
             ) : (
               <View className="bg-surface-card border border-violet-500/30 rounded-2xl p-5">
@@ -273,7 +260,7 @@ export default function StudentHomeScreen() {
             className="bg-success-500/10 border border-success-500/20 rounded-2xl p-4 mb-6 flex-row items-center gap-3"
           >
             <View className="w-10 h-10 rounded-2xl bg-success-500/15 border border-success-500/25 items-center justify-center">
-              <AppIcon name="check-circle" size={18} color="#34D399" strokeWidth={2} />
+              <AppIcon name="check-circle" size={18} color="#52525B" strokeWidth={2} />
             </View>
             <Text className="text-sm text-success-500 flex-1" style={{ fontFamily: font.semibold }}>
               Conectado ao seu personal! Confira o chat.
@@ -304,14 +291,14 @@ export default function StudentHomeScreen() {
                   </DisplayHeading>
                   <View className="flex-row items-center gap-4 mt-2">
                     <View className="flex-row items-center gap-1.5">
-                      <AppIcon name="list" size={14} color="#9B40D8" strokeWidth={2} />
+                      <AppIcon name="list" size={14} color="#3F3F46" strokeWidth={2} />
                       <Text className="text-[12px] text-violet-300" style={{ fontFamily: font.semibold }}>
                         {pluralize(todayExerciseCount, "exercício", "exercícios")}
                       </Text>
                     </View>
                     {todayWorkout.estimated_duration_minutes ? (
                       <View className="flex-row items-center gap-1.5">
-                        <AppIcon name="clock" size={14} color="#7FD3E0" strokeWidth={2} />
+                        <AppIcon name="clock" size={14} color="#71717A" strokeWidth={2} />
                         <Text className="text-[12px] text-ice-400" style={{ fontFamily: font.semibold }}>
                           ~{todayWorkout.estimated_duration_minutes}min
                         </Text>
@@ -320,12 +307,12 @@ export default function StudentHomeScreen() {
                   </View>
                   <View className="mt-6 flex-row items-center justify-between">
                     <View className="flex-row items-center gap-2">
-                      <AppIcon name="play" size={16} color="#C636E0" strokeWidth={2} />
+                      <AppIcon name="play" size={16} color="#27272A" strokeWidth={2} />
                       <Text className="text-fuchsia-400 text-sm" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>
                         Começar treino
                       </Text>
                     </View>
-                    <AppIcon name="chevron-right" size={18} color="#C636E0" strokeWidth={2} />
+                    <AppIcon name="chevron-right" size={18} color="#27272A" strokeWidth={2} />
                   </View>
                 </Pressable>
               </Link>
@@ -369,7 +356,7 @@ export default function StudentHomeScreen() {
             className="bg-warning-500/10 border border-warning-500/30 rounded-2xl p-4 mb-6 flex-row items-center gap-3"
           >
             <View className="w-10 h-10 rounded-2xl bg-warning-500/15 border border-warning-500/25 items-center justify-center">
-              <AppIcon name="warning" size={18} color="#FBBF24" strokeWidth={2} />
+              <AppIcon name="warning" size={18} color="#52525B" strokeWidth={2} />
             </View>
             <View className="flex-1">
               <Text className="text-sm text-warning-500" style={{ fontFamily: font.semibold }}>

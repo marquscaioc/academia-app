@@ -22,7 +22,7 @@ export default function SobreDadosScreen() {
 
           {/* Back */}
           <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5 mb-6">
-            <AppIcon name="arrow-left" size={16} color="#6E6382" strokeWidth={2} />
+            <AppIcon name="arrow-left" size={16} color="#71717A" strokeWidth={2} />
             <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>Voltar</Text>
           </Pressable>
 
@@ -30,14 +30,14 @@ export default function SobreDadosScreen() {
             Fontes de dados
           </Text>
           <Text className="text-sm text-text-muted mb-8" style={{ fontFamily: font.regular }}>
-            Dados nutricionais utilizados no Projeto Gaab e suas respectivas licenças.
+            Dados nutricionais utilizados no Projeto Academia e suas respectivas licenças.
           </Text>
 
           {/* TACO */}
           <View className="bg-surface-card border border-surface-border rounded-3xl p-5 mb-4">
             <View className="flex-row items-center gap-2 mb-3">
               <View className="w-8 h-8 rounded-xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
-                <AppIcon name="food" size={16} color="#9B40D8" strokeWidth={2} />
+                <AppIcon name="food" size={16} color="#3F3F46" strokeWidth={2} />
               </View>
               <Text className="text-base text-text-primary" style={{ fontFamily: font.semibold }}>TACO</Text>
             </View>
@@ -56,7 +56,7 @@ export default function SobreDadosScreen() {
           <View className="bg-surface-card border border-surface-border rounded-3xl p-5 mb-4">
             <View className="flex-row items-center gap-2 mb-3">
               <View className="w-8 h-8 rounded-xl bg-cyan-500/15 border border-cyan-500/25 items-center justify-center">
-                <AppIcon name="search" size={16} color="#67E8F9" strokeWidth={2} />
+                <AppIcon name="search" size={16} color="#52525B" strokeWidth={2} />
               </View>
               <Text className="text-base text-text-primary" style={{ fontFamily: font.semibold }}>Open Food Facts</Text>
             </View>
@@ -80,7 +80,7 @@ export default function SobreDadosScreen() {
           <View className="bg-surface-card border border-surface-border rounded-3xl p-5 mb-4">
             <View className="flex-row items-center gap-2 mb-3">
               <View className="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-500/25 items-center justify-center">
-                <AppIcon name="image" size={16} color="#34D399" strokeWidth={2} />
+                <AppIcon name="image" size={16} color="#52525B" strokeWidth={2} />
               </View>
               <Text className="text-base text-text-primary" style={{ fontFamily: font.semibold }}>Imagens dos alimentos</Text>
             </View>

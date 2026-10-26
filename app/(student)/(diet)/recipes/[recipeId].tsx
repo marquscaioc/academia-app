@@ -34,7 +34,7 @@ export default function RecipeDetailScreen() {
         ) : (
           <View className="w-full h-48 bg-surface-elevated items-center justify-center">
             <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
-              <AppIcon name="food" size={28} color="#9B40D8" strokeWidth={2} />
+              <AppIcon name="food" size={28} color="#3F3F46" strokeWidth={2} />
             </View>
           </View>
         )}
@@ -46,7 +46,7 @@ export default function RecipeDetailScreen() {
               onPress={() => user && toggleFavorite.mutate({ user_id: user.id, recipe_id: recipe.id })}
               className="w-10 h-10 bg-surface-card border border-surface-border rounded-2xl items-center justify-center"
             >
-              <AppIcon name="heart" size={18} color={isFav ? "#FB7185" : "#6E6382"} strokeWidth={2} />
+              <AppIcon name="heart" size={18} color={isFav ? "#3F3F46" : "#71717A"} strokeWidth={2} />
             </Pressable>
           </View>
 
@@ -88,18 +88,18 @@ export default function RecipeDetailScreen() {
           <View className="flex-row items-center flex-wrap gap-x-4 gap-y-2 mb-6">
             {recipe.prep_time_minutes ? (
               <View className="flex-row items-center gap-1.5">
-                <AppIcon name="clock" size={14} color="#6E6382" strokeWidth={2} />
+                <AppIcon name="clock" size={14} color="#71717A" strokeWidth={2} />
                 <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>Preparo: {recipe.prep_time_minutes}min</Text>
               </View>
             ) : null}
             {recipe.cook_time_minutes ? (
               <View className="flex-row items-center gap-1.5">
-                <AppIcon name="timer" size={14} color="#6E6382" strokeWidth={2} />
+                <AppIcon name="timer" size={14} color="#71717A" strokeWidth={2} />
                 <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>Cozimento: {recipe.cook_time_minutes}min</Text>
               </View>
             ) : null}
             <View className="flex-row items-center gap-1.5">
-              <AppIcon name="food" size={14} color="#6E6382" strokeWidth={2} />
+              <AppIcon name="food" size={14} color="#71717A" strokeWidth={2} />
               <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>{recipe.servings} porcao(es)</Text>
             </View>
           </View>
@@ -109,7 +109,7 @@ export default function RecipeDetailScreen() {
             <View className="mb-6">
               <View className="flex-row items-center gap-2.5 mb-3">
                 <View className="w-9 h-9 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
-                  <AppIcon name="list" size={18} color="#9B40D8" strokeWidth={2} />
+                  <AppIcon name="list" size={18} color="#3F3F46" strokeWidth={2} />
                 </View>
                 <Text className="text-xl text-text-primary" style={{ fontFamily: font.display }}>Ingredientes</Text>
               </View>
@@ -130,7 +130,7 @@ export default function RecipeDetailScreen() {
             <View>
               <View className="flex-row items-center gap-2.5 mb-3">
                 <View className="w-9 h-9 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
-                  <AppIcon name="clipboard-check" size={18} color="#9B40D8" strokeWidth={2} />
+                  <AppIcon name="clipboard-check" size={18} color="#3F3F46" strokeWidth={2} />
                 </View>
                 <Text className="text-xl text-text-primary" style={{ fontFamily: font.display }}>Modo de preparo</Text>
               </View>
@@ -139,7 +139,7 @@ export default function RecipeDetailScreen() {
           ) : null}
 
           <Pressable onPress={() => router.back()} className="mt-8 flex-row items-center justify-center gap-2">
-            <AppIcon name="arrow-left" size={18} color="#9B40D8" strokeWidth={2} />
+            <AppIcon name="arrow-left" size={18} color="#3F3F46" strokeWidth={2} />
             <Text className="text-violet-400" style={{ fontFamily: font.semibold, letterSpacing: 0.3 }}>Voltar para receitas</Text>
           </Pressable>
         </View>

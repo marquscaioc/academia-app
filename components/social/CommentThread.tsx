@@ -97,7 +97,7 @@ export function CommentThread({ comments, postId, currentUserId, onReply, isPend
                 <TextInput
                   className="flex-1 bg-surface-card border border-surface-border rounded-xl px-3 py-2 text-xs text-text-primary font-sans"
                   placeholder={`Responder ${comment.author?.full_name?.split(" ")[0]}...`}
-                  placeholderTextColor="#6E6580"
+                  placeholderTextColor="#71717A"
                   value={replyText}
                   onChangeText={setReplyText}
                   editable={!isSending && !isPending}
@@ -123,7 +123,7 @@ export function CommentThread({ comments, postId, currentUserId, onReply, isPend
         <TextInput
           className="flex-1 bg-surface-card border border-surface-border rounded-xl px-3 py-2.5 text-xs text-text-primary font-sans"
           placeholder="Comentar..."
-          placeholderTextColor="#6E6580"
+          placeholderTextColor="#71717A"
           value={replyingTo ? "" : replyText}
           onChangeText={(v) => { setReplyingTo(null); setReplyText(v); }}
           editable={!isSending && !isPending}

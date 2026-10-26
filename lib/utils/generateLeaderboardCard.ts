@@ -40,21 +40,21 @@ export function generateLeaderboardHtml(data: LeaderboardCardData): string {
 
   return `<!DOCTYPE html>
 <html><head><meta charset="utf-8"><style>
-  body { font-family: system-ui; padding: 24px; background: #0B0811; color: #F2EEF8; margin: 0; width: 400px; }
-  .title { font-size: 18px; font-weight: 900; color: #781BB6; margin-bottom: 4px; }
-  .subtitle { font-size: 12px; color: #6E6382; margin-bottom: 16px; }
-  .row { display: flex; align-items: center; padding: 10px 12px; border-radius: 12px; margin-bottom: 4px; background: #16121E; }
-  .row.user { background: #781BB620; border: 1px solid #781BB640; }
+  body { font-family: system-ui; padding: 24px; background: #F7F7F8; color: #202024; margin: 0; width: 400px; }
+  .title { font-size: 18px; font-weight: 900; color: #27272A; margin-bottom: 4px; }
+  .subtitle { font-size: 12px; color: #71717A; margin-bottom: 16px; }
+  .row { display: flex; align-items: center; padding: 10px 12px; border-radius: 12px; margin-bottom: 4px; background: #FFFFFF; }
+  .row.user { background: #27272A10; border: 1px solid #27272A30; }
   .rank { width: 32px; font-size: 16px; text-align: center; }
   .name { flex: 1; font-size: 14px; font-weight: 600; }
-  .score { font-size: 16px; font-weight: 900; color: #781BB6; }
-  .footer { text-align: center; color: #6E6382; font-size: 10px; margin-top: 12px; }
+  .score { font-size: 16px; font-weight: 900; color: #27272A; }
+  .footer { text-align: center; color: #71717A; font-size: 10px; margin-top: 12px; }
 </style></head><body>
   <div class="title">${data.challengeTitle}</div>
   <div class="subtitle">Ranking</div>
   ${rows}
   ${userRow}
-  <div class="footer">Projeto Gaab</div>
+  <div class="footer">Projeto Academia</div>
 </body></html>`;
 }
 

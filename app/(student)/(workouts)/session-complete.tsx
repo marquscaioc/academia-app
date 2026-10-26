@@ -137,7 +137,7 @@ export default function SessionCompleteScreen() {
 
             <View className="w-full gap-3 mt-8">
               {shareError ? (
-                <Text className="text-xs text-danger-500 text-center" accessibilityRole="alert">
+                <Text className="text-xs text-danger-500 text-center font-sans" accessibilityRole="alert">
                   {shareError}
                 </Text>
               ) : null}

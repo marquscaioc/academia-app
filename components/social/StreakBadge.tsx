@@ -16,7 +16,7 @@ export function StreakBadge({ streak, size = "sm" }: StreakBadgeProps) {
 
   return (
     <View className={`flex-row items-center gap-1 bg-warning-500/15 rounded-full ${padding}`}>
-      <AppIcon name="streak" size={iconSize} color="#FB923C" strokeWidth={2} />
+      <AppIcon name="streak" size={iconSize} color="#71717A" strokeWidth={2} />
       <Text className={`${textSize} font-black text-warning-500`}>{streak}</Text>
     </View>
   );

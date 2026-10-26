@@ -9,7 +9,7 @@ import { useDietPlans } from "../../../hooks/queries/useDiet";
 import { useCreateSubstitution } from "../../../hooks/mutations/useSubstitutionMutations";
 import { Avatar } from "../../../components/ui/Avatar";
 import { AppIcon } from "../../../components/ui";
-import { font, amethystGlow } from "../../../lib/design/tokens";
+import { font, surfaceShadow } from "../../../lib/design/tokens";
 import { LinearGradient } from "expo-linear-gradient";
 
 export default function SubstitutionsScreen() {
@@ -69,7 +69,7 @@ export default function SubstitutionsScreen() {
             onPress={() => (studentId ? (setStudentId(null), resetForm()) : router.back())}
             className="flex-row items-center gap-1.5 active:opacity-70"
           >
-            <AppIcon name="arrow-left" size={16} color="#6E6382" strokeWidth={2} />
+            <AppIcon name="arrow-left" size={16} color="#71717A" strokeWidth={2} />
             <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>Voltar</Text>
           </Pressable>
           <Text className="text-3xl text-text-primary" style={{ fontFamily: font.display }}>Substituições</Text>
@@ -83,7 +83,7 @@ export default function SubstitutionsScreen() {
             {!students?.length ? (
               <View className="items-center py-8 gap-3">
                 <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
-                  <AppIcon name="social" size={28} color="#9B40D8" strokeWidth={2} />
+                  <AppIcon name="social" size={28} color="#3F3F46" strokeWidth={2} />
                 </View>
                 <Text className="text-sm text-text-muted text-center" style={{ fontFamily: font.regular }}>Nenhum aluno ativo.</Text>
               </View>
@@ -99,19 +99,19 @@ export default function SubstitutionsScreen() {
                 >
                   <Avatar uri={s.student?.avatar_url} name={s.student?.full_name} size="md" />
                   <Text className="text-sm text-text-primary flex-1" style={{ fontFamily: font.semibold }}>{s.student?.full_name}</Text>
-                  <AppIcon name="chevron-right" size={18} color="#6E6382" strokeWidth={2} />
+                  <AppIcon name="chevron-right" size={18} color="#71717A" strokeWidth={2} />
                 </Pressable>
               ))
             )}
           </View>
         ) : plansLoading ? (
           <View className="items-center py-10">
-            <ActivityIndicator size="large" color="#781BB6" />
+            <ActivityIndicator size="large" color="#27272A" />
           </View>
         ) : !plans?.length || !plans[0].meals?.length ? (
           <View className="items-center py-10 gap-4">
             <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
-              <AppIcon name="diet" size={28} color="#9B40D8" strokeWidth={2} />
+              <AppIcon name="diet" size={28} color="#3F3F46" strokeWidth={2} />
             </View>
             <Text className="text-xl text-text-primary text-center" style={{ fontFamily: font.display }}>Sem plano ativo</Text>
             <Text className="text-sm text-text-muted text-center px-4" style={{ fontFamily: font.regular }}>
@@ -127,7 +127,7 @@ export default function SubstitutionsScreen() {
             {plans[0].meals!.map((meal) => (
               <View key={meal.id}>
                 <View className="flex-row items-center gap-2 mb-2">
-                  <AppIcon name="food" size={18} color="#6E6382" strokeWidth={2} />
+                  <AppIcon name="food" size={18} color="#71717A" strokeWidth={2} />
                   <Text className="text-base text-text-primary" style={{ fontFamily: font.display }}>{meal.name}</Text>
                 </View>
                 <View className="gap-2">
@@ -135,14 +135,14 @@ export default function SubstitutionsScreen() {
                     <View key={item.id} className="bg-surface-card border border-surface-border rounded-3xl p-4">
                       <View className="flex-row items-center justify-between gap-3">
                         <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
-                          <AppIcon name="apple" size={18} color="#9B40D8" strokeWidth={2} />
+                          <AppIcon name="apple" size={18} color="#3F3F46" strokeWidth={2} />
                         </View>
                         <Text className="text-sm text-text-primary flex-1" style={{ fontFamily: font.semibold }}>{item.food_name}</Text>
                         <Pressable
                           onPress={() => (activeItem === item.id ? resetForm() : setActiveItem(item.id))}
                           className="flex-row items-center gap-1.5 active:opacity-70"
                         >
-                          <AppIcon name={activeItem === item.id ? "close" : "plus"} size={14} color="#9B40D8" strokeWidth={2} />
+                          <AppIcon name={activeItem === item.id ? "close" : "plus"} size={14} color="#3F3F46" strokeWidth={2} />
                           <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>
                             {activeItem === item.id ? "Cancelar" : "Substituição"}
                           </Text>
@@ -155,7 +155,7 @@ export default function SubstitutionsScreen() {
                             className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
                             style={{ fontFamily: font.regular }}
                             placeholder="Alimento substituto"
-                            placeholderTextColor="#6E6382"
+                            placeholderTextColor="#71717A"
                             value={foodName}
                             onChangeText={setFoodName}
                           />
@@ -164,7 +164,7 @@ export default function SubstitutionsScreen() {
                               className="flex-1 bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
                               style={{ fontFamily: font.regular }}
                               placeholder="Kcal"
-                              placeholderTextColor="#6E6382"
+                              placeholderTextColor="#71717A"
                               keyboardType="numeric"
                               value={cal}
                               onChangeText={setCal}
@@ -173,7 +173,7 @@ export default function SubstitutionsScreen() {
                               className="flex-1 bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
                               style={{ fontFamily: font.regular }}
                               placeholder="Proteína (g)"
-                              placeholderTextColor="#6E6382"
+                              placeholderTextColor="#71717A"
                               keyboardType="numeric"
                               value={prot}
                               onChangeText={setProt}
@@ -182,12 +182,12 @@ export default function SubstitutionsScreen() {
                           <Pressable
                             onPress={() => submit(item.id)}
                             disabled={!foodName.trim() || createSub.isPending}
-                            style={foodName.trim() ? amethystGlow : undefined}
+                            style={foodName.trim() ? surfaceShadow : undefined}
                             className="rounded-2xl overflow-hidden"
                           >
                             {foodName.trim() ? (
                               <LinearGradient
-                                colors={["#781BB6", "#C636E0"]}
+                                colors={["#27272A", "#27272A"]}
                                 start={{ x: 0, y: 0 }}
                                 end={{ x: 1, y: 0.9 }}
                                 className="py-3 items-center"

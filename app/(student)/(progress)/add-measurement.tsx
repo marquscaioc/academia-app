@@ -16,7 +16,7 @@ import { useAuth } from "../../../lib/auth/provider";
 import { useAddMeasurement } from "../../../hooks/mutations/useProgressMutations";
 import { AppIcon, DisplayHeading } from "../../../components/ui";
 import { WebContainer } from "../../../components/layout/WebContainer";
-import { amethystGlow, font } from "../../../lib/design/tokens";
+import { surfaceShadow, font } from "../../../lib/design/tokens";
 
 interface MeasurementField {
   key: string;
@@ -132,7 +132,7 @@ export default function AddMeasurementScreen() {
               <AppIcon
                 name="chevron-left"
                 size={18}
-                color="#9B40D8"
+                color="#3F3F46"
                 strokeWidth={2}
               />
               <Text
@@ -146,7 +146,7 @@ export default function AddMeasurementScreen() {
           </View>
 
           <View className="w-12 h-12 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
-            <AppIcon name="ruler" size={22} color="#9B40D8" strokeWidth={2} />
+            <AppIcon name="ruler" size={22} color="#3F3F46" strokeWidth={2} />
           </View>
 
           <Text
@@ -180,7 +180,7 @@ export default function AddMeasurementScreen() {
                     className="border border-surface-border rounded-2xl px-4 py-3 text-[15px] text-text-primary bg-surface-card/80 w-24 text-right"
                     style={{ fontFamily: font.regular }}
                     placeholder={field.placeholder}
-                    placeholderTextColor="#6E6382"
+                    placeholderTextColor="#71717A"
                     value={values[field.key] ?? ""}
                     onChangeText={(v) => updateValue(field.key, v)}
                     keyboardType="decimal-pad"
@@ -200,7 +200,7 @@ export default function AddMeasurementScreen() {
                 <AppIcon
                   name="clipboard"
                   size={14}
-                  color="#6E6382"
+                  color="#71717A"
                   strokeWidth={2}
                 />
                 <Text
@@ -213,7 +213,7 @@ export default function AddMeasurementScreen() {
               <TextInput
                 className="border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary bg-surface-card/80"
                 placeholder="Notas opcionais..."
-                placeholderTextColor="#6E6382"
+                placeholderTextColor="#71717A"
                 value={notes}
                 onChangeText={setNotes}
                 multiline
@@ -225,13 +225,13 @@ export default function AddMeasurementScreen() {
               onPress={handleSave}
               disabled={addMeasurement.isPending}
               className="rounded-2xl overflow-hidden mt-4 mb-10"
-              style={addMeasurement.isPending ? undefined : amethystGlow}
+              style={addMeasurement.isPending ? undefined : surfaceShadow}
             >
               <LinearGradient
                 colors={
                   addMeasurement.isPending
-                    ? ["#50107D", "#86169E"]
-                    : ["#781BB6", "#C636E0"]
+                    ? ["#18181B", "#3F3F46"]
+                    : ["#27272A", "#27272A"]
                 }
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0.9 }}

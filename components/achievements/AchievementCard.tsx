@@ -13,7 +13,7 @@ export function AchievementCard({ name, description, icon, earned, progress }: A
     <View className={`items-center p-3 rounded-2xl border ${
       earned ? "bg-violet-500/10 border-violet-500/30" : "bg-surface-card border-surface-border opacity-50"
     }`}>
-      <Text className="text-3xl mb-2">{icon}</Text>
+      <Text className="text-3xl mb-2 font-sans">{icon}</Text>
       <Text className={`text-xs font-bold text-center ${earned ? "text-text-primary" : "text-text-muted"}`} numberOfLines={1}>
         {name}
       </Text>

@@ -25,12 +25,12 @@ export function VideoPlayerModal({ visible, videoUrl, onClose }: VideoPlayerModa
           hitSlop={12}
           className="absolute top-14 right-6 z-10 w-11 h-11 bg-surface-elevated rounded-full items-center justify-center"
         >
-          <AppIcon name="close" size={20} color="#A99FBA" strokeWidth={2} />
+          <AppIcon name="close" size={20} color="#52525B" strokeWidth={2} />
         </Pressable>
 
         <ExerciseVideo uri={videoUrl} />
 
-        <Text className="text-text-muted text-xs mt-4">Toque no X para fechar</Text>
+        <Text className="text-text-muted text-xs mt-4 font-sans">Toque no X para fechar</Text>
       </View>
     </Modal>
   );

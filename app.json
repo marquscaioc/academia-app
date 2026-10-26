@@ -1,36 +1,29 @@
 {
   "expo": {
-    "name": "Projeto Gaab",
+    "name": "Projeto Academia",
     "slug": "academia-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "dark",
+    "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "runtimeVersion": {
       "policy": "appVersion"
     },
     "scheme": "academia-app",
     "splash": {
-      "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#0B0811"
+      "backgroundColor": "#F7F7F8"
     },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.academiaapp"
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#0B0811"
-      },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.academiaapp"
     },
     "web": {
-      "favicon": "./assets/favicon.png",
       "bundler": "metro"
     },
     "plugins": [
@@ -40,20 +33,20 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "O Projeto Gaab usa a câmera para check-ins de desafio e fotos de progresso.",
-          "microphonePermission": "O Projeto Gaab usa o microfone ao gravar vídeos curtos."
+          "cameraPermission": "O Projeto Academia usa a câmera para check-ins de desafio e fotos de progresso.",
+          "microphonePermission": "O Projeto Academia usa o microfone ao gravar vídeos curtos."
         }
       ],
       [
         "expo-image-picker",
         {
-          "photosPermission": "O Projeto Gaab acessa suas fotos para avatar, feed, progresso e dieta."
+          "photosPermission": "O Projeto Academia acessa suas fotos para avatar, feed, progresso e dieta."
         }
       ],
       [
         "expo-notifications",
         {
-          "color": "#781BB6"
+          "color": "#27272A"
         }
       ],
       "expo-video"

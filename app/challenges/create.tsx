@@ -7,7 +7,7 @@ import { useAuth } from "../../lib/auth/provider";
 import { useCreateChallenge } from "../../hooks/mutations/useChallengeMutations";
 import { AppIcon } from "../../components/ui";
 import { WebContainer } from "../../components/layout/WebContainer";
-import { font, amethystGlow } from "../../lib/design/tokens";
+import { font, surfaceShadow } from "../../lib/design/tokens";
 
 const scoringModes = [
   { value: "days_active", label: "Dias ativos", desc: "1 ponto por dia que treinar" },
@@ -63,7 +63,7 @@ export default function CreateChallengeScreen() {
         <WebContainer maxWidth={640}>
         <View className="flex-row items-center justify-between mb-6">
           <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5">
-            <AppIcon name="arrow-left" size={16} color="#6E6382" strokeWidth={2} />
+            <AppIcon name="arrow-left" size={16} color="#71717A" strokeWidth={2} />
             <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>Cancelar</Text>
           </Pressable>
           <Text className="text-2xl text-text-primary" style={{ fontFamily: font.display }}>Novo desafio.</Text>
@@ -82,7 +82,7 @@ export default function CreateChallengeScreen() {
             <TextInput
               className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
               placeholder="Ex: Desafio 30 dias"
-              placeholderTextColor="#6E6382"
+              placeholderTextColor="#71717A"
               value={title}
               onChangeText={setTitle}
               style={{ fontFamily: font.regular }}
@@ -94,7 +94,7 @@ export default function CreateChallengeScreen() {
             <TextInput
               className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
               placeholder="Regras e detalhes do desafio"
-              placeholderTextColor="#6E6382"
+              placeholderTextColor="#71717A"
               value={description}
               onChangeText={setDescription}
               multiline
@@ -107,7 +107,7 @@ export default function CreateChallengeScreen() {
             <TextInput
               className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
               placeholder="30"
-              placeholderTextColor="#6E6382"
+              placeholderTextColor="#71717A"
               value={durationDays}
               onChangeText={setDurationDays}
               keyboardType="number-pad"
@@ -133,7 +133,7 @@ export default function CreateChallengeScreen() {
                     <Text className="text-xs text-text-muted mt-0.5" style={{ fontFamily: font.regular }}>{m.desc}</Text>
                   </View>
                   {scoringMode === m.value ? (
-                    <AppIcon name="check-circle" size={20} color="#9B40D8" strokeWidth={2} />
+                    <AppIcon name="check-circle" size={20} color="#3F3F46" strokeWidth={2} />
                   ) : (
                     <View className="w-5 h-5 rounded-full border border-surface-border" />
                   )}
@@ -167,10 +167,10 @@ export default function CreateChallengeScreen() {
             onPress={handleCreate}
             disabled={createChallenge.isPending}
             className="rounded-2xl overflow-hidden mt-4 mb-10"
-            style={amethystGlow}
+            style={surfaceShadow}
           >
             <LinearGradient
-              colors={createChallenge.isPending ? ["#50107D", "#86169E"] : ["#781BB6", "#C636E0"]}
+              colors={createChallenge.isPending ? ["#18181B", "#3F3F46"] : ["#27272A", "#27272A"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0.9 }}
               style={{ paddingVertical: 18, alignItems: "center" }}

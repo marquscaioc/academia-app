@@ -7,7 +7,7 @@ import { useAuth } from "../../../lib/auth/provider";
 import { useCreateInvite } from "../../../hooks/mutations/useInviteMutations";
 import { DisplayHeading } from "../../../components/ui/DisplayHeading";
 import { AppIcon } from "../../../components/ui";
-import { amethystGlow, font } from "../../../lib/design/tokens";
+import { surfaceShadow, font } from "../../../lib/design/tokens";
 
 export default function InviteScreen() {
   const { user } = useAuth();
@@ -28,7 +28,7 @@ export default function InviteScreen() {
             onPress={() => router.back()}
             className="flex-row items-center gap-1.5 active:opacity-70"
           >
-            <AppIcon name="arrow-left" size={18} color="#6E6382" strokeWidth={2} />
+            <AppIcon name="arrow-left" size={18} color="#71717A" strokeWidth={2} />
             <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>
               Voltar
             </Text>
@@ -43,7 +43,7 @@ export default function InviteScreen() {
           {inviteCode ? (
             <View className="items-center">
               <View className="w-20 h-20 bg-violet-500/15 border border-violet-500/25 rounded-3xl items-center justify-center mb-6">
-                <AppIcon name="qr" size={30} color="#9B40D8" strokeWidth={2} />
+                <AppIcon name="qr" size={30} color="#3F3F46" strokeWidth={2} />
               </View>
               <Text
                 className="text-sm text-text-secondary mb-4"
@@ -77,7 +77,7 @@ export default function InviteScreen() {
                 onPress={handleGenerate}
                 className="flex-row items-center gap-2 border border-surface-border rounded-2xl px-6 py-3 mt-8 active:bg-surface-hover"
               >
-                <AppIcon name="refresh" size={18} color="#A99FBA" strokeWidth={2} />
+                <AppIcon name="refresh" size={18} color="#52525B" strokeWidth={2} />
                 <Text
                   className="text-text-secondary text-sm"
                   style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
@@ -89,7 +89,7 @@ export default function InviteScreen() {
           ) : (
             <View className="items-center">
               <View className="w-20 h-20 bg-violet-500/15 border border-violet-500/25 rounded-3xl items-center justify-center mb-6">
-                <AppIcon name="user-add" size={30} color="#9B40D8" strokeWidth={2} />
+                <AppIcon name="user-add" size={30} color="#3F3F46" strokeWidth={2} />
               </View>
               <DisplayHeading size="md" className="text-text-primary text-center mb-2">
                 Adicionar aluno
@@ -105,10 +105,10 @@ export default function InviteScreen() {
                 onPress={handleGenerate}
                 disabled={createInvite.isPending}
                 className="rounded-2xl overflow-hidden"
-                style={amethystGlow}
+                style={surfaceShadow}
               >
                 <LinearGradient
-                  colors={createInvite.isPending ? ["#50107D", "#86169E"] : ["#781BB6", "#C636E0"]}
+                  colors={createInvite.isPending ? ["#18181B", "#3F3F46"] : ["#27272A", "#27272A"]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0.9 }}
                   className="px-8 items-center justify-center"

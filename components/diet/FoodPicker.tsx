@@ -79,7 +79,7 @@ export function FoodPicker({
                 value={term}
                 onChangeText={setTerm}
                 placeholder="Buscar alimento…"
-                placeholderTextColor="#6E6382"
+                placeholderTextColor="#71717A"
                 className="bg-surface-elevated rounded-2xl px-4 py-3 text-text-primary"
                 style={{ fontFamily: font.regular }}
                 autoFocus
@@ -96,7 +96,7 @@ export function FoodPicker({
               </Pressable>
 
               {local.isLoading ? (
-                <ActivityIndicator className="mt-4" color="#781BB6" />
+                <ActivityIndicator className="mt-4" color="#27272A" />
               ) : null}
 
               {/* Empty state */}

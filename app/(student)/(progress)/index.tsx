@@ -8,7 +8,7 @@ import { useBodyMeasurements, useProgressPhotos } from "../../../hooks/queries/u
 import { useAdherenceScore } from "../../../hooks/queries/useCheckins";
 import { Card } from "../../../components/ui/Card";
 import { AppIcon, DisplayHeading, SectionLabel } from "../../../components/ui";
-import { font, palette } from "../../../lib/design/tokens";
+import { font } from "../../../lib/design/tokens";
 import { SimpleLineChart } from "../../../components/progress/SimpleLineChart";
 import { AdherenceRing } from "../../../components/progress/AdherenceRing";
 import { PhotoComparison } from "../../../components/progress/PhotoComparison";
@@ -30,7 +30,7 @@ function QuerySection({ query, label, children }: {
     return (
       <Card variant="outlined" className="mb-6">
         <View className="flex-row items-center gap-3" accessibilityRole="progressbar" accessibilityLabel={`Carregando ${label}`}>
-          <ActivityIndicator color={palette.violet500} />
+          <ActivityIndicator color="#27272A" />
           <Text className="text-text-muted text-sm" style={{ fontFamily: font.regular }}>Carregando {label}...</Text>
         </View>
       </Card>
@@ -134,7 +134,7 @@ export default function ProgressScreen() {
           <Link href="/(student)/(progress)/add-measurement" asChild>
             <Pressable className="flex-1 bg-surface-card border border-surface-border rounded-2xl py-4 items-center active:bg-surface-hover">
               <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-2">
-                <AppIcon name="ruler" size={18} color="#9B40D8" strokeWidth={2} />
+                <AppIcon name="ruler" size={18} color="#3F3F46" strokeWidth={2} />
               </View>
               <Text className="text-xs text-text-secondary" style={{ fontFamily: font.semibold }}>Registrar medidas</Text>
             </Pressable>
@@ -142,7 +142,7 @@ export default function ProgressScreen() {
           <Link href="/(student)/(progress)/add-photo" asChild>
             <Pressable className="flex-1 bg-surface-card border border-surface-border rounded-2xl py-4 items-center active:bg-surface-hover">
               <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-2">
-                <AppIcon name="camera" size={18} color="#9B40D8" strokeWidth={2} />
+                <AppIcon name="camera" size={18} color="#3F3F46" strokeWidth={2} />
               </View>
               <Text className="text-xs text-text-secondary" style={{ fontFamily: font.semibold }}>Tirar foto</Text>
             </Pressable>
@@ -150,7 +150,7 @@ export default function ProgressScreen() {
           <Link href="/(student)/(progress)/export-report" asChild>
             <Pressable className="flex-1 bg-surface-card border border-surface-border rounded-2xl py-4 items-center active:bg-surface-hover">
               <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-2">
-                <AppIcon name="file" size={18} color="#9B40D8" strokeWidth={2} />
+                <AppIcon name="file" size={18} color="#3F3F46" strokeWidth={2} />
               </View>
               <Text className="text-xs text-text-secondary" style={{ fontFamily: font.semibold }}>Exportar PDF</Text>
             </Pressable>
@@ -159,13 +159,13 @@ export default function ProgressScreen() {
 
         {/* Weight chart */}
         {measurementsQuery.isSuccess ? <View className="mb-6">
-          <SimpleLineChart data={weightData} title="Peso" unit="kg" color="#781BB6" />
+          <SimpleLineChart data={weightData} title="Peso" unit="kg" color="#27272A" />
         </View> : null}
 
         {/* Waist chart */}
         {measurementsQuery.isSuccess && waistData.length > 0 ? (
           <View className="mb-6">
-            <SimpleLineChart data={waistData} title="Cintura" unit="cm" color="#67E8F9" />
+            <SimpleLineChart data={waistData} title="Cintura" unit="cm" color="#52525B" />
           </View>
         ) : null}
 
@@ -184,7 +184,7 @@ export default function ProgressScreen() {
                   className="bg-surface-card border border-surface-border rounded-2xl px-4 py-3 flex-row items-center gap-3 active:bg-surface-hover"
                 >
                   <View className="w-9 h-9 rounded-xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
-                    <AppIcon name="trend" size={16} color="#9B40D8" strokeWidth={2} />
+                    <AppIcon name="trend" size={16} color="#3F3F46" strokeWidth={2} />
                   </View>
                   <View className="flex-1">
                     <Text className="text-sm text-text-primary" style={{ fontFamily: font.semibold }} numberOfLines={1}>{e.name}</Text>
@@ -192,7 +192,7 @@ export default function ProgressScreen() {
                       {pluralize(e.sessions, "sessão", "sessões")} · carga máx. {formatKg(e.maxWeightKg)}
                     </Text>
                   </View>
-                  <AppIcon name="chevron-right" size={16} color="#6E6382" strokeWidth={2} />
+                  <AppIcon name="chevron-right" size={16} color="#71717A" strokeWidth={2} />
                 </Pressable>
               ))}
               {trained.length > 5 ? (
@@ -222,7 +222,7 @@ export default function ProgressScreen() {
               <Link href="/(student)/(progress)/badges" asChild>
                 <Pressable className="flex-row items-center gap-1">
                   <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>Ver todas</Text>
-                  <AppIcon name="chevron-right" size={14} color="#9B40D8" strokeWidth={2} />
+                  <AppIcon name="chevron-right" size={14} color="#3F3F46" strokeWidth={2} />
                 </Pressable>
               </Link>
             </View>
@@ -230,7 +230,7 @@ export default function ProgressScreen() {
               {achievements.slice(0, 5).map((a) => (
                 <View key={a.id} className="bg-violet-500/10 border border-violet-500/30 rounded-2xl px-4 py-3 items-center mr-3" style={{ minWidth: 80 }}>
                   <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-2">
-                    <AppIcon name="trophy" size={18} color="#C636E0" strokeWidth={2} />
+                    <AppIcon name="trophy" size={18} color="#27272A" strokeWidth={2} />
                   </View>
                   <Text className="text-[10px] text-text-primary text-center" style={{ fontFamily: font.semibold }} numberOfLines={1}>
                     {a.achievement?.name ?? "Conquista"}
@@ -261,7 +261,7 @@ export default function ProgressScreen() {
             <Card variant="outlined">
               <View className="items-center py-4">
                 <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-3">
-                  <AppIcon name="ruler" size={28} color="#9B40D8" strokeWidth={2} />
+                  <AppIcon name="ruler" size={28} color="#3F3F46" strokeWidth={2} />
                 </View>
                 <Text className="text-sm text-text-muted text-center" style={{ fontFamily: font.regular }}>Nenhuma medida registrada.</Text>
               </View>
@@ -306,7 +306,7 @@ export default function ProgressScreen() {
             <Card variant="outlined">
               <View className="items-center py-4">
                 <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-3">
-                  <AppIcon name="camera" size={28} color="#9B40D8" strokeWidth={2} />
+                  <AppIcon name="camera" size={28} color="#3F3F46" strokeWidth={2} />
                 </View>
                 <Text className="text-sm text-text-muted text-center" style={{ fontFamily: font.regular }}>Nenhuma foto ainda.</Text>
               </View>

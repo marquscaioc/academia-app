@@ -105,7 +105,7 @@ import {
 import { palette } from "../../lib/design/tokens";
 
 /**
- * Curated, verified icon vocabulary for Projeto Gaab. Screens use these semantic
+ * Curated, verified icon vocabulary for Projeto Academia. Screens use these semantic
  * names via <AppIcon name="..." /> so iconography stays consistent and no screen
  * can reference an icon that does not exist.
  */
@@ -231,7 +231,7 @@ interface AppIconProps {
 }
 
 /** Render a curated icon by semantic name with consistent defaults. */
-export function AppIcon({ name, size = 20, color = palette.textSecondary, strokeWidth = 2, fill }: AppIconProps) {
+export function AppIcon({ name, size = 20, color = palette.textSecondary, strokeWidth = 2, fill = "none" }: AppIconProps) {
   const Glyph = ICONS[name] ?? Circle;
   return <Glyph size={size} color={color} strokeWidth={strokeWidth} fill={fill} />;
 }
@@ -242,7 +242,7 @@ export function Icon({
   size = 20,
   color = palette.textSecondary,
   strokeWidth = 2,
-  fill,
+  fill = "none",
 }: {
   icon: LucideIcon;
   size?: number;

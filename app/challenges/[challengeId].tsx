@@ -29,7 +29,7 @@ import { LoadingScreen } from "../../components/ui/LoadingScreen";
 import { shareLeaderboardCard } from "../../lib/utils/generateLeaderboardCard";
 import { readUploadBody } from "../../lib/supabase/uploadBody";
 import { supabase } from "../../lib/supabase/client";
-import { font, amethystGlow } from "../../lib/design/tokens";
+import { font, surfaceShadow } from "../../lib/design/tokens";
 import { useState } from "react";
 import { toast } from "../../stores/useToastStore";
 
@@ -188,7 +188,7 @@ export default function ChallengeDetailScreen() {
         <WebContainer maxWidth={640}>
         <View className="px-6 pt-6">
           <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5 mb-4 self-start">
-            <AppIcon name="arrow-left" size={18} color="#9B40D8" strokeWidth={2} />
+            <AppIcon name="arrow-left" size={18} color="#3F3F46" strokeWidth={2} />
             <Text className="text-violet-400" style={{ fontFamily: font.medium }}>Voltar</Text>
           </Pressable>
 
@@ -211,14 +211,14 @@ export default function ChallengeDetailScreen() {
           <View className="flex-row gap-3 mb-6">
             <Card className="flex-1 items-center py-3">
               <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-2">
-                <AppIcon name="social" size={18} color="#9B40D8" strokeWidth={2} />
+                <AppIcon name="social" size={18} color="#3F3F46" strokeWidth={2} />
               </View>
               <Text className="text-3xl text-text-primary" style={{ fontFamily: font.display, letterSpacing: -0.5 }}>{leaderboard?.length ?? 0}</Text>
               <Text className="text-[10px] text-text-muted mt-1 uppercase" style={{ fontFamily: font.semibold, letterSpacing: 1.5 }}>Participantes</Text>
             </Card>
             <Card className="flex-1 items-center py-3">
               <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-2">
-                <AppIcon name="calendar" size={18} color="#9B40D8" strokeWidth={2} />
+                <AppIcon name="calendar" size={18} color="#3F3F46" strokeWidth={2} />
               </View>
               <Text className="text-3xl text-violet-400" style={{ fontFamily: font.display, letterSpacing: -0.5 }}>{daysLeft}</Text>
               <Text className="text-[10px] text-text-muted mt-1 uppercase" style={{ fontFamily: font.semibold, letterSpacing: 1.5 }}>Dias restantes</Text>
@@ -226,7 +226,7 @@ export default function ChallengeDetailScreen() {
             {isJoined ? (
               <Card className="flex-1 items-center py-3">
                 <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-2">
-                  <AppIcon name="trophy" size={18} color="#9B40D8" strokeWidth={2} />
+                  <AppIcon name="trophy" size={18} color="#3F3F46" strokeWidth={2} />
                 </View>
                 <Text className="text-3xl text-ice-400" style={{ fontFamily: font.display, letterSpacing: -0.5 }}>{participation?.total_score ?? 0}</Text>
                 <Text className="text-[10px] text-text-muted mt-1 uppercase" style={{ fontFamily: font.semibold, letterSpacing: 1.5 }}>Meu score</Text>
@@ -240,10 +240,10 @@ export default function ChallengeDetailScreen() {
               onPress={handleJoin}
               disabled={joinChallenge.isPending}
               className="rounded-2xl mb-4 overflow-hidden"
-              style={amethystGlow}
+              style={surfaceShadow}
             >
               <LinearGradient
-                colors={joinChallenge.isPending ? ["#50107D", "#86169E"] : ["#781BB6", "#C636E0"]}
+                colors={joinChallenge.isPending ? ["#18181B", "#3F3F46"] : ["#27272A", "#27272A"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0.9 }}
                 style={{ paddingVertical: 16, alignItems: "center" }}
@@ -294,7 +294,7 @@ export default function ChallengeDetailScreen() {
           {/* Share leaderboard */}
           {leaderboard && leaderboard.length > 0 ? (
             <Pressable onPress={handleShareLeaderboard} className="flex-row items-center justify-center gap-1.5 mb-4">
-              <AppIcon name="share" size={14} color="#9B40D8" strokeWidth={2} />
+              <AppIcon name="share" size={14} color="#3F3F46" strokeWidth={2} />
               <Text className="text-violet-400 text-xs text-center uppercase" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>Compartilhar ranking</Text>
             </Pressable>
           ) : null}
@@ -350,7 +350,7 @@ export default function ChallengeDetailScreen() {
             ) : (
               <View className="items-center py-10">
                 <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
-                  <AppIcon name="trophy" size={28} color="#9B40D8" strokeWidth={2} />
+                  <AppIcon name="trophy" size={28} color="#3F3F46" strokeWidth={2} />
                 </View>
                 <Text className="text-sm text-text-muted text-center" style={{ fontFamily: font.regular }}>Nenhum participante ainda.</Text>
               </View>
@@ -363,7 +363,7 @@ export default function ChallengeDetailScreen() {
                 <Card key={entry.id} variant="outlined" className="grow basis-[300px]">
                   <View className="flex-row items-center gap-2.5 mb-2">
                     <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
-                      <AppIcon name="activity" size={18} color="#9B40D8" strokeWidth={2} />
+                      <AppIcon name="activity" size={18} color="#3F3F46" strokeWidth={2} />
                     </View>
                     <Text className="flex-1 text-sm text-text-primary" style={{ fontFamily: font.semibold }}>
                       {entry.profile?.full_name ?? "Usuario"}
@@ -381,7 +381,7 @@ export default function ChallengeDetailScreen() {
                     />
                   ) : null}
                   <View className="flex-row items-center gap-1.5 mt-2">
-                    <AppIcon name="clock" size={14} color="#6E6382" strokeWidth={2} />
+                    <AppIcon name="clock" size={14} color="#71717A" strokeWidth={2} />
                     <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>
                       {new Date(entry.created_at).toLocaleString("pt-BR")}
                     </Text>
@@ -393,7 +393,7 @@ export default function ChallengeDetailScreen() {
           ) : (
             <View className="items-center py-10">
               <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
-                <AppIcon name="activity" size={28} color="#9B40D8" strokeWidth={2} />
+                <AppIcon name="activity" size={28} color="#3F3F46" strokeWidth={2} />
               </View>
               <Text className="text-sm text-text-muted text-center" style={{ fontFamily: font.regular }}>Nenhuma atividade ainda.</Text>
             </View>

@@ -1,13 +1,6 @@
 import { useLocalSearchParams, router } from "expo-router";
 import { useState } from "react";
-import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { ActivityIndicator, Pressable, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../../../../lib/auth/provider";
@@ -16,7 +9,7 @@ import { useSubmitCheckIn } from "../../../../hooks/mutations/useCheckinMutation
 import { LoadingScreen } from "../../../../components/ui/LoadingScreen";
 import { WebContainer } from "../../../../components/layout/WebContainer";
 import { AppIcon } from "../../../../components/ui";
-import { font, amethystGlow } from "../../../../lib/design/tokens";
+import { font, surfaceShadow } from "../../../../lib/design/tokens";
 import { LinearGradient } from "expo-linear-gradient";
 
 export default function CheckInResponseScreen() {
@@ -80,7 +73,7 @@ export default function CheckInResponseScreen() {
         {/* Header */}
         <View className="flex-row items-center justify-between mb-2">
           <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5">
-            <AppIcon name="arrow-left" size={16} color="#6E6382" strokeWidth={2} />
+            <AppIcon name="arrow-left" size={16} color="#71717A" strokeWidth={2} />
             <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>Sair</Text>
           </Pressable>
           <Text className="text-xs text-text-muted" style={{ fontFamily: font.bold }}>
@@ -97,7 +90,7 @@ export default function CheckInResponseScreen() {
         </View>
 
         <View className="flex-row items-center gap-1.5 mb-3">
-          <AppIcon name="clipboard-check" size={14} color="#9B40D8" strokeWidth={2} />
+          <AppIcon name="clipboard-check" size={14} color="#3F3F46" strokeWidth={2} />
           <Text className="text-violet-400 uppercase" style={{ fontFamily: font.semibold, fontSize: 10, letterSpacing: 2 }}>
             {checkIn.template?.title}
           </Text>
@@ -114,7 +107,7 @@ export default function CheckInResponseScreen() {
             <TextInput
               className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
               placeholder="Sua resposta..."
-              placeholderTextColor="#6E6382"
+              placeholderTextColor="#71717A"
               value={String(answers[currentQ.id] ?? "")}
               onChangeText={(v) => setAnswers({ ...answers, [currentQ.id]: v })}
               multiline
@@ -124,7 +117,7 @@ export default function CheckInResponseScreen() {
             <TextInput
               className="bg-surface-card/80 border border-surface-border rounded-2xl px-5 py-4 text-3xl text-violet-400 text-center"
               placeholder="0"
-              placeholderTextColor="#6E6382"
+              placeholderTextColor="#71717A"
               value={String(answers[currentQ.id] ?? "")}
               onChangeText={(v) => setAnswers({ ...answers, [currentQ.id]: parseFloat(v) || 0 })}
               keyboardType="decimal-pad"
@@ -197,13 +190,13 @@ export default function CheckInResponseScreen() {
             return (
               <View className="mt-4">
                 <View className="flex-row items-center gap-1.5 mb-2">
-                  <AppIcon name="warning" size={14} color="#FBBF24" strokeWidth={2} />
+                  <AppIcon name="warning" size={14} color="#52525B" strokeWidth={2} />
                   <Text className="text-xs text-warning-500" style={{ fontFamily: font.semibold }}>Justifique sua resposta *</Text>
                 </View>
                 <TextInput
                   className="bg-surface-card/80 border border-warning-500/30 rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
                   placeholder="Explique o motivo..."
-                  placeholderTextColor="#6E6382"
+                  placeholderTextColor="#71717A"
                   value={justifications[currentQ.id] ?? ""}
                   onChangeText={(v) => setJustifications({ ...justifications, [currentQ.id]: v })}
                   multiline
@@ -221,7 +214,7 @@ export default function CheckInResponseScreen() {
               onPress={() => setCurrentIdx(currentIdx - 1)}
               className="flex-1 flex-row items-center justify-center gap-1.5 border border-surface-border rounded-2xl py-4"
             >
-              <AppIcon name="chevron-left" size={18} color="#A99FBA" strokeWidth={2} />
+              <AppIcon name="chevron-left" size={18} color="#52525B" strokeWidth={2} />
               <Text className="text-text-secondary text-sm" style={{ fontFamily: font.semibold }}>Anterior</Text>
             </Pressable>
           ) : null}
@@ -229,10 +222,10 @@ export default function CheckInResponseScreen() {
             onPress={handleNext}
             disabled={submitCheckIn.isPending}
             className="flex-1"
-            style={amethystGlow}
+            style={surfaceShadow}
           >
             <LinearGradient
-              colors={submitCheckIn.isPending ? ["#50107D", "#86169E"] : ["#781BB6", "#C636E0"]}
+              colors={submitCheckIn.isPending ? ["#18181B", "#3F3F46"] : ["#27272A", "#27272A"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0.9 }}
               className="rounded-2xl py-4 items-center"

@@ -2,6 +2,7 @@ import { Pressable, Text, View } from "react-native";
 import { router, useSegments } from "expo-router";
 import { AppIcon, type IconName } from "../ui";
 import { useAuth } from "../../lib/auth/provider";
+import { Logo } from "../ui/Logo";
 import { font } from "../../lib/design/tokens";
 
 export interface SidebarItem {
@@ -24,18 +25,11 @@ export function AppSidebar({ items, subtitle }: { items: SidebarItem[]; subtitle
     <View className="w-60 bg-dark-200 border-r border-surface-border pt-8 px-4 justify-between">
       <View>
         {/* Brand */}
-        <View className="flex-row items-center gap-3 px-3 mb-10">
-          <View className="w-10 h-10 bg-violet-500 rounded-2xl items-center justify-center">
-            <Text className="text-white text-lg" style={{ fontFamily: font.display }}>G</Text>
-          </View>
-          <View>
-            <Text className="text-xl text-text-primary" style={{ fontFamily: font.display, letterSpacing: -0.3 }}>
-              Projeto Gaab
-            </Text>
-            <Text className="text-[9px] text-text-muted uppercase" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>
+        <View className="gap-1.5 px-3 mb-10">
+            <Logo size="lg" />
+            <Text className="text-[10px] text-text-muted uppercase" style={{ fontFamily: font.semibold, letterSpacing: 1 }}>
               {subtitle}
             </Text>
-          </View>
         </View>
 
         {/* Nav */}
@@ -47,17 +41,17 @@ export function AppSidebar({ items, subtitle }: { items: SidebarItem[]; subtitle
                 key={item.href}
                 onPress={() => router.push(item.href as never)}
                 className={`flex-row items-center gap-3 px-4 py-3 rounded-xl ${
-                  isActive ? "bg-violet-500/10" : "active:bg-surface-hover"
+                  isActive ? "bg-surface-elevated" : "active:bg-surface-hover"
                 }`}
               >
-                <AppIcon name={item.icon} size={18} color={isActive ? "#9B40D8" : "#6E6382"} strokeWidth={isActive ? 2.4 : 2} />
+                <AppIcon name={item.icon} size={18} color={isActive ? "#3F3F46" : "#71717A"} strokeWidth={isActive ? 2.4 : 2} />
                 <Text
-                  className={`text-sm ${isActive ? "text-violet-400" : "text-text-muted"}`}
+                  className={`text-sm ${isActive ? "text-violet-400" : "text-text-secondary"}`}
                   style={{ fontFamily: isActive ? font.semibold : font.medium }}
                 >
                   {item.label}
                 </Text>
-                {isActive ? <View className="ml-auto w-1.5 h-1.5 bg-violet-500 rounded-full" /> : null}
+                {isActive ? <View className="ml-auto w-1 h-4 bg-primary-500 rounded-full" /> : null}
               </Pressable>
             );
           })}
@@ -70,7 +64,7 @@ export function AppSidebar({ items, subtitle }: { items: SidebarItem[]; subtitle
           onPress={() => router.push("/profile/edit" as never)}
           className="flex-row items-center gap-3 px-4 py-3 rounded-xl active:bg-surface-hover"
         >
-          <AppIcon name="user" size={18} color="#6E6382" strokeWidth={2} />
+          <AppIcon name="user" size={18} color="#71717A" strokeWidth={2} />
           <Text className="text-sm text-text-muted" style={{ fontFamily: font.medium }} numberOfLines={1}>
             {profile?.full_name ?? "Perfil"}
           </Text>
@@ -79,7 +73,7 @@ export function AppSidebar({ items, subtitle }: { items: SidebarItem[]; subtitle
           onPress={() => signOut()}
           className="flex-row items-center gap-3 px-4 py-3 rounded-xl active:bg-surface-hover"
         >
-          <AppIcon name="logout" size={18} color="#6E6382" strokeWidth={2} />
+          <AppIcon name="logout" size={18} color="#71717A" strokeWidth={2} />
           <Text className="text-sm text-text-muted" style={{ fontFamily: font.medium }}>Sair</Text>
         </Pressable>
       </View>

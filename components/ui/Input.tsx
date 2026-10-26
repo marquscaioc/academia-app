@@ -30,7 +30,7 @@ export function Input({ label, error, helperText, ...props }: InputProps) {
       <TextInput
         className={`border ${ring} rounded-2xl px-4 py-3.5 text-[15px] text-text-primary bg-surface-card/80`}
         style={{ fontFamily: font.regular }}
-        placeholderTextColor="#6E6382"
+        placeholderTextColor="#71717A"
         onFocus={(e) => {
           setFocused(true);
           props.onFocus?.(e);

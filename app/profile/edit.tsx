@@ -17,7 +17,7 @@ import { Avatar } from "../../components/ui/Avatar";
 import { DisplayHeading } from "../../components/ui/DisplayHeading";
 import { AppIcon } from "../../components/ui";
 import { WebContainer } from "../../components/layout/WebContainer";
-import { font, amethystGlow } from "../../lib/design/tokens";
+import { font, surfaceShadow } from "../../lib/design/tokens";
 
 export default function EditProfileScreen() {
   const { user, profile, refreshProfile, signOut } = useAuth();
@@ -110,7 +110,7 @@ export default function EditProfileScreen() {
         <WebContainer maxWidth={640}>
         <View className="flex-row items-center justify-between mb-8">
           <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5">
-            <AppIcon name="arrow-left" size={16} color="#6E6382" strokeWidth={2} />
+            <AppIcon name="arrow-left" size={16} color="#71717A" strokeWidth={2} />
             <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>Cancelar</Text>
           </Pressable>
           <DisplayHeading size="sm">Editar perfil.</DisplayHeading>
@@ -122,10 +122,10 @@ export default function EditProfileScreen() {
           <Avatar uri={profile?.avatar_url} name={fullName} size="xl" />
           <Pressable className="mt-3 flex-row items-center gap-1.5" onPress={pickAvatar} disabled={uploadingAvatar}>
             {uploadingAvatar ? (
-              <ActivityIndicator color="#a78bfa" />
+              <ActivityIndicator color="#52525B" />
             ) : (
               <>
-                <AppIcon name="camera" size={16} color="#9B40D8" strokeWidth={2} />
+                <AppIcon name="camera" size={16} color="#3F3F46" strokeWidth={2} />
                 <Text className="text-violet-400 text-sm" style={{ fontFamily: font.semibold }}>Trocar foto</Text>
               </>
             )}
@@ -134,7 +134,7 @@ export default function EditProfileScreen() {
 
         {error ? (
           <View className="bg-danger-500/10 border border-danger-500/20 rounded-2xl p-4 mb-5 flex-row items-center justify-center gap-2">
-            <AppIcon name="warning" size={16} color="#FB7185" strokeWidth={2} />
+            <AppIcon name="warning" size={16} color="#3F3F46" strokeWidth={2} />
             <Text className="text-danger-500 text-center text-sm" style={{ fontFamily: font.medium }}>{error}</Text>
           </View>
         ) : null}
@@ -149,7 +149,7 @@ export default function EditProfileScreen() {
               value={fullName}
               onChangeText={setFullName}
               placeholder="Seu nome"
-              placeholderTextColor="#6E6382"
+              placeholderTextColor="#71717A"
               style={{ fontFamily: font.regular }}
             />
           </View>
@@ -163,7 +163,7 @@ export default function EditProfileScreen() {
               value={displayName}
               onChangeText={setDisplayName}
               placeholder="Como quer ser chamado"
-              placeholderTextColor="#6E6382"
+              placeholderTextColor="#71717A"
               style={{ fontFamily: font.regular }}
             />
           </View>
@@ -177,7 +177,7 @@ export default function EditProfileScreen() {
               value={bio}
               onChangeText={setBio}
               placeholder="Conte um pouco sobre você"
-              placeholderTextColor="#6E6382"
+              placeholderTextColor="#71717A"
               multiline
               style={{ minHeight: 100, textAlignVertical: "top", fontFamily: font.regular }}
             />
@@ -197,7 +197,7 @@ export default function EditProfileScreen() {
           {/* Notification preferences */}
           <View className="bg-surface-card border border-surface-border rounded-3xl p-4 mt-4">
             <View className="flex-row items-center gap-2 mb-3">
-              <AppIcon name="bell" size={16} color="#6E6382" strokeWidth={2} />
+              <AppIcon name="bell" size={16} color="#71717A" strokeWidth={2} />
               <Text className="text-[10px] text-text-muted uppercase" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>Notificações</Text>
             </View>
             <Pressable
@@ -226,10 +226,10 @@ export default function EditProfileScreen() {
             onPress={handleSave}
             disabled={loading}
             className="rounded-2xl overflow-hidden mt-4 mb-10"
-            style={amethystGlow}
+            style={surfaceShadow}
           >
             <LinearGradient
-              colors={loading ? ["#50107D", "#86169E"] : ["#781BB6", "#C636E0"]}
+              colors={loading ? ["#18181B", "#3F3F46"] : ["#27272A", "#27272A"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0.9 }}
               style={{ paddingVertical: 18, alignItems: "center" }}
@@ -250,7 +250,7 @@ export default function EditProfileScreen() {
           {/* Danger zone — LGPD account deletion */}
           <View className="border border-danger-500/25 bg-danger-500/[0.04] rounded-3xl p-4 mb-12">
             <View className="flex-row items-center gap-2 mb-2">
-              <AppIcon name="warning" size={16} color="#FB7185" strokeWidth={2} />
+              <AppIcon name="warning" size={16} color="#3F3F46" strokeWidth={2} />
               <Text className="text-[10px] text-danger-500 uppercase" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>
                 Zona de perigo
               </Text>
@@ -264,7 +264,7 @@ export default function EditProfileScreen() {
                   onPress={() => setConfirmDelete(true)}
                   className="flex-row items-center justify-center gap-2 border border-danger-500/40 rounded-2xl py-3 active:bg-danger-500/10"
                 >
-                  <AppIcon name="trash" size={16} color="#FB7185" strokeWidth={2} />
+                  <AppIcon name="trash" size={16} color="#3F3F46" strokeWidth={2} />
                   <Text className="text-danger-500 text-sm" style={{ fontFamily: font.semibold }}>Excluir minha conta</Text>
                 </Pressable>
               </>

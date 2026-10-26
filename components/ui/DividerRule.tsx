@@ -7,7 +7,7 @@ export function DividerRule({ accent = false }: { accent?: boolean }) {
   }
   return (
     <LinearGradient
-      colors={["transparent", "#9B40D8", "#C636E0", "transparent"]}
+      colors={["transparent", "#3F3F46", "#27272A", "transparent"]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}
       style={{ height: 1, marginVertical: 16 }}

@@ -57,12 +57,12 @@ export default function AdminUsersScreen() {
         </Text>
 
         <View className="flex-row items-center gap-3 bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 mb-4">
-          <AppIcon name="search" size={18} color="#6E6382" strokeWidth={2} />
+          <AppIcon name="search" size={18} color="#71717A" strokeWidth={2} />
           <TextInput
             className="flex-1 text-[15px] text-text-primary"
             style={{ fontFamily: font.regular }}
             placeholder="Buscar por nome..."
-            placeholderTextColor="#6E6382"
+            placeholderTextColor="#71717A"
             value={search}
             onChangeText={setSearch}
           />
@@ -89,7 +89,7 @@ export default function AdminUsersScreen() {
 
         {isLoading ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" color="#781BB6" />
+            <ActivityIndicator size="large" color="#27272A" />
           </View>
         ) : (
           <FlatList
@@ -108,7 +108,7 @@ export default function AdminUsersScreen() {
                     {item.full_name}
                   </Text>
                   <View className="flex-row items-center gap-1.5 mt-0.5">
-                    <AppIcon name="calendar" size={14} color="#6E6382" strokeWidth={2} />
+                    <AppIcon name="calendar" size={14} color="#71717A" strokeWidth={2} />
                     <Text
                       className="text-xs text-text-muted"
                       style={{ fontFamily: font.regular }}

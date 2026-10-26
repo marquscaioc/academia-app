@@ -8,6 +8,7 @@ import { useTrainerOverview } from "../../hooks/queries/useStudentAdherence";
 import { dashboardSummary, sortByAttention } from "../../lib/trainer/adherence";
 import { StudentAdherenceRow } from "../../components/trainer/StudentAdherenceRow";
 import { AppIcon, DisplayHeading, SectionLabel, type IconName } from "../../components/ui";
+import { WebContainer } from "../../components/layout/WebContainer";
 import { font } from "../../lib/design/tokens";
 
 function MetricCard({ value, label, icon, color }: { value: string; label: string; icon: IconName; color: string }) {
@@ -15,7 +16,7 @@ function MetricCard({ value, label, icon, color }: { value: string; label: strin
     <View className="flex-1 min-w-[150px] bg-surface-card border border-surface-border rounded-3xl p-5">
       <View className="flex-row items-center justify-between mb-3">
         <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
-          <AppIcon name={icon} size={18} color="#9B40D8" strokeWidth={2} />
+          <AppIcon name={icon} size={18} color="#3F3F46" strokeWidth={2} />
         </View>
         <Text className={`text-4xl ${color}`} style={{ fontFamily: font.display, letterSpacing: -0.5 }}>{value}</Text>
       </View>
@@ -60,25 +61,28 @@ export default function TrainerDashboardScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
-      <ScrollView className="flex-1 px-6 pt-6">
+      <ScrollView className="flex-1 px-6 pt-8" contentContainerStyle={{ paddingBottom: 32 }}>
+        <WebContainer>
         {/* Header */}
         <View className="flex-row items-center justify-between mb-8">
           <View>
             <SectionLabel tone="accent" className="mb-2">
-              Painel do Personal
+              ÁREA PROFISSIONAL
             </SectionLabel>
-            <DisplayHeading size="lg">{firstName}</DisplayHeading>
+            <DisplayHeading size="lg">Visão geral</DisplayHeading>
+            <Text className="text-sm text-text-secondary mt-2" style={{ fontFamily: font.regular }}>Olá, {firstName}. Acompanhe seus alunos e organize o dia.</Text>
           </View>
           <Link href="/profile/edit" asChild>
             <Pressable className="w-10 h-10 bg-surface-card border border-surface-border rounded-2xl items-center justify-center active:bg-surface-hover">
-              <AppIcon name="settings" size={18} color="#A99FBA" strokeWidth={2} />
+              <AppIcon name="settings" size={18} color="#52525B" strokeWidth={2} />
             </Pressable>
           </Link>
         </View>
 
+        <View className="flex-row flex-wrap gap-4 mb-8">
         {/* CTA: Criar plano */}
         <Link href="/(trainer)/workout-builder" asChild>
-          <Pressable className="bg-violet-500 rounded-3xl p-5 mb-6 flex-row items-center gap-4 active:bg-violet-600">
+          <Pressable className="bg-primary-500 rounded-2xl p-5 flex-1 min-w-[260px] flex-row items-center gap-4 active:bg-primary-600">
             <View className="w-12 h-12 bg-dark-400/20 rounded-2xl items-center justify-center">
               <AppIcon name="clipboard-check" size={22} color="#FFFFFF" strokeWidth={2} />
             </View>
@@ -92,17 +96,19 @@ export default function TrainerDashboardScreen() {
 
         {/* CTA: Criar dieta */}
         <Link href="/(trainer)/diet-builder" asChild>
-          <Pressable className="bg-surface-card border border-fuchsia-400/30 rounded-3xl p-5 mb-6 flex-row items-center gap-4 active:bg-surface-hover">
+          <Pressable className="bg-surface-card border border-surface-border rounded-2xl p-5 flex-1 min-w-[260px] flex-row items-center gap-4 active:bg-surface-hover">
             <View className="w-12 h-12 bg-fuchsia-400/20 rounded-2xl items-center justify-center">
-              <AppIcon name="diet" size={22} color="#C636E0" strokeWidth={2} />
+              <AppIcon name="diet" size={22} color="#27272A" strokeWidth={2} />
             </View>
             <View className="flex-1">
               <Text className="text-fuchsia-400 text-base" style={{ fontFamily: font.semibold, letterSpacing: 0.3 }}>Criar plano alimentar</Text>
               <Text className="text-text-muted text-xs mt-0.5" style={{ fontFamily: font.regular }}>Refeições, macros e metas para o aluno</Text>
             </View>
-            <AppIcon name="arrow-right" size={20} color="#C636E0" strokeWidth={2} />
+            <AppIcon name="arrow-right" size={20} color="#27272A" strokeWidth={2} />
           </Pressable>
         </Link>
+
+        </View>
 
         {/* Metrics */}
         {summary ? (
@@ -137,14 +143,14 @@ export default function TrainerDashboardScreen() {
               { href: "/(trainer)/checkins/responses", icon: "trend", label: "Respostas" },
               { href: "/(trainer)/courses", icon: "courses", label: "Aulas" },
               { href: "/partners", icon: "user", label: "Parceiros" },
-              { href: "/(trainer)/checkins/branding", icon: "sparkles", label: "Branding" },
+              { href: "/(trainer)/checkins/branding", icon: "sparkles", label: "Perfil profissional" },
               { href: "/(trainer)/diet-builder/substitutions", icon: "repeat", label: "Substituições" },
               { href: "/(trainer)/recipes/new", icon: "food", label: "Nova receita" },
             ] as { href: string; icon: IconName; label: string }[]).map((t) => (
               <Link key={t.href} href={t.href as never} asChild>
                 <Pressable className="bg-surface-card border border-surface-border rounded-2xl px-4 py-3 flex-row items-center gap-2.5 active:bg-surface-hover">
                   <View className="w-8 h-8 rounded-xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
-                    <AppIcon name={t.icon} size={16} color="#9B40D8" strokeWidth={2} />
+                    <AppIcon name={t.icon} size={16} color="#3F3F46" strokeWidth={2} />
                   </View>
                   <Text className="text-xs text-text-secondary" style={{ fontFamily: font.semibold }}>{t.label}</Text>
                 </Pressable>
@@ -157,7 +163,7 @@ export default function TrainerDashboardScreen() {
         <View className="bg-surface-card border border-surface-border rounded-3xl p-6 mb-6">
           <View className="flex-row items-center gap-3 mb-5">
             <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
-              <AppIcon name="rocket" size={18} color="#9B40D8" strokeWidth={2} />
+              <AppIcon name="rocket" size={18} color="#3F3F46" strokeWidth={2} />
             </View>
             <DisplayHeading size="sm">Primeiros passos</DisplayHeading>
           </View>
@@ -210,7 +216,7 @@ export default function TrainerDashboardScreen() {
           ) : (
             <View className="bg-surface-card border border-surface-border rounded-3xl p-6 items-center">
               <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
-                <AppIcon name="trend" size={28} color="#9B40D8" strokeWidth={2} />
+                <AppIcon name="trend" size={28} color="#3F3F46" strokeWidth={2} />
               </View>
               <DisplayHeading size="sm" className="mb-2">Nenhum aluno ativo</DisplayHeading>
               <Text className="text-sm text-text-muted text-center mb-4" style={{ fontFamily: font.regular }}>
@@ -232,6 +238,7 @@ export default function TrainerDashboardScreen() {
         >
           <Text className="text-text-muted text-sm" style={{ fontFamily: font.semibold }}>Sair da conta</Text>
         </Pressable>
+        </WebContainer>
       </ScrollView>
     </SafeAreaView>
   );

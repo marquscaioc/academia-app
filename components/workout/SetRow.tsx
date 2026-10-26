@@ -185,7 +185,7 @@ export const SetRow = memo(function SetRow({
           {logged?.syncStatus === "pending" ? (
             <ActivityIndicator size="small" color="#FFFFFF" />
           ) : (
-            <AppIcon name="check" size={20} color={completed ? "#0B0811" : palette.textMuted} strokeWidth={2.6} />
+            <AppIcon name="check" size={20} color={completed ? "#F7F7F8" : palette.textMuted} strokeWidth={2.6} />
           )}
         </Pressable>
       )}
