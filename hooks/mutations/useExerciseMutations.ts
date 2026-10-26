@@ -78,7 +78,7 @@ export function useCreateWorkoutPlan() {
       supabase.functions.invoke("push-notification", {
         body: {
           user_id: input.student_id,
-          title: "Novo treino disponivel!",
+          title: "Novo treino disponível!",
           body: `Seu personal criou o plano "${input.name}". Confira!`,
           data: { type: "new_workout", screen: "workouts" },
         },

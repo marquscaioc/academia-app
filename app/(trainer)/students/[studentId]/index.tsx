@@ -180,7 +180,7 @@ export default function StudentDetailScreen() {
               <EmptyState
                 iconName="clipboard"
                 title="Prontuario vazio"
-                description="Nenhum evento registrado ainda. As notas e atualizacoes do aluno aparecerao aqui."
+                description="Nenhum evento registrado ainda. As notas e atualizações do aluno aparecerão aqui."
               />
             }
           />

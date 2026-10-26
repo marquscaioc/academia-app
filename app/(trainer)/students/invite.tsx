@@ -49,14 +49,14 @@ export default function InviteScreen() {
                 className="text-sm text-text-secondary mb-4"
                 style={{ fontFamily: font.regular }}
               >
-                Compartilhe este codigo com seu aluno:
+                Compartilhe este código com seu aluno:
               </Text>
               <View className="bg-surface-card border border-violet-400/80 rounded-3xl px-10 py-8 mb-6 items-center">
                 <Text
                   className="text-text-muted text-[11px] mb-3"
                   style={{ fontFamily: font.semibold, letterSpacing: 2 }}
                 >
-                  CODIGO DE CONVITE
+                  CÓDIGO DE CONVITE
                 </Text>
                 <Text
                   className="text-6xl text-fuchsia-300 tracking-[8px] text-center"
@@ -82,7 +82,7 @@ export default function InviteScreen() {
                   className="text-text-secondary text-sm"
                   style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
                 >
-                  Gerar novo codigo
+                  Gerar novo código
                 </Text>
               </Pressable>
             </View>
@@ -98,7 +98,7 @@ export default function InviteScreen() {
                 className="text-sm text-text-secondary text-center max-w-[300px] leading-5 mb-8"
                 style={{ fontFamily: font.regular }}
               >
-                Gere um codigo de convite para seu aluno se conectar a voce. Ao aceitar, ele tera acesso aos treinos e uma conversa sera criada automaticamente.
+                Gere um código de convite para seu aluno se conectar a você. Ao aceitar, ele terá acesso aos treinos e uma conversa será criada automaticamente.
               </Text>
 
               <Pressable
@@ -123,7 +123,7 @@ export default function InviteScreen() {
                         className="text-white text-base"
                         style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
                       >
-                        Gerar codigo
+                        Gerar código
                       </Text>
                     </View>
                   )}

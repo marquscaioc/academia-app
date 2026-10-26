@@ -26,7 +26,7 @@ const TAG_OPTIONS = [
   { value: "low_carb", label: "Low Carb" },
   { value: "vegan", label: "Vegano" },
   { value: "gluten_free", label: "Sem Gluten" },
-  { value: "quick", label: "Rapido" },
+  { value: "quick", label: "Rápido" },
 ];
 
 export default function NewRecipeScreen() {
@@ -101,7 +101,7 @@ export default function NewRecipeScreen() {
       });
       router.back();
     } catch {
-      Alert.alert("Erro", "Nao foi possivel salvar a receita. Tente novamente.");
+      Alert.alert("Erro", "Não foi possível salvar a receita. Tente novamente.");
     } finally {
       setSaving(false);
     }
@@ -145,11 +145,11 @@ export default function NewRecipeScreen() {
 
             {/* Descricao */}
             <View>
-              <SectionLabel className="mb-2 ml-1">Descricao (opcional)</SectionLabel>
+              <SectionLabel className="mb-2 ml-1">Descrição (opcional)</SectionLabel>
               <TextInput
                 className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
                 style={{ fontFamily: font.regular }}
-                placeholder="Breve descricao da receita..."
+                placeholder="Breve descrição da receita..."
                 placeholderTextColor="#6E6382"
                 value={description}
                 onChangeText={setDescription}
@@ -161,7 +161,7 @@ export default function NewRecipeScreen() {
             {/* Porcoes */}
             <View className="flex-row items-center gap-4">
               <View className="flex-1">
-                <SectionLabel className="mb-2 ml-1">Porcoes</SectionLabel>
+                <SectionLabel className="mb-2 ml-1">Porções</SectionLabel>
                 <TextInput
                   className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
                   style={{ fontFamily: font.regular }}

@@ -32,7 +32,7 @@ export default function CreateChallengeScreen() {
 
   const handleCreate = async () => {
     if (!title.trim()) {
-      setError("Informe o titulo do desafio");
+      setError("Informe o título do desafio");
       return;
     }
     if (!user) return;
@@ -78,7 +78,7 @@ export default function CreateChallengeScreen() {
 
         <View className="gap-5">
           <View>
-            <Text className="text-text-muted mb-2 ml-1 uppercase" style={{ fontFamily: font.semibold, fontSize: 11, letterSpacing: 2 }}>Titulo *</Text>
+            <Text className="text-text-muted mb-2 ml-1 uppercase" style={{ fontFamily: font.semibold, fontSize: 11, letterSpacing: 2 }}>Título *</Text>
             <TextInput
               className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
               placeholder="Ex: Desafio 30 dias"
@@ -90,7 +90,7 @@ export default function CreateChallengeScreen() {
           </View>
 
           <View>
-            <Text className="text-text-muted mb-2 ml-1 uppercase" style={{ fontFamily: font.semibold, fontSize: 11, letterSpacing: 2 }}>Descricao</Text>
+            <Text className="text-text-muted mb-2 ml-1 uppercase" style={{ fontFamily: font.semibold, fontSize: 11, letterSpacing: 2 }}>Descrição</Text>
             <TextInput
               className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
               placeholder="Regras e detalhes do desafio"
@@ -103,7 +103,7 @@ export default function CreateChallengeScreen() {
           </View>
 
           <View>
-            <Text className="text-text-muted mb-2 ml-1 uppercase" style={{ fontFamily: font.semibold, fontSize: 11, letterSpacing: 2 }}>Duracao (dias)</Text>
+            <Text className="text-text-muted mb-2 ml-1 uppercase" style={{ fontFamily: font.semibold, fontSize: 11, letterSpacing: 2 }}>Duração (dias)</Text>
             <TextInput
               className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
               placeholder="30"
@@ -116,7 +116,7 @@ export default function CreateChallengeScreen() {
           </View>
 
           <View>
-            <Text className="text-text-muted mb-2 ml-1 uppercase" style={{ fontFamily: font.semibold, fontSize: 11, letterSpacing: 2 }}>Modo de pontuacao</Text>
+            <Text className="text-text-muted mb-2 ml-1 uppercase" style={{ fontFamily: font.semibold, fontSize: 11, letterSpacing: 2 }}>Modo de pontuação</Text>
             <View className="gap-2">
               {scoringModes.map((m) => (
                 <Pressable
@@ -144,7 +144,7 @@ export default function CreateChallengeScreen() {
 
           {/* Toggles */}
           {[
-            { label: "Foto obrigatoria", desc: "Participantes devem enviar foto no check-in", value: requirePhoto, onToggle: () => setRequirePhoto(!requirePhoto) },
+            { label: "Foto obrigatória", desc: "Participantes devem enviar foto no check-in", value: requirePhoto, onToggle: () => setRequirePhoto(!requirePhoto) },
             { label: "Modo equipe", desc: "Participantes formam times", value: teamMode, onToggle: () => setTeamMode(!teamMode) },
             { label: "Anti-trapaca (pose)", desc: "Pose do dia obrigatoria na foto", value: poseVerification, onToggle: () => setPoseVerification(!poseVerification) },
           ].map((toggle) => (

@@ -62,10 +62,10 @@ export default function AdminOverviewScreen() {
         </View>
 
         <View className="flex-row flex-wrap gap-3 mb-8">
-          <MetricBox value={String(stats?.totalUsers ?? 0)} label="Usuarios totais" icon="social" />
+          <MetricBox value={String(stats?.totalUsers ?? 0)} label="Usuários totais" icon="social" />
           <MetricBox value={String(stats?.trainers ?? 0)} label="Trainers" icon="clipboard" />
           <MetricBox value={String(stats?.students ?? 0)} label="Alunos" icon="user" />
-          <MetricBox value={String(stats?.workoutSessions ?? 0)} label="Sessoes de treino" icon="workout" />
+          <MetricBox value={String(stats?.workoutSessions ?? 0)} label="Sessões de treino" icon="workout" />
           <MetricBox value={String(stats?.challenges ?? 0)} label="Desafios" icon="trophy" />
           <MetricBox value={String(stats?.posts ?? 0)} label="Posts no feed" icon="message" />
         </View>

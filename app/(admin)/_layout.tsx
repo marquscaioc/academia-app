@@ -44,7 +44,7 @@ function AdminTabs() {
           }}
         >
           <Tabs.Screen name="overview" options={{ title: "Overview", tabBarIcon: ({ focused, color }) => <TabIcon name="overview" focused={focused} color={color} /> }} />
-          <Tabs.Screen name="users" options={{ title: "Usuarios", tabBarIcon: ({ focused, color }) => <TabIcon name="users" focused={focused} color={color} /> }} />
+          <Tabs.Screen name="users" options={{ title: "Usuários", tabBarIcon: ({ focused, color }) => <TabIcon name="users" focused={focused} color={color} /> }} />
           <Tabs.Screen name="moderation" options={{ title: "Moderacao", tabBarIcon: ({ focused, color }) => <TabIcon name="moderation" focused={focused} color={color} /> }} />
         </Tabs>
       </View>

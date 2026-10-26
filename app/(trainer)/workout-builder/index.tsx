@@ -145,7 +145,7 @@ export default function WorkoutBuilderScreen() {
 
       router.back();
     } catch (e) {
-      Alert.alert("Erro", "Nao foi possivel salvar o plano. Tente novamente.");
+      Alert.alert("Erro", "Não foi possível salvar o plano. Tente novamente.");
     } finally {
       setSaving(false);
     }
@@ -235,10 +235,10 @@ export default function WorkoutBuilderScreen() {
               />
             </View>
             <View>
-              <SectionLabel className="mb-2 ml-1">Descricao</SectionLabel>
+              <SectionLabel className="mb-2 ml-1">Descrição</SectionLabel>
               <TextInput
                 className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
-                placeholder="Observacoes do plano"
+                placeholder="Observações do plano"
                 placeholderTextColor="#6E6382"
                 value={planDescription}
                 onChangeText={setPlanDescription}
@@ -286,7 +286,7 @@ export default function WorkoutBuilderScreen() {
           <View className="px-6 py-3">
             <TextInput
               className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
-              placeholder="Buscar exercicio para adicionar..."
+              placeholder="Buscar exercício para adicionar..."
               placeholderTextColor="#6E6382"
               value={searchExercise}
               onChangeText={setSearchExercise}
@@ -324,7 +324,7 @@ export default function WorkoutBuilderScreen() {
                 <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
                   <AppIcon name="search" size={28} color="#9B40D8" strokeWidth={2} />
                 </View>
-                <Text className="text-text-muted text-sm" style={{ fontFamily: font.regular }}>Busque e adicione exercicios acima</Text>
+                <Text className="text-text-muted text-sm" style={{ fontFamily: font.regular }}>Busque e adicione exercícios acima</Text>
               </View>
             ) : (
               <View className="gap-3">
@@ -339,7 +339,7 @@ export default function WorkoutBuilderScreen() {
                     </View>
                     <View className="flex-row gap-2">
                       <View className="flex-1">
-                        <Text className="text-[10px] text-text-muted mb-1" style={{ fontFamily: font.medium }}>Series</Text>
+                        <Text className="text-[10px] text-text-muted mb-1" style={{ fontFamily: font.medium }}>Séries</Text>
                         <TextInput
                           className="bg-dark-300 border border-surface-border rounded-xl px-3 py-2 text-sm text-text-primary text-center"
                           value={String(ex.sets)}

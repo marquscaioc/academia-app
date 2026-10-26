@@ -14,7 +14,7 @@ const tagFilters = [
   { value: "high_protein", label: "High Protein" },
   { value: "vegan", label: "Vegano" },
   { value: "gluten_free", label: "Sem Gluten" },
-  { value: "quick", label: "Rapido" },
+  { value: "quick", label: "Rápido" },
 ];
 
 export default function RecipesScreen() {

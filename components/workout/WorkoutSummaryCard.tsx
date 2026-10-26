@@ -17,7 +17,7 @@ export function WorkoutSummaryCard({
   return (
     <View className="bg-surface-card border border-violet-500/30 rounded-3xl p-6">
       <View className="flex-row items-center justify-between mb-4">
-        <Text className="text-xs text-violet-400 font-bold uppercase tracking-wider">Treino Concluido</Text>
+        <Text className="text-xs text-violet-400 font-bold uppercase tracking-wider">Treino Concluído</Text>
         <StreakBadge streak={streak} size="md" />
       </View>
 
@@ -27,7 +27,7 @@ export function WorkoutSummaryCard({
       <View className="flex-row gap-3">
         <View className="flex-1 bg-violet-500/10 rounded-2xl p-3 items-center">
           <Text className="text-lg font-black text-violet-400">{duration}</Text>
-          <Text className="text-[10px] text-text-muted">Duracao</Text>
+          <Text className="text-[10px] text-text-muted">Duração</Text>
         </View>
         <View className="flex-1 bg-ice-400/10 rounded-2xl p-3 items-center">
           <Text className="text-lg font-black text-ice-400">{totalVolume}kg</Text>
@@ -35,7 +35,7 @@ export function WorkoutSummaryCard({
         </View>
         <View className="flex-1 bg-success-500/10 rounded-2xl p-3 items-center">
           <Text className="text-lg font-black text-success-500">{setsCompleted}</Text>
-          <Text className="text-[10px] text-text-muted">Series</Text>
+          <Text className="text-[10px] text-text-muted">Séries</Text>
         </View>
       </View>
 

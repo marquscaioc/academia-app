@@ -24,7 +24,7 @@ export function SubstitutionSheet({
         <Pressable className="flex-1" onPress={onClose} />
         <View className="bg-dark-200 border-t border-surface-border rounded-t-3xl px-6 pt-6 pb-10 max-h-[70%]">
           <View className="flex-row items-center justify-between mb-5">
-            <Text className="text-lg font-black text-text-primary">Substituicoes</Text>
+            <Text className="text-lg font-black text-text-primary">Substituições</Text>
             <Pressable onPress={onClose}>
               <AppIcon name="close" size={20} color="#6E6382" strokeWidth={2} />
             </Pressable>
@@ -42,7 +42,7 @@ export function SubstitutionSheet({
 
           {!subs || subs.length === 0 ? (
             <View className="items-center py-8">
-              <Text className="text-text-muted text-sm">Nenhuma substituicao disponivel</Text>
+              <Text className="text-text-muted text-sm">Nenhuma substituição disponível</Text>
             </View>
           ) : (
             <ScrollView className="gap-3">

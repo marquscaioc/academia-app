@@ -184,7 +184,7 @@ export default function DietScreen() {
           <EmptyState
             iconName="diet"
             title="Nenhum plano alimentar"
-            description="Seu nutricionista ou personal ainda nao atribuiu um plano alimentar."
+            description="Seu nutricionista ou personal ainda não atribuiu um plano alimentar."
           />
         </WebContainer>
       </SafeAreaView>
@@ -207,7 +207,7 @@ export default function DietScreen() {
           </Card>
           <Card className="flex-1 items-center py-3 px-2">
             <Text className="text-lg text-violet-400" style={{ fontFamily: font.bold }}>{Math.round(totalProt)}g</Text>
-            <Text className="text-[10px] uppercase text-text-muted mt-0.5" style={{ fontFamily: font.semibold, letterSpacing: 1.5 }}>Proteina</Text>
+            <Text className="text-[10px] uppercase text-text-muted mt-0.5" style={{ fontFamily: font.semibold, letterSpacing: 1.5 }}>Proteína</Text>
           </Card>
           <Card className="flex-1 items-center py-3 px-2">
             <Text className="text-lg text-ice-400" style={{ fontFamily: font.bold }}>{Math.round(totalCarb)}g</Text>
@@ -224,7 +224,7 @@ export default function DietScreen() {
         <Card variant="outlined" className="mb-6 gap-3 py-4">
           {[
             { label: "Calorias", consumed: consumedCal,  goal: metaCal,  unit: "kcal", color: "#9B40D8", textColor: "text-violet-400" },
-            { label: "Proteina", consumed: consumedProt, goal: metaProt, unit: "g",    color: "#A78BFA", textColor: "text-violet-300" },
+            { label: "Proteína", consumed: consumedProt, goal: metaProt, unit: "g",    color: "#A78BFA", textColor: "text-violet-300" },
             { label: "Carbos",   consumed: consumedCarb, goal: metaCarb, unit: "g",    color: "#67E8F9", textColor: "text-cyan-300"   },
             { label: "Gordura",  consumed: consumedFat,  goal: metaFat,  unit: "g",    color: "#FCD34D", textColor: "text-warning-400"},
           ].map(({ label, consumed, goal, unit, color, textColor }) => {
@@ -251,7 +251,7 @@ export default function DietScreen() {
         {/* Adherence + water */}
         <View className="flex-row gap-4 mb-6">
           <Card variant="outlined" className="flex-1">
-            <SectionLabel className="mb-1.5">Refeicoes</SectionLabel>
+            <SectionLabel className="mb-1.5">Refeições</SectionLabel>
             <Text className="text-xl text-text-primary" style={{ fontFamily: font.bold }}>
               {completedMeals}/{totalMeals}
             </Text>
@@ -263,7 +263,7 @@ export default function DietScreen() {
             </View>
           </Card>
           <Card variant="outlined" className="flex-1">
-            <SectionLabel className="mb-1.5">Agua</SectionLabel>
+            <SectionLabel className="mb-1.5">Água</SectionLabel>
             <Text className="text-xl text-text-primary" style={{ fontFamily: font.bold }}>
               {(totalWaterMl / 1000).toFixed(1)}L
             </Text>
@@ -282,7 +282,7 @@ export default function DietScreen() {
           className="bg-blue-500/10 rounded-2xl py-3.5 items-center mb-6 active:bg-blue-500/20 flex-row justify-center gap-2"
         >
           <AppIcon name="water" size={18} color="#60A5FA" strokeWidth={2} />
-          <Text className="text-blue-400 text-sm" style={{ fontFamily: font.semibold }}>+ 250ml de agua</Text>
+          <Text className="text-blue-400 text-sm" style={{ fontFamily: font.semibold }}>+ 250ml de água</Text>
         </Pressable>
 
         {/* Recipes link */}
@@ -297,7 +297,7 @@ export default function DietScreen() {
         </Pressable>
 
         {/* Meals */}
-        <DisplayHeading size="sm" className="mb-3">Refeicoes do dia</DisplayHeading>
+        <DisplayHeading size="sm" className="mb-3">Refeições do dia</DisplayHeading>
         <View className="flex-row flex-wrap gap-3 mb-10">
           {meals.map((meal) => {
             const isLogged = loggedMealIds.has(meal.id);

@@ -42,10 +42,10 @@ export function PhotoCaptureModal({
         {!permission?.granted ? (
           <View className="flex-1 items-center justify-center px-8">
             <Text className="text-white text-lg font-bold text-center mb-4">
-              Precisamos acessar sua camera
+              Precisamos acessar sua câmera
             </Text>
             <Pressable onPress={requestPermission} className="bg-violet-500 px-6 py-3 rounded-xl">
-              <Text className="text-white font-bold">Permitir Camera</Text>
+              <Text className="text-white font-bold">Permitir Câmera</Text>
             </Pressable>
             <Pressable onPress={onClose} className="mt-4">
               <Text className="text-text-muted">Cancelar</Text>

@@ -44,7 +44,7 @@ export default function EditProfileScreen() {
   };
 
   const handleSave = async () => {
-    if (!fullName.trim()) { setError("Nome e obrigatorio"); return; }
+    if (!fullName.trim()) { setError("Nome é obrigatório"); return; }
     if (!user) return;
 
     setError("");
@@ -176,7 +176,7 @@ export default function EditProfileScreen() {
               className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
               value={bio}
               onChangeText={setBio}
-              placeholder="Conte um pouco sobre voce"
+              placeholder="Conte um pouco sobre você"
               placeholderTextColor="#6E6382"
               multiline
               style={{ minHeight: 100, textAlignVertical: "top", fontFamily: font.regular }}
@@ -198,7 +198,7 @@ export default function EditProfileScreen() {
           <View className="bg-surface-card border border-surface-border rounded-3xl p-4 mt-4">
             <View className="flex-row items-center gap-2 mb-3">
               <AppIcon name="bell" size={16} color="#6E6382" strokeWidth={2} />
-              <Text className="text-[10px] text-text-muted uppercase" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>Notificacoes</Text>
+              <Text className="text-[10px] text-text-muted uppercase" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>Notificações</Text>
             </View>
             <Pressable
               onPress={async () => {
@@ -208,7 +208,7 @@ export default function EditProfileScreen() {
                   .from("profiles")
                   .update({ notify_follower_workouts: newVal })
                   .eq("id", user.id);
-                if (updErr) { setError("Erro ao atualizar notificacao"); return; }
+                if (updErr) { setError("Erro ao atualizar notificação"); return; }
                 refreshProfile();
               }}
               className="flex-row items-center justify-between"

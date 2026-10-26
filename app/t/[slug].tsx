@@ -37,7 +37,7 @@ export default function TrainerPublicPage() {
         <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-5">
           <AppIcon name="search" size={28} color="#9B40D8" strokeWidth={2} />
         </View>
-        <Text className="text-2xl text-text-primary text-center" style={{ fontFamily: font.display }}>Profissional nao encontrado</Text>
+        <Text className="text-2xl text-text-primary text-center" style={{ fontFamily: font.display }}>Profissional não encontrado</Text>
         <Text className="text-sm text-text-muted text-center mt-2" style={{ fontFamily: font.regular }}>Verifique o link e tente novamente.</Text>
       </SafeAreaView>
     );
@@ -98,7 +98,7 @@ export default function TrainerPublicPage() {
           <View className="bg-surface-card border border-surface-border rounded-3xl p-6 items-center">
             <Text className="text-2xl text-text-primary mb-2 text-center" style={{ fontFamily: font.display }}>Quer treinar comigo?</Text>
             <Text className="text-sm text-text-muted text-center mb-5" style={{ fontFamily: font.regular }}>
-              Baixe o app e use o codigo de convite do seu personal.
+              Baixe o app e use o código de convite do seu personal.
             </Text>
             <View className="flex-row rounded-2xl py-4 px-8 items-center justify-center gap-2" style={{ backgroundColor: primaryColor }}>
               <AppIcon name="rocket" size={18} color="#FFFFFF" strokeWidth={2} />

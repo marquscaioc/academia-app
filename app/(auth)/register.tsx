@@ -65,7 +65,7 @@ export default function RegisterScreen() {
       return;
     }
     if (password !== confirmPassword) {
-      setError("As senhas nao conferem");
+      setError("As senhas não conferem");
       return;
     }
     const parsedDob = parseDob(dob);
@@ -200,7 +200,7 @@ export default function RegisterScreen() {
               </Text>
               <TextInput
                 className={inputClass("password")}
-                placeholder="Minimo 6 caracteres"
+                placeholder="Mínimo 6 caracteres"
                 placeholderTextColor="#6E6382"
                 style={{ fontFamily: font.regular }}
                 value={password}
@@ -296,7 +296,7 @@ export default function RegisterScreen() {
           </View>
 
           <View className="flex-row justify-center mt-8">
-            <Text className="text-text-muted text-sm">Ja tem uma conta? </Text>
+            <Text className="text-text-muted text-sm">Já tem uma conta? </Text>
             <Link href="/(auth)/login" asChild>
               <Pressable>
                 <Text className="text-violet-300 font-bold text-sm">Entrar</Text>

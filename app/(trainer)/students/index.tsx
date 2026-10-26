@@ -214,7 +214,7 @@ export default function StudentsScreen() {
             <View className="w-12 h-12 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
               <AppIcon name="water" size={22} color="#9B40D8" strokeWidth={2} />
             </View>
-            <Text className="text-2xl text-text-primary mb-1" style={{ fontFamily: font.display }}>Meta de agua.</Text>
+            <Text className="text-2xl text-text-primary mb-1" style={{ fontFamily: font.display }}>Meta de água.</Text>
             <Text className="text-sm text-text-muted mb-5" style={{ fontFamily: font.regular }}>{waterModal?.name}</Text>
 
             <Text

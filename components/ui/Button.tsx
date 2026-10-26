@@ -47,6 +47,12 @@ export function Button({
       </View>
     );
 
+  const a11y = {
+    accessibilityRole: "button" as const,
+    accessibilityLabel: title,
+    accessibilityState: { disabled: isDisabled, busy: !!loading },
+  };
+
   // Gradient variants (primary / danger) — the signature amethyst treatment.
   if (variant === "primary" || variant === "danger") {
     const colors =
@@ -55,6 +61,7 @@ export function Button({
       <Pressable
         onPress={onPress}
         disabled={isDisabled}
+        {...a11y}
         className={`${widthCls} ${isDisabled ? "opacity-50" : ""}`}
         style={variant === "primary" && !isDisabled ? amethystGlow : undefined}
       >
@@ -86,6 +93,7 @@ export function Button({
     <Pressable
       onPress={onPress}
       disabled={isDisabled}
+      {...a11y}
       className={`flex-row items-center justify-center ${s.container} ${flat.box} ${widthCls} ${
         isDisabled ? "opacity-50" : ""
       }`}

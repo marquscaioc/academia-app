@@ -27,10 +27,10 @@ interface DraftQuestion {
 
 const questionTypes = [
   { value: "text", label: "Texto", icon: "notebook" },
-  { value: "number", label: "Numero", icon: "gauge" },
+  { value: "number", label: "Número", icon: "gauge" },
   { value: "scale", label: "Escala 1-10", icon: "scale" },
   { value: "choice", label: "Multipla escolha", icon: "list" },
-  { value: "boolean", label: "Sim/Nao", icon: "check-circle" },
+  { value: "boolean", label: "Sim/Não", icon: "check-circle" },
 ] as const;
 
 export default function CheckinBuilderScreen() {
@@ -109,7 +109,7 @@ export default function CheckinBuilderScreen() {
 
         <View className="gap-5">
           <View>
-            <SectionLabel className="mb-2 ml-1">Titulo *</SectionLabel>
+            <SectionLabel className="mb-2 ml-1">Título *</SectionLabel>
             <TextInput
               className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
               placeholder="Ex: Check-in semanal"
@@ -121,10 +121,10 @@ export default function CheckinBuilderScreen() {
           </View>
 
           <View>
-            <SectionLabel className="mb-2 ml-1">Descricao</SectionLabel>
+            <SectionLabel className="mb-2 ml-1">Descrição</SectionLabel>
             <TextInput
               className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
-              placeholder="Instrucoes para o aluno"
+              placeholder="Instruções para o aluno"
               placeholderTextColor="#6E6382"
               value={description}
               onChangeText={setDescription}
@@ -134,7 +134,7 @@ export default function CheckinBuilderScreen() {
           </View>
 
           <View>
-            <SectionLabel className="mb-2 ml-1">Frequencia</SectionLabel>
+            <SectionLabel className="mb-2 ml-1">Frequência</SectionLabel>
             <View className="flex-row gap-2">
               {frequencies.map((f) => (
                 <Pressable
@@ -234,7 +234,7 @@ export default function CheckinBuilderScreen() {
                   {q.type === "choice" ? (
                     <TextInput
                       className="bg-dark-300 border border-surface-border rounded-2xl px-4 py-2.5 text-xs text-text-primary"
-                      placeholder="Opcoes separadas por virgula: Otimo, Bom, Regular, Ruim"
+                      placeholder="Opções separadas por vírgula: Ótimo, Bom, Regular, Ruim"
                       placeholderTextColor="#6E6382"
                       value={q.options}
                       onChangeText={(v) => updateQuestion(idx, "options", v)}

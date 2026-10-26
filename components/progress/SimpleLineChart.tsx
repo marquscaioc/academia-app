@@ -23,7 +23,7 @@ export function SimpleLineChart({
   if (!data.length) {
     return (
       <View className="bg-surface-card border border-surface-border rounded-2xl p-5 items-center py-10">
-        <Text className="text-text-muted text-sm">Dados insuficientes para o grafico</Text>
+        <Text className="text-text-muted text-sm">Dados insuficientes para o gráfico</Text>
       </View>
     );
   }

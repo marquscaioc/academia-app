@@ -73,7 +73,7 @@ export function ChallengeCard({
         {requirePhoto ? (
           <View className="flex-row items-center gap-1">
             <AppIcon name="camera" size={14} color="#6E6382" strokeWidth={2} />
-            <Text className="text-xs text-text-muted">Foto obrigatoria</Text>
+            <Text className="text-xs text-text-muted">Foto obrigatória</Text>
           </View>
         ) : null}
       </View>

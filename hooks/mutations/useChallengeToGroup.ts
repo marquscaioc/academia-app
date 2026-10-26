@@ -13,7 +13,7 @@ export function useConvertToGroup() {
         .eq("id", input.challengeId)
         .single();
 
-      if (!challenge) throw new Error("Desafio nao encontrado");
+      if (!challenge) throw new Error("Desafio não encontrado");
 
       // Create group
       const { data: group, error: groupErr } = await supabase

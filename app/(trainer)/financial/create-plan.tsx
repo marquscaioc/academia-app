@@ -31,7 +31,7 @@ export default function CreatePlanScreen() {
     if (!user) return;
 
     const priceCents = Math.round(parseFloat(price.replace(",", ".")) * 100);
-    if (isNaN(priceCents) || priceCents <= 0) { setError("Valor invalido"); return; }
+    if (isNaN(priceCents) || priceCents <= 0) { setError("Valor inválido"); return; }
 
     setError("");
     try {
@@ -44,7 +44,7 @@ export default function CreatePlanScreen() {
       });
       router.back();
     } catch (e) {
-      setError("Nao foi possivel criar o plano. Tente novamente.");
+      setError("Não foi possível criar o plano. Tente novamente.");
     }
   };
 
@@ -65,7 +65,7 @@ export default function CreatePlanScreen() {
             <AppIcon name="money" size={18} color="#9B40D8" strokeWidth={2} />
           </View>
           <Text className="flex-1 text-text-secondary text-sm leading-5" style={{ fontFamily: font.regular }}>
-            Defina nome, valor e periodo para cobrar seus alunos por assinatura.
+            Defina nome, valor e período para cobrar seus alunos por assinatura.
           </Text>
         </View>
 
@@ -90,7 +90,7 @@ export default function CreatePlanScreen() {
           </View>
 
           <View>
-            <SectionLabel className="mb-2 ml-1">Descricao</SectionLabel>
+            <SectionLabel className="mb-2 ml-1">Descrição</SectionLabel>
             <TextInput
               className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
               placeholder="O que esta incluso no plano"
@@ -116,7 +116,7 @@ export default function CreatePlanScreen() {
           </View>
 
           <View>
-            <SectionLabel className="mb-2 ml-1">Periodo de cobranca</SectionLabel>
+            <SectionLabel className="mb-2 ml-1">Período de cobrança</SectionLabel>
             <View className="flex-row gap-2">
               {intervals.map((i) => (
                 <Pressable

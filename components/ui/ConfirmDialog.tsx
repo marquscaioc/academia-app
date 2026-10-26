@@ -30,14 +30,19 @@ export function ConfirmDialog({
 }: ConfirmDialogProps) {
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel} statusBarTranslucent>
-      <Pressable
-        onPress={onCancel}
-        accessibilityLabel="Fechar"
-        className="flex-1 bg-black/70 items-center justify-center px-6"
-      >
+      <View className="flex-1 items-center justify-center px-6">
+        {/* Backdrop is a sibling (not a wrapper) so screen readers don't see the dialog inside a button. */}
         <Pressable
-          onPress={() => {}}
+          onPress={loading ? undefined : onCancel}
+          accessibilityRole="button"
+          accessibilityLabel="Fechar"
+          className="absolute inset-0 bg-black/70"
+        />
+        <View
           accessibilityRole="alert"
+          accessibilityViewIsModal
+          aria-modal
+          aria-label={title}
           className="w-full max-w-[420px] bg-surface-elevated border border-surface-border rounded-3xl p-6"
         >
           <Text className="text-text-primary text-lg mb-2" style={{ fontFamily: font.semibold }}>
@@ -59,8 +64,8 @@ export function ConfirmDialog({
             />
             <Button title={cancelLabel} onPress={onCancel} variant="ghost" disabled={loading} />
           </View>
-        </Pressable>
-      </Pressable>
+        </View>
+      </View>
     </Modal>
   );
 }

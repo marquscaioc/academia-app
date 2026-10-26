@@ -57,7 +57,7 @@ export default function CreateExerciseScreen() {
   };
 
   const handleCreate = async () => {
-    if (!name.trim()) { setError("Informe o nome do exercicio"); return; }
+    if (!name.trim()) { setError("Informe o nome do exercício"); return; }
     if (!user) return;
 
     setError("");
@@ -153,7 +153,7 @@ export default function CreateExerciseScreen() {
 
           {/* Video + Thumbnail */}
           <View>
-            <Text className="text-text-muted mb-2 ml-1 uppercase" style={{ fontFamily: font.semibold, fontSize: 11, letterSpacing: 2 }}>Midia</Text>
+            <Text className="text-text-muted mb-2 ml-1 uppercase" style={{ fontFamily: font.semibold, fontSize: 11, letterSpacing: 2 }}>Mídia</Text>
             <View className="flex-row gap-3">
               <Pressable onPress={pickVideo} className="flex-1 bg-surface-card border border-dashed border-surface-border rounded-2xl py-6 items-center active:bg-surface-hover">
                 {videoUri ? (
@@ -161,7 +161,7 @@ export default function CreateExerciseScreen() {
                     <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-2">
                       <AppIcon name="check-circle" size={18} color="#9B40D8" strokeWidth={2} />
                     </View>
-                    <Text className="text-xs text-violet-400" style={{ fontFamily: font.semibold }}>Video selecionado</Text>
+                    <Text className="text-xs text-violet-400" style={{ fontFamily: font.semibold }}>Vídeo selecionado</Text>
                     <Text className="text-[10px] text-text-muted mt-1" style={{ fontFamily: font.regular }}>Toque para trocar</Text>
                   </View>
                 ) : (
@@ -169,7 +169,7 @@ export default function CreateExerciseScreen() {
                     <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-2">
                       <AppIcon name="video" size={18} color="#9B40D8" strokeWidth={2} />
                     </View>
-                    <Text className="text-xs text-text-muted" style={{ fontFamily: font.semibold }}>Adicionar video</Text>
+                    <Text className="text-xs text-text-muted" style={{ fontFamily: font.semibold }}>Adicionar vídeo</Text>
                   </View>
                 )}
               </Pressable>
@@ -190,10 +190,10 @@ export default function CreateExerciseScreen() {
 
           {/* Description */}
           <View>
-            <Text className="text-text-muted mb-2 ml-1 uppercase" style={{ fontFamily: font.semibold, fontSize: 11, letterSpacing: 2 }}>Descricao</Text>
+            <Text className="text-text-muted mb-2 ml-1 uppercase" style={{ fontFamily: font.semibold, fontSize: 11, letterSpacing: 2 }}>Descrição</Text>
             <TextInput
               className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
-              placeholder="Descricao breve"
+              placeholder="Descrição breve"
               placeholderTextColor="#6E6382"
               value={description}
               onChangeText={setDescription}
@@ -204,10 +204,10 @@ export default function CreateExerciseScreen() {
 
           {/* Instructions */}
           <View>
-            <Text className="text-text-muted mb-2 ml-1 uppercase" style={{ fontFamily: font.semibold, fontSize: 11, letterSpacing: 2 }}>Instrucoes</Text>
+            <Text className="text-text-muted mb-2 ml-1 uppercase" style={{ fontFamily: font.semibold, fontSize: 11, letterSpacing: 2 }}>Instruções</Text>
             <TextInput
               className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
-              placeholder="Passo a passo da execucao"
+              placeholder="Passo a passo da execução"
               placeholderTextColor="#6E6382"
               value={instructions}
               onChangeText={setInstructions}

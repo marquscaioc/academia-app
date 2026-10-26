@@ -51,7 +51,7 @@ function TrainerTabs() {
         >
           <Tabs.Screen name="dashboard" options={{ title: "Dashboard", tabBarIcon: ({ focused, color }) => <TabIcon name="dashboard" focused={focused} color={color} /> }} />
           <Tabs.Screen name="students" options={{ title: "Alunos", tabBarIcon: ({ focused, color }) => <TabIcon name="students" focused={focused} color={color} /> }} />
-          <Tabs.Screen name="exercises" options={{ title: "Exercicios", tabBarIcon: ({ focused, color }) => <TabIcon name="exercises" focused={focused} color={color} /> }} />
+          <Tabs.Screen name="exercises" options={{ title: "Exercícios", tabBarIcon: ({ focused, color }) => <TabIcon name="exercises" focused={focused} color={color} /> }} />
           <Tabs.Screen name="financial" options={{ title: "Financeiro", tabBarIcon: ({ focused, color }) => <TabIcon name="financial" focused={focused} color={color} /> }} />
           <Tabs.Screen name="chat" options={{ href: null }} />
           <Tabs.Screen name="checkins" options={{ href: null }} />

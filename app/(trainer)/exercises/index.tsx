@@ -67,7 +67,7 @@ export default function ExercisesScreen() {
           <AppIcon name="search" size={18} color="#6E6382" strokeWidth={2} />
           <TextInput
             className="flex-1 py-3.5 text-[15px] text-text-primary"
-            placeholder="Buscar exercicio..."
+            placeholder="Buscar exercício..."
             placeholderTextColor="#6E6382"
             value={search}
             onChangeText={setSearch}
@@ -136,8 +136,8 @@ export default function ExercisesScreen() {
         ) : !exercises?.length ? (
           <EmptyState
             iconName="workout"
-            title="Nenhum exercicio encontrado"
-            description="Adicione exercicios com instrucoes para montar os treinos dos seus alunos."
+            title="Nenhum exercício encontrado"
+            description="Adicione exercícios com instruções para montar os treinos dos seus alunos."
           />
         ) : (
           <FlatList

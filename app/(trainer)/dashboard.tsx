@@ -76,7 +76,7 @@ export default function TrainerDashboardScreen() {
             </View>
             <View className="flex-1">
               <Text className="text-white text-base" style={{ fontFamily: font.semibold, letterSpacing: 0.3 }}>Criar plano de treino</Text>
-              <Text className="text-white/70 text-xs mt-0.5" style={{ fontFamily: font.regular }}>Selecione aluno, exercicios e configure</Text>
+              <Text className="text-white/70 text-xs mt-0.5" style={{ fontFamily: font.regular }}>Selecione aluno, exercícios e configure</Text>
             </View>
             <AppIcon name="arrow-right" size={20} color="#FFFFFF" strokeWidth={2} />
           </Pressable>
@@ -90,7 +90,7 @@ export default function TrainerDashboardScreen() {
             </View>
             <View className="flex-1">
               <Text className="text-fuchsia-400 text-base" style={{ fontFamily: font.semibold, letterSpacing: 0.3 }}>Criar plano alimentar</Text>
-              <Text className="text-text-muted text-xs mt-0.5" style={{ fontFamily: font.regular }}>Refeicoes, macros e metas para o aluno</Text>
+              <Text className="text-text-muted text-xs mt-0.5" style={{ fontFamily: font.regular }}>Refeições, macros e metas para o aluno</Text>
             </View>
             <AppIcon name="arrow-right" size={20} color="#C636E0" strokeWidth={2} />
           </Pressable>
@@ -184,7 +184,7 @@ export default function TrainerDashboardScreen() {
               </View>
               <DisplayHeading size="sm" className="mb-2">Sem dados ainda</DisplayHeading>
               <Text className="text-sm text-text-muted text-center" style={{ fontFamily: font.regular }}>
-                Dados de adesao aparecerão aqui{"\n"}quando seus alunos comecarem a treinar.
+                Dados de adesão aparecerão aqui{"\n"}quando seus alunos começarem a treinar.
               </Text>
             </View>
           )}

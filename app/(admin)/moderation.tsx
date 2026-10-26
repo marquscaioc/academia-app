@@ -24,13 +24,13 @@ export default function ModerationScreen() {
             className="text-3xl text-text-primary text-center"
             style={{ fontFamily: font.display, letterSpacing: -0.3 }}
           >
-            Nenhum conteudo reportado
+            Nenhum conteúdo reportado
           </Text>
           <Text
             className="text-sm text-text-secondary text-center mt-2.5 max-w-[300px] leading-5"
             style={{ fontFamily: font.regular }}
           >
-            Posts e comentarios reportados pelos usuarios aparecerão aqui para revisao.
+            Posts e comentários reportados pelos usuários aparecerão aqui para revisão.
           </Text>
         </View>
       </View>

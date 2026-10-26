@@ -191,7 +191,7 @@ export default function DietBuilderScreen() {
 
       router.back();
     } catch (e) {
-      Alert.alert("Erro", "Nao foi possivel salvar o plano. Tente novamente.");
+      Alert.alert("Erro", "Não foi possível salvar o plano. Tente novamente.");
     } finally {
       setSaving(false);
     }
@@ -293,7 +293,7 @@ export default function DietBuilderScreen() {
                 style={{ paddingVertical: 18, alignItems: "center", flexDirection: "row", justifyContent: "center", gap: 8 }}
               >
                 <AppIcon name="food" size={18} color={planName.trim() ? "#FFFFFF" : "#6E6382"} strokeWidth={2} />
-                <Text className={planName.trim() ? "text-white" : "text-text-muted"} style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Proximo: Refeicoes</Text>
+                <Text className={planName.trim() ? "text-white" : "text-text-muted"} style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Próximo: Refeições</Text>
                 <AppIcon name="arrow-right" size={18} color={planName.trim() ? "#FFFFFF" : "#6E6382"} strokeWidth={2} />
               </LinearGradient>
             </Pressable>
@@ -313,7 +313,7 @@ export default function DietBuilderScreen() {
                       className="text-base text-text-primary flex-1"
                       value={meal.name}
                       onChangeText={(v) => { const u = [...meals]; u[mi].name = v; setMeals(u); }}
-                      placeholder="Nome da refeicao"
+                      placeholder="Nome da refeição"
                       placeholderTextColor="#6E6382"
                       style={{ fontFamily: font.semibold }}
                     />
@@ -390,7 +390,7 @@ export default function DietBuilderScreen() {
 
             <Pressable onPress={addNewMeal} className="border border-dashed border-violet-500/30 rounded-2xl py-4 flex-row items-center justify-center gap-2">
               <AppIcon name="food" size={18} color="#9B40D8" strokeWidth={2} />
-              <Text className="text-violet-400 text-sm" style={{ fontFamily: font.semibold }}>Nova refeicao</Text>
+              <Text className="text-violet-400 text-sm" style={{ fontFamily: font.semibold }}>Nova refeição</Text>
             </Pressable>
 
             {/* Macro totals bar */}

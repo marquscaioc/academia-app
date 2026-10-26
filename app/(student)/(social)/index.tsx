@@ -153,7 +153,7 @@ export default function SocialFeedScreen() {
         className="px-6 py-3 flex-row items-center gap-3 border-b border-surface-border"
       >
         <Avatar uri={profile?.avatar_url} name={profile?.full_name} size="sm" />
-        <Text className="text-sm text-text-muted flex-1" style={{ fontFamily: font.regular }}>No que voce esta pensando?</Text>
+        <Text className="text-sm text-text-muted flex-1" style={{ fontFamily: font.regular }}>No que você está pensando?</Text>
       </Pressable>
 
       {/* Composer */}
@@ -225,7 +225,7 @@ export default function SocialFeedScreen() {
       ) : !posts?.length ? (
         <EmptyState
           iconName="social"
-          title="Nenhuma publicacao"
+          title="Nenhuma publicação"
           description="Seja o primeiro a compartilhar algo! Publique seu treino ou conquista."
         />
       ) : (

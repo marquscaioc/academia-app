@@ -53,7 +53,7 @@ export default function AdminUsersScreen() {
           className="text-3xl text-text-primary mb-4"
           style={{ fontFamily: font.display }}
         >
-          Usuarios
+          Usuários
         </Text>
 
         <View className="flex-row items-center gap-3 bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 mb-4">

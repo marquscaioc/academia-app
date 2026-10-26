@@ -128,7 +128,7 @@ export default function NotificationsScreen() {
             </View>
             <DisplayHeading size="sm">Tudo em dia.</DisplayHeading>
             <Text className="text-text-secondary text-sm text-center mt-2" style={{ fontFamily: font.regular }}>
-              Nenhuma notificacao ainda.
+              Nenhuma notificação ainda.
             </Text>
           </View>
         ) : (

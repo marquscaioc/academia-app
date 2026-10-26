@@ -10,7 +10,7 @@ export function MostImprovedLeaderboard({ entries }: MostImprovedLeaderboardProp
   if (!entries.length) {
     return (
       <View className="items-center py-8">
-        <Text className="text-text-muted text-sm">Dados insuficientes para ranking de evolucao.</Text>
+        <Text className="text-text-muted text-sm">Dados insuficientes para ranking de evolução.</Text>
       </View>
     );
   }

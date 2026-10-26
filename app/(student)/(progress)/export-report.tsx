@@ -85,7 +85,7 @@ export default function ExportReportScreen() {
       };
       await exportProgressReport(data);
     } catch (e) {
-      Alert.alert("Erro ao exportar", "Nao foi possivel gerar o relatorio. Tente novamente.");
+      Alert.alert("Erro ao exportar", "Não foi possível gerar o relatório. Tente novamente.");
     } finally {
       setExporting(false);
     }
@@ -108,10 +108,10 @@ export default function ExportReportScreen() {
           </Pressable>
           <View className="w-16" />
         </View>
-        <DisplayHeading size="xl" className="mb-8">Exportar relatorio.</DisplayHeading>
+        <DisplayHeading size="xl" className="mb-8">Exportar relatório.</DisplayHeading>
 
         {/* Period selector */}
-        <SectionLabel className="mb-3 ml-1">Periodo</SectionLabel>
+        <SectionLabel className="mb-3 ml-1">Período</SectionLabel>
         <View className="flex-row gap-2 mb-6">
           {periods.map((p) => (
             <Pressable
@@ -137,7 +137,7 @@ export default function ExportReportScreen() {
             <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
               <AppIcon name="file" size={18} color="#9B40D8" strokeWidth={2} />
             </View>
-            <Text className="text-sm text-text-primary" style={{ fontFamily: font.semibold }}>O relatorio incluira:</Text>
+            <Text className="text-sm text-text-primary" style={{ fontFamily: font.semibold }}>O relatório incluira:</Text>
           </View>
           <View className="gap-3">
             <View className="flex-row items-center justify-between">

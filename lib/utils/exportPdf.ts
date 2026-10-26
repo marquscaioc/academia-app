@@ -97,7 +97,7 @@ export function generateProgressHtml(data: ProgressReportData): string {
 </head>
 <body>
   <div class="header">
-    <h1>Relatorio de Progresso</h1>
+    <h1>Relatório de Progresso</h1>
     <h2>${data.studentName} | ${data.period}</h2>
     <p style="font-size:12px;color:#888;">Personal: ${data.trainerName}</p>
   </div>
@@ -121,7 +121,7 @@ export function generateProgressHtml(data: ProgressReportData): string {
     </div>
   </div>
 
-  <h3>Evolucao de Medidas</h3>
+  <h3>Evolução de Medidas</h3>
   <table>
     <thead>
       <tr><th>Data</th><th>Peso</th><th>% Gordura</th><th>Cintura</th><th>Peito</th><th>Quadril</th></tr>
@@ -135,7 +135,7 @@ export function generateProgressHtml(data: ProgressReportData): string {
   <h3>Recordes Pessoais (PRs)</h3>
   <table>
     <thead>
-      <tr><th>Exercicio</th><th>Peso</th><th>Reps</th><th>Data</th></tr>
+      <tr><th>Exercício</th><th>Peso</th><th>Reps</th><th>Data</th></tr>
     </thead>
     <tbody>${prRows}</tbody>
   </table>` : ""}

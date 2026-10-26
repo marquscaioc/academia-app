@@ -119,7 +119,7 @@ export default function GroupsScreen() {
             />
             <TextInput
               className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary mb-3"
-              placeholder="Descricao (opcional)"
+              placeholder="Descrição (opcional)"
               placeholderTextColor="#6E6382"
               value={newDesc}
               onChangeText={setNewDesc}

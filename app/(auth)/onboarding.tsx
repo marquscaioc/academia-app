@@ -16,7 +16,7 @@ const roles: { value: Role; icon: IconName; label: string; description: string; 
     value: "student",
     icon: "workout",
     label: "Aluno",
-    description: "Acompanhe treinos, dieta e evolucao",
+    description: "Acompanhe treinos, dieta e evolução",
     features: ["Treinos prescritos", "Dieta personalizada", "Acompanhamento de progresso", "Desafios e competicoes"],
   },
   {

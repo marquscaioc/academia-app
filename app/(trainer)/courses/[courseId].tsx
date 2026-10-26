@@ -94,7 +94,7 @@ export default function CourseDetailScreen() {
           <View className="bg-surface-card border border-surface-border rounded-3xl p-4 mb-4">
             <TextInput
               className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary mb-3"
-              placeholder="Titulo da aula"
+              placeholder="Título da aula"
               placeholderTextColor="#6E6382"
               value={title}
               onChangeText={setTitle}

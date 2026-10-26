@@ -40,7 +40,7 @@ export default function TrainerCoursesScreen() {
             <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>Voltar</Text>
           </Pressable>
           <View className="items-center">
-            <Text className="text-text-muted uppercase mb-0.5" style={{ fontFamily: font.semibold, fontSize: 10, letterSpacing: 2 }}>Conteudo</Text>
+            <Text className="text-text-muted uppercase mb-0.5" style={{ fontFamily: font.semibold, fontSize: 10, letterSpacing: 2 }}>Conteúdo</Text>
             <Text className="text-2xl text-text-primary" style={{ fontFamily: font.display }}>Aulas</Text>
           </View>
           <Pressable onPress={() => setShowNew(!showNew)} className="flex-row items-center gap-1.5 bg-violet-500 px-3 py-1.5 rounded-xl">
@@ -54,7 +54,7 @@ export default function TrainerCoursesScreen() {
             <Text className="text-violet-400 mb-3 uppercase" style={{ fontFamily: font.semibold, fontSize: 11, letterSpacing: 2 }}>Novo curso</Text>
             <TextInput
               className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary mb-3"
-              placeholder="Titulo do curso"
+              placeholder="Título do curso"
               placeholderTextColor="#6E6382"
               value={title}
               onChangeText={setTitle}
@@ -62,7 +62,7 @@ export default function TrainerCoursesScreen() {
             />
             <TextInput
               className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary mb-3"
-              placeholder="Descricao"
+              placeholder="Descrição"
               placeholderTextColor="#6E6382"
               value={description}
               onChangeText={setDescription}
@@ -89,7 +89,7 @@ export default function TrainerCoursesScreen() {
           <EmptyState
             iconName="courses"
             title="Nenhum curso ainda"
-            description="Crie cursos com videoaulas para seus alunos assistirem. Inclua tecnicas, dicas de execucao, ou conteudo teorico."
+            description="Crie cursos com videoaulas para seus alunos assistirem. Inclua técnicas, dicas de execução, ou conteúdo teórico."
           />
         ) : (
           <View className="gap-3 pb-10">

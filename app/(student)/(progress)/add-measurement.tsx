@@ -207,7 +207,7 @@ export default function AddMeasurementScreen() {
                   className="text-[11px] text-text-muted uppercase"
                   style={{ fontFamily: font.semibold, letterSpacing: 1.5 }}
                 >
-                  Observacoes
+                  Observações
                 </Text>
               </View>
               <TextInput
