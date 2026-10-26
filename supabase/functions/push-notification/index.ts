@@ -7,8 +7,14 @@
 //    with an active trainer_students link to the target student.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { consumeRateLimit, tooManyRequests } from "../_shared/rateLimit.ts";
 
 const EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send";
+// End-user callers only (service role is exempt): 30 pushes per minute per caller.
+const USER_LIMIT = 30;
+const USER_WINDOW_S = 60;
+const MAX_TITLE = 120;
+const MAX_BODY = 500;
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -39,6 +45,9 @@ Deno.serve(async (req) => {
 
     const { user_id, title, body, data }: PushPayload = await req.json();
     if (!user_id || !title) return json({ error: "missing_fields" }, 400);
+    if (typeof title !== "string" || title.length > MAX_TITLE || (body != null && (typeof body !== "string" || body.length > MAX_BODY))) {
+      return json({ error: "invalid_fields" }, 400);
+    }
 
     // --- Authorization ---
     const authHeader = req.headers.get("Authorization") ?? "";
@@ -49,6 +58,9 @@ Deno.serve(async (req) => {
       const { data: auth } = await admin.auth.getUser(jwt);
       const caller = auth?.user;
       if (!caller) return json({ error: "unauthorized" }, 401);
+      if (!(await consumeRateLimit(admin, `push:${caller.id}`, USER_LIMIT, USER_WINDOW_S))) {
+        return tooManyRequests(USER_WINDOW_S, CORS);
+      }
 
       if (caller.id !== user_id) {
         const { data: callerProfile } = await admin

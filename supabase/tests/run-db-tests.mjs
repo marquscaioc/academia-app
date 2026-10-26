@@ -27,6 +27,10 @@ CREATE FUNCTION storage.foldername(name text) RETURNS text[] LANGUAGE sql IMMUTA
   AS $$ SELECT (string_to_array(name, '/'))[1:array_length(string_to_array(name, '/'), 1) - 1] $$;
 CREATE PUBLICATION supabase_realtime;
 GRANT USAGE ON SCHEMA public, auth, storage TO authenticated, anon, service_role;
+-- Like Supabase: privileges are granted when each object is created, so a migration's later REVOKE sticks.
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO authenticated, service_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO authenticated, service_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT EXECUTE ON FUNCTIONS TO authenticated, service_role;
 `;
 
 const db = new PGlite({ extensions: { pg_trgm } });
@@ -43,10 +47,6 @@ for (const f of files) {
   }
 }
 console.log(`Applied ${files.length - failures}/${files.length} migrations`);
-await db.exec(`
-  GRANT ALL ON ALL TABLES IN SCHEMA public TO authenticated;
-  GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO authenticated;
-`);
 
 // ---------------------------------------------------------------------------
 const U = {
@@ -607,6 +607,14 @@ await check("create_workout_plan / copy_workout_plan: atomic, own plans only, li
   await expectError(as(U.trainerA, "SELECT public.copy_workout_plan($1, $2, 'x')", [plan, U.studentB]), "copy to unlinked student");
   const studentSees = await as(U.studentA, "SELECT id FROM public.workout_plans WHERE id = $1", [tpl]);
   eq(studentSees.rows.length, 0, "student cannot see templates");
+});
+
+await check("consume_rate_limit: counts per key and window; app users cannot call it or read counters", async () => {
+  const hit = async (key) => (await asSuper("SELECT public.consume_rate_limit($1, 2, 60) AS ok", [key])).rows[0].ok;
+  eq([await hit("t:a"), await hit("t:a"), await hit("t:a"), await hit("t:b")], [true, true, false, true], "limit 2 per key");
+  await expectError(as(U.studentA, "SELECT public.consume_rate_limit('t:x', 100, 60)"), "authenticated cannot execute");
+  await expectError(as(U.studentA, "SELECT * FROM public.edge_rate_limits"), "authenticated cannot read counters");
+  await expectError(asSuper("SELECT public.consume_rate_limit('', 1, 60)"), "empty key rejected");
 });
 
 // ---------------------------------------------------------------------------
