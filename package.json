@@ -12,7 +12,8 @@
     "lint": "eslint app components hooks lib stores",
     "typecheck": "tsc --noEmit",
     "test": "jest",
-    "test:db": "node supabase/tests/run-db-tests.mjs"
+    "test:db": "node supabase/tests/run-db-tests.mjs",
+    "test:api": "node supabase/tests/api-integration.mjs"
   },
   "dependencies": {
     "@expo-google-fonts/archivo-black": "^0.4.1",

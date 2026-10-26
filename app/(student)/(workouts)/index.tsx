@@ -9,12 +9,16 @@ import { useWorkoutPlans, useWorkoutSessions } from "../../../hooks/queries/useW
 import { WorkoutCalendar } from "../../../components/progress/WorkoutCalendar";
 import { AppIcon, BigStat, DisplayHeading, Logo, SectionLabel } from "../../../components/ui";
 import { WebContainer } from "../../../components/layout/WebContainer";
-import { font } from "../../../lib/design/tokens";
+import { font, palette } from "../../../lib/design/tokens";
+import { recommendNextWorkout, workoutStatuses } from "../../../lib/workout/schedule";
+import { useWorkoutSessionStore } from "../../../stores/useWorkoutSessionStore";
 
 export default function WorkoutsScreen() {
   const { user } = useAuth();
-  const { data: plans, isLoading } = useWorkoutPlans(user?.id);
+  const { data: plans, isLoading, isError, refetch } = useWorkoutPlans(user?.id);
   const { data: sessions } = useWorkoutSessions(user?.id);
+  const activeWorkoutId = useWorkoutSessionStore((s) => s.workoutId);
+  const activeWorkoutName = useWorkoutSessionStore((s) => s.workoutName);
 
   const trainedDates = useMemo(() => {
     const dates = new Set<string>();
@@ -26,7 +30,18 @@ export default function WorkoutsScreen() {
     return dates;
   }, [sessions]);
 
-  const allWorkouts = plans?.flatMap((p) => (p.workouts ?? []).map((w) => ({ ...w, planName: p.name }))) ?? [];
+  const allWorkouts = useMemo(
+    () =>
+      (plans ?? []).flatMap((p) =>
+        (p.workouts ?? [])
+          .slice()
+          .sort((a, b) => a.sort_order - b.sort_order)
+          .map((w) => ({ ...w, planName: p.name })),
+      ),
+    [plans],
+  );
+  const statuses = useMemo(() => workoutStatuses(allWorkouts, sessions ?? []), [allWorkouts, sessions]);
+  const nextWorkout = useMemo(() => recommendNextWorkout(allWorkouts, sessions ?? []), [allWorkouts, sessions]);
 
   const finishedThisWeek = useMemo(() => {
     const now = new Date();
@@ -91,6 +106,31 @@ export default function WorkoutsScreen() {
           </Text>
         </Animated.View>
 
+        {activeWorkoutId ? (
+          <Link href={`/(student)/(workouts)/${activeWorkoutId}`} asChild>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={`Retomar treino em andamento: ${activeWorkoutName ?? ""}`}
+              className="flex-row items-center gap-3 bg-success-500/10 border border-success-500/30 rounded-2xl p-4 mb-6 active:opacity-80"
+            >
+              <View className="w-10 h-10 rounded-xl bg-success-500/20 items-center justify-center">
+                <AppIcon name="play" size={18} color={palette.success} strokeWidth={2.2} />
+              </View>
+              <View className="flex-1">
+                <Text className="text-text-primary text-sm" style={{ fontFamily: font.semibold }}>
+                  Treino em andamento
+                </Text>
+                <Text className="text-text-secondary text-xs" numberOfLines={1} style={{ fontFamily: font.regular }}>
+                  {activeWorkoutName ?? "Toque para continuar"}
+                </Text>
+              </View>
+              <Text className="text-success-500 text-sm" style={{ fontFamily: font.semibold }}>
+                Retomar
+              </Text>
+            </Pressable>
+          </Link>
+        ) : null}
+
         {/* Weekly pulse — big numbers */}
         <Animated.View entering={FadeInDown.delay(220).springify()} className="mb-8">
           <SectionLabel withRule className="mb-4">
@@ -115,6 +155,21 @@ export default function WorkoutsScreen() {
         {isLoading ? (
           <View className="items-center py-10">
             <ActivityIndicator size="large" color="#781BB6" />
+          </View>
+        ) : isError ? (
+          <View className="bg-surface-card border border-danger-500/30 rounded-3xl p-6 items-center mb-10">
+            <AppIcon name="warning" size={24} color={palette.danger} strokeWidth={2} />
+            <Text className="text-text-primary text-base mt-3 mb-1" style={{ fontFamily: font.semibold }}>
+              Não foi possível carregar seus treinos
+            </Text>
+            <Text className="text-text-muted text-sm text-center mb-4" style={{ fontFamily: font.regular }}>
+              Verifique sua conexão e tente novamente.
+            </Text>
+            <Pressable onPress={() => refetch()} accessibilityRole="button" className="bg-violet-500 rounded-xl px-5 py-3">
+              <Text className="text-white text-sm" style={{ fontFamily: font.semibold }}>
+                Tentar novamente
+              </Text>
+            </Pressable>
           </View>
         ) : !allWorkouts.length ? (
           <Animated.View
@@ -155,7 +210,7 @@ export default function WorkoutsScreen() {
               >
                 <Link href={`/(student)/(workouts)/${w.id}`} asChild>
                   <Pressable className="bg-surface-card border border-surface-border rounded-3xl p-5 active:bg-surface-hover overflow-hidden">
-                    {idx === 0 ? (
+                    {w.id === nextWorkout?.id ? (
                       <LinearGradient
                         colors={["rgba(198,54,224,0.12)", "transparent"]}
                         start={{ x: 0, y: 0 }}
@@ -169,7 +224,7 @@ export default function WorkoutsScreen() {
                       {/* Index numeral */}
                       <View className="w-14 items-start">
                         <Text
-                          className={idx === 0 ? "text-fuchsia-400" : "text-text-muted"}
+                          className={w.id === nextWorkout?.id ? "text-fuchsia-400" : "text-text-muted"}
                           style={{
                             fontFamily: font.display,
                             fontSize: 36,
@@ -210,6 +265,22 @@ export default function WorkoutsScreen() {
                             </View>
                           ) : null}
                         </View>
+                        <View className="flex-row items-center gap-2 mt-2">
+                          {w.id === activeWorkoutId ? (
+                            <StatusPill tone="success" label="Em andamento" />
+                          ) : statuses[w.id]?.doneToday ? (
+                            <StatusPill tone="success" label="Feito hoje" />
+                          ) : w.id === nextWorkout?.id ? (
+                            <StatusPill tone="accent" label="Próximo" />
+                          ) : statuses[w.id]?.doneThisWeek ? (
+                            <StatusPill tone="muted" label="Feito esta semana" />
+                          ) : null}
+                          <Text className="text-[11px] text-text-muted" style={{ fontFamily: font.regular }}>
+                            {statuses[w.id]?.lastFinishedAt
+                              ? `Último: ${new Date(statuses[w.id].lastFinishedAt as string).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })}`
+                              : "Ainda não realizado"}
+                          </Text>
+                        </View>
                       </View>
 
                       <View className="self-center">
@@ -228,5 +299,20 @@ export default function WorkoutsScreen() {
         </WebContainer>
       </ScrollView>
     </SafeAreaView>
+  );
+}
+
+function StatusPill({ tone, label }: { tone: "success" | "accent" | "muted"; label: string }) {
+  const cls = {
+    success: "bg-success-500/15 text-success-500",
+    accent: "bg-fuchsia-500/15 text-fuchsia-300",
+    muted: "bg-surface-elevated text-text-secondary",
+  }[tone].split(" ");
+  return (
+    <View className={`rounded-full px-2 py-0.5 ${cls[0]}`}>
+      <Text className={`text-[10px] ${cls[1]}`} style={{ fontFamily: font.semibold, letterSpacing: 0.3 }}>
+        {label}
+      </Text>
+    </View>
   );
 }
