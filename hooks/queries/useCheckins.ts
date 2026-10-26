@@ -88,37 +88,41 @@ export function useAdherenceScore(userId?: string) {
       const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
 
       // Workout adherence: sessions in last 30 days
-      const { count: workoutCount } = await supabase
+      const { count: workoutCount, error: workoutError } = await supabase
         .from("workout_sessions")
         .select("*", { count: "exact", head: true })
         .eq("user_id", userId!)
         .gte("started_at", thirtyDaysAgo)
         .not("finished_at", "is", null);
+      if (workoutError) throw workoutError;
 
       // Meal adherence: meal logs in last 7 days
       const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
-      const { count: mealLogCount } = await supabase
+      const { count: mealLogCount, error: mealError } = await supabase
         .from("meal_logs")
         .select("*", { count: "exact", head: true })
         .eq("user_id", userId!)
         .gte("logged_at", sevenDaysAgo);
+      if (mealError) throw mealError;
 
       // Check-in adherence: submitted check-ins in last 30 days
-      const { count: submittedCheckins } = await supabase
+      const { count: submittedCheckins, error: submittedError } = await supabase
         .from("check_ins")
         .select("*", { count: "exact", head: true })
         .eq("user_id", userId!)
         .eq("status", "submitted")
         .gte("created_at", thirtyDaysAgo);
+      if (submittedError) throw submittedError;
 
-      const { count: totalCheckins } = await supabase
+      const { count: totalCheckins, error: checkinError } = await supabase
         .from("check_ins")
         .select("*", { count: "exact", head: true })
         .eq("user_id", userId!)
         .gte("created_at", thirtyDaysAgo);
+      if (checkinError) throw checkinError;
 
       // Target comes from the student's latest active plan schedule, never from an invented number.
-      const { data: plan } = await supabase
+      const { data: plan, error: planError } = await supabase
         .from("workout_plans")
         .select("workouts(day_of_week)")
         .eq("student_id", userId!)
@@ -126,6 +130,7 @@ export function useAdherenceScore(userId?: string) {
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
+      if (planError) throw planError;
 
       // null = not enough information (no scheduled days / no check-in requested): shown as "sem dados".
       const workoutScore = workoutAdherence(workoutCount ?? 0, plannedDaysPerWeek(plan?.workouts ?? []));

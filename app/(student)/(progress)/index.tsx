@@ -1,6 +1,6 @@
 import { Link, router } from "expo-router";
-import { useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { useState, type ReactNode } from "react";
+import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import { useAuth } from "../../../lib/auth/provider";
@@ -8,7 +8,7 @@ import { useBodyMeasurements, useProgressPhotos } from "../../../hooks/queries/u
 import { useAdherenceScore } from "../../../hooks/queries/useCheckins";
 import { Card } from "../../../components/ui/Card";
 import { AppIcon, DisplayHeading, SectionLabel } from "../../../components/ui";
-import { font } from "../../../lib/design/tokens";
+import { font, palette } from "../../../lib/design/tokens";
 import { SimpleLineChart } from "../../../components/progress/SimpleLineChart";
 import { AdherenceRing } from "../../../components/progress/AdherenceRing";
 import { PhotoComparison } from "../../../components/progress/PhotoComparison";
@@ -21,15 +21,51 @@ import { useTrainedExercises } from "../../../hooks/queries/useExerciseEvolution
 import { formatKg } from "../../../lib/workout/metrics";
 import { pluralize } from "../../../lib/utils/plural";
 
+function QuerySection({ query, label, children }: {
+  query: { isLoading: boolean; isError: boolean; refetch: () => unknown };
+  label: string;
+  children: ReactNode;
+}) {
+  if (query.isLoading) {
+    return (
+      <Card variant="outlined" className="mb-6">
+        <View className="flex-row items-center gap-3" accessibilityRole="progressbar" accessibilityLabel={`Carregando ${label}`}>
+          <ActivityIndicator color={palette.violet500} />
+          <Text className="text-text-muted text-sm" style={{ fontFamily: font.regular }}>Carregando {label}...</Text>
+        </View>
+      </Card>
+    );
+  }
+  if (query.isError) {
+    return (
+      <Card variant="outlined" className="mb-6">
+        <Text accessibilityRole="alert" className="text-text-secondary text-sm" style={{ fontFamily: font.regular }}>
+          Não foi possível carregar {label}.
+        </Text>
+        <Pressable onPress={() => { void query.refetch(); }} accessibilityRole="button" accessibilityLabel={`Tentar carregar ${label} novamente`} className="self-start py-3">
+          <Text className="text-violet-400 text-sm" style={{ fontFamily: font.semibold }}>Tentar novamente</Text>
+        </Pressable>
+      </Card>
+    );
+  }
+  return <>{children}</>;
+}
+
 export default function ProgressScreen() {
   const { user } = useAuth();
-  const { data: measurements } = useBodyMeasurements(user?.id);
-  const { data: photos } = useProgressPhotos(user?.id);
+  const measurementsQuery = useBodyMeasurements(user?.id);
+  const { data: measurements } = measurementsQuery;
+  const photosQuery = useProgressPhotos(user?.id);
+  const { data: photos } = photosQuery;
   const photoSigned = useSignedUrls("progress-photos", (photos ?? []).map((p) => p.photo_url));
-  const { data: adherence } = useAdherenceScore(user?.id);
-  const { data: checkinHistory } = useCheckinScoreHistory(user?.id);
-  const { data: achievements } = useUserAchievements(user?.id);
-  const { data: trained } = useTrainedExercises(user?.id);
+  const adherenceQuery = useAdherenceScore(user?.id);
+  const { data: adherence } = adherenceQuery;
+  const checkinHistoryQuery = useCheckinScoreHistory(user?.id);
+  const { data: checkinHistory } = checkinHistoryQuery;
+  const achievementsQuery = useUserAchievements(user?.id);
+  const { data: achievements } = achievementsQuery;
+  const trainedQuery = useTrainedExercises(user?.id);
+  const { data: trained } = trainedQuery;
   const [showAllExercises, setShowAllExercises] = useState(false);
   const visibleExercises = showAllExercises ? trained : trained?.slice(0, 5);
 
@@ -61,6 +97,7 @@ export default function ProgressScreen() {
         <DisplayHeading size="xl" className="mb-6">Meu progresso.</DisplayHeading>
 
         {/* Weight + Variation cards */}
+        <QuerySection query={measurementsQuery} label="medidas">
         <View className="flex-row gap-3 mb-6">
           <Card variant="outlined" className="flex-1">
             <SectionLabel className="mb-1">Peso atual</SectionLabel>
@@ -79,8 +116,10 @@ export default function ProgressScreen() {
             </Text>
           </Card>
         </View>
+        </QuerySection>
 
         {/* Adherence rings */}
+        <QuerySection query={adherenceQuery} label="adesão">
         {adherence ? (
           <View className="flex-row justify-around mb-6 bg-surface-card border border-surface-border rounded-3xl py-6">
             <AdherenceRing score={adherence.workoutScore} label="Treino" emptyHint="Plano sem dias definidos" />
@@ -88,6 +127,7 @@ export default function ProgressScreen() {
             <AdherenceRing score={adherence.overallScore} label="Geral" emptyHint="Sem dados" />
           </View>
         ) : null}
+        </QuerySection>
 
         {/* Quick actions */}
         <View className="flex-row gap-3 mb-6">
@@ -118,12 +158,12 @@ export default function ProgressScreen() {
         </View>
 
         {/* Weight chart */}
-        <View className="mb-6">
+        {measurementsQuery.isSuccess ? <View className="mb-6">
           <SimpleLineChart data={weightData} title="Peso" unit="kg" color="#781BB6" />
-        </View>
+        </View> : null}
 
         {/* Waist chart */}
-        {waistData.length > 0 ? (
+        {measurementsQuery.isSuccess && waistData.length > 0 ? (
           <View className="mb-6">
             <SimpleLineChart data={waistData} title="Cintura" unit="cm" color="#67E8F9" />
           </View>
@@ -132,6 +172,7 @@ export default function ProgressScreen() {
         {/* Per-exercise evolution (real logged sets only) */}
         <View className="mb-6">
           <SectionLabel className="mb-3">Evolução por exercício</SectionLabel>
+          <QuerySection query={trainedQuery} label="evolução dos exercícios">
           {trained && trained.length > 0 ? (
             <View className="gap-2">
               {visibleExercises?.map((e) => (
@@ -169,9 +210,11 @@ export default function ProgressScreen() {
               </Text>
             </View>
           )}
+          </QuerySection>
         </View>
 
         {/* Achievements */}
+        <QuerySection query={achievementsQuery} label="conquistas">
         {achievements && achievements.length > 0 ? (
           <View className="mb-6">
             <View className="flex-row items-center justify-between mb-3">
@@ -197,8 +240,10 @@ export default function ProgressScreen() {
             </ScrollView>
           </View>
         ) : null}
+        </QuerySection>
 
         {/* Check-in score chart */}
+        <QuerySection query={checkinHistoryQuery} label="histórico de check-ins">
         {checkinHistory && checkinHistory.length > 0 ? (
           <View className="mb-6">
             <SectionLabel className="mb-3">Score de check-in</SectionLabel>
@@ -207,9 +252,10 @@ export default function ProgressScreen() {
             </Card>
           </View>
         ) : null}
+        </QuerySection>
 
         {/* Recent measurements */}
-        <View className="mb-6">
+        {measurementsQuery.isSuccess ? <View className="mb-6">
           <SectionLabel className="mb-3">Medidas recentes</SectionLabel>
           {!measurements?.length ? (
             <Card variant="outlined">
@@ -237,10 +283,10 @@ export default function ProgressScreen() {
               ))}
             </View>
           )}
-        </View>
+        </View> : null}
 
         {/* Before/After comparison */}
-        {photos && photos.length >= 2 ? (
+        {photosQuery.isSuccess && photos && photos.length >= 2 ? (
           <View className="mb-6">
             <SectionLabel className="mb-3">Comparativo</SectionLabel>
             <PhotoComparison
@@ -255,6 +301,7 @@ export default function ProgressScreen() {
         {/* Progress photos */}
         <View className="mb-10">
           <SectionLabel className="mb-3">Fotos de progresso</SectionLabel>
+          <QuerySection query={photosQuery} label="fotos de progresso">
           {!photos?.length ? (
             <Card variant="outlined">
               <View className="items-center py-4">
@@ -280,6 +327,7 @@ export default function ProgressScreen() {
               ))}
             </View>
           )}
+          </QuerySection>
         </View>
         </WebContainer>
       </ScrollView>
