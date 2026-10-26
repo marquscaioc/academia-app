@@ -22,6 +22,7 @@ describe("useWorkoutSessionStore", () => {
 
   it("begins a session with a clean state", () => {
     useWorkoutSessionStore.getState().begin({
+      ownerId: "student",
       sessionId: "sess",
       workoutId: "w",
       workoutName: "Treino A",
@@ -29,6 +30,7 @@ describe("useWorkoutSessionStore", () => {
     });
     const s = useWorkoutSessionStore.getState();
     expect(s.sessionId).toBe("sess");
+    expect(s.ownerId).toBe("student");
     expect(s.sets).toEqual([]);
     expect(s.currentExerciseIndex).toBe(0);
   });

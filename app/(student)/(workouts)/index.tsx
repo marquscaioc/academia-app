@@ -18,8 +18,8 @@ export default function WorkoutsScreen() {
   const { user } = useAuth();
   const { data: plans, isLoading, isError, refetch } = useWorkoutPlans(user?.id);
   const { data: sessions } = useWorkoutSessions(user?.id);
-  const activeWorkoutId = useWorkoutSessionStore((s) => s.workoutId);
-  const activeWorkoutName = useWorkoutSessionStore((s) => s.workoutName);
+  const activeWorkoutId = useWorkoutSessionStore((s) => s.ownerId === user?.id ? s.workoutId : null);
+  const activeWorkoutName = useWorkoutSessionStore((s) => s.ownerId === user?.id ? s.workoutName : null);
 
   const trainedDates = useMemo(() => {
     const dates = new Set<string>();

@@ -19,6 +19,7 @@ export interface SessionSet {
 }
 
 interface BeginInput {
+  ownerId: string;
   sessionId: string;
   workoutId: string;
   workoutName: string;
@@ -28,6 +29,8 @@ interface BeginInput {
 }
 
 interface WorkoutSessionState {
+  /** Auth identity owning this persisted draft (legacy ownerless drafts are discarded). */
+  ownerId: string | null;
   sessionId: string | null;
   workoutId: string | null;
   workoutName: string | null;
@@ -52,6 +55,7 @@ interface WorkoutSessionState {
 }
 
 const initial = {
+  ownerId: null,
   sessionId: null,
   workoutId: null,
   workoutName: null,
@@ -68,8 +72,8 @@ export const useWorkoutSessionStore = create<WorkoutSessionState>()(
     (set, get) => ({
       ...initial,
 
-      begin: ({ sessionId, workoutId, workoutName, startedAt, sets }) =>
-        set({ ...initial, sessionId, workoutId, workoutName, startedAt, sets: sets ?? [] }),
+      begin: ({ ownerId, sessionId, workoutId, workoutName, startedAt, sets }) =>
+        set({ ...initial, ownerId, sessionId, workoutId, workoutName, startedAt, sets: sets ?? [] }),
 
       end: () => set({ ...initial }),
 
