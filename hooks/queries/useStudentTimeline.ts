@@ -32,7 +32,7 @@ export function useStudentTimeline(studentId?: string) {
           type: "workout",
           date: s.started_at,
           title: w?.name ?? "Treino",
-          subtitle: s.duration_seconds ? `${Math.round(s.duration_seconds / 60)}min` : undefined,
+          subtitle: s.duration_seconds ? s.duration_seconds < 60 ? "< 1 min" : `${Math.round(s.duration_seconds / 60)} min` : undefined,
           data: s,
         });
       }

@@ -528,6 +528,33 @@ await check("chat media: members only", async () => {
   );
 });
 
+// ---- trainer overview RPC (00037) --------------------------------------------------
+await check("trainer_student_overview: own active students only, real counts, planned days", async () => {
+  const plan = (
+    await as(U.trainerA, "INSERT INTO public.workout_plans (trainer_id, student_id, name) VALUES ($1, $2, 'Plano B') RETURNING id", [
+      U.trainerA,
+      U.studentA,
+    ])
+  ).rows[0].id;
+  await as(U.trainerA, "INSERT INTO public.workouts (plan_id, name, day_of_week) VALUES ($1, 'A', '{1,3}'), ($1, 'B', '{3,5}')", [plan]);
+  await asSuper(
+    "INSERT INTO public.workout_sessions (user_id, started_at, finished_at) VALUES ($1, now() - interval '2 days', now() - interval '2 days' + interval '1 hour')",
+    [U.studentA],
+  );
+  const a = await as(U.trainerA, "SELECT * FROM public.trainer_student_overview()");
+  // (attacker accepted trainer A's invite in an earlier scenario, so it is a legit student of A)
+  const ids = a.rows.map((r) => r.student_id);
+  if (!ids.includes(U.studentA) || ids.includes(U.studentB)) throw new Error(`trainer A rows ${JSON.stringify(ids)}`);
+  const row = a.rows.find((r) => r.student_id === U.studentA);
+  eq(row.planned_days_per_week, 3, "distinct scheduled weekdays");
+  eq(row.plan_name, "Plano B", "latest active plan");
+  if (!(row.sessions_7d >= 1 && row.sessions_30d >= row.sessions_7d)) throw new Error(`counts ${row.sessions_7d}/${row.sessions_30d}`);
+  const b = await as(U.trainerB, "SELECT student_id FROM public.trainer_student_overview()");
+  eq(b.rows.map((r) => r.student_id), [U.studentB], "trainer B rows");
+  const s = await as(U.studentA, "SELECT * FROM public.trainer_student_overview()");
+  eq(s.rows.length, 0, "student gets nothing");
+});
+
 // ---------------------------------------------------------------------------
 for (const [status, name] of results) console.log(`${status}  ${name}`);
 console.log(`\n${results.filter((r) => r[0] === "PASS").length} passed, ${failures} failed`);

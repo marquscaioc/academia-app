@@ -81,7 +81,7 @@ export default function StudentDetailScreen() {
             <Text className="text-violet-400" style={{ fontFamily: font.medium }}>Voltar</Text>
           </Pressable>
           <DisplayHeading size="md">{student?.full_name ?? "Aluno"}</DisplayHeading>
-          <SectionLabel className="mt-2">Prontuario e Timeline</SectionLabel>
+          <SectionLabel className="mt-2">Histórico e notas</SectionLabel>
 
           <View className="flex-row flex-wrap gap-3 mt-4">
             <Pressable
@@ -179,7 +179,7 @@ export default function StudentDetailScreen() {
             ListEmptyComponent={
               <EmptyState
                 iconName="clipboard"
-                title="Prontuario vazio"
+                title="Nada registrado ainda"
                 description="Nenhum evento registrado ainda. As notas e atualizações do aluno aparecerão aqui."
               />
             }

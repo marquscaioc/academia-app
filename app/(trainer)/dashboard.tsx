@@ -1,17 +1,18 @@
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../../lib/auth/provider";
 import { supabase } from "../../lib/supabase/client";
-import { useStudentAdherenceList } from "../../hooks/queries/useStudentAdherence";
+import { useTrainerOverview } from "../../hooks/queries/useStudentAdherence";
+import { dashboardSummary, sortByAttention } from "../../lib/trainer/adherence";
 import { StudentAdherenceRow } from "../../components/trainer/StudentAdherenceRow";
 import { AppIcon, DisplayHeading, SectionLabel, type IconName } from "../../components/ui";
 import { font } from "../../lib/design/tokens";
 
 function MetricCard({ value, label, icon, color }: { value: string; label: string; icon: IconName; color: string }) {
   return (
-    <View className="flex-1 bg-surface-card border border-surface-border rounded-3xl p-5">
+    <View className="flex-1 min-w-[150px] bg-surface-card border border-surface-border rounded-3xl p-5">
       <View className="flex-row items-center justify-between mb-3">
         <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
           <AppIcon name={icon} size={18} color="#9B40D8" strokeWidth={2} />
@@ -26,25 +27,32 @@ function MetricCard({ value, label, icon, color }: { value: string; label: strin
 export default function TrainerDashboardScreen() {
   const { user, profile, signOut } = useAuth();
   const firstName = profile?.full_name?.split(" ")[0] ?? "Trainer";
-  const { data: adherenceList } = useStudentAdherenceList(user?.id);
+  const { data: overview, isLoading: overviewLoading, error: overviewError, refetch: refetchOverview } = useTrainerOverview(user?.id);
+  const summary = overview ? dashboardSummary(overview) : null;
+  const attentionList = overview ? sortByAttention(overview) : [];
 
   const { data: counts } = useQuery({
     queryKey: ["trainer", "dashboard-counts", user?.id],
     queryFn: async () => {
-      const [students, plans] = await Promise.all([
-        supabase
-          .from("trainer_students")
-          .select("*", { count: "exact", head: true })
-          .eq("trainer_id", user!.id)
-          .eq("status", "active"),
+      const [plans, assignedPlans, exercises] = await Promise.all([
         supabase
           .from("workout_plans")
           .select("*", { count: "exact", head: true })
           .eq("trainer_id", user!.id),
+        supabase
+          .from("workout_plans")
+          .select("*", { count: "exact", head: true })
+          .eq("trainer_id", user!.id)
+          .not("student_id", "is", null),
+        supabase
+          .from("exercises")
+          .select("*", { count: "exact", head: true })
+          .eq("created_by", user!.id),
       ]);
       return {
-        activeStudents: students.count ?? 0,
         workoutPlans: plans.count ?? 0,
+        assignedPlans: assignedPlans.count ?? 0,
+        customExercises: exercises.count ?? 0,
       };
     },
     enabled: !!user,
@@ -97,10 +105,27 @@ export default function TrainerDashboardScreen() {
         </Link>
 
         {/* Metrics */}
-        <View className="flex-row gap-3 mb-6">
-          <MetricCard value={String(counts?.activeStudents ?? 0)} label="Alunos ativos" icon="social" color="text-violet-400" />
-          <MetricCard value={String(counts?.workoutPlans ?? 0)} label="Treinos criados" icon="workout" color="text-ice-400" />
-        </View>
+        {summary ? (
+          <View className="flex-row flex-wrap gap-3 mb-6">
+            <MetricCard value={String(summary.activeStudents)} label="Alunos ativos" icon="social" color="text-violet-400" />
+            <MetricCard
+              value={`${summary.trainedLast7d}/${summary.activeStudents}`}
+              label="Treinaram (7 dias)"
+              icon="workout"
+              color="text-ice-400"
+            />
+            <MetricCard value={String(summary.pendingCheckins)} label="Check-ins pendentes" icon="clipboard" color="text-fuchsia-400" />
+            <MetricCard value={String(summary.plansEndingSoon)} label="Planos vencendo (7d)" icon="calendar" color="text-warning-500" />
+            {summary.subscriptionsNeedingAttention > 0 ? (
+              <MetricCard
+                value={String(summary.subscriptionsNeedingAttention)}
+                label="Assinaturas a verificar"
+                icon="financial"
+                color="text-danger-500"
+              />
+            ) : null}
+          </View>
+        ) : null}
 
         {/* Ferramentas (acesso direto, sobretudo no mobile onde nao ha sidebar) */}
         <View className="mb-6">
@@ -137,10 +162,10 @@ export default function TrainerDashboardScreen() {
           </View>
 
           {[
-            { step: "01", text: "Adicione exercicios na biblioteca", done: false },
-            { step: "02", text: "Crie planos de treino", done: false },
-            { step: "03", text: "Convide seus alunos", done: false },
-            { step: "04", text: "Atribua treinos e acompanhe", done: false },
+            { step: "01", text: "Adicione exercícios na biblioteca", done: (counts?.customExercises ?? 0) > 0 },
+            { step: "02", text: "Crie planos de treino", done: (counts?.workoutPlans ?? 0) > 0 },
+            { step: "03", text: "Convide seus alunos", done: (summary?.activeStudents ?? 0) > 0 },
+            { step: "04", text: "Atribua treinos e acompanhe", done: (counts?.assignedPlans ?? 0) > 0 },
           ].map((item) => (
             <View key={item.step} className="flex-row items-center gap-4 py-3 border-b border-surface-border last:border-0">
               <View className={`w-8 h-8 rounded-lg items-center justify-center ${
@@ -163,17 +188,21 @@ export default function TrainerDashboardScreen() {
 
         {/* Student adherence alerts */}
         <View className="mb-6">
-          <SectionLabel className="mb-4">Adesao dos Alunos</SectionLabel>
-          {adherenceList && adherenceList.length > 0 ? (
+          <SectionLabel className="mb-4">Acompanhamento dos alunos</SectionLabel>
+          {overviewLoading ? (
+            <Text className="text-sm text-text-muted" style={{ fontFamily: font.regular }}>Carregando…</Text>
+          ) : overviewError ? (
+            <Pressable onPress={() => refetchOverview()} accessibilityRole="button" className="bg-surface-card border border-danger-500/30 rounded-3xl p-5">
+              <Text className="text-sm text-text-primary" style={{ fontFamily: font.semibold }}>Não foi possível carregar os alunos.</Text>
+              <Text className="text-xs text-text-muted mt-1" style={{ fontFamily: font.regular }}>Toque para tentar novamente.</Text>
+            </Pressable>
+          ) : attentionList.length > 0 ? (
             <View className="gap-2">
-              {adherenceList.map((s) => (
+              {attentionList.map((s) => (
                 <StudentAdherenceRow
-                  key={s.studentId}
-                  name={s.name}
-                  avatarUrl={s.avatarUrl}
-                  workoutAdherence={s.workoutAdherence}
-                  checkinAdherence={s.checkinAdherence}
-                  overallAdherence={s.overallAdherence}
+                  key={s.student_id}
+                  student={s}
+                  onPress={() => router.push(`/(trainer)/students/${s.student_id}` as never)}
                 />
               ))}
             </View>
@@ -182,10 +211,15 @@ export default function TrainerDashboardScreen() {
               <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
                 <AppIcon name="trend" size={28} color="#9B40D8" strokeWidth={2} />
               </View>
-              <DisplayHeading size="sm" className="mb-2">Sem dados ainda</DisplayHeading>
-              <Text className="text-sm text-text-muted text-center" style={{ fontFamily: font.regular }}>
-                Dados de adesão aparecerão aqui{"\n"}quando seus alunos começarem a treinar.
+              <DisplayHeading size="sm" className="mb-2">Nenhum aluno ativo</DisplayHeading>
+              <Text className="text-sm text-text-muted text-center mb-4" style={{ fontFamily: font.regular }}>
+                Convide alunos para acompanhar treinos,{"\n"}check-ins e evolução aqui.
               </Text>
+              <Link href="/(trainer)/students/invite" asChild>
+                <Pressable accessibilityRole="button" className="bg-violet-500 rounded-2xl px-5 py-3 active:bg-violet-600">
+                  <Text className="text-white text-sm" style={{ fontFamily: font.semibold }}>Convidar aluno</Text>
+                </Pressable>
+              </Link>
             </View>
           )}
         </View>
