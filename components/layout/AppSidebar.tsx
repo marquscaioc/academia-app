@@ -95,6 +95,7 @@ export const STUDENT_NAV: SidebarItem[] = [
   { href: "/(student)/(social)", icon: "social", label: "Social", match: "(social)" },
   { href: "/(student)/(chat)", icon: "chat", label: "Chat", match: "(chat)" },
   { href: "/(student)/(courses)", icon: "courses", label: "Aulas", match: "(courses)" },
+  { href: "/partners", icon: "user", label: "Parceiros", match: "partners" },
 ];
 
 export const ADMIN_NAV: SidebarItem[] = [

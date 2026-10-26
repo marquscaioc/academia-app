@@ -136,6 +136,7 @@ export default function TrainerDashboardScreen() {
               { href: "/(trainer)/checkins/builder", icon: "clipboard", label: "Check-ins" },
               { href: "/(trainer)/checkins/responses", icon: "trend", label: "Respostas" },
               { href: "/(trainer)/courses", icon: "courses", label: "Aulas" },
+              { href: "/partners", icon: "user", label: "Parceiros" },
               { href: "/(trainer)/checkins/branding", icon: "sparkles", label: "Branding" },
               { href: "/(trainer)/diet-builder/substitutions", icon: "repeat", label: "Substituições" },
               { href: "/(trainer)/recipes/new", icon: "food", label: "Nova receita" },

@@ -72,7 +72,8 @@ export default function MoreScreen() {
     { label: "Grupos", description: "Comunidades de treino", icon: "user", href: "/groups" },
   ];
   const learning: HubItem[] = [
-    { label: "Aulas", description: "Cursos e videoaulas do seu personal", icon: "courses", href: "/(student)/(courses)" },
+    { label: "Aulas e e-books", description: "Vídeos e materiais do seu personal", icon: "courses", href: "/(student)/(courses)" },
+    { label: "Profissionais parceiros", description: "Contatos indicados pelo seu personal", icon: "user", href: "/partners" },
     { label: "Conquistas", description: "Medalhas desbloqueadas", icon: "medal", href: "/(student)/(progress)/badges" },
   ];
   const account: HubItem[] = [
