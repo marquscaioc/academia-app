@@ -50,6 +50,9 @@ export function useConvertToGroup() {
           conversation_type: "group",
           title: challenge.title,
           group_id: group.id,
+          // RLS "Create conversations" exige created_by = auth.uid(); sem isso o
+          // insert falhava silenciosamente e o grupo ficava sem conversa.
+          created_by: input.userId,
         })
         .select()
         .single();

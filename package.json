@@ -11,7 +11,8 @@
     "build": "npx expo export --platform web --clear && node scripts/patch-web-html.mjs",
     "lint": "eslint app components hooks lib stores",
     "typecheck": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest",
+    "test:db": "node supabase/tests/run-db-tests.mjs"
   },
   "dependencies": {
     "@expo-google-fonts/archivo-black": "^0.4.1",
@@ -59,6 +60,7 @@
     "zustand": "^5.0.12"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.2.17",
     "@types/jest": "^29.5.14",
     "@types/react": "~19.1.0",
     "babel-preset-expo": "~54.0.10",
