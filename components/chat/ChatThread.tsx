@@ -85,7 +85,7 @@ export default function ChatThread() {
             accessibilityLabel="Conversar pelo WhatsApp"
             className="flex-row items-center gap-1.5 rounded-xl border border-success-500/30 bg-success-500/10 px-3 py-2"
           >
-            <AppIcon name="phone" size={15} color="#34D399" strokeWidth={2} />
+            <AppIcon name="phone" size={15} color="#3F3F46" strokeWidth={2} />
             <Text className="text-success-500 text-xs" style={{ fontFamily: font.semibold }}>WhatsApp</Text>
           </Pressable>
         ) : null}

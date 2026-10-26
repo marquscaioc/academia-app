@@ -219,7 +219,7 @@ export default function ChallengeDetailScreen() {
               accessibilityRole="link"
               className="flex-row items-center justify-center gap-2 border border-violet-500/30 bg-violet-500/10 rounded-2xl py-3 mb-5"
             >
-              <AppIcon name="external" size={16} color="#9B40D8" strokeWidth={2} />
+              <AppIcon name="external" size={16} color="#3F3F46" strokeWidth={2} />
               <Text className="text-violet-400 text-sm" style={{ fontFamily: font.semibold }}>Ver no Instagram</Text>
             </Pressable>
           ) : null}
