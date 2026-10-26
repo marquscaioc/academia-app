@@ -50,7 +50,8 @@ export function Button({
   const a11y = {
     accessibilityRole: "button" as const,
     accessibilityLabel: title,
-    accessibilityState: { disabled: isDisabled, busy: !!loading },
+    "aria-disabled": isDisabled,
+    "aria-busy": !!loading,
   };
 
   // Gradient variants (primary / danger) — the signature amethyst treatment.

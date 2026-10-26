@@ -176,7 +176,7 @@ export const SetRow = memo(function SetRow({
         <Pressable
           onPress={handleCheck}
           accessibilityRole="checkbox"
-          accessibilityState={{ checked: completed }}
+          aria-checked={completed}
           accessibilityLabel={completed ? `Desmarcar série ${setNumber}` : `Concluir série ${setNumber}`}
           className={`w-11 h-11 rounded-xl items-center justify-center ${
             completed ? "bg-success-500" : "bg-surface-elevated border border-surface-border"

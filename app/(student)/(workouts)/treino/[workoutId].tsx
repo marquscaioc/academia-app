@@ -459,7 +459,7 @@ export default function WorkoutExecutionScreen() {
                     key={ex.id}
                     onPress={() => goTo(i)}
                     accessibilityRole="tab"
-                    accessibilityState={{ selected: active }}
+                    aria-selected={active}
                     accessibilityLabel={`Exercício ${i + 1}: ${ex.exercise?.name ?? ""}${done ? ", concluído" : ""}`}
                     className={`h-9 min-w-[36px] px-3 rounded-full items-center justify-center flex-row gap-1 ${
                       active ? "bg-violet-500" : done ? "bg-success-500/15" : "bg-surface-card border border-surface-border"
