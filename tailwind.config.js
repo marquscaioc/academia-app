@@ -4,6 +4,9 @@ module.exports = {
     "./app/**/*.{js,jsx,ts,tsx}",
     "./components/**/*.{js,jsx,ts,tsx}",
   ],
+  // The app is dark-only (no `dark:` variants). "class" stops NativeWind on web from throwing when
+  // something toggles a class on <html> ("Cannot manually set color scheme ... type 'media'").
+  darkMode: "class",
   presets: [require("nativewind/preset")],
   theme: {
     extend: {

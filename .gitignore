@@ -51,3 +51,4 @@ CODE_REVIEW.md
 
 # seed data (large dataset, not versioned)
 scripts/data/
+.playwright-mcp/

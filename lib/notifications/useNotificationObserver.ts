@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Platform } from "react-native";
 import { router } from "expo-router";
 import * as Notifications from "expo-notifications";
 import { supabase } from "../supabase/client";
@@ -34,11 +35,15 @@ async function navigateForResponse(response: Notifications.NotificationResponse 
 // (app aberto pela notificacao) quanto com o app ja em execucao.
 export function useNotificationObserver() {
   useEffect(() => {
+    // Push notification responses are native-only; on web these APIs throw.
+    if (Platform.OS === "web") return;
     let mounted = true;
 
-    Notifications.getLastNotificationResponseAsync().then((response) => {
-      if (mounted) navigateForResponse(response);
-    });
+    Notifications.getLastNotificationResponseAsync()
+      .then((response) => {
+        if (mounted) navigateForResponse(response);
+      })
+      .catch(() => {});
 
     const sub = Notifications.addNotificationResponseReceivedListener((response) => {
       navigateForResponse(response);
