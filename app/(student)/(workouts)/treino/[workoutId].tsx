@@ -41,6 +41,7 @@ import {
   parseRepTarget,
   totalVolume,
 } from "../../../../lib/workout/metrics";
+import { pluralize } from "../../../../lib/utils/plural";
 
 type Dialog = null | "finish" | "finish-empty" | "discard" | "switch";
 
@@ -312,7 +313,7 @@ export default function WorkoutExecutionScreen() {
               {workout.name}
             </DisplayHeading>
             <Text className="text-sm text-text-secondary mb-2" style={{ fontFamily: font.regular }}>
-              {exercises.length} exercícios · {totalTargetSets} séries
+              {pluralize(exercises.length, "exercício", "exercícios")} · {pluralize(totalTargetSets, "série", "séries")}
               {workout.estimated_duration_minutes ? ` · ~${workout.estimated_duration_minutes} min` : ""}
             </Text>
             {workout.notes ? (

@@ -21,6 +21,7 @@ import { AppIcon, BigStat, DisplayHeading, GradientCard, Logo, SectionLabel, typ
 import { WebContainer } from "../../../components/layout/WebContainer";
 import { font } from "../../../lib/design/tokens";
 import { recommendNextWorkout } from "../../../lib/workout/schedule";
+import { pluralize } from "../../../lib/utils/plural";
 
 function QuickAction({ icon, label, href, index }: { icon: IconName; label: string; href: string; index: number }) {
   return (
@@ -305,7 +306,7 @@ export default function StudentHomeScreen() {
                     <View className="flex-row items-center gap-1.5">
                       <AppIcon name="list" size={14} color="#9B40D8" strokeWidth={2} />
                       <Text className="text-[12px] text-violet-300" style={{ fontFamily: font.semibold }}>
-                        {todayExerciseCount} exercícios
+                        {pluralize(todayExerciseCount, "exercício", "exercícios")}
                       </Text>
                     </View>
                     {todayWorkout.estimated_duration_minutes ? (

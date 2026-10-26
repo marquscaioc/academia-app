@@ -12,6 +12,7 @@ import { WebContainer } from "../../../components/layout/WebContainer";
 import { font, palette } from "../../../lib/design/tokens";
 import { recommendNextWorkout, workoutStatuses } from "../../../lib/workout/schedule";
 import { useWorkoutSessionStore } from "../../../stores/useWorkoutSessionStore";
+import { pluralize } from "../../../lib/utils/plural";
 
 export default function WorkoutsScreen() {
   const { user } = useAuth();
@@ -253,7 +254,7 @@ export default function WorkoutsScreen() {
                           <View className="flex-row items-center gap-1.5">
                             <AppIcon name="list" size={14} color="#9B40D8" strokeWidth={2} />
                             <Text className="text-[11px] text-violet-300" style={{ fontFamily: font.semibold }}>
-                              {w.exercises?.length ?? 0} exercícios
+                              {pluralize(w.exercises?.length ?? 0, "exercício", "exercícios")}
                             </Text>
                           </View>
                           {w.estimated_duration_minutes ? (

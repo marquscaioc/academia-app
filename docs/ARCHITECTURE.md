@@ -60,6 +60,15 @@ Expo Router strips group names from URLs. Two dynamic routes in sibling groups t
 
 Static screens inside groups (`/history`, `/session-complete`) must also stay unique across groups.
 
+Student navigation: 5 tabs — Início, Treinos, Dieta, Progresso, **Mais**. `(social)`, `(chat)` and `(courses)` stay as
+routes but are hidden from the tab bar (`href: null`) and reached from the Mais hub (`app/(student)/(more)/index.tsx`),
+which also links challenges, groups, badges, notifications, profile and legal pages. The Mais tab shows the unread-chat
+badge. Desktop web keeps the full sidebar.
+
+Known limitation: each tab group's `index` resolves to `/`, so on web a reload while on a tab other than Início returns
+to Início (deep screens such as `/treino/:id` are unaffected). Fixing it requires per-tab URL segments (e.g. `/treinos`),
+a larger routing change not yet done.
+
 ## 4. Workout session data flow
 
 ```

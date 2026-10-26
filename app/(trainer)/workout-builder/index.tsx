@@ -26,6 +26,7 @@ import {
   useAddWorkoutExercise,
 } from "../../../hooks/mutations/useExerciseMutations";
 import { Avatar } from "../../../components/ui/Avatar";
+import { pluralize } from "../../../lib/utils/plural";
 
 interface SelectedExercise {
   exercise_id: string;
@@ -441,7 +442,7 @@ export default function WorkoutBuilderScreen() {
                 style={{ paddingVertical: 16, alignItems: "center", flexDirection: "row", justifyContent: "center", gap: 8 }}
               >
                 <Text className={exercises.length > 0 ? "text-white" : "text-text-muted"} style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>
-                  Revisar ({exercises.length} exercícios)
+                  Revisar ({pluralize(exercises.length, "exercício", "exercícios")})
                 </Text>
                 <AppIcon name="arrow-right" size={18} color={exercises.length > 0 ? "#FFFFFF" : "#6E6382"} strokeWidth={2} />
               </LinearGradient>
