@@ -1,4 +1,4 @@
-import { Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { TimelineEvent } from "../../hooks/queries/useStudentTimeline";
 import { AppIcon, type IconName } from "../ui";
 
@@ -12,9 +12,10 @@ const typeConfig: Record<string, { icon: IconName; color: string; iconColor: str
 
 interface TimelineItemProps {
   event: TimelineEvent;
+  onPress?: () => void;
 }
 
-export function TimelineItem({ event }: TimelineItemProps) {
+export function TimelineItem({ event, onPress }: TimelineItemProps) {
   const config = typeConfig[event.type] ?? typeConfig.note;
   const date = new Date(event.date).toLocaleDateString("pt-BR", {
     day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit",
@@ -31,13 +32,19 @@ export function TimelineItem({ event }: TimelineItemProps) {
       </View>
 
       {/* Content */}
-      <View className="flex-1 pb-4">
+      <Pressable
+        onPress={onPress}
+        disabled={!onPress}
+        accessibilityRole={onPress ? "button" : undefined}
+        accessibilityLabel={onPress ? `Ver detalhes: ${event.title}` : undefined}
+        className="flex-1 pb-4 active:opacity-70"
+      >
         <Text className="text-sm font-bold text-text-primary">{event.title}</Text>
         {event.subtitle ? (
           <Text className="text-xs text-text-muted mt-0.5">{event.subtitle}</Text>
         ) : null}
         <Text className="text-[10px] text-text-muted mt-1">{date}</Text>
-      </View>
+      </Pressable>
     </View>
   );
 }

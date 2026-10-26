@@ -175,7 +175,16 @@ export default function StudentDetailScreen() {
             data={timeline}
             keyExtractor={(item) => item.id}
             contentContainerClassName="px-6 pt-4 pb-10"
-            renderItem={({ item }) => <TimelineItem event={item} />}
+            renderItem={({ item }) => (
+              <TimelineItem
+                event={item}
+                onPress={
+                  item.type === "workout"
+                    ? () => router.push(`/(trainer)/students/sessao/${item.id}` as never)
+                    : undefined
+                }
+              />
+            )}
             ListEmptyComponent={
               <EmptyState
                 iconName="clipboard"
