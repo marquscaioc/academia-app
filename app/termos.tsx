@@ -62,7 +62,7 @@ export default function TermsScreen() {
         <P>Você pode encerrar sua conta a qualquer momento em Perfil → Excluir conta.</P>
 
         <H>6. Limitação de responsabilidade</H>
-        <P>O app é fornecido "como está". Não nos responsabilizamos por lesões decorrentes do uso indevido. (Revisar com jurídico.)</P>
+        <P>O app é fornecido &quot;como está&quot;. Não nos responsabilizamos por lesões decorrentes do uso indevido. (Revisar com jurídico.)</P>
 
         <H>7. Contato</H>
         <P>suporte@academiaapp.com (definir).</P>

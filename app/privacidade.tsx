@@ -29,7 +29,7 @@ export default function PrivacyScreen() {
         </View>
 
         <P>
-          Esta Política descreve como o Projeto Gaab ("nós") coleta, usa e protege seus dados pessoais, em
+          Esta Política descreve como o Projeto Gaab (&quot;nós&quot;) coleta, usa e protege seus dados pessoais, em
           conformidade com a Lei Geral de Proteção de Dados (LGPD — Lei 13.709/2018).
         </P>
 

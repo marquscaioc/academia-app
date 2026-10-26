@@ -7,7 +7,9 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
-    "runtimeVersion": { "policy": "appVersion" },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
     "scheme": "academia-app",
     "splash": {
       "image": "./assets/splash-icon.png",
@@ -53,7 +55,8 @@
         {
           "color": "#781BB6"
         }
-      ]
+      ],
+      "expo-video"
     ]
   }
 }

@@ -1,5 +1,5 @@
 import { Modal, Pressable, Text, View } from "react-native";
-import { Video, ResizeMode } from "expo-av";
+import { useVideoPlayer, VideoView } from "expo-video";
 import { AppIcon } from "../ui";
 
 interface VideoPlayerModalProps {
@@ -8,31 +8,49 @@ interface VideoPlayerModalProps {
   onClose: () => void;
 }
 
+/**
+ * Exercise demo player (expo-video). The player is only created while the modal
+ * is open, so videos are never downloaded before the user asks for them.
+ */
 export function VideoPlayerModal({ visible, videoUrl, onClose }: VideoPlayerModalProps) {
-  if (!videoUrl) return null;
+  if (!videoUrl || !visible) return null;
 
   return (
-    <Modal visible={visible} animationType="fade" transparent statusBarTranslucent>
+    <Modal visible animationType="fade" transparent statusBarTranslucent onRequestClose={onClose}>
       <View className="flex-1 bg-black/95 items-center justify-center">
-        <Pressable onPress={onClose} className="absolute top-14 right-6 z-10 w-10 h-10 bg-surface-elevated rounded-full items-center justify-center">
-          <AppIcon name="close" size={20} color="#6E6382" strokeWidth={2} />
+        <Pressable
+          onPress={onClose}
+          accessibilityRole="button"
+          accessibilityLabel="Fechar vídeo"
+          hitSlop={12}
+          className="absolute top-14 right-6 z-10 w-11 h-11 bg-surface-elevated rounded-full items-center justify-center"
+        >
+          <AppIcon name="close" size={20} color="#A99FBA" strokeWidth={2} />
         </Pressable>
 
-        <Video
-          source={{ uri: videoUrl }}
-          style={{ width: "100%", aspectRatio: 9 / 16, maxHeight: "80%" }}
-          useNativeControls
-          resizeMode={ResizeMode.CONTAIN}
-          shouldPlay
-          isLooping
-        />
+        <ExerciseVideo uri={videoUrl} />
 
-        <View className="flex-row items-center mt-4">
-          <Text className="text-text-muted text-xs">Toque </Text>
-          <AppIcon name="close" size={12} color="#6E6382" strokeWidth={2} />
-          <Text className="text-text-muted text-xs"> para fechar</Text>
-        </View>
+        <Text className="text-text-muted text-xs mt-4">Toque no X para fechar</Text>
       </View>
     </Modal>
+  );
+}
+
+function ExerciseVideo({ uri }: { uri: string }) {
+  // Remounted per URI (keyed by parent render), so the player is released on close.
+  const player = useVideoPlayer(uri, (p) => {
+    p.loop = true;
+    p.muted = true;
+    p.play();
+  });
+
+  return (
+    <VideoView
+      player={player}
+      style={{ width: "100%", aspectRatio: 9 / 16, maxHeight: "80%" }}
+      contentFit="contain"
+      nativeControls
+      allowsFullscreen
+    />
   );
 }
