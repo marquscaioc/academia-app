@@ -4,26 +4,20 @@ import { Slot, type ErrorBoundaryProps } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import {
-  useFonts,
-  Nunito_400Regular,
-  Nunito_400Regular_Italic,
-  Nunito_500Medium,
-  Nunito_600SemiBold,
-  Nunito_700Bold,
-  Nunito_900Black,
-} from "@expo-google-fonts/nunito";
-import {
-  InstrumentSerif_400Regular,
-  InstrumentSerif_400Regular_Italic,
-} from "@expo-google-fonts/instrument-serif";
-import {
-  DMSans_400Regular,
-  DMSans_500Medium,
-  DMSans_600SemiBold,
-  DMSans_700Bold,
-  DMSans_900Black,
-} from "@expo-google-fonts/dm-sans";
+import { useFonts } from "expo-font";
+import { Nunito_400Regular } from "@expo-google-fonts/nunito/400Regular";
+import { Nunito_400Regular_Italic } from "@expo-google-fonts/nunito/400Regular_Italic";
+import { Nunito_500Medium } from "@expo-google-fonts/nunito/500Medium";
+import { Nunito_600SemiBold } from "@expo-google-fonts/nunito/600SemiBold";
+import { Nunito_700Bold } from "@expo-google-fonts/nunito/700Bold";
+import { Nunito_900Black } from "@expo-google-fonts/nunito/900Black";
+import { InstrumentSerif_400Regular } from "@expo-google-fonts/instrument-serif/400Regular";
+import { InstrumentSerif_400Regular_Italic } from "@expo-google-fonts/instrument-serif/400Regular_Italic";
+import { DMSans_400Regular } from "@expo-google-fonts/dm-sans/400Regular";
+import { DMSans_500Medium } from "@expo-google-fonts/dm-sans/500Medium";
+import { DMSans_600SemiBold } from "@expo-google-fonts/dm-sans/600SemiBold";
+import { DMSans_700Bold } from "@expo-google-fonts/dm-sans/700Bold";
+import { DMSans_900Black } from "@expo-google-fonts/dm-sans/900Black";
 import { AuthProvider, useAuth } from "../lib/auth/provider";
 import { useRestNotifications } from "../lib/notifications/useRestNotifications";
 import { ToastHost } from "../components/ui/ToastHost";
