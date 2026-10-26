@@ -1,4 +1,4 @@
-import { Tabs } from "expo-router";
+import { Tabs, useSegments } from "expo-router";
 import { View } from "react-native";
 import { useIsDesktop } from "../../lib/layout/useIsDesktop";
 import { BrandingProvider, useBranding } from "../../lib/branding/BrandingProvider";
@@ -28,6 +28,9 @@ function TabIcon({ name, focused, color }: { name: string; focused: boolean; col
 function StudentTabs() {
   const { primaryColor } = useBranding();
   const isDesktop = useIsDesktop();
+  // The workout screen is a focus mode with its own top bar; the tab bar only steals space there.
+  const segments = useSegments() as string[];
+  const hideTabBar = isDesktop || segments.includes("treino");
 
   return (
     <View className="flex-1 flex-row">
@@ -38,7 +41,7 @@ function StudentTabs() {
             headerShown: false,
             tabBarActiveTintColor: primaryColor,
             tabBarInactiveTintColor: "#6E6382",
-            tabBarStyle: isDesktop
+            tabBarStyle: hideTabBar
               ? { display: "none" as const }
               : {
                   backgroundColor: "#14101B",
@@ -58,7 +61,7 @@ function StudentTabs() {
       <Tabs.Screen
         name="(home)"
         options={{
-          title: "Inicio",
+          title: "Início",
           tabBarIcon: ({ focused, color }) => <TabIcon name="home" focused={focused} color={color} />,
         }}
       />

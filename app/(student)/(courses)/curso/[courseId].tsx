@@ -2,13 +2,13 @@ import { router, useLocalSearchParams } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { Pressable, ScrollView, Text, View, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useAuth } from "../../../lib/auth/provider";
-import { useCourseDetail } from "../../../hooks/queries/useCourses";
-import { useMarkLessonComplete } from "../../../hooks/mutations/useCourseMutations";
-import { LoadingScreen } from "../../../components/ui/LoadingScreen";
-import { AppIcon } from "../../../components/ui";
-import { font, amethystGlow } from "../../../lib/design/tokens";
-import { WebContainer } from "../../../components/layout/WebContainer";
+import { useAuth } from "../../../../lib/auth/provider";
+import { useCourseDetail } from "../../../../hooks/queries/useCourses";
+import { useMarkLessonComplete } from "../../../../hooks/mutations/useCourseMutations";
+import { LoadingScreen } from "../../../../components/ui/LoadingScreen";
+import { AppIcon } from "../../../../components/ui";
+import { font, amethystGlow } from "../../../../lib/design/tokens";
+import { WebContainer } from "../../../../components/layout/WebContainer";
 import { useState } from "react";
 
 export default function StudentCourseDetailScreen() {
@@ -92,7 +92,7 @@ export default function StudentCourseDetailScreen() {
             ) : (
               <View className="items-center justify-center" style={{ aspectRatio: 16 / 9 }}>
                 <Text className="text-white" style={{ fontFamily: font.regular }}>
-                  Video player nao disponivel no web
+                  Player de vídeo indisponível na versão web
                 </Text>
               </View>
             )}
@@ -115,7 +115,7 @@ export default function StudentCourseDetailScreen() {
                       className="text-white text-xs"
                       style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
                     >
-                      Marcar concluida
+                      Marcar concluída
                     </Text>
                   </LinearGradient>
                 </Pressable>
@@ -123,7 +123,7 @@ export default function StudentCourseDetailScreen() {
                 <View className="bg-success-500/15 px-3 py-1.5 rounded-xl flex-row items-center gap-1.5">
                   <AppIcon name="check" size={14} color="#34D399" strokeWidth={2.5} />
                   <Text className="text-success-500 text-xs" style={{ fontFamily: font.bold }}>
-                    Concluida
+                    Concluída
                   </Text>
                 </View>
               )}
@@ -135,7 +135,7 @@ export default function StudentCourseDetailScreen() {
           className="text-[11px] text-text-muted uppercase mb-1"
           style={{ fontFamily: font.semibold, letterSpacing: 2 }}
         >
-          Conteudo
+          Conteúdo
         </Text>
         <Text
           className="text-2xl text-text-primary mb-3"

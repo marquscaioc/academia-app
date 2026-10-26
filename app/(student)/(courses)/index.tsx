@@ -27,15 +27,15 @@ export default function StudentCoursesScreen() {
         ) : !courses?.length ? (
           <EmptyState
             iconName="courses"
-            title="Nenhuma aula disponivel"
-            description="Seu personal ainda nao publicou cursos. Quando publicar, voce vera aqui."
+            title="Nenhuma aula disponível"
+            description="Seu personal ainda não publicou cursos. Quando publicar, você verá aqui."
           />
         ) : (
           <View className="flex-row flex-wrap gap-3 pb-10">
             {courses.map((c) => (
               <Pressable
                 key={c.id}
-                onPress={() => router.push(`/(student)/(courses)/${c.id}`)}
+                onPress={() => router.push(`/(student)/(courses)/curso/${c.id}`)}
                 className="grow basis-[360px] bg-surface-card border border-surface-border rounded-3xl p-5 active:bg-surface-hover"
               >
                 <View className="flex-row items-center gap-4">

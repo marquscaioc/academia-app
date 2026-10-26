@@ -107,7 +107,7 @@ export default function WorkoutsScreen() {
         </Animated.View>
 
         {activeWorkoutId ? (
-          <Link href={`/(student)/(workouts)/${activeWorkoutId}`} asChild>
+          <Link href={`/(student)/(workouts)/treino/${activeWorkoutId}`} asChild>
             <Pressable
               accessibilityRole="button"
               accessibilityLabel={`Retomar treino em andamento: ${activeWorkoutName ?? ""}`}
@@ -208,7 +208,7 @@ export default function WorkoutsScreen() {
                 className="grow basis-[360px]"
                 entering={FadeInDown.delay(300 + idx * 60).springify()}
               >
-                <Link href={`/(student)/(workouts)/${w.id}`} asChild>
+                <Link href={`/(student)/(workouts)/treino/${w.id}`} asChild>
                   <Pressable className="bg-surface-card border border-surface-border rounded-3xl p-5 active:bg-surface-hover overflow-hidden">
                     {w.id === nextWorkout?.id ? (
                       <LinearGradient

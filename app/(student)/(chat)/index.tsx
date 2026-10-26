@@ -68,7 +68,7 @@ function NewConversationModal({ userId, onClose }: { userId: string; onClose: ()
   const open = async (otherId: string) => {
     const convId = await getOrCreateDM.mutateAsync({ user_a: userId, user_b: otherId });
     onClose();
-    router.push(`/(student)/(chat)/${convId}` as never);
+    router.push(`/(student)/(chat)/conversa/${convId}` as never);
   };
 
   return (
@@ -167,7 +167,7 @@ export default function ChatListScreen() {
 
               return (
                 <Pressable
-                  onPress={() => router.push(`/(student)/(chat)/${item.id}`)}
+                  onPress={() => router.push(`/(student)/(chat)/conversa/${item.id}`)}
                   className="flex-row items-center gap-4 px-6 py-4 active:bg-surface-hover border-b border-surface-border"
                 >
                   {isGroup ? (

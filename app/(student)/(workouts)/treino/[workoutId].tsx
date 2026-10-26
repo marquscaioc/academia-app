@@ -3,35 +3,36 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useShallow } from "zustand/react/shallow";
-import { font, palette } from "../../../lib/design/tokens";
-import { DisplayHeading } from "../../../components/ui/DisplayHeading";
-import { AppIcon, Button, EmptyState } from "../../../components/ui";
-import { ConfirmDialog } from "../../../components/ui/ConfirmDialog";
-import { ExerciseCard } from "../../../components/workout/ExerciseCard";
-import { RestTimer } from "../../../components/workout/RestTimer";
-import { SetRow, type SetValues } from "../../../components/workout/SetRow";
-import { VideoPlayerModal } from "../../../components/workout/VideoPlayerModal";
-import { LoadingScreen } from "../../../components/ui/LoadingScreen";
-import { WebContainer } from "../../../components/layout/WebContainer";
-import { useAuth } from "../../../lib/auth/provider";
-import { useOpenSession, useWorkoutDetail, type WorkoutExercise } from "../../../hooks/queries/useWorkouts";
-import { fetchExerciseBests, useLastPerformance } from "../../../hooks/queries/useLastPerformance";
+import { font, palette } from "../../../../lib/design/tokens";
+import { DisplayHeading } from "../../../../components/ui/DisplayHeading";
+import { AppIcon, Button, EmptyState } from "../../../../components/ui";
+import { ConfirmDialog } from "../../../../components/ui/ConfirmDialog";
+import { ExerciseCard } from "../../../../components/workout/ExerciseCard";
+import { RestTimer } from "../../../../components/workout/RestTimer";
+import { SetRow, type SetValues } from "../../../../components/workout/SetRow";
+import { VideoPlayerModal } from "../../../../components/workout/VideoPlayerModal";
+import { LoadingScreen } from "../../../../components/ui/LoadingScreen";
+import { WebContainer } from "../../../../components/layout/WebContainer";
+import { useAuth } from "../../../../lib/auth/provider";
+import { useOpenSession, useWorkoutDetail, type WorkoutExercise } from "../../../../hooks/queries/useWorkouts";
+import { fetchExerciseBests, useLastPerformance } from "../../../../hooks/queries/useLastPerformance";
 import {
   useDeleteSet,
   useFinishSession,
   useStartSession,
   useSyncSet,
-} from "../../../hooks/mutations/useLogWorkout";
+} from "../../../../hooks/mutations/useLogWorkout";
 import {
   setsForExercise,
   useSessionHydrated,
   useWorkoutSessionStore,
   type SessionSet,
-} from "../../../stores/useWorkoutSessionStore";
-import { useNow } from "../../../lib/hooks/useNow";
-import { haptics } from "../../../lib/haptics";
-import { uuid } from "../../../lib/utils/uuid";
-import { supabase } from "../../../lib/supabase/client";
+} from "../../../../stores/useWorkoutSessionStore";
+import { useNow } from "../../../../lib/hooks/useNow";
+import { haptics } from "../../../../lib/haptics";
+import { uuid } from "../../../../lib/utils/uuid";
+import { isPlayableVideo } from "../../../../lib/utils/media";
+import { supabase } from "../../../../lib/supabase/client";
 import {
   bestMarks,
   detectRecords,
@@ -39,7 +40,7 @@ import {
   formatKg,
   parseRepTarget,
   totalVolume,
-} from "../../../lib/workout/metrics";
+} from "../../../../lib/workout/metrics";
 
 type Dialog = null | "finish" | "finish-empty" | "discard" | "switch";
 
@@ -330,7 +331,7 @@ export default function WorkoutExecutionScreen() {
                 tone="warning"
                 text={`Você tem "${store.workoutName ?? "um treino"}" em andamento.`}
                 actionLabel="Retomar"
-                onAction={() => router.replace(`/(student)/(workouts)/${store.workoutId}` as never)}
+                onAction={() => router.replace(`/(student)/(workouts)/treino/${store.workoutId}` as never)}
               />
             ) : resumable ? (
               <Notice
@@ -495,7 +496,7 @@ export default function WorkoutExecutionScreen() {
                 </View>
 
                 <View className="flex-row gap-2 mb-4">
-                  {current.exercise?.video_url ? (
+                  {isPlayableVideo(current.exercise?.video_url) ? (
                     <SmallAction icon="play" label="Ver vídeo" onPress={() => setVideoUrl(current.exercise?.video_url ?? null)} />
                   ) : null}
                   {instructions ? (

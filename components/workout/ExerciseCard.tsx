@@ -1,6 +1,7 @@
 import { Pressable, Text, View } from "react-native";
 import { AppIcon } from "../ui";
 import { ExerciseAnimation } from "./ExerciseAnimation";
+import { isPlayableVideo } from "../../lib/utils/media";
 
 interface ExerciseCardProps {
   name: string;
@@ -31,9 +32,8 @@ export function ExerciseCard({
   onPlayVideo,
   animateImages = true,
 }: ExerciseCardProps) {
-  // If videoUrl is an image (free-exercise-db secondary frame), use as animation
-  // If videoUrl is an actual .mp4, use as video
-  const isVideoMp4 = videoUrl?.endsWith(".mp4") || videoUrl?.endsWith(".mov");
+  // free-exercise-db stores a second image frame in videoUrl; only real videos get the play affordance
+  const isVideoMp4 = isPlayableVideo(videoUrl);
   const secondFrame = isVideoMp4 ? null : videoUrl;
 
   return (

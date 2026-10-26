@@ -20,7 +20,7 @@ import { font } from "../../lib/design/tokens";
 /**
  * Shared conversation thread. Route-agnostic (reads conversationId from params,
  * user from auth, navigates via router.back()), so both the student
- * `(chat)/[conversationId]` and trainer `chat/[conversationId]` routes re-export it.
+ * `(chat)/conversa/[conversationId]` and trainer `chat/[conversationId]` routes re-export it.
  */
 export default function ChatThread() {
   const { conversationId } = useLocalSearchParams<{ conversationId: string }>();
