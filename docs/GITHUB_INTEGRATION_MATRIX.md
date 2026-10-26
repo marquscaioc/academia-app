@@ -69,3 +69,12 @@ entitlements come only from verified webhooks (see `SECURITY.md`).
 - SDK 54 bundled versions used as the compatibility reference: reanimated ~4.1.1, worklets 0.5.1, gesture-handler ~2.28.0,
   react-native-svg 15.12.1, expo-linear-gradient ~15.0.8, expo-router ~6.0.x, @sentry/react-native ~7.2.0.
 - Upgrading to SDK 58 is a separate project (4 major versions; Legacy Architecture already dropped). Not started.
+
+## 6. Continuation dependency decisions
+
+- Kept existing evolution charts; no redundant chart dependency for already working load/e1RM/volume views.
+- Added SDK54-compatible expo-document-picker~14.0.8 for PDF lessons and direct expo-file-system~19.0.24 for native ArrayBuffer uploads. Existing expo-video/notifications reused.
+- Upload contract: [official Supabase reference](https://supabase.com/docs/reference/javascript/storage-from-upload). Native Blob/FormData replaced by File.arrayBuffer after inspecting installed SDK54 source. Device QA remains pending.
+- Rest scheduling checked against installed SDK54 types/Android implementation and [SDK54 source](https://github.com/expo/expo/blob/sdk-54/packages/expo-notifications/src/scheduleNotificationAsync.ts). OS restrictions can defer delivery.
+- Used font weights imported individually: exported web assets reduced from55 in the earlier build to32. Main JS is4.91 MB after features; splitting remains pending.
+- Earlier store/payment-policy notes are historical audit research, not refreshed release advice. Reverify official store/provider rules when the commercial model is chosen.

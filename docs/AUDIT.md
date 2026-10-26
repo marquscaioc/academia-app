@@ -94,3 +94,13 @@ Verified in the browser at 400×860 against the local stack:
 
 Remaining UX gaps: history detail, charts of load/e1RM over time, exercise substitution during a session,
 plate calculator, warm-up ramp, notes per set. See `IMPLEMENTATION_PLAN.md`.
+
+## 7. Continuation verification (2026-10-26)
+
+Updates supersede older open items above: plan editing/history preservation (00040/00043), rest scheduling/session ownership, server challenge scoring/photo proof (00041/00044), private feed/group RLS (00042), private course video/PDF/free-preview authorization (00045/00046), referrals/contact publication (00047), auth/cache race guards and truthful error/health-unavailable states.
+
+Isolated-worktree verification: TypeScript pass; lint0 errors/14 baseline warnings; 117 unit tests; 68 DB scenarios over46 migrations; 35 local API/Storage scenarios including concurrent submissions; web export4.91 MB main/32 assets. Browser verified editor save/reopen/reorder/notes and partner validation. See TESTING.md for limits.
+
+Newly found/fixed: cached tenant data surviving auth changes; old profile requests resolving in a new session; offline logout claiming success while SDK retained its session; background expiry cancelling an OS reminder; unsupported native Blob uploads; student course authors/inaccessible progress; unavailable health data presented as zero activity.
+
+Pending: native QA, remote/staging approval, paid entitlements/provider credentials, historical public course object copy, tab reload URLs, approved exercise substitution, favourites/duplicate detection, policy/index performance and observability. Issued signed links last to expiry. No clinical data or real charges introduced.

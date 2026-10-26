@@ -18,10 +18,10 @@ Never put a secret in an `EXPO_PUBLIC_*` variable: those are inlined into the bu
 ## 2. Database (Supabase)
 
 1. Backup the production database.
-2. Apply pending migrations **00034, 00035, 00036** to a branch / staging project first:
+2. Apply pending migrations **00034–00047** to a branch / staging project first:
    `npx supabase link --project-ref <ref>` then `npx supabase db push` (review the diff it prints).
-3. Run `npm run test:api` against staging (temporarily relax the localhost guard only for a disposable staging project).
-4. Apply to production during low traffic. All three migrations are additive/policy-replacing; 00036 alters FKs
+3. Prepare an explicit disposable-staging harness; the committed `test:api` suite intentionally refuses non-local URLs.
+4. Apply to production during low traffic after approval. Migrations add/replace functions/policies;00036 alters FKs
    (brief locks on `check_ins`, `check_in_answers`, `meal_logs`, `feed_posts`, `challenge_entries`).
 5. Cron jobs (`00024_cron_edge_functions.sql.template`): fill the project URL and service-role key **in the SQL editor**,
    never commit the filled file. Cron functions now reject calls without the service-role bearer.
@@ -57,3 +57,13 @@ decision (IAP vs 1:1 coaching, see `GITHUB_INTEGRATION_MATRIX.md`).
 - [ ] Edge functions deployed; cron uses service-role bearer
 - [ ] Web build smoke-tested (login, workout flow, finish)
 - [ ] EAS preview build installed on a physical device (not yet done)
+
+## 7. Continuation release notes
+
+Migrations00034–00047 applied only to the local academia-app-master stack on554xx. Remote application needs owner authorization and backup. Publish compatible frontend/schema together after staging verification. The committed API suite deliberately refuses non-local URLs; prepare a separately reviewed disposable-staging harness instead of weakening that guard for production.
+
+00042 makes feed-media private, so old clients need the signing flow.00045/00046 restrict lesson bodies and add private course-media/PDF; paid bodies stay closed pending verified entitlements. Historical public course objects need an explicitly reviewed copy if present; external/public lesson URLs were not migrated automatically.
+
+Document-picker/FileSystem dependencies match SDK54. Native delivery, playback, upload and document selection need EAS preview/device verification. Modified account-cleanup edge code also needs deliberate deployment/runtime verification. No native or deployed-runtime success is claimed.
+
+Concurrent visual changes remain in the original worktree. The functional branch feat/master-continuation is isolated in academia-master-continuation. Build/smoke-test the merged artifact before release. Functional development preview uses8100; original visual work may use8099.

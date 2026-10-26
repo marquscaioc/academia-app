@@ -13,7 +13,7 @@
                                              │ HTTPS (PostgREST / GoTrue / Storage / Realtime)
 ┌────────────────────────────────────────────▼────────────────────────────────────────────┐
 │ Supabase                                                                                 │
-│  Postgres 17 + RLS (supabase/migrations 00001–00036) — the security boundary             │
+│  Postgres 17 + RLS (supabase/migrations 00001–00047) — the security boundary             │
 │  Storage buckets (avatars, exercise-videos, progress-photos, feed-media, chat-media,     │
 │                   brand-assets) with per-folder policies                                 │
 │  Edge functions (Deno): push-notification, social-notification, delete-account,          │
@@ -96,6 +96,19 @@ delete history (FKs `SET NULL`).
 
 ## 6. Platform specifics
 
-- Web: single bundle (4.8 MB, Phase 7 target). `Alert.alert` is a no-op on web → use `ConfirmDialog`.
+- Web: main bundle4.91 MB (splitting remains Phase7 work). `Alert.alert` is a no-op on web → use `ConfirmDialog`.
 - Native-only APIs (haptics, notifications, health) are wrapped and no-op on web.
 - `babel.config.js` must keep `unstable_transformImportMeta: true` (zustand ESM).
+
+## 7. Continuation flows
+
+- The builder loads an owner-scoped plan into a draft retaining prescription IDs. `update_workout_plan` locks it, checks updated_at, rejects active recent sessions and saves atomically. Removed prescriptions detach historic FKs; session starts take a compatible parent lock. Failed saves retain the draft.
+- Auth epoch guards discard late profile responses across identity changes. QueryClient is cancelled/cleared; workout persistence has ownerId. Actual auth identity and hydration gate foreign-state cleanup; the loading watchdog cannot erase a restored session by itself.
+- Rest OS scheduling lives at the authenticated root. A stable identifier is replaced/cancelled serially. Background JS expiry cannot cancel a pending OS reminder; device timing remains unverified.
+- Challenge entries form a ledger. Server triggers derive rule/session points and update participant/team totals. Stable request IDs and UTC/session caps protect retries. Uploaded photo presence is checked; this is not pose verification.
+- Feed/group/challenge photos are signed after RLS reads. Private course video/PDF links last15 minutes. Native uploads use Expo FileSystem ArrayBuffer; native course playback uses expo-video.
+- `/partners` is a shared authenticated route: trainer directory/contact editor or linked-student referral cards. It never shares health data or sends messages automatically.
+
+Web export is now4.91 MB main JS /32 assets, with imports of only used font weights. Bundle splitting remains pending. Schema runs through00047.
+
+Concurrent visual work is preserved in the original academia-app-master worktree. This functional branch is isolated in academia-master-continuation, retaining the original design. Combine them by reviewing/cherry-picking feature commits; do not overwrite either worktree.

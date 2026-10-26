@@ -1,44 +1,46 @@
 # Testing
 
-Four layers. Results below are from real runs on 2026-10-26 (Windows 11, Node 20+, Docker Desktop).
+Executed on 2026-10-26 in isolated `academia-master-continuation`, branch `feat/master-continuation`. No remote database or native device was tested.
 
-| Command | What | Needs | Last result |
-|---|---|---|---|
-| `npm run typecheck` | `tsc --noEmit` | — | **pass** (0 errors) |
-| `npm run lint` | ESLint 9 + eslint-config-expo | — | **pass** (0 errors, 25 warnings) |
-| `npm test` | Jest (jest-expo): `lib/workout/metrics`, `schedule`, `compare`, session store, media helper, toast store, trainer adherence, plan draft | — | **pass** — 8 suites, 49 tests |
-| `npm run test:db` | All migrations applied to an in-memory Postgres (PGlite 0.2.17) with Supabase stubs, then RLS / trigger scenarios as different users | — | **pass** — 38 migrations, 40/40 scenarios |
-| `npm run test:api` | supabase-js against the **local** stack (GoTrue + PostgREST + Storage + RLS), exactly as the app calls it | Docker + `npx supabase start` | **pass** — 20/20 |
-| `npm run build` | Production web export | — | **pass** (main bundle 4.82 MB) |
-| Browser smoke (manual, Playwright MCP) | login → workout → sets → rest → finish → summary → history → reload-resume | dev server + local stack + `npm run seed:demo` | **pass** (see AUDIT.md §6) |
+| Command | Result | Coverage / limits |
+|---|---|---|
+| `npm run typecheck` | pass, 0 errors | App, hooks, stores and tests |
+| `npm run lint` | pass, 0 errors / 14 existing warnings | Mostly unused baseline imports/catch variables |
+| `npm test -- --runInBand` | pass, 22 suites / 117 tests | Workout logic/editor, auth races/offline logout, session ownership, OS rest scheduling/background expiry, upload buffers, comment recovery, contacts and unavailable health integration |
+| `npm run test:db` | pass, 46 migrations / 68 scenarios | Real Postgres policies/triggers/functions in PGlite; 00024 template is excluded |
+| `npm run test:api` | pass, 35 scenarios | Real local GoTrue, PostgREST and Storage; concurrent scoring, editor/history/version protection, private media, course PDF/progress and partners |
+| `npm run build` | pass | Web export, main JS 4.91 MB, 32 exported assets; imports only used font weights |
+| Browser | pass for tested flows | Trainer reordered/saved/reopened a demo template, retained notes, cancelled removal and restored original order. Partner directory loaded and rejected empty professional data; radio selection reaches accessibility tree; trainer logout → student login → start/sets → reload/resume → finish → history (3 × 40 kg × 8, volume960 kg) |
 
-Not run / not available: native iOS/Android builds (need EAS + credentials), device tests, push delivery,
-performance profiling, accessibility audit with a screen reader.
+## Reproduce
 
-## Local stack
-
-```bash
-npx supabase start          # ports 554xx (supabase/config.toml) — chosen to avoid another local stack on 543xx
-npx supabase migration up --local
-npm run seed:demo           # aluno@demo.local / treinador@demo.local, password Demo-Treino-2026!
+```powershell
+npm install
+npm run typecheck
+npm run lint
+npm test -- --runInBand
+npm run test:db
+npx supabase@2 migration up --local
 npm run test:api
+npm run build
+npx expo start --web --port 8100
 ```
 
-`seed-demo.mjs` and `api-integration.mjs` read keys from `supabase status -o env` and **refuse any non-localhost URL**.
-The API tests create random users per run and delete them at the end.
+The local stack uses ports554xx. A different project uses543xx; never stop/reset it. API tests refuse non-local URLs, create random users and delete their own fixtures. CLI credentials load internally; service keys are never printed. `.env.local` remains ignored.
 
-Web app against the local stack: put the local URL/anon key in `.env.local` (gitignored) and run
-`npx expo start --web --port 8099`. Do not set `CI=1` (it disables the file watcher).
+Optional: `node supabase/tests/professional-partners-tests.mjs`. Its same10 scenarios are already included in the official68; do not count them twice.
 
-## Writing tests
+Local demo: `npm run seed:demo`; aluno@demo.local or treinador@demo.local / Demo-Treino-2026!. Original worktree may run8099; this isolated continuation uses8100 to avoid concurrent visual work.
 
-- Pure logic → `lib/…` + Jest test in `__tests__/`. Keep domain functions free of React/Supabase imports.
-- Any RLS/trigger/migration change → add a scenario to `supabase/tests/run-db-tests.mjs` (use `as(user, sql)` /
-  `asSuper(sql)`; assert both the allowed and the denied path).
-- Anything the app does through supabase-js that depends on GoTrue/PostgREST/Storage behaviour → `api-integration.mjs`.
-- Never mark something as tested unless one of the commands above ran it.
+## Limits
 
-## PGlite stub caveats
+PGlite has auth/storage stubs, not GoTrue or a Storage HTTP server; API tests supply that second layer. Native notifications, video/document-picker and FileSystem uploads have type/unit coverage, but actual iOS/Android delivery, playback and uploads need a physical preview build. Android restrictions may defer alarms; exact delivery is not guaranteed.
 
-The stub provides `auth.uid()`, `auth.users`, `storage.objects/buckets/foldername` and the `anon/authenticated/service_role`
-roles. It does not emulate GoTrue, PostgREST or the Storage API; those are covered by `test:api`.
+Not executed: EAS/native builds, device push delivery, full screen-reader audit, every main-screen browser flow, deployed edge runtime after recursive account-cleanup changes, paid gateway/webhooks, production migration/deployment. Claude's earlier edge runtime results are in commit messages and were not rerun here.
+
+## Adding coverage
+
+- Pure/state/race rules: Jest under `__tests__`.
+- SQL authorization/integrity: new migration plus scenario export imported by `run-db-tests.mjs`.
+- HTTP/Storage/concurrency: scenario export imported by `api-integration.mjs`, retaining its local guard and cleanup.
+- Applied migrations are immutable; next number after00047 is00048.

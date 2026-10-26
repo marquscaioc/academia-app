@@ -1,6 +1,6 @@
 # Database
 
-Supabase Postgres (17 locally). Schema = `supabase/migrations/00001…00038` applied in order
+Supabase Postgres (17 locally). Schema = `supabase/migrations/00001…00047` applied in order
 (`00024_cron_edge_functions.sql.template` is a template, not a migration).
 
 **Rules**: never edit or delete an applied migration; every change is a new numbered file; no destructive statements
@@ -22,6 +22,7 @@ the local stack (`npx supabase migration up --local`) before it is proposed for 
 | Content | `courses`, `lessons`, `lesson_progress`, `student_notes` |
 | Financial (internal records, no gateway) | `subscription_plans`, `subscriptions`, `payment_records` |
 | Other | `notifications` |
+| Referrals | `professional_partners`; explicitly published `trainer_profiles.contact_whatsapp` |
 
 ## 2. Workout data rules
 
@@ -45,7 +46,10 @@ the local stack (`npx supabase migration up --local`) before it is proposed for 
 | `get_user_prs(uuid)` | **invoker** | RLS applies |
 | `trainer_student_overview()` (00037) | **invoker** | caller's active students only; RLS applies to every joined table |
 | `create_workout_plan(...)`, `copy_workout_plan(...)` (00038) | **invoker** | trainer role only; RLS on every insert; exercises must be visible to the caller; one transaction |
-| `increment_challenge_score`, `increment_team_score` | definer | caller must be the user / team member; points 0..100000 |
+| `increment_challenge_score`, `increment_team_score` | definer | client execution revoked by00041; ledger triggers control scores |
+| `update_workout_plan(...)` (00040) | invoker | trainer owner, expected updated_at, visible/bound exercises; one transaction |
+| `lock_session_prescription()` (00043) | trigger | session starts share-lock parent plan against editor changes |
+| `score_challenge_entry()` and score/team triggers (00041/00044) | definer | rules/session-derived points, UTC caps, membership, uploaded proof |
 | `is_challenge_participant(uuid)` | definer | avoids RLS recursion |
 | `is_conversation_member(uuid, uuid)` | definer | used by chat RLS and chat-media storage |
 | `prevent_role_escalation` | trigger | role, active, onboarding, streak and follower counters are server-managed |
@@ -61,11 +65,12 @@ All client uploads use `<auth.uid()>/<file>`.
 | avatars | yes | own folder | everyone (authenticated) |
 | exercise-videos | yes | own folder | everyone (authenticated) |
 | progress-photos | no | own folder (insert/update/delete) | owner + actively linked trainer |
-| feed-media | yes* | own folder | everyone (authenticated) |
+| feed-media | no | own folder | owner or authorized referencing post/group/challenge reader |
+| course-media | no | owner trainer/course folder | owner or authorized free/preview lesson reader |
 | chat-media | no | `<uid>/<conversation_id>/…`, member of that conversation | conversation members |
 | brand-assets | yes | own folder, trainer/nutritionist/admin | everyone |
 
-\* Open item: media of non-public posts is reachable by URL. Needs a private bucket + signed URLs.
+Feed links expire after60 minutes; course links after15 minutes. Revocation prevents new signing; issued links remain valid until expiry.
 
 ## 5. Account deletion (LGPD)
 
@@ -83,6 +88,17 @@ evaluation; drop duplicate indexes listed in `AUDIT.md`.
 ## 7. Applying migrations
 
 - **Local**: `npx supabase start` (ports 554xx, see `supabase/config.toml`), then `npx supabase migration up --local`.
-- **Remote**: not done by this work. 00034–00038 are pending on the production project and require the owner's
+- **Remote**: not done by this work. 00034–00047 are pending on the production project and require the owner's
   authorisation and a backup first. Recommended order: take a backup → apply on a Supabase branch → run `npm run test:api`
   against the branch → apply to production.
+
+## 8. Continuation migrations
+
+- 00039: service-only atomic edge rate counters.
+- 00040/00043: in-place editor, stable IDs/history, optimistic version check and session-start locks.
+- 00041/00044: challenge ledger scoring, guarded team totals, UTC caps and uploaded-photo proof. Historic scores remain unchanged.
+- 00042: private feed bucket, scoped signing and group RLS recursion fix.
+- 00045/00046: trainer course writes, free/preview lesson/progress authorization, private course media and PDF column. Paid bodies remain closed pending verified entitlements.
+- 00047: trainer-owned referrals and explicit published WhatsApp contact.
+
+All46 SQL migrations apply in PGlite and local Postgres. Exact tests/limits: TESTING.md. Next number00048; never edit an applied migration.
