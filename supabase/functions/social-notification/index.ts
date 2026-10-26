@@ -5,9 +5,8 @@
 // Each finished session notifies followers at most once (repeat calls are no-ops).
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { type ExpoMessage, sendExpoPush } from "../_shared/expoPush.ts";
 import { consumeRateLimit } from "../_shared/rateLimit.ts";
-
-const EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -45,8 +44,9 @@ Deno.serve(async (req) => {
       .limit(1);
     if (!recent?.length) return json({ sent: 0 });
 
-    // One announcement per session: a window longer than the 10-minute eligibility makes the key single-use.
-    if (!(await consumeRateLimit(supabase, `social:${recent[0].id}`, 1, 3600))) {
+    // One announcement per session. The 1-day window (aligned to UTC midnight; the longest that
+    // consume_rate_limit keeps) covers the 10-minute eligibility unless it straddles midnight UTC.
+    if (!(await consumeRateLimit(supabase, `social:${recent[0].id}`, 1, 24 * 60 * 60))) {
       return json({ sent: 0, reason: "already_notified" });
     }
 
@@ -62,27 +62,19 @@ Deno.serve(async (req) => {
       .select("follower_id, follower:profiles!follower_id(push_token, notify_follower_workouts)")
       .eq("following_id", userId);
 
-    const messages = (followers ?? [])
+    const messages: ExpoMessage[] = (followers ?? [])
       .map((f) => f.follower as unknown as { push_token: string | null; notify_follower_workouts: boolean } | null)
       .filter((f) => f?.push_token && f.notify_follower_workouts)
       .map((f) => ({
-        to: f!.push_token,
+        to: f!.push_token!,
         title: `${name} acabou de treinar! 💪`,
         body: "Bora treinar também?",
         data: { type: "social_workout", screen: "social" },
-        sound: "default",
+        sound: "default" as const,
       }));
 
-    // Expo accepts up to 100 messages per request.
-    for (let i = 0; i < messages.length; i += 100) {
-      await fetch(EXPO_PUSH_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(messages.slice(i, i + 100)),
-      });
-    }
-
-    return json({ sent: messages.length });
+    const push = await sendExpoPush(supabase, messages);
+    return json({ sent: push.accepted, failed: push.failed });
   } catch (error) {
     console.error(`social-notification failed: ${String(error)}`);
     return json({ error: "internal_error" }, 500);

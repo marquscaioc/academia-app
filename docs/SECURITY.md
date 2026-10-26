@@ -35,9 +35,13 @@ Legacy course URLs in public `exercise-videos` or external providers remain unch
 
 - `push-notification`: service role or authorized JWT actor; per-caller30/min limit and input caps.
 - `food-lookup`: verified session, per-user30/min limit, validated input and escaped LIKE wildcards.
-- `social-notification`: actor from JWT, recently finished owned session, one announcement per session (`social:<session id>` key in `consume_rate_limit`), CORS for web.
+- `social-notification`: actor from JWT, recently finished owned session, one announcement per session (`social:<session id>` key in `consume_rate_limit`, 1-day window aligned to UTC midnight), CORS for web.
 - `delete-account`: caller JWT, own files including nested course media, then auth user. Cleanup is best effort; recursive cleanup needs deployed-runtime verification.
 - Cron functions require the service-role bearer. `weekly-digest` no longer reads/stores email in notifications.
+- All Expo pushes go through `_shared/expoPush.ts`: 100-message chunks, per-message tickets checked, and tokens Expo reports as `DeviceNotRegistered` are cleared (matched by token, so a newer token is kept). Ticket "ok" means accepted by Expo, not delivered; receipts are not polled.
+- `smart-nudge` sends once per milestone (exactly 3, 5 and 7 days without training; it previously re-sent daily from day 3 to 8). `smart-nudge` and `plan-expiring` hold a per-user/per-plan key for the day, so a repeated cron run sends nothing new. `plan-expiring` now also stores the in-app notification for diet plans.
+- `push-notification` stores the in-app notification even when the target has no push token (`is_pushed=false`).
+- `EXPO_PUSH_URL` overrides the Expo endpoint for local tests only; leave it unset in deployed functions.
 
 00039 counters are service-role only. No production deployment occurred.
 

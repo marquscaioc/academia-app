@@ -1,17 +1,21 @@
 // Supabase Edge Function: smart-nudge
 // Scheduled daily at 10am
-// Sends personalized push to students who haven't trained in 3+ days
+// Sends one push when a student reaches 3, 5 and 7 days without training (once per milestone).
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { requireServiceRole } from "../_shared/auth.ts";
-
-const EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send";
+import { type ExpoMessage, sendExpoPush } from "../_shared/expoPush.ts";
+import { consumeRateLimit } from "../_shared/rateLimit.ts";
 
 const messages = [
-  { days: 3, title: "Sentimos sua falta! 💪", body: (name: string) => `${name}, ja faz 3 dias desde seu ultimo treino. Que tal uma sessao leve hoje?` },
-  { days: 5, title: "Bora voltar? 🏋️", body: (name: string) => `${name}, 5 dias sem treinar! Seu progresso agradece cada sessao. Vamos la!` },
-  { days: 7, title: "Nao desista! 🔥", body: (name: string) => `${name}, ja faz 1 semana! Lembre-se: consistencia vence intensidade. Um treino hoje faz toda a diferenca.` },
+  { days: 3, title: "Sentimos sua falta! 💪", body: (name: string) => `${name}, já faz 3 dias desde seu último treino. Que tal uma sessão leve hoje?` },
+  { days: 5, title: "Bora voltar? 🏋️", body: (name: string) => `${name}, 5 dias sem treinar! Seu progresso agradece cada sessão. Vamos lá!` },
+  { days: 7, title: "Não desista! 🔥", body: (name: string) => `${name}, já faz 1 semana! Lembre-se: consistência vence intensidade. Um treino hoje faz toda a diferença.` },
 ];
+
+// Guards a second run on the same (UTC) day; on other days daysSince no longer matches the milestone.
+// consume_rate_limit (00039) purges windows older than a day, so longer windows would not stick.
+const ONCE_WINDOW_S = 24 * 60 * 60;
 
 Deno.serve(async (req) => {
   const denied = requireServiceRole(req);
@@ -29,7 +33,8 @@ Deno.serve(async (req) => {
       .eq("is_active", true)
       .not("push_token", "is", null);
 
-    let sentCount = 0;
+    const pushes: ExpoMessage[] = [];
+    const rows: Record<string, unknown>[] = [];
     const today = new Date();
 
     for (const student of students ?? []) {
@@ -38,41 +43,37 @@ Deno.serve(async (req) => {
       const lastDate = new Date(student.last_workout_date);
       const daysSince = Math.floor((today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
 
-      // Find the appropriate message
-      const msg = messages.filter((m) => daysSince >= m.days).pop();
+      // Only on the milestone day itself; the key also guards against a second run that day.
+      const msg = messages.find((m) => m.days === daysSince);
       if (!msg) continue;
+      if (!(await consumeRateLimit(supabase, `smart-nudge:${student.id}:${student.last_workout_date}:${msg.days}`, 1, ONCE_WINDOW_S))) continue;
 
-      // Only send once per threshold (avoid daily spam)
-      if (daysSince !== msg.days && daysSince !== msg.days + 1) continue;
-
-      await fetch(EXPO_PUSH_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          to: student.push_token,
-          title: msg.title,
-          body: msg.body(student.full_name?.split(" ")[0] ?? "Atleta"),
-          data: { type: "smart_nudge", screen: "home" },
-          sound: "default",
-        }),
+      const firstName = student.full_name?.split(" ")[0] || "Atleta";
+      pushes.push({
+        to: student.push_token,
+        title: msg.title,
+        body: msg.body(firstName),
+        data: { type: "smart_nudge", screen: "home" },
+        sound: "default",
       });
-
-      await supabase.from("notifications").insert({
+      rows.push({
         user_id: student.id,
         type: "smart_nudge",
         title: msg.title,
-        body: msg.body(student.full_name ?? "Atleta"),
+        body: msg.body(firstName),
         is_pushed: true,
       });
-
-      sentCount++;
     }
 
-    return new Response(JSON.stringify({ sent: sentCount }), {
+    if (rows.length) await supabase.from("notifications").insert(rows);
+    const push = await sendExpoPush(supabase, pushes);
+
+    return new Response(JSON.stringify({ sent: push.accepted, failed: push.failed, removed_tokens: push.removedTokens }), {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: String(error) }), {
+    console.error(`smart-nudge failed: ${String(error)}`);
+    return new Response(JSON.stringify({ error: "internal_error" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });

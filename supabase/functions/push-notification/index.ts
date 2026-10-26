@@ -7,9 +7,8 @@
 //    with an active trainer_students link to the target student.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { sendExpoPush } from "../_shared/expoPush.ts";
 import { consumeRateLimit, tooManyRequests } from "../_shared/rateLimit.ts";
-
-const EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send";
 // End-user callers only (service role is exempt): 30 pushes per minute per caller.
 const USER_LIMIT = 30;
 const USER_WINDOW_S = 60;
@@ -91,33 +90,23 @@ Deno.serve(async (req) => {
       .eq("id", user_id)
       .single();
 
-    if (!profile?.push_token) return json({ sent: false, reason: "no_token" });
-
-    await admin.from("notifications").insert({
+    // The in-app notification is stored even without a device token (web users, push disabled).
+    const { error: insertError } = await admin.from("notifications").insert({
       user_id,
       type: (data?.type as string) ?? "default",
       title,
       body,
       data,
-      is_pushed: true,
+      is_pushed: !!profile?.push_token,
     });
+    if (insertError) throw new Error(`notification insert failed: ${insertError.message}`);
 
-    const pushResponse = await fetch(EXPO_PUSH_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        to: profile.push_token,
-        title,
-        body,
-        data,
-        sound: "default",
-        priority: "high",
-      }),
-    });
+    if (!profile?.push_token) return json({ sent: false, stored: true, reason: "no_token" });
 
-    const result = await pushResponse.json();
-    return json({ sent: true, result });
+    const push = await sendExpoPush(admin, [{ to: profile.push_token, title, body, data, sound: "default", priority: "high" }]);
+    return json({ sent: push.accepted === 1, stored: true, ...(push.removedTokens ? { reason: "token_unregistered" } : {}) });
   } catch (error) {
-    return json({ error: String(error) }, 500);
+    console.error(`push-notification failed: ${String(error)}`);
+    return json({ error: "internal_error" }, 500);
   }
 });
