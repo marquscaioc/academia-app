@@ -5,6 +5,8 @@ import { BrandingProvider, useBranding } from "../../lib/branding/BrandingProvid
 import { RoleGuard } from "../../components/auth/RoleGuard";
 import { AppSidebar, STUDENT_NAV } from "../../components/layout/AppSidebar";
 import { AppIcon, type IconName } from "../../components/ui";
+import { useAuth } from "../../lib/auth/provider";
+import { useUnreadConversationCount } from "../../hooks/queries/useChat";
 
 const TAB_ICON: Record<string, IconName> = {
   home: "home",
@@ -14,6 +16,7 @@ const TAB_ICON: Record<string, IconName> = {
   social: "social",
   chat: "chat",
   courses: "courses",
+  more: "more",
 };
 
 function TabIcon({ name, focused, color }: { name: string; focused: boolean; color: string }) {
@@ -31,6 +34,8 @@ function StudentTabs() {
   // The workout screen is a focus mode with its own top bar; the tab bar only steals space there.
   const segments = useSegments() as string[];
   const hideTabBar = isDesktop || segments.includes("treino");
+  const { user } = useAuth();
+  const unreadChats = useUnreadConversationCount(user?.id);
 
   return (
     <View className="flex-1 flex-row">
@@ -89,6 +94,7 @@ function StudentTabs() {
       <Tabs.Screen
         name="(social)"
         options={{
+          href: null,
           title: "Social",
           tabBarIcon: ({ focused, color }) => <TabIcon name="social" focused={focused} color={color} />,
         }}
@@ -96,6 +102,7 @@ function StudentTabs() {
       <Tabs.Screen
         name="(chat)"
         options={{
+          href: null,
           title: "Chat",
           tabBarIcon: ({ focused, color }) => <TabIcon name="chat" focused={focused} color={color} />,
         }}
@@ -103,8 +110,17 @@ function StudentTabs() {
       <Tabs.Screen
         name="(courses)"
         options={{
+          href: null,
           title: "Aulas",
           tabBarIcon: ({ focused, color }) => <TabIcon name="courses" focused={focused} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="(more)"
+        options={{
+          title: "Mais",
+          tabBarBadge: unreadChats > 0 ? unreadChats : undefined,
+          tabBarIcon: ({ focused, color }) => <TabIcon name="more" focused={focused} color={color} />,
         }}
       />
         </Tabs>

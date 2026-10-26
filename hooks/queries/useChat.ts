@@ -59,6 +59,17 @@ export function useConversations(userId?: string) {
   });
 }
 
+/** Conversations with a message newer than the user's last read time. Derived from the cached list. */
+export function useUnreadConversationCount(userId?: string): number {
+  const { data } = useConversations(userId);
+  if (!data || !userId) return 0;
+  return data.filter((c) => {
+    if (!c.last_message_at) return false;
+    const me = c.members?.find((m) => m.user_id === userId);
+    return !me?.last_read_at || new Date(c.last_message_at) > new Date(me.last_read_at);
+  }).length;
+}
+
 export function useMessages(conversationId: string) {
   return useQuery({
     queryKey: ["chat", "messages", conversationId],
