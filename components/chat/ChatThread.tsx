@@ -6,10 +6,14 @@ import {
   Pressable,
   Text,
   View,
+  Linking,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../lib/auth/provider";
-import { useMessages } from "../../hooks/queries/useChat";
+import { useConversations, useMessages } from "../../hooks/queries/useChat";
+import { useTrainerContacts } from "../../hooks/queries/useProfessionalPartners";
+import { whatsappContactUrl } from "../../lib/partners/contact";
+import { toast } from "../../stores/useToastStore";
 import { useSendMessage, useMarkConversationRead } from "../../hooks/mutations/useChatMutations";
 import { useRealtimeMessages } from "../../lib/realtime/useRealtimeMessages";
 import { MessageBubble } from "./MessageBubble";
@@ -24,8 +28,20 @@ import { font } from "../../lib/design/tokens";
  */
 export default function ChatThread() {
   const { conversationId } = useLocalSearchParams<{ conversationId: string }>();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { data: messages, isLoading } = useMessages(conversationId ?? "");
+  const isStudent = profile?.role === "student";
+  const { data: conversations } = useConversations(user?.id);
+  const conversation = conversations?.find((c) => c.id === conversationId);
+  const other = conversation?.conversation_type === "direct" ? conversation.members?.find((m) => m.user_id !== user?.id) : undefined;
+  // Students get a WhatsApp shortcut when the other member is one of their active trainers and that trainer
+  // published a contact number (trainer_profiles.contact_whatsapp, same source as the Parceiros screen).
+  const { data: trainerContacts } = useTrainerContacts(isStudent && other ? user?.id : undefined, false);
+  const trainerContact = trainerContacts?.find((c) => c.id === other?.user_id);
+  const trainerPhone = trainerContact?.contact_whatsapp ?? null;
+  // Students may not be allowed to read the trainer's profile row (RLS returns null), so fall back to the brand.
+  const title = conversation?.name ?? other?.profile?.full_name ?? (trainerContact ? trainerContact.brand_name || "Seu professor" : "");
+  const whatsappUrl = trainerPhone ? whatsappContactUrl(trainerPhone, "Olá! Vim pelo chat do Projeto Gaab.") : null;
   const sendMessage = useSendMessage();
   const { mutate: markRead } = useMarkConversationRead();
   const userId = user?.id;
@@ -57,6 +73,22 @@ export default function ChatThread() {
           <AppIcon name="arrow-left" size={18} color="#3F3F46" strokeWidth={2} />
           <Text className="text-violet-400 text-sm" style={{ fontFamily: font.semibold }}>Voltar</Text>
         </Pressable>
+        <Text className="flex-1 text-text-primary text-[15px]" numberOfLines={1} style={{ fontFamily: font.semibold }}>
+          {title}
+        </Text>
+        {whatsappUrl ? (
+          <Pressable
+            onPress={() => {
+              Linking.openURL(whatsappUrl).catch(() => toast.error("Não foi possível abrir o WhatsApp", "Tente novamente."));
+            }}
+            accessibilityRole="link"
+            accessibilityLabel="Conversar pelo WhatsApp"
+            className="flex-row items-center gap-1.5 rounded-xl border border-success-500/30 bg-success-500/10 px-3 py-2"
+          >
+            <AppIcon name="phone" size={15} color="#34D399" strokeWidth={2} />
+            <Text className="text-success-500 text-xs" style={{ fontFamily: font.semibold }}>WhatsApp</Text>
+          </Pressable>
+        ) : null}
       </View>
 
       {/* Messages */}

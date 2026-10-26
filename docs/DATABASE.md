@@ -1,6 +1,6 @@
 # Database
 
-Supabase Postgres (17 locally). Schema = `supabase/migrations/00001…00047` applied in order
+Supabase Postgres (17 locally). Schema = `supabase/migrations/00001…00052` applied in order
 (`00024_cron_edge_functions.sql.template` is a template, not a migration).
 
 **Rules**: never edit or delete an applied migration; every change is a new numbered file; no destructive statements
@@ -88,7 +88,7 @@ evaluation; drop duplicate indexes listed in `AUDIT.md`.
 ## 7. Applying migrations
 
 - **Local**: `npx supabase start` (ports 554xx, see `supabase/config.toml`), then `npx supabase migration up --local`.
-- **Remote**: not done by this work. 00034–00047 are pending on the production project and require the owner's
+- **Remote**: not done by this work. 00034–00052 are pending on the production project and require the owner's
   authorisation and a backup first. Recommended order: take a backup → apply on a Supabase branch → run `npm run test:api`
   against the branch → apply to production.
 
@@ -100,5 +100,6 @@ evaluation; drop duplicate indexes listed in `AUDIT.md`.
 - 00042: private feed bucket, scoped signing and group RLS recursion fix.
 - 00045/00046: trainer course writes, free/preview lesson/progress authorization, private course media and PDF column. Paid bodies remain closed pending verified entitlements.
 - 00047: trainer-owned referrals and explicit published WhatsApp contact.
+- 00052: optional `challenges.instagram_url`, constrained to `https://www.instagram.com/…` (the app normalizes `@perfil` and bare links).
 
 All46 SQL migrations apply in PGlite and local Postgres. Exact tests/limits: TESTING.md. Next number00048; never edit an applied migration.
