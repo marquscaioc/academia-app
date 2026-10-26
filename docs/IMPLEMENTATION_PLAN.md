@@ -39,7 +39,8 @@ tests plus a browser check. ✅ = done and verified, ◐ = partly done, ☐ = no
 - ✅ Replace N+1 with one RPC (`trainer_student_overview()`, migration 00037).
 - ✅ Dashboard from real data only: active students, trained in 7d, pending check-ins, plans/subscriptions expiring.
 - ◐ Student profile: timeline opens session detail (shared `SessionDetailScreen`). Measurements/photos views not reviewed.
-- ☐ Workout editor: duplicate plan, reorder, templates, assign to multiple students.
+- ◐ Workout editor: ✅ atomic create (00038), multiple workouts + days, templates, duplicate to student/template.
+  ☐ edit an existing plan in place, reorder exercises.
 - ☐ Exercise library: muscle/equipment filters, favourites, duplicate detection.
 
 ## Phase 5 — Content and ecosystem ☐
@@ -58,4 +59,4 @@ tests plus a browser check. ✅ = done and verified, ◐ = partly done, ☐ = no
 - ☐ Private feed-media + signed URLs; rate limits on push/food-lookup; remove email from weekly-digest payload.
 - ☐ Policies → `(select auth.uid())`; drop duplicate indexes.
 - ☐ Sentry ~7.2.0; web bundle splitting (4.8 MB today); EAS preview build on device.
-- ⛔ Apply 00034–00037 to the remote project (owner authorisation + backup).
+- ⛔ Apply 00034–00038 to the remote project (owner authorisation + backup).

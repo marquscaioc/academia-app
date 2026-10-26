@@ -5,10 +5,10 @@ Four layers. Results below are from real runs on 2026-10-26 (Windows 11, Node 20
 | Command | What | Needs | Last result |
 |---|---|---|---|
 | `npm run typecheck` | `tsc --noEmit` | — | **pass** (0 errors) |
-| `npm run lint` | ESLint 9 + eslint-config-expo | — | **pass** (0 errors, 27 warnings) |
-| `npm test` | Jest (jest-expo): `lib/workout/metrics`, `schedule`, `compare`, session store, media helper, toast store, trainer adherence | — | **pass** — 7 suites, 42 tests |
-| `npm run test:db` | All migrations applied to an in-memory Postgres (PGlite 0.2.17) with Supabase stubs, then RLS / trigger scenarios as different users | — | **pass** — 37 migrations, 39/39 scenarios |
-| `npm run test:api` | supabase-js against the **local** stack (GoTrue + PostgREST + Storage + RLS), exactly as the app calls it | Docker + `npx supabase start` | **pass** — 19/19 |
+| `npm run lint` | ESLint 9 + eslint-config-expo | — | **pass** (0 errors, 25 warnings) |
+| `npm test` | Jest (jest-expo): `lib/workout/metrics`, `schedule`, `compare`, session store, media helper, toast store, trainer adherence, plan draft | — | **pass** — 8 suites, 49 tests |
+| `npm run test:db` | All migrations applied to an in-memory Postgres (PGlite 0.2.17) with Supabase stubs, then RLS / trigger scenarios as different users | — | **pass** — 38 migrations, 40/40 scenarios |
+| `npm run test:api` | supabase-js against the **local** stack (GoTrue + PostgREST + Storage + RLS), exactly as the app calls it | Docker + `npx supabase start` | **pass** — 20/20 |
 | `npm run build` | Production web export | — | **pass** (main bundle 4.82 MB) |
 | Browser smoke (manual, Playwright MCP) | login → workout → sets → rest → finish → summary → history → reload-resume | dev server + local stack + `npm run seed:demo` | **pass** (see AUDIT.md §6) |
 

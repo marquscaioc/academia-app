@@ -24,14 +24,13 @@ Stack: Expo SDK 54, Expo Router 6, RN Web, TypeScript, NativeWind 4, Supabase, T
   `npm run build`. Report pass/fail/not-run honestly.
 
 ## Next action
-Trainer workout editor (Phase 4): duplicate a plan to the same/another student and save/apply templates; exercise
-library muscle/equipment filters. Pure logic in `lib/` with Jest tests; verify in the browser as treinador@demo.local.
+Exercise library muscle/equipment filters (Phase 4); edit an existing plan in place (builder creates/duplicates only). Pure logic in `lib/` with Jest tests; verify in the browser as treinador@demo.local.
 
 Then: per-exercise evolution charts (react-native-gifted-charts); challenge server-side scoring trigger (Phase 5);
 private feed-media with signed URLs; rate limits on push/food-lookup; remove email PII from weekly-digest.
 
 ## Do not
-- Edit applied migrations; write new ones (next number: 00038) and add DB test scenarios.
+- Edit applied migrations; write new ones (next number: 00039) and add DB test scenarios.
 - Apply migrations to the remote project, deploy, or touch payment credentials without the owner's authorisation.
 - Show fictitious metrics or mock data in production flows; add buttons without real actions.
 - Copy code from AGPL (Stravio, wger) or unlicensed (expo-supabase-starter-kit) repos.
