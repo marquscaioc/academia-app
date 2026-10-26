@@ -3,6 +3,7 @@
 // Creates an in-app "Resumo semanal" notification per active student: finished workouts, streak,
 // answered check-ins and new achievements of the last 7 days. It does NOT send email (no provider is
 // configured), so it does not read e-mail addresses and stores no contact data in the notification.
+// A student who already got a digest in the last 6 days is skipped, so a repeated run creates no duplicates.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { requireServiceRole } from "../_shared/auth.ts";
@@ -17,6 +18,7 @@ Deno.serve(async (req) => {
     );
 
     const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    const sixDaysAgo = new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString();
 
     const { data: students, error } = await supabase
       .from("profiles")
@@ -26,8 +28,20 @@ Deno.serve(async (req) => {
     if (error) throw error;
 
     let created = 0;
+    let skipped = 0;
 
     for (const student of students ?? []) {
+      const { count: alreadySent } = await supabase
+        .from("notifications")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", student.id)
+        .eq("type", "weekly_digest")
+        .gte("created_at", sixDaysAgo);
+      if (alreadySent) {
+        skipped++;
+        continue;
+      }
+
       const { count: workoutCount } = await supabase
         .from("workout_sessions")
         .select("*", { count: "exact", head: true })
@@ -66,11 +80,12 @@ Deno.serve(async (req) => {
       if (!insertError) created++;
     }
 
-    return new Response(JSON.stringify({ processed: students?.length ?? 0, created }), {
+    return new Response(JSON.stringify({ processed: students?.length ?? 0, created, skipped }), {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: String(error) }), {
+    console.error(`weekly-digest failed: ${String(error)}`);
+    return new Response(JSON.stringify({ error: "internal_error" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });

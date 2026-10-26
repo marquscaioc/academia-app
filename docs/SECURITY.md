@@ -41,6 +41,7 @@ Legacy course URLs in public `exercise-videos` or external providers remain unch
 - All Expo pushes go through `_shared/expoPush.ts`: 100-message chunks, per-message tickets checked, and tokens Expo reports as `DeviceNotRegistered` are cleared (matched by token, so a newer token is kept). Ticket "ok" means accepted by Expo, not delivered; receipts are not polled.
 - `smart-nudge` sends once per milestone (exactly 3, 5 and 7 days without training; it previously re-sent daily from day 3 to 8). `smart-nudge` and `plan-expiring` hold a per-user/per-plan key for the day, so a repeated cron run sends nothing new. `plan-expiring` now also stores the in-app notification for diet plans.
 - `push-notification` stores the in-app notification even when the target has no push token (`is_pushed=false`).
+- `auto-checkin` enforces cadence against each student's last check-in of the template (weekly ≥ 6 days, biweekly ≥ 13 days on Mondays, monthly ≥ 27 days on day 1, daily ≥ 12 h). "Biweekly" previously fired on the first two Mondays of every month. Pushes are sent only for check-ins that were actually created. `weekly-digest` skips students who already got a digest in the last 6 days.
 - `EXPO_PUSH_URL` overrides the Expo endpoint for local tests only; leave it unset in deployed functions.
 
 00039 counters are service-role only. No production deployment occurred.
