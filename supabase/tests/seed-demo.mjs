@@ -42,21 +42,27 @@ await admin
 
 const IMG = "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises";
 const catalog = [
-  ["Supino reto com barra", "Barbell_Bench_Press_-_Medium_Grip", "Deite no banco, desça a barra até o peito e empurre até estender os cotovelos."],
-  ["Remada curvada", "Bent_Over_Barbell_Row", "Tronco inclinado, puxe a barra em direção ao abdômen mantendo a coluna neutra."],
-  ["Agachamento livre", "Barbell_Squat", "Pés na largura dos ombros, desça até as coxas ficarem paralelas ao chão."],
-  ["Desenvolvimento com halteres", "Dumbbell_Shoulder_Press", "Empurre os halteres acima da cabeça sem arquear a lombar."],
+  ["Supino reto com barra", "Barbell_Bench_Press_-_Medium_Grip", "Deite no banco, desça a barra até o peito e empurre até estender os cotovelos.", "Peito", "Barra"],
+  ["Remada curvada", "Bent_Over_Barbell_Row", "Tronco inclinado, puxe a barra em direção ao abdômen mantendo a coluna neutra.", "Costas", "Barra"],
+  ["Agachamento livre", "Barbell_Squat", "Pés na largura dos ombros, desça até as coxas ficarem paralelas ao chão.", "Quadríceps", "Barra"],
+  ["Desenvolvimento com halteres", "Dumbbell_Shoulder_Press", "Empurre os halteres acima da cabeça sem arquear a lombar.", "Ombros", "Halteres"],
 ];
+// Lookup tables come from the migrations' seed data; a missing name just leaves the column null.
+const { data: muscleRows } = await admin.from("muscle_groups").select("id, name");
+const { data: equipmentRows } = await admin.from("equipment").select("id, name");
+const idByName = (rows, name) => rows?.find((r) => r.name === name)?.id ?? null;
 const exerciseIds = [];
-for (const [name, slug, instructions] of catalog) {
+for (const [name, slug, instructions, muscle, equip] of catalog) {
+  const tags = { primary_muscle_group_id: idByName(muscleRows, muscle), equipment_id: idByName(equipmentRows, equip) };
   const { data: found } = await admin.from("exercises").select("id").eq("name", name).maybeSingle();
   if (found) {
+    await admin.from("exercises").update(tags).eq("id", found.id);
     exerciseIds.push(found.id);
     continue;
   }
   const { data, error } = await admin
     .from("exercises")
-    .insert({ name, instructions, is_global: true, thumbnail_url: `${IMG}/${slug}/0.jpg`, video_url: `${IMG}/${slug}/1.jpg` })
+    .insert({ name, instructions, is_global: true, thumbnail_url: `${IMG}/${slug}/0.jpg`, video_url: `${IMG}/${slug}/1.jpg`, ...tags })
     .select("id")
     .single();
   if (error) throw error;

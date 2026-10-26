@@ -13,22 +13,67 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { ExerciseCard } from "../../../components/workout/ExerciseCard";
 import { EmptyState } from "../../../components/ui/EmptyState";
 import { AppIcon } from "../../../components/ui";
-import { useExercises, useMuscleGroups } from "../../../hooks/queries/useExercises";
+import { useEquipment, useExercises, useMuscleGroups } from "../../../hooks/queries/useExercises";
+import type { ExerciseOrigin } from "../../../lib/utils/exerciseFilter";
+import { pluralize } from "../../../lib/utils/plural";
 import { translateExerciseName } from "../../../lib/utils/exerciseTranslations";
 import { useAuth } from "../../../lib/auth/provider";
 import { font } from "../../../lib/design/tokens";
+
+function Chip({ label, active, onPress }: { label: string; active: boolean; onPress: () => void }) {
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      aria-selected={active}
+      className={`px-3 py-1.5 rounded-full border ${active ? "bg-violet-500 border-violet-500" : "bg-surface-card border-surface-border"}`}
+    >
+      <Text className={`text-xs ${active ? "text-white" : "text-text-muted"}`} style={{ fontFamily: font.semibold }}>
+        {label}
+      </Text>
+    </Pressable>
+  );
+}
+
+function ChipRow({ children }: { children: React.ReactNode }) {
+  return (
+    <View style={{ height: 36, marginBottom: 8 }}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8, alignItems: "center" }}>
+        {children}
+      </ScrollView>
+    </View>
+  );
+}
+
+const ORIGINS: [ExerciseOrigin, string][] = [
+  ["all", "Todos"],
+  ["mine", "Meus"],
+  ["global", "Biblioteca global"],
+];
 
 export default function ExercisesScreen() {
   const { user, role } = useAuth();
   const [search, setSearch] = useState("");
   const [selectedMuscle, setSelectedMuscle] = useState<string | undefined>();
-  const { data: exercises, isLoading } = useExercises({
+  const [selectedEquipment, setSelectedEquipment] = useState<string | undefined>();
+  const [origin, setOrigin] = useState<ExerciseOrigin>("all");
+  const { data: exercises, isLoading, error, refetch } = useExercises({
     search: search || undefined,
     muscleGroupId: selectedMuscle,
+    equipmentId: selectedEquipment,
+    origin,
     userId: user?.id,
     role,
   });
   const { data: muscleGroups } = useMuscleGroups();
+  const { data: equipment } = useEquipment();
+  const filtered = !!search.trim() || !!selectedMuscle || !!selectedEquipment || origin !== "all";
+  const clearFilters = () => {
+    setSearch("");
+    setSelectedMuscle(undefined);
+    setSelectedEquipment(undefined);
+    setOrigin("all");
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
@@ -67,7 +112,8 @@ export default function ExercisesScreen() {
           <AppIcon name="search" size={18} color="#6E6382" strokeWidth={2} />
           <TextInput
             className="flex-1 py-3.5 text-[15px] text-text-primary"
-            placeholder="Buscar exercício..."
+            placeholder="Buscar por nome, músculo ou equipamento..."
+            accessibilityLabel="Buscar exercício"
             placeholderTextColor="#6E6382"
             value={search}
             onChangeText={setSearch}
@@ -75,56 +121,40 @@ export default function ExercisesScreen() {
           />
         </View>
 
-        {/* Muscle group filters - fixed height ScrollView */}
-        <View style={{ height: 36, marginBottom: 12 }}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ gap: 8, alignItems: "center" }}
-          >
-            <Pressable
-              onPress={() => setSelectedMuscle(undefined)}
-              className={`px-3 py-1.5 rounded-full border ${
-                !selectedMuscle ? "bg-violet-500 border-violet-500" : "bg-surface-card border-surface-border"
-              }`}
-            >
-              <Text
-                className={`text-xs ${!selectedMuscle ? "text-white" : "text-text-muted"}`}
-                style={{ fontFamily: font.semibold }}
-              >
-                Todos
-              </Text>
-            </Pressable>
-            {muscleGroups?.map((mg) => (
-              <Pressable
-                key={mg.id}
-                onPress={() => setSelectedMuscle(selectedMuscle === mg.id ? undefined : mg.id)}
-                className={`px-3 py-1.5 rounded-full border ${
-                  selectedMuscle === mg.id
-                    ? "bg-violet-500 border-violet-500"
-                    : "bg-surface-card border-surface-border"
-                }`}
-              >
-                <Text
-                  className={`text-xs ${
-                    selectedMuscle === mg.id ? "text-white" : "text-text-muted"
-                  }`}
-                  style={{ fontFamily: font.semibold }}
-                >
-                  {mg.name}
-                </Text>
-              </Pressable>
+        <ChipRow>
+          {ORIGINS.map(([value, label]) => (
+            <Chip key={value} label={label} active={origin === value} onPress={() => setOrigin(value)} />
+          ))}
+        </ChipRow>
+        <ChipRow>
+          <Chip label="Todos os músculos" active={!selectedMuscle} onPress={() => setSelectedMuscle(undefined)} />
+          {muscleGroups?.map((mg) => (
+            <Chip
+              key={mg.id}
+              label={mg.name}
+              active={selectedMuscle === mg.id}
+              onPress={() => setSelectedMuscle(selectedMuscle === mg.id ? undefined : mg.id)}
+            />
+          ))}
+        </ChipRow>
+        {equipment?.length ? (
+          <ChipRow>
+            <Chip label="Qualquer equipamento" active={!selectedEquipment} onPress={() => setSelectedEquipment(undefined)} />
+            {equipment.map((eq) => (
+              <Chip
+                key={eq.id}
+                label={eq.name}
+                active={selectedEquipment === eq.id}
+                onPress={() => setSelectedEquipment(selectedEquipment === eq.id ? undefined : eq.id)}
+              />
             ))}
-          </ScrollView>
-        </View>
+          </ChipRow>
+        ) : null}
 
         {/* Count */}
         {exercises?.length ? (
-          <Text
-            className="text-xs text-text-muted mb-2"
-            style={{ fontFamily: font.regular }}
-          >
-            {exercises.length} exercício{exercises.length !== 1 ? "s" : ""}
+          <Text className="text-xs text-text-muted mb-2 mt-1" style={{ fontFamily: font.regular }}>
+            {pluralize(exercises.length, "exercício", "exercícios")}
           </Text>
         ) : null}
 
@@ -133,12 +163,30 @@ export default function ExercisesScreen() {
           <View className="flex-1 items-center justify-center">
             <ActivityIndicator size="large" color="#781BB6" />
           </View>
-        ) : !exercises?.length ? (
+        ) : error ? (
           <EmptyState
-            iconName="workout"
-            title="Nenhum exercício encontrado"
-            description="Adicione exercícios com instruções para montar os treinos dos seus alunos."
+            iconName="alert"
+            title="Não foi possível carregar"
+            description="Verifique sua conexão e tente novamente."
+            actionLabel="Tentar novamente"
+            onAction={() => refetch()}
           />
+        ) : !exercises?.length ? (
+          filtered ? (
+            <EmptyState
+              iconName="search"
+              title="Nada com esses filtros"
+              description="Nenhum exercício combina com a busca e os filtros escolhidos."
+              actionLabel="Limpar filtros"
+              onAction={clearFilters}
+            />
+          ) : (
+            <EmptyState
+              iconName="workout"
+              title="Nenhum exercício encontrado"
+              description="Adicione exercícios com instruções para montar os treinos dos seus alunos."
+            />
+          )
         ) : (
           <FlatList
             data={exercises}

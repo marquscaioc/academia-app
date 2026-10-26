@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "../../lib/supabase/client";
+import { filterExercises, type ExerciseOrigin } from "../../lib/utils/exerciseFilter";
 
 export interface Exercise {
   id: string;
@@ -29,21 +30,17 @@ export interface Equipment {
   name: string;
 }
 
-import { translateExerciseName } from "../../lib/utils/exerciseTranslations";
-
-// Normalize for accent-insensitive search (remove accents, lowercase)
-function normalize(s: string): string {
-  return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-}
-
 export function useExercises(filters?: {
   muscleGroupId?: string;
+  equipmentId?: string;
+  /** Client-side: "mine" = created by userId, "global" = shared library. */
+  origin?: ExerciseOrigin;
   search?: string;
   userId?: string;
   role?: "student" | "trainer" | "admin" | null;
 }) {
   return useQuery({
-    queryKey: ["exercises", "list", filters?.muscleGroupId, filters?.userId, filters?.role],
+    queryKey: ["exercises", "list", filters?.muscleGroupId, filters?.equipmentId, filters?.userId, filters?.role],
     queryFn: async () => {
       // Resolve trainer scope for defense-in-depth
       let trainerScopeIds: string[] = [];
@@ -69,6 +66,9 @@ export function useExercises(filters?: {
       if (filters?.muscleGroupId) {
         query = query.eq("primary_muscle_group_id", filters.muscleGroupId);
       }
+      if (filters?.equipmentId) {
+        query = query.eq("equipment_id", filters.equipmentId);
+      }
 
       // Tenant filter: global exercises OR created by self/linked-trainers
       if (filters?.role === "trainer" && filters?.userId) {
@@ -86,18 +86,8 @@ export function useExercises(filters?: {
       if (error) throw error;
       return data as Exercise[];
     },
-    select: (data) => {
-      // Client-side search across English name + PT-BR translation + muscle/equipment
-      if (!filters?.search?.trim()) return data;
-      const term = normalize(filters.search.trim());
-      return data.filter((ex) => {
-        const en = normalize(ex.name);
-        const pt = normalize(translateExerciseName(ex.name));
-        const muscle = normalize(ex.muscle_group?.name ?? "");
-        const equip = normalize(ex.equipment?.name ?? "");
-        return en.includes(term) || pt.includes(term) || muscle.includes(term) || equip.includes(term);
-      });
-    },
+    // Client-side search across English name + PT-BR translation + muscle/equipment, and origin
+    select: (data) => filterExercises(data, { search: filters?.search, origin: filters?.origin, userId: filters?.userId }),
   });
 }
 

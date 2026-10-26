@@ -24,6 +24,7 @@ import { useCopyWorkoutPlan, useCreateWorkoutPlan } from "../../../hooks/mutatio
 import { Avatar } from "../../../components/ui/Avatar";
 import { pluralize } from "../../../lib/utils/plural";
 import { toast } from "../../../stores/useToastStore";
+import { translateExerciseName } from "../../../lib/utils/exerciseTranslations";
 import {
   WEEKDAY_SHORT,
   buildPlanPayload,
@@ -462,17 +463,17 @@ export default function WorkoutBuilderScreen() {
               renderItem={({ item }) => (
                 <Pressable
                   onPress={() => {
-                    updateWorkout({ exercises: [...current.exercises, newExercise(item)] });
+                    updateWorkout({ exercises: [...current.exercises, newExercise({ id: item.id, name: translateExerciseName(item.name) })] });
                     setSearchExercise("");
                   }}
                   accessibilityRole="button"
-                  accessibilityLabel={`Adicionar ${item.name}`}
+                  accessibilityLabel={`Adicionar ${translateExerciseName(item.name)}`}
                   className="bg-surface-elevated rounded-2xl p-3 flex-row items-center gap-3"
                 >
                   <View className="w-9 h-9 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
                     <AppIcon name="workout" size={18} color="#9B40D8" strokeWidth={2} />
                   </View>
-                  <Text className="text-sm text-text-primary flex-1" style={{ fontFamily: font.regular }}>{item.name}</Text>
+                  <Text className="text-sm text-text-primary flex-1" style={{ fontFamily: font.regular }}>{translateExerciseName(item.name)}</Text>
                   <View className="flex-row items-center gap-1">
                     <AppIcon name="plus" size={14} color="#9B40D8" strokeWidth={2} />
                     <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>Adicionar</Text>
