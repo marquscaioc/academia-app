@@ -24,7 +24,8 @@ import {
   DMSans_700Bold,
   DMSans_900Black,
 } from "@expo-google-fonts/dm-sans";
-import { AuthProvider } from "../lib/auth/provider";
+import { AuthProvider, useAuth } from "../lib/auth/provider";
+import { useRestNotifications } from "../lib/notifications/useRestNotifications";
 import { ToastHost } from "../components/ui/ToastHost";
 import { LoadingScreen } from "../components/ui/LoadingScreen";
 import { useNotificationObserver } from "../lib/notifications/useNotificationObserver";
@@ -38,6 +39,12 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+function WorkoutRestNotifications() {
+  const { user, identityReady } = useAuth();
+  useRestNotifications(user?.id ?? null, identityReady);
+  return null;
+}
 
 /**
  * App-wide error boundary. expo-router renders this when a route subtree throws,
@@ -102,6 +109,7 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
+          <WorkoutRestNotifications />
           <StatusBar style="light" />
           <Slot />
           <ToastHost />

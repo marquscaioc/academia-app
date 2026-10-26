@@ -1,20 +1,27 @@
-import { Platform } from "react-native";
+import { AppState, Platform } from "react-native";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
 import { supabase } from "../supabase/client";
+import { ensureRestNotificationChannel } from "./rest";
 
 Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
+  handleNotification: async (notification) => {
+    const rest = notification.request.content.data?.kind === "workout_rest";
+    const show = !rest || AppState.currentState !== "active";
+    return {
+      shouldShowAlert: show,
+      shouldPlaySound: show,
+      shouldSetBadge: !rest,
+      shouldShowBanner: show,
+      shouldShowList: show,
+    };
+  },
 });
 
 export async function registerForPushNotifications(userId: string): Promise<string | null> {
   if (Platform.OS === "web") return null;
+  // Android 13 needs an existing channel before the permission prompt appears.
+  await ensureRestNotificationChannel();
 
   const { status: existingStatus } = await Notifications.getPermissionsAsync();
   let finalStatus = existingStatus;

@@ -1,5 +1,5 @@
-import { useEffect, useRef } from "react";
-import { Pressable, Text, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { AppState, Platform, Pressable, Text, View } from "react-native";
 import { useWorkoutSessionStore } from "../../stores/useWorkoutSessionStore";
 import { useNow } from "../../lib/hooks/useNow";
 import { haptics } from "../../lib/haptics";
@@ -17,16 +17,24 @@ export function RestTimer() {
   const clearRest = useWorkoutSessionStore((s) => s.clearRest);
   const now = useNow(!!restEndsAt, 250);
   const notifiedFor = useRef<number | null>(null);
+  const [appState, setAppState] = useState(AppState.currentState);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", setAppState);
+    return () => subscription.remove();
+  }, []);
 
   const remaining = restEndsAt ? Math.max(0, Math.ceil((restEndsAt - now) / 1000)) : 0;
 
   useEffect(() => {
-    if (restEndsAt && remaining === 0 && notifiedFor.current !== restEndsAt) {
+    // Background JS can keep ticking briefly. Leave the deadline intact there,
+    // otherwise clearRest would cancel/dismiss the OS alert as it is delivered.
+    if (restEndsAt && remaining === 0 && notifiedFor.current !== restEndsAt && (Platform.OS === "web" || appState === "active")) {
       notifiedFor.current = restEndsAt;
       haptics.success();
       clearRest();
     }
-  }, [remaining, restEndsAt, clearRest]);
+  }, [remaining, restEndsAt, clearRest, appState]);
 
   if (!restEndsAt || remaining === 0) return null;
 
