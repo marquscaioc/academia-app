@@ -242,6 +242,35 @@ await check("trainer can edit the prescription without destroying history", asyn
   assert(count === 3, `history lost: ${count} sets`);
 });
 
+await check("create_workout_plan / copy_workout_plan RPCs (builder) — atomic, template, copy to student", async () => {
+  const workouts = [
+    { name: "A", day_of_week: [1, 4], exercises: [{ exercise_id: ex.id, target_sets: 4, target_reps: "6-8", target_weight_kg: 62.5 }] },
+  ];
+  const { data: tpl, error: e1 } = await trainer.client.rpc("create_workout_plan", {
+    p_student_id: null,
+    p_name: "Modelo API",
+    p_description: null,
+    p_workouts: workouts,
+  });
+  assert(!e1 && tpl, e1?.message ?? "no template id");
+  const { data: copy, error: e2 } = await trainer.client.rpc("copy_workout_plan", {
+    p_source_plan_id: tpl,
+    p_student_id: student.id,
+    p_name: "Do modelo",
+  });
+  assert(!e2 && copy, e2?.message ?? "no copy id");
+  const { data: seen } = await student.client
+    .from("workout_plans")
+    .select("id, name, workouts(day_of_week, exercises:workout_exercises(target_weight_kg))")
+    .in("id", [tpl, copy]);
+  assert(seen?.length === 1 && seen[0].id === copy, `student saw ${JSON.stringify(seen?.map((p) => p.name))}`);
+  assert(Number(seen[0].workouts[0].exercises[0].target_weight_kg) === 62.5, "weight copied");
+  const { error: e3 } = await otherTrainer.client.rpc("copy_workout_plan", { p_source_plan_id: tpl, p_student_id: null, p_name: "x" });
+  assert(e3, "other trainer copied a plan that is not theirs");
+  const { error: e4 } = await student.client.rpc("create_workout_plan", { p_student_id: null, p_name: "x", p_description: null, p_workouts: workouts });
+  assert(e4, "student created a plan");
+});
+
 await check("student cannot mark a payment as paid", async () => {
   const { data: plan } = await trainer.client
     .from("subscription_plans")
@@ -290,6 +319,8 @@ await check("student deletes own progress photo", async () => {
 
 // ---- cleanup ----------------------------------------------------------------------
 for (const [bucket, path] of uploaded) await admin.storage.from(bucket).remove([path]);
+// Templates have no student, so they would not cascade with the users (trainer_id is SET NULL).
+await admin.from("workout_plans").delete().in("trainer_id", [trainer.id, otherTrainer.id]);
 for (const u of [trainer, otherTrainer, student, attacker]) await admin.auth.admin.deleteUser(u.id);
 await admin.from("exercises").delete().eq("id", ex.id);
 

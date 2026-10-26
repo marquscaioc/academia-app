@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "../../lib/supabase/client";
+import type { PlanWorkoutPayload } from "../../lib/trainer/planDraft";
 
 interface CreateExerciseInput {
   name: string;
@@ -34,98 +35,68 @@ export function useCreateExercise() {
 }
 
 interface CreateWorkoutPlanInput {
-  trainer_id: string;
-  student_id: string;
+  /** null = template (modelo), only visible to the trainer. */
+  student_id: string | null;
   name: string;
   description?: string;
+  workouts: PlanWorkoutPayload[];
 }
 
-interface AddWorkoutInput {
-  plan_id: string;
-  name: string;
-  sort_order?: number;
-  estimated_duration_minutes?: number;
-  notes?: string;
+function notifyNewPlan(studentId: string | null, planName: string) {
+  if (!studentId) return;
+  supabase.functions
+    .invoke("push-notification", {
+      body: {
+        user_id: studentId,
+        title: "Novo treino disponível!",
+        body: `Seu personal criou o plano "${planName}". Confira!`,
+        data: { type: "new_workout", screen: "workouts" },
+      },
+    })
+    .catch(() => {});
 }
 
-interface AddWorkoutExerciseInput {
-  workout_id: string;
-  exercise_id: string;
-  sort_order: number;
-  target_sets?: number;
-  target_reps?: string;
-  target_weight_kg?: number;
-  target_rpe?: number;
-  tempo?: string;
-  superset_group?: number;
-  rest_seconds?: number;
-  notes?: string;
+function invalidatePlans(queryClient: ReturnType<typeof useQueryClient>) {
+  queryClient.invalidateQueries({ queryKey: ["workouts"] });
+  queryClient.invalidateQueries({ queryKey: ["trainer"] });
 }
 
+/** Plan + workouts + exercises in one transaction (create_workout_plan, migration 00038). */
 export function useCreateWorkoutPlan() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (input: CreateWorkoutPlanInput) => {
-      const { data, error } = await supabase
-        .from("workout_plans")
-        .insert(input)
-        .select()
-        .single();
+      const { data, error } = await supabase.rpc("create_workout_plan", {
+        p_student_id: input.student_id,
+        p_name: input.name,
+        p_description: input.description ?? null,
+        p_workouts: input.workouts,
+      });
       if (error) throw error;
-
-      // Send push notification to student
-      supabase.functions.invoke("push-notification", {
-        body: {
-          user_id: input.student_id,
-          title: "Novo treino disponível!",
-          body: `Seu personal criou o plano "${input.name}". Confira!`,
-          data: { type: "new_workout", screen: "workouts" },
-        },
-      }).catch(() => {});
-
-      return data;
+      // Only after the whole plan exists.
+      notifyNewPlan(input.student_id, input.name);
+      return data as string;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["workouts", "plans"] });
-    },
+    onSuccess: () => invalidatePlans(queryClient),
   });
 }
 
-export function useAddWorkout() {
+/** Duplicates one of the trainer's plans to a student or to a template (copy_workout_plan, migration 00038). */
+export function useCopyWorkoutPlan() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (input: AddWorkoutInput) => {
-      const { data, error } = await supabase
-        .from("workouts")
-        .insert(input)
-        .select()
-        .single();
+    mutationFn: async (input: { source_plan_id: string; student_id: string | null; name: string }) => {
+      const { data, error } = await supabase.rpc("copy_workout_plan", {
+        p_source_plan_id: input.source_plan_id,
+        p_student_id: input.student_id,
+        p_name: input.name,
+      });
       if (error) throw error;
-      return data;
+      notifyNewPlan(input.student_id, input.name);
+      return data as string;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["workouts"] });
-    },
-  });
-}
-
-export function useAddWorkoutExercise() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (input: AddWorkoutExerciseInput) => {
-      const { data, error } = await supabase
-        .from("workout_exercises")
-        .insert(input)
-        .select()
-        .single();
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["workouts"] });
-    },
+    onSuccess: () => invalidatePlans(queryClient),
   });
 }

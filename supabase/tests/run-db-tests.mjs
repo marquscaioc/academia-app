@@ -555,6 +555,60 @@ await check("trainer_student_overview: own active students only, real counts, pl
   eq(s.rows.length, 0, "student gets nothing");
 });
 
+await check("create_workout_plan / copy_workout_plan: atomic, own plans only, linked students, visible exercises", async () => {
+  const workouts = (exId) =>
+    JSON.stringify([
+      { name: "A", day_of_week: [1, 3, 3, 9], exercises: [{ exercise_id: exId, target_sets: 4, target_reps: "6-8", rest_seconds: 90 }] },
+      { name: "B", exercises: [{ exercise_id: exId }, { exercise_id: exId, superset_group: 1 }] },
+    ]);
+  const plan = (
+    await as(U.trainerA, "SELECT public.create_workout_plan($1, ' Força ', null, $2::jsonb) AS id", [U.studentA, workouts(exercise)])
+  ).rows[0].id;
+  const shape = await asSuper(
+    `SELECT w.name, w.day_of_week, count(we.id)::int AS n, min(we.target_sets) AS sets
+       FROM public.workouts w LEFT JOIN public.workout_exercises we ON we.workout_id = w.id
+      WHERE w.plan_id = $1 GROUP BY w.id ORDER BY w.sort_order`,
+    [plan],
+  );
+  eq(shape.rows.map((r) => [r.name, r.day_of_week, r.n]), [["A", [1, 3], 1], ["B", null, 2]], "plan shape");
+  eq((await asSuper("SELECT name FROM public.workout_plans WHERE id = $1", [plan])).rows[0].name, "Força", "trimmed name");
+
+  // Atomic: a bad exercise in the 2nd workout leaves no plan behind.
+  const before = (await asSuper("SELECT count(*)::int AS n FROM public.workout_plans")).rows[0].n;
+  const privateB = (
+    await asSuper("INSERT INTO public.exercises (name, created_by, is_global) VALUES ('Privado B', $1, false) RETURNING id", [U.trainerB])
+  ).rows[0].id;
+  await expectError(
+    as(U.trainerA, "SELECT public.create_workout_plan($1, 'X', null, $2::jsonb)", [
+      U.studentA,
+      JSON.stringify([{ name: "A", exercises: [{ exercise_id: exercise }] }, { name: "B", exercises: [{ exercise_id: privateB }] }]),
+    ]),
+    "another trainer's private exercise",
+  );
+  eq((await asSuper("SELECT count(*)::int AS n FROM public.workout_plans")).rows[0].n, before, "no partial plan");
+  await expectError(as(U.trainerA, "SELECT public.create_workout_plan($1, 'X', null, $2::jsonb)", [U.studentB, workouts(exercise)]), "unlinked student");
+  await expectError(as(U.studentA, "SELECT public.create_workout_plan(null, 'X', null, $1::jsonb)", [workouts(exercise)]), "student caller");
+  await expectError(as(U.trainerA, "SELECT public.create_workout_plan($1, 'X', null, '[]'::jsonb)", [U.studentA]), "no workouts");
+
+  // Copy to a template, then from the template to the student.
+  const tpl = (await as(U.trainerA, "SELECT public.copy_workout_plan($1, null, 'Modelo força') AS id", [plan])).rows[0].id;
+  const t = (await asSuper("SELECT student_id, name FROM public.workout_plans WHERE id = $1", [tpl])).rows[0];
+  eq([t.student_id, t.name], [null, "Modelo força"], "template row");
+  const copy = (await as(U.trainerA, "SELECT public.copy_workout_plan($1, $2, '') AS id", [tpl, U.studentA])).rows[0].id;
+  const copied = await asSuper(
+    `SELECT w.name, w.day_of_week, count(we.id)::int AS n FROM public.workouts w
+       LEFT JOIN public.workout_exercises we ON we.workout_id = w.id WHERE w.plan_id = $1 GROUP BY w.id ORDER BY w.sort_order`,
+    [copy],
+  );
+  eq(copied.rows.map((r) => [r.name, r.day_of_week, r.n]), shape.rows.map((r) => [r.name, r.day_of_week, r.n]), "copy matches source");
+  eq((await asSuper("SELECT name FROM public.workout_plans WHERE id = $1", [copy])).rows[0].name, "Modelo força", "empty name keeps source name");
+
+  await expectError(as(U.trainerB, "SELECT public.copy_workout_plan($1, $2, 'x')", [plan, U.studentB]), "other trainer's plan");
+  await expectError(as(U.trainerA, "SELECT public.copy_workout_plan($1, $2, 'x')", [plan, U.studentB]), "copy to unlinked student");
+  const studentSees = await as(U.studentA, "SELECT id FROM public.workout_plans WHERE id = $1", [tpl]);
+  eq(studentSees.rows.length, 0, "student cannot see templates");
+});
+
 // ---------------------------------------------------------------------------
 for (const [status, name] of results) console.log(`${status}  ${name}`);
 console.log(`\n${results.filter((r) => r[0] === "PASS").length} passed, ${failures} failed`);

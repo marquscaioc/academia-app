@@ -72,6 +72,35 @@ export function useWorkoutPlans(studentId?: string) {
   });
 }
 
+export interface TrainerPlanSummary {
+  id: string;
+  name: string;
+  student_id: string | null;
+  created_at: string;
+  student: { full_name: string | null } | null;
+  workouts: { id: string; name: string; exercises: { count: number }[] }[];
+}
+
+/** The trainer's active plans and templates (student_id null), newest first — sources for "duplicar". */
+export function useTrainerPlans(trainerId?: string) {
+  return useQuery({
+    queryKey: ["workouts", "plans", "trainer", { trainerId }],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("workout_plans")
+        .select("id, name, student_id, created_at, student:profiles!student_id(full_name), workouts(id, name, exercises:workout_exercises(count))")
+        .eq("trainer_id", trainerId!)
+        .eq("is_active", true)
+        .order("created_at", { ascending: false })
+        .limit(50);
+      if (error) throw error;
+      // Untyped client infers to-one embeds as arrays; PostgREST returns an object for student_id → profiles.
+      return data as unknown as TrainerPlanSummary[];
+    },
+    enabled: !!trainerId,
+  });
+}
+
 export function useWorkoutDetail(workoutId: string) {
   return useQuery({
     queryKey: ["workouts", "detail", workoutId],
