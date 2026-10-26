@@ -45,13 +45,13 @@ Status legend: **Fixed** (code + test in this repo), **Open** (still to do), **D
 | C5 | Finishing a workout could run twice and double-count streak/feed | **Fixed** (`update … where finished_at is null`) |
 | C6 | Rest timer based on `setInterval` counting; drifted and died in background | **Fixed** (absolute `restEndsAt`) |
 | C7 | "Ver vídeo" shown for exercises whose `video_url` is a JPG frame (free-exercise-db) | **Fixed** (`isPlayableVideo`) |
-| C8 | `Alert.alert` used for confirmations; does nothing on web | Partially fixed: workout flow uses `ConfirmDialog`. **Open** for other screens (e.g. `app/challenges/[challengeId].tsx`) |
+| C8 | `Alert.alert` used for confirmations; does nothing on web | **Fixed**: `ConfirmDialog` + cross-platform toast; no `Alert.alert` left |
 | C9 | Home always showed "Tem um código de convite?" and an unconditional "Conectado" banner, even for linked students | **Fixed** |
-| C10 | Student tab bar has 7 tabs (labels truncated on phones) | **Open** — proposal: 5 tabs + "Mais" hub (Phase 2) |
+| C10 | Student tab bar has 7 tabs (labels truncated on phones) | **Fixed**: 5 tabs + "Mais" hub |
 | C11 | Many user-visible strings without Portuguese accents | **Fixed** for 113 strings in 41 files; residual cases may remain in less-used screens |
 | C12 | `Button` had no accessibility role/state; `ConfirmDialog` nested the dialog inside the backdrop button | **Fixed** |
 | C13 | Next workout picked naïvely (first workout) | **Fixed** (`recommendNextWorkout`: weekday schedule, then A→B→C rotation from real history) |
-| C14 | History screen shows only name/date/duration; no session detail | **Open** (Phase 3) |
+| C14 | History screen shows only name/date/duration; no session detail | **Fixed**: session detail with per-exercise sets and comparison |
 
 ## 4. Database / RLS (full report summarised; SQL fixes in 00034–00036)
 
@@ -75,7 +75,7 @@ Status legend: **Fixed** (code + test in this repo), **Open** (still to do), **D
 | Medium | Finished sessions editable/backdatable forever | **Fixed** 00035 (locked 24 h after finish) |
 | Low | Missing FK/filter indexes; `auth.uid()` per-row in policies | Mostly **fixed** 00035; policy rewrite to `(select auth.uid())` **Open** |
 | Low | `progress_photos.is_private` unused; `feed-media` bucket is public so non-public post media is reachable by URL | **Open** (needs private bucket + signed URLs) |
-| Perf | N+1 in `useStudentAdherenceList` (2 queries per student, sequential) | **Open** (Phase 4: one RPC) |
+| Perf | N+1 in `useStudentAdherenceList` (2 queries per student, sequential) | **Fixed**: `trainer_student_overview()` RPC (00037) |
 
 ## 5. Financial
 

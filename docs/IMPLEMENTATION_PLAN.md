@@ -18,8 +18,8 @@ tests plus a browser check. ✅ = done and verified, ◐ = partly done, ☐ = no
 
 ## Phase 2 — Design system ◐
 - ✅ Button a11y, ConfirmDialog (web-safe), pt-BR copy pass.
-- ☐ Student navigation: 7 tabs → 5 (Início, Treinos, Progresso, Social, Mais[Dieta, Chat, Aulas, Desafios, Perfil]).
-- ☐ Replace remaining `Alert.alert` confirmations (challenges, groups, trainer screens) with `ConfirmDialog` / toast.
+- ✅ Student navigation: 7 tabs → 5 (Início, Treinos, Dieta, Progresso, Mais[Social, Chat, Aulas, Desafios, Perfil]).
+- ✅ Replace remaining `Alert.alert` with `ConfirmDialog` / cross-platform toast (`stores/useToastStore`).
 - ☐ Adopt react-native-reusables primitives (Select, Tabs, Progress) where they replace ad-hoc code; keep tokens.
 - ☐ Consistent loading / empty / error states on every main screen (audit each with the browser).
 
@@ -30,15 +30,15 @@ tests plus a browser check. ✅ = done and verified, ◐ = partly done, ☐ = no
   idempotent sync, idempotent finish, sync-failure retry.
 - ✅ Finish: duration, volume, planned vs done, PRs (explicit criteria: beats previous best weight / reps at weight /
   e1RM / set volume; first-ever is not a PR; warm-ups excluded).
-- ☐ History detail screen: sets per exercise, volume, comparison with previous session of the same workout.
+- ✅ History detail screen: sets per exercise, volume, comparison with previous session of the same workout.
 - ☐ Per-exercise evolution chart (load, e1RM) with gifted-charts.
 - ☐ Background rest notification (expo-notifications local schedule) on native.
 - ☐ Exercise substitution during a session (trainer-approved alternatives).
 
-## Phase 4 — Trainer panel ☐
-- ☐ Replace N+1 `useStudentAdherenceList` with one RPC (sessions last 7/30 days, last workout, pending check-ins).
-- ☐ Dashboard from real data only: active/inactive students, sessions this week, pending check-ins, subscriptions expiring.
-- ☐ Student profile: plan, workouts, history (reuse student history components read-only), check-ins, measurements, photos.
+## Phase 4 — Trainer panel ◐
+- ✅ Replace N+1 with one RPC (`trainer_student_overview()`, migration 00037).
+- ✅ Dashboard from real data only: active students, trained in 7d, pending check-ins, plans/subscriptions expiring.
+- ◐ Student profile: timeline opens session detail (shared `SessionDetailScreen`). Measurements/photos views not reviewed.
 - ☐ Workout editor: duplicate plan, reorder, templates, assign to multiple students.
 - ☐ Exercise library: muscle/equipment filters, favourites, duplicate detection.
 
@@ -58,4 +58,4 @@ tests plus a browser check. ✅ = done and verified, ◐ = partly done, ☐ = no
 - ☐ Private feed-media + signed URLs; rate limits on push/food-lookup; remove email from weekly-digest payload.
 - ☐ Policies → `(select auth.uid())`; drop duplicate indexes.
 - ☐ Sentry ~7.2.0; web bundle splitting (4.8 MB today); EAS preview build on device.
-- ⛔ Apply 00034–00036 to the remote project (owner authorisation + backup).
+- ⛔ Apply 00034–00037 to the remote project (owner authorisation + backup).

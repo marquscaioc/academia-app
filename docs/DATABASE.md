@@ -1,6 +1,6 @@
 # Database
 
-Supabase Postgres (17 locally). Schema = `supabase/migrations/00001…00036` applied in order
+Supabase Postgres (17 locally). Schema = `supabase/migrations/00001…00037` applied in order
 (`00024_cron_edge_functions.sql.template` is a template, not a migration).
 
 **Rules**: never edit or delete an applied migration; every change is a new numbered file; no destructive statements
@@ -43,6 +43,7 @@ the local stack (`npx supabase migration up --local`) before it is proposed for 
 | `has_trainer_link(uuid)` | definer | any link status — used in trainer WITH CHECK |
 | `accept_invite(code, uuid)` | definer | uses `auth.uid()`; `FOR UPDATE` on invite |
 | `get_user_prs(uuid)` | **invoker** | RLS applies |
+| `trainer_student_overview()` (00037) | **invoker** | caller's active students only; RLS applies to every joined table |
 | `increment_challenge_score`, `increment_team_score` | definer | caller must be the user / team member; points 0..100000 |
 | `is_challenge_participant(uuid)` | definer | avoids RLS recursion |
 | `is_conversation_member(uuid, uuid)` | definer | used by chat RLS and chat-media storage |
@@ -81,6 +82,6 @@ evaluation; drop duplicate indexes listed in `AUDIT.md`.
 ## 7. Applying migrations
 
 - **Local**: `npx supabase start` (ports 554xx, see `supabase/config.toml`), then `npx supabase migration up --local`.
-- **Remote**: not done by this work. 00034, 00035, 00036 are pending on the production project and require the owner's
+- **Remote**: not done by this work. 00034, 00035, 00036, 00037 are pending on the production project and require the owner's
   authorisation and a backup first. Recommended order: take a backup → apply on a Supabase branch → run `npm run test:api`
   against the branch → apply to production.
