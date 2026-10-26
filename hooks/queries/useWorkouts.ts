@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "../../lib/supabase/client";
+import type { HistorySet } from "../../lib/workout/compare";
 
 export interface WorkoutPlan {
   id: string;
@@ -165,5 +166,71 @@ export function useWorkoutSessions(userId?: string) {
       return data as WorkoutSession[];
     },
     enabled: !!userId,
+  });
+}
+
+interface SessionSetRow {
+  exercise_id: string;
+  set_number: number;
+  reps: number | null;
+  weight_kg: number | string | null;
+  is_warmup: boolean | null;
+  exercise: { name: string } | null;
+}
+
+export interface SessionDetail {
+  session: WorkoutSession;
+  sets: HistorySet[];
+  /** Previous finished session of the same workout, used as the comparison baseline. */
+  previous: { id: string; started_at: string; sets: HistorySet[] } | null;
+}
+
+function toHistorySets(rows: SessionSetRow[] | null): HistorySet[] {
+  return (rows ?? []).map((r) => ({
+    exerciseId: r.exercise_id,
+    exerciseName: r.exercise?.name ?? "Exercício",
+    setNumber: r.set_number,
+    reps: r.reps,
+    weightKg: r.weight_kg === null ? null : Number(r.weight_kg),
+    isWarmup: !!r.is_warmup,
+  }));
+}
+
+const SET_COLUMNS = "exercise_id, set_number, reps, weight_kg, is_warmup, exercise:exercises(name)";
+
+export function useSessionDetail(sessionId?: string) {
+  return useQuery({
+    queryKey: ["workouts", "sessionDetail", sessionId],
+    queryFn: async (): Promise<SessionDetail> => {
+      const { data, error } = await supabase
+        .from("workout_sessions")
+        .select(`*, workout:workouts(name, plan:workout_plans(name)), sets:workout_session_sets(${SET_COLUMNS})`)
+        .eq("id", sessionId!)
+        .single();
+      if (error) throw error;
+      const { sets, ...session } = data as WorkoutSession & { sets: SessionSetRow[] };
+
+      let previous: SessionDetail["previous"] = null;
+      if (session.workout_id) {
+        const { data: prev, error: prevError } = await supabase
+          .from("workout_sessions")
+          .select(`id, started_at, sets:workout_session_sets(${SET_COLUMNS})`)
+          .eq("user_id", session.user_id)
+          .eq("workout_id", session.workout_id)
+          .not("finished_at", "is", null)
+          .lt("started_at", session.started_at)
+          .order("started_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (prevError) throw prevError;
+        if (prev) {
+          // exercise is many-to-one (an object at runtime); the generated select type models it as an array.
+          const p = prev as unknown as { id: string; started_at: string; sets: SessionSetRow[] };
+          previous = { id: p.id, started_at: p.started_at, sets: toHistorySets(p.sets) };
+        }
+      }
+      return { session, sets: toHistorySets(sets), previous };
+    },
+    enabled: !!sessionId,
   });
 }

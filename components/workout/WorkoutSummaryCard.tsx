@@ -40,7 +40,7 @@ export function WorkoutSummaryCard({
       </View>
 
       <View className="mt-4 items-center">
-        <Text className="text-[10px] text-text-muted">{exerciseCount} exercicios</Text>
+        <Text className="text-[10px] text-text-muted">{exerciseCount} {exerciseCount === 1 ? "exercício" : "exercícios"}</Text>
       </View>
     </View>
   );

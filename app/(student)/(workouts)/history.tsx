@@ -53,7 +53,12 @@ export default function WorkoutHistoryScreen() {
             showsVerticalScrollIndicator={false}
             contentContainerClassName="gap-2 pb-4"
             renderItem={({ item }) => (
-              <View className="bg-surface-card border border-surface-border rounded-3xl p-5">
+              <Pressable
+                onPress={() => router.push(`/(student)/(workouts)/historico/${item.id}` as never)}
+                accessibilityRole="button"
+                accessibilityLabel={`Ver detalhes de ${item.workout?.name ?? "Treino livre"}`}
+                className="bg-surface-card border border-surface-border rounded-3xl p-5 active:bg-surface-hover"
+              >
                 <View className="flex-row items-center gap-3 mb-3">
                   <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
                     <AppIcon name="workout" size={18} color="#9B40D8" strokeWidth={2} />
@@ -61,9 +66,14 @@ export default function WorkoutHistoryScreen() {
                   <Text className="flex-1 text-sm text-text-primary" style={{ fontFamily: font.semibold }}>
                     {item.workout?.name ?? "Treino livre"}
                   </Text>
-                  {item.mood ? (
+                  {!item.finished_at ? (
+                    <Text className="text-[10px] uppercase text-warning-500" style={{ fontFamily: font.semibold, letterSpacing: 1 }}>
+                      Não finalizado
+                    </Text>
+                  ) : item.mood ? (
                     <Text className="text-lg">{moodEmoji[item.mood] ?? ""}</Text>
                   ) : null}
+                  <AppIcon name="chevron-right" size={16} color="#6E6382" strokeWidth={2} />
                 </View>
                 <View className="flex-row items-center gap-4">
                   <View className="flex-row items-center gap-1.5">
@@ -85,7 +95,7 @@ export default function WorkoutHistoryScreen() {
                     </View>
                   ) : null}
                 </View>
-              </View>
+              </Pressable>
             )}
           />
         )}

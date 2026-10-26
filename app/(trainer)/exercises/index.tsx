@@ -124,7 +124,7 @@ export default function ExercisesScreen() {
             className="text-xs text-text-muted mb-2"
             style={{ fontFamily: font.regular }}
           >
-            {exercises.length} exercicio{exercises.length !== 1 ? "s" : ""}
+            {exercises.length} exercício{exercises.length !== 1 ? "s" : ""}
           </Text>
         ) : null}
 
