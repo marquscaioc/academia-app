@@ -1,507 +1,730 @@
 import { useLocalSearchParams, router } from "expo-router";
-import { useState } from "react";
-import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { font, amethystGlow, amethystGradient } from "../../../lib/design/tokens";
+import { useShallow } from "zustand/react/shallow";
+import { font, palette } from "../../../lib/design/tokens";
 import { DisplayHeading } from "../../../components/ui/DisplayHeading";
-import { AppIcon } from "../../../components/ui";
+import { AppIcon, Button, EmptyState } from "../../../components/ui";
+import { ConfirmDialog } from "../../../components/ui/ConfirmDialog";
 import { ExerciseCard } from "../../../components/workout/ExerciseCard";
 import { RestTimer } from "../../../components/workout/RestTimer";
+import { SetRow, type SetValues } from "../../../components/workout/SetRow";
 import { VideoPlayerModal } from "../../../components/workout/VideoPlayerModal";
-import { useAuth } from "../../../lib/auth/provider";
-import { useWorkoutDetail, WorkoutExercise } from "../../../hooks/queries/useWorkouts";
-import {
-  useStartSession,
-  useLogSet,
-  useFinishSession,
-} from "../../../hooks/mutations/useLogWorkout";
-import { useTimerStore } from "../../../stores/useTimerStore";
-import { useWorkoutSessionStore } from "../../../stores/useWorkoutSessionStore";
-import { useLastPerformance } from "../../../hooks/queries/useLastPerformance";
 import { LoadingScreen } from "../../../components/ui/LoadingScreen";
 import { WebContainer } from "../../../components/layout/WebContainer";
+import { useAuth } from "../../../lib/auth/provider";
+import { useOpenSession, useWorkoutDetail, type WorkoutExercise } from "../../../hooks/queries/useWorkouts";
+import { fetchExerciseBests, useLastPerformance } from "../../../hooks/queries/useLastPerformance";
+import {
+  useDeleteSet,
+  useFinishSession,
+  useStartSession,
+  useSyncSet,
+} from "../../../hooks/mutations/useLogWorkout";
+import {
+  setsForExercise,
+  useSessionHydrated,
+  useWorkoutSessionStore,
+  type SessionSet,
+} from "../../../stores/useWorkoutSessionStore";
+import { useNow } from "../../../lib/hooks/useNow";
+import { haptics } from "../../../lib/haptics";
+import { uuid } from "../../../lib/utils/uuid";
+import { supabase } from "../../../lib/supabase/client";
+import {
+  bestMarks,
+  detectRecords,
+  formatDuration,
+  formatKg,
+  parseRepTarget,
+  totalVolume,
+} from "../../../lib/workout/metrics";
+
+type Dialog = null | "finish" | "finish-empty" | "discard" | "switch";
 
 export default function WorkoutExecutionScreen() {
-  const { workoutId } = useLocalSearchParams<{ workoutId: string }>();
+  const { workoutId = "" } = useLocalSearchParams<{ workoutId: string }>();
   const { user } = useAuth();
-  const { data: workout, isLoading, isError } = useWorkoutDetail(workoutId ?? "");
-  const startSessionMutation = useStartSession();
-  const logSetMutation = useLogSet();
-  const finishSessionMutation = useFinishSession();
-  const timerStore = useTimerStore();
-  const sessionStore = useWorkoutSessionStore();
-  const [activeExerciseIdx, setActiveExerciseIdx] = useState(0);
-  const [playingVideoUrl, setPlayingVideoUrl] = useState<string | null>(null);
-  const [customWeight, setCustomWeight] = useState("");
+  const hydrated = useSessionHydrated();
+  const workoutQ = useWorkoutDetail(workoutId);
+  const openSessionQ = useOpenSession(workoutId, user?.id);
+  const store = useWorkoutSessionStore(
+    useShallow((s) => ({
+      sessionId: s.sessionId,
+      workoutId: s.workoutId,
+      workoutName: s.workoutName,
+      startedAt: s.startedAt,
+      currentExerciseIndex: s.currentExerciseIndex,
+      sets: s.sets,
+      finishing: s.finishing,
+    })),
+  );
+  const actions = useWorkoutSessionStore.getState;
 
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
-  if (isError || !workout) {
-    return (
-      <SafeAreaView className="flex-1 bg-dark-400 items-center justify-center px-6">
-        <DisplayHeading size="md" className="text-center mb-2">
-          Nao foi possivel carregar o treino
-        </DisplayHeading>
-        <Text
-          className="text-text-secondary text-sm text-center mb-6"
-          style={{ fontFamily: font.regular }}
-        >
-          Verifique sua conexao e tente novamente.
-        </Text>
-        <Pressable onPress={() => router.back()} style={amethystGlow}>
-          <LinearGradient
-            colors={amethystGradient}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0.9 }}
-            className="flex-row gap-2 rounded-2xl px-6 py-3 items-center justify-center"
-          >
-            <AppIcon name="arrow-left" size={18} color="#FFFFFF" strokeWidth={2} />
-            <Text
-              className="text-white"
-              style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
-            >
-              Voltar
-            </Text>
-          </LinearGradient>
-        </Pressable>
-      </SafeAreaView>
-    );
-  }
+  const startM = useStartSession();
+  const syncM = useSyncSet();
+  const deleteM = useDeleteSet();
+  const finishM = useFinishSession();
 
-  const exercises = workout.exercises ?? [];
-  const currentExercise = exercises[activeExerciseIdx];
-  const completedSets = currentExercise
-    ? sessionStore.getCompletedSetsForExercise(currentExercise.exercise_id)
-    : [];
-  const { data: lastPerf } = useLastPerformance(currentExercise?.exercise_id, user?.id, currentExercise?.target_reps);
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [showHowTo, setShowHowTo] = useState(false);
+  const [dialog, setDialog] = useState<Dialog>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [extraSets, setExtraSets] = useState<Record<string, number>>({});
 
-  const handleStartWorkout = async () => {
-    if (!user) return;
-    const session = await startSessionMutation.mutateAsync({
-      user_id: user.id,
-      workout_id: workoutId,
-    });
-    sessionStore.startSession(session.id, workoutId);
+  const exercises = useMemo(() => workoutQ.data?.exercises ?? [], [workoutQ.data]);
+  const isActiveHere = !!store.sessionId && store.workoutId === workoutId;
+  const otherActive = !!store.sessionId && store.workoutId !== workoutId;
+  const idx = Math.min(store.currentExerciseIndex, Math.max(0, exercises.length - 1));
+  const current: WorkoutExercise | undefined = isActiveHere ? exercises[idx] : undefined;
+
+  const lastPerfQ = useLastPerformance(current?.exercise_id, user?.id, current?.target_reps, store.sessionId);
+  const now = useNow(isActiveHere);
+
+  // ---- sync helpers -------------------------------------------------------
+  const pushSet = useCallback(
+    (s: SessionSet) => {
+      const sessionId = actions().sessionId;
+      if (!sessionId) return Promise.resolve(false);
+      actions().upsertSet({ ...s, syncStatus: "pending" });
+      return syncM
+        .mutateAsync({
+          id: s.id,
+          session_id: sessionId,
+          workout_exercise_id: s.workoutExerciseId,
+          exercise_id: s.exerciseId,
+          set_number: s.setNumber,
+          reps: s.reps,
+          weight_kg: s.weightKg,
+          is_warmup: s.isWarmup,
+        })
+        .then(() => {
+          actions().patchSet(s.id, { syncStatus: "synced" });
+          return true;
+        })
+        .catch(() => {
+          actions().patchSet(s.id, { syncStatus: "error" });
+          return false;
+        });
+    },
+    [actions, syncM],
+  );
+
+  // Retry anything that was not confirmed by the server before the app closed.
+  const retriedFor = useRef<string | null>(null);
+  useEffect(() => {
+    if (!isActiveHere || !store.sessionId || retriedFor.current === store.sessionId) return;
+    retriedFor.current = store.sessionId;
+    for (const s of actions().sets) if (s.syncStatus !== "synced") pushSet(s);
+  }, [isActiveHere, store.sessionId, actions, pushSet]);
+
+  // ---- derived progress ---------------------------------------------------
+  const totalTargetSets = exercises.reduce((n, e) => n + (e.target_sets ?? 0), 0);
+  const workingDone = store.sets.filter((s) => isActiveHere && s.completed && !s.isWarmup).length;
+  const progress = totalTargetSets > 0 ? Math.min(1, workingDone / totalTargetSets) : 0;
+
+  // ---- handlers -----------------------------------------------------------
+  const beginFresh = async () => {
+    if (!user || !workoutQ.data) return;
+    setErrorMsg(null);
+    try {
+      const open = openSessionQ.data;
+      if (open) {
+        actions().begin({
+          sessionId: open.id,
+          workoutId,
+          workoutName: workoutQ.data.name,
+          startedAt: new Date(open.started_at).getTime(),
+          sets: open.sets.map((r) => ({
+            id: r.id,
+            workoutExerciseId: r.workout_exercise_id ?? r.exercise_id,
+            exerciseId: r.exercise_id,
+            setNumber: r.set_number,
+            reps: r.reps,
+            weightKg: r.weight_kg === null ? null : Number(r.weight_kg),
+            isWarmup: !!r.is_warmup,
+            completed: true,
+            syncStatus: "synced",
+          })),
+        });
+        return;
+      }
+      const created = await startM.mutateAsync({ user_id: user.id, workout_id: workoutId });
+      actions().begin({
+        sessionId: created.id,
+        workoutId,
+        workoutName: workoutQ.data.name,
+        startedAt: new Date(created.started_at).getTime(),
+      });
+      haptics.tap();
+    } catch {
+      setErrorMsg("Não foi possível iniciar o treino. Verifique sua conexão e tente novamente.");
+    }
   };
 
-  const handleLogSet = async () => {
-    if (!sessionStore.sessionId || !currentExercise) return;
+  const handleStart = () => {
+    if (otherActive) {
+      setDialog("switch");
+      return;
+    }
+    beginFresh();
+  };
 
-    const setNumber = completedSets.length + 1;
-    const effectiveWeight = customWeight
-      ? parseFloat(customWeight)
-      : lastPerf?.suggestedWeight ?? currentExercise.target_weight_kg ?? undefined;
-
-    await logSetMutation.mutateAsync({
-      session_id: sessionStore.sessionId,
-      exercise_id: currentExercise.exercise_id,
-      workout_exercise_id: currentExercise.id,
-      set_number: setNumber,
-      reps: currentExercise.target_reps
-        ? parseInt(currentExercise.target_reps)
-        : undefined,
-      weight_kg: effectiveWeight,
-    });
-
-    sessionStore.addSet({
-      exerciseId: currentExercise.exercise_id,
-      workoutExerciseId: currentExercise.id,
+  const handleComplete = (we: WorkoutExercise, setNumber: number, values: SetValues, existing?: SessionSet) => {
+    const set: SessionSet = {
+      id: existing?.id ?? uuid(),
+      workoutExerciseId: we.id,
+      exerciseId: we.exercise_id,
       setNumber,
-      reps: currentExercise.target_reps
-        ? parseInt(currentExercise.target_reps)
-        : undefined,
-      weightKg: effectiveWeight,
+      reps: values.reps,
+      weightKg: values.weightKg,
+      isWarmup: values.isWarmup,
       completed: true,
-    });
-
-    if (setNumber < (currentExercise.target_sets ?? 3)) {
-      timerStore.start(currentExercise.rest_seconds ?? 60);
+      syncStatus: "pending",
+    };
+    haptics.tap();
+    pushSet(set);
+    if (!existing) {
+      const allDone = workingDone + (values.isWarmup ? 0 : 1) >= totalTargetSets;
+      if (!allDone) actions().startRest(we.rest_seconds ?? 60);
     }
   };
 
-  const handleNextExercise = () => {
-    if (activeExerciseIdx < exercises.length - 1) {
-      setActiveExerciseIdx(activeExerciseIdx + 1);
-      setCustomWeight("");
+  const handleUncomplete = async (s: SessionSet) => {
+    actions().removeSet(s.id);
+    try {
+      await deleteM.mutateAsync(s.id);
+    } catch {
+      actions().upsertSet({ ...s, syncStatus: "synced" });
+      setErrorMsg("Sem conexão: não foi possível desmarcar a série.");
     }
   };
 
-  const handleFinishWorkout = async () => {
-    if (!sessionStore.sessionId || !sessionStore.startedAt) return;
-
-    const durationSeconds = Math.floor(
-      (Date.now() - sessionStore.startedAt.getTime()) / 1000,
-    );
-
-    await finishSessionMutation.mutateAsync({
-      session_id: sessionStore.sessionId,
-      duration_seconds: durationSeconds,
-    });
-
-    const totalVolume = sessionStore.sets.reduce((sum, s) => sum + (s.weightKg ?? 0) * (s.reps ?? 0), 0);
-    const mins = Math.floor(durationSeconds / 60);
-    const secs = durationSeconds % 60;
-
-    sessionStore.endSession();
-    router.replace({
-      pathname: "/(student)/(workouts)/session-complete",
-      params: {
-        workoutName: workout?.name ?? "Treino",
-        duration: `${mins}:${secs.toString().padStart(2, "0")}`,
-        volume: String(Math.round(totalVolume)),
-        exercises: String(exercises.length),
-        sets: String(sessionStore.sets.length),
-      },
-    } as never);
+  const goTo = (i: number) => {
+    actions().setExerciseIndex(i);
+    setShowHowTo(false);
   };
 
-  if (!sessionStore.isActive) {
+  const requestFinish = () => {
+    if (store.finishing) return;
+    const completedAny = store.sets.some((s) => s.completed);
+    setDialog(completedAny ? "finish" : "finish-empty");
+  };
+
+  const discardSession = async () => {
+    const sessionId = store.sessionId;
+    setDialog(null);
+    actions().end();
+    if (sessionId) {
+      // The user explicitly cancels their own in-progress session → remove it and its sets.
+      await supabase.from("workout_sessions").delete().eq("id", sessionId).is("finished_at", null);
+      openSessionQ.refetch();
+    }
+  };
+
+  const finish = async () => {
+    const st = actions();
+    if (!st.sessionId || !st.startedAt || st.finishing || !user) return;
+    st.setFinishing(true);
+    setErrorMsg(null);
+    try {
+      const unsynced = st.sets.filter((s) => s.syncStatus !== "synced");
+      const results = await Promise.all(unsynced.map((s) => pushSet(s)));
+      if (results.some((ok) => !ok)) {
+        setErrorMsg("Algumas séries ainda não foram salvas. Verifique a conexão e tente finalizar novamente.");
+        return;
+      }
+
+      const sessionId = st.sessionId;
+      const sets = actions().sets.filter((s) => s.completed);
+      const durationSeconds = Math.max(1, Math.round((Date.now() - st.startedAt) / 1000));
+
+      // PRs are computed against all previous finished sessions (excluding this one).
+      const exerciseIds = [...new Set(sets.map((s) => s.exerciseId))];
+      let records: { name: string; kind: string; value: number }[] = [];
+      try {
+        const bests = await fetchExerciseBests(user.id, exerciseIds, sessionId);
+        records = exerciseIds.flatMap((exId) => {
+          const name = exercises.find((e) => e.exercise_id === exId)?.exercise?.name ?? "Exercício";
+          const current = sets.filter((s) => s.exerciseId === exId);
+          return detectRecords(current, bests[exId] ?? bestMarks([])).map((h) => ({ name, kind: h.kind, value: h.value }));
+        });
+      } catch {
+        // Records are a bonus; never block finishing the session on them.
+      }
+
+      await finishM.mutateAsync({ session_id: sessionId, duration_seconds: durationSeconds });
+
+      const working = sets.filter((s) => !s.isWarmup);
+      const params = {
+        workoutName: st.workoutName ?? workoutQ.data?.name ?? "Treino",
+        duration: formatDuration(durationSeconds),
+        volume: String(Math.round(totalVolume(sets))),
+        exercises: String(new Set(working.map((s) => s.workoutExerciseId)).size),
+        sets: String(working.length),
+        plannedSets: String(totalTargetSets),
+        records: JSON.stringify(records.slice(0, 10)),
+      };
+      haptics.success();
+      actions().end();
+      setDialog(null);
+      router.replace({ pathname: "/(student)/(workouts)/session-complete", params } as never);
+    } catch {
+      setErrorMsg("Não foi possível finalizar o treino. Seus dados estão salvos — tente novamente.");
+    } finally {
+      actions().setFinishing(false);
+    }
+  };
+
+  // ---- render states ------------------------------------------------------
+  if (workoutQ.isLoading || !hydrated) return <LoadingScreen />;
+
+  if (workoutQ.isError || !workoutQ.data) {
     return (
       <SafeAreaView className="flex-1 bg-dark-400">
-        <ScrollView className="flex-1 px-6 pt-6">
-          <WebContainer maxWidth={640}>
-          <Pressable
-            onPress={() => router.back()}
-            className="flex-row items-center gap-1.5 mb-4"
-          >
-            <AppIcon name="arrow-left" size={18} color="#9B40D8" strokeWidth={2} />
-            <Text className="text-violet-400" style={{ fontFamily: font.medium }}>
-              Voltar
-            </Text>
-          </Pressable>
-
-          <Text
-            className="text-text-muted uppercase mb-2"
-            style={{ fontFamily: font.semibold, fontSize: 10, letterSpacing: 2 }}
-          >
-            Treino
-          </Text>
-          <DisplayHeading size="lg" className="mb-2">
-            {workout.name}
-          </DisplayHeading>
-          {workout.notes ? (
-            <Text
-              className="text-sm text-text-secondary mb-6"
-              style={{ fontFamily: font.regular }}
-            >
-              {workout.notes}
-            </Text>
-          ) : null}
-
-          <View className="flex-row flex-wrap gap-3 mb-8">
-            {exercises.map((ex, idx) => (
-              <View key={ex.id} className="grow basis-[300px]">
-              <ExerciseCard
-                name={ex.exercise?.name ?? "Exercicio"}
-                muscleGroup={ex.exercise?.muscle_group?.name}
-                thumbnailUrl={ex.exercise?.thumbnail_url}
-                videoUrl={ex.exercise?.video_url}
-                targetSets={ex.target_sets}
-                targetReps={ex.target_reps}
-                targetWeightKg={ex.target_weight_kg}
-                restSeconds={ex.rest_seconds}
-                onPlayVideo={() => setPlayingVideoUrl(ex.exercise?.video_url ?? null)}
-              />
-              </View>
-            ))}
-          </View>
-
-          <Pressable
-            onPress={handleStartWorkout}
-            disabled={startSessionMutation.isPending}
-            style={amethystGlow}
-            className="mb-10"
-          >
-            <LinearGradient
-              colors={
-                startSessionMutation.isPending
-                  ? ["#50107D", "#86169E"]
-                  : amethystGradient
-              }
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0.9 }}
-              className="flex-row gap-2 rounded-2xl py-4 items-center justify-center"
-            >
-              {startSessionMutation.isPending ? (
-                <ActivityIndicator color="#fff" />
-              ) : (
-                <>
-                  <AppIcon name="play" size={20} color="#FFFFFF" strokeWidth={2} />
-                  <Text
-                    className="text-white text-lg"
-                    style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
-                  >
-                    Iniciar treino
-                  </Text>
-                </>
-              )}
-            </LinearGradient>
-          </Pressable>
-          </WebContainer>
-        </ScrollView>
-        <VideoPlayerModal visible={!!playingVideoUrl} videoUrl={playingVideoUrl} onClose={() => setPlayingVideoUrl(null)} />
+        <EmptyState
+          iconName="warning"
+          title="Treino indisponível"
+          description="Não foi possível carregar este treino. Verifique sua conexão e tente novamente."
+          actionLabel="Tentar novamente"
+          onAction={() => workoutQ.refetch()}
+        />
       </SafeAreaView>
     );
   }
 
-  return (
-    <SafeAreaView className="flex-1 bg-dark-400">
-      <View className="flex-1 px-6 pt-6">
-        <View className="flex-row items-center justify-between mb-6">
-          <View>
-            <Text
-              className="text-text-muted uppercase mb-1"
-              style={{ fontFamily: font.semibold, fontSize: 10, letterSpacing: 2 }}
-            >
-              Exercicio {activeExerciseIdx + 1}/{exercises.length}
-            </Text>
-            <Text
-              className="text-xl text-text-primary"
-              style={{ fontFamily: font.bold }}
-            >
-              {currentExercise?.exercise?.name ?? "Exercicio"}
-            </Text>
-            {currentExercise?.exercise?.video_url ? (
-              <Pressable
-                onPress={() => setPlayingVideoUrl(currentExercise.exercise?.video_url ?? null)}
-                className="flex-row items-center gap-1.5 mt-1"
-              >
-                <AppIcon name="play" size={14} color="#9B40D8" strokeWidth={2} />
-                <Text
-                  className="text-violet-400 text-xs"
-                  style={{ fontFamily: font.semibold }}
-                >
-                  Ver video
-                </Text>
-              </Pressable>
-            ) : null}
-          </View>
-          <Pressable
-            onPress={handleFinishWorkout}
-            className="flex-row items-center gap-1.5 bg-danger-500/10 px-4 py-2 rounded-2xl"
-          >
-            <AppIcon name="check-circle" size={16} color="#FB7185" strokeWidth={2} />
-            <Text
-              className="text-danger-600 text-sm"
-              style={{ fontFamily: font.semibold }}
-            >
-              Finalizar
-            </Text>
-          </Pressable>
-        </View>
+  const workout = workoutQ.data;
 
-        {currentExercise ? (
-          <View className="flex-1">
-            <View className="bg-surface-card border border-surface-border rounded-3xl p-5 mb-4">
-              <View className="flex-row items-center justify-between mb-3">
-                <View className="flex-row items-center gap-2">
-                  <AppIcon name="target" size={16} color="#6E6382" strokeWidth={2} />
-                  <Text
-                    className="text-sm text-text-secondary"
-                    style={{ fontFamily: font.regular }}
-                  >
-                    Meta
-                  </Text>
-                </View>
-                <Text
-                  className="text-sm text-text-primary"
-                  style={{ fontFamily: font.semibold }}
-                >
-                  {currentExercise.target_sets} x{" "}
-                  {currentExercise.target_reps ?? "10-12"}
-                  {currentExercise.target_weight_kg
-                    ? ` @ ${currentExercise.target_weight_kg}kg`
-                    : ""}
+  // ---- overview (not started) --------------------------------------------
+  if (!isActiveHere) {
+    const resumable = openSessionQ.data;
+    return (
+      <SafeAreaView className="flex-1 bg-dark-400">
+        <ScrollView className="flex-1 px-6 pt-6" contentContainerStyle={{ paddingBottom: 40 }}>
+          <WebContainer maxWidth={720}>
+            <BackLink />
+            <Text className="text-text-muted uppercase mb-2" style={{ fontFamily: font.semibold, fontSize: 11, letterSpacing: 2 }}>
+              Treino
+            </Text>
+            <DisplayHeading size="lg" className="mb-2">
+              {workout.name}
+            </DisplayHeading>
+            <Text className="text-sm text-text-secondary mb-2" style={{ fontFamily: font.regular }}>
+              {exercises.length} exercícios · {totalTargetSets} séries
+              {workout.estimated_duration_minutes ? ` · ~${workout.estimated_duration_minutes} min` : ""}
+            </Text>
+            {workout.notes ? (
+              <View className="bg-surface-card border border-surface-border rounded-2xl p-4 mt-2 mb-2">
+                <Text className="text-[11px] text-text-muted uppercase mb-1" style={{ fontFamily: font.semibold, letterSpacing: 1.5 }}>
+                  Notas do treinador
+                </Text>
+                <Text className="text-sm text-text-secondary" style={{ fontFamily: font.regular }}>
+                  {workout.notes}
                 </Text>
               </View>
-              <View className="flex-row items-center justify-between">
-                <View className="flex-row items-center gap-2">
-                  <AppIcon name="check-all" size={16} color="#6E6382" strokeWidth={2} />
-                  <Text
-                    className="text-sm text-text-secondary"
-                    style={{ fontFamily: font.regular }}
-                  >
-                    Concluidas
-                  </Text>
-                </View>
-                <Text
-                  className="text-sm text-violet-400"
-                  style={{ fontFamily: font.bold }}
-                >
-                  {completedSets.length} / {currentExercise.target_sets ?? 3}
+            ) : null}
+
+            {otherActive ? (
+              <Notice
+                tone="warning"
+                text={`Você tem "${store.workoutName ?? "um treino"}" em andamento.`}
+                actionLabel="Retomar"
+                onAction={() => router.replace(`/(student)/(workouts)/${store.workoutId}` as never)}
+              />
+            ) : resumable ? (
+              <Notice
+                tone="info"
+                text={`Treino iniciado às ${new Date(resumable.started_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })} não foi finalizado. Continue de onde parou.`}
+              />
+            ) : null}
+
+            <View className="gap-3 mt-4 mb-6">
+              {exercises.length === 0 ? (
+                <Text className="text-text-muted text-sm" style={{ fontFamily: font.regular }}>
+                  Este treino ainda não tem exercícios. Fale com seu treinador.
                 </Text>
-              </View>
+              ) : (
+                exercises.map((ex) => (
+                  <ExerciseCard
+                    key={ex.id}
+                    name={ex.exercise?.name ?? "Exercício"}
+                    muscleGroup={ex.exercise?.muscle_group?.name}
+                    thumbnailUrl={ex.exercise?.thumbnail_url}
+                    videoUrl={ex.exercise?.video_url}
+                    targetSets={ex.target_sets}
+                    targetReps={ex.target_reps}
+                    targetWeightKg={ex.target_weight_kg}
+                    restSeconds={ex.rest_seconds}
+                    onPlayVideo={() => setVideoUrl(ex.exercise?.video_url ?? null)}
+                  />
+                ))
+              )}
             </View>
 
-            {/* Progressao de carga */}
-            {lastPerf?.lastWeight ? (
-              <View className="bg-violet-500/5 border border-violet-500/20 rounded-3xl p-4 mb-4">
-                <View className="flex-row items-center gap-1.5 mb-1">
-                  <AppIcon name="trend" size={14} color="#9B40D8" strokeWidth={2} />
-                  <Text
-                    className="text-text-muted uppercase"
-                    style={{ fontFamily: font.semibold, fontSize: 10, letterSpacing: 2 }}
-                  >
-                    Ultima vez
-                  </Text>
-                </View>
-                <Text
-                  className="text-sm text-text-primary"
-                  style={{ fontFamily: font.bold }}
-                >
-                  {lastPerf.lastWeight}kg x {lastPerf.lastReps} reps
+            {errorMsg ? <Notice tone="danger" text={errorMsg} /> : null}
+
+            <Button
+              title={resumable ? "Retomar treino" : "Iniciar treino"}
+              size="lg"
+              onPress={handleStart}
+              loading={startM.isPending}
+              disabled={exercises.length === 0 || openSessionQ.isLoading}
+              icon={<AppIcon name="play" size={18} color="#FFFFFF" strokeWidth={2.2} />}
+            />
+          </WebContainer>
+        </ScrollView>
+
+        <VideoPlayerModal visible={!!videoUrl} videoUrl={videoUrl} onClose={() => setVideoUrl(null)} />
+        <ConfirmDialog
+          visible={dialog === "switch"}
+          title="Treino em andamento"
+          message={`"${store.workoutName ?? "Outro treino"}" ainda não foi finalizado. Deseja descartá-lo e iniciar este?`}
+          confirmLabel="Descartar e iniciar"
+          destructive
+          onCancel={() => setDialog(null)}
+          onConfirm={async () => {
+            await discardSession();
+            beginFresh();
+          }}
+        />
+      </SafeAreaView>
+    );
+  }
+
+  // ---- execution ---------------------------------------------------------
+  const elapsed = store.startedAt ? Math.round((now - store.startedAt) / 1000) : 0;
+  const exerciseSets = current ? setsForExercise(store.sets, current.id) : [];
+  const repTarget = parseRepTarget(current?.target_reps);
+  const lastPerf = lastPerfQ.data;
+  const loggedMax = exerciseSets.reduce((m, s) => Math.max(m, s.setNumber), 0);
+  const rowCount = current ? Math.max(current.target_sets ?? 0, loggedMax, (current.target_sets ?? 0) + (extraSets[current.id] ?? 0), 1) : 0;
+  const completedHere = exerciseSets.filter((s) => s.completed && !s.isWarmup).length;
+  const exerciseDone = !!current && completedHere >= (current.target_sets ?? 0);
+  const isLast = idx >= exercises.length - 1;
+  const instructions = current?.exercise?.instructions || current?.exercise?.description;
+
+  return (
+    <SafeAreaView className="flex-1 bg-dark-400" edges={["top", "left", "right"]}>
+      <KeyboardAvoidingView className="flex-1" behavior={Platform.OS === "ios" ? "padding" : undefined}>
+        {/* Top bar */}
+        <View className="px-4 pt-2 pb-3 border-b border-surface-border">
+          <WebContainer maxWidth={720}>
+            <View className="flex-row items-center gap-3">
+              <Pressable
+                onPress={() => (router.canGoBack() ? router.back() : router.replace("/(student)/(workouts)" as never))}
+                accessibilityRole="button"
+                accessibilityLabel="Voltar (o treino continua em andamento)"
+                hitSlop={10}
+                className="w-10 h-10 rounded-full items-center justify-center bg-surface-card"
+              >
+                <AppIcon name="chevron-down" size={20} color={palette.textSecondary} strokeWidth={2.2} />
+              </Pressable>
+              <View className="flex-1">
+                <Text className="text-text-primary text-base" numberOfLines={1} style={{ fontFamily: font.semibold }}>
+                  {workout.name}
                 </Text>
-                {lastPerf.targetRepsHit && lastPerf.suggestedWeight ? (
-                  <View className="flex-row items-center gap-1.5 mt-1">
-                    <AppIcon name="sparkles" size={14} color="#9B40D8" strokeWidth={2} />
-                    <Text
-                      className="text-xs text-violet-400"
-                      style={{ fontFamily: font.bold }}
-                    >
-                      Sugestao: {lastPerf.suggestedWeight}kg (+2.5kg)
+                <Text
+                  className="text-violet-300 text-xs"
+                  style={{ fontFamily: font.medium, fontVariant: ["tabular-nums"] }}
+                  accessibilityLabel={`Tempo de treino ${formatDuration(elapsed)}`}
+                >
+                  {formatDuration(elapsed)} · {workingDone}/{totalTargetSets} séries
+                </Text>
+              </View>
+              <Pressable
+                onPress={requestFinish}
+                disabled={store.finishing}
+                accessibilityRole="button"
+                accessibilityLabel="Finalizar treino"
+                className="bg-success-500 px-4 h-10 rounded-full items-center justify-center"
+              >
+                <Text className="text-dark-400 text-sm" style={{ fontFamily: font.bold }}>
+                  Finalizar
+                </Text>
+              </Pressable>
+            </View>
+            <View className="h-1.5 bg-surface-card rounded-full overflow-hidden mt-3" accessibilityRole="progressbar" accessibilityValue={{ min: 0, max: 100, now: Math.round(progress * 100) }}>
+              <View className="h-full bg-violet-500 rounded-full" style={{ width: `${progress * 100}%` }} />
+            </View>
+            {/* Exercise pager */}
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mt-3" contentContainerStyle={{ gap: 8 }}>
+              {exercises.map((ex, i) => {
+                const done = setsForExercise(store.sets, ex.id).filter((s) => s.completed && !s.isWarmup).length >= (ex.target_sets ?? 0);
+                const active = i === idx;
+                return (
+                  <Pressable
+                    key={ex.id}
+                    onPress={() => goTo(i)}
+                    accessibilityRole="tab"
+                    accessibilityState={{ selected: active }}
+                    accessibilityLabel={`Exercício ${i + 1}: ${ex.exercise?.name ?? ""}${done ? ", concluído" : ""}`}
+                    className={`h-9 min-w-[36px] px-3 rounded-full items-center justify-center flex-row gap-1 ${
+                      active ? "bg-violet-500" : done ? "bg-success-500/15" : "bg-surface-card border border-surface-border"
+                    }`}
+                  >
+                    {done && !active ? <AppIcon name="check" size={14} color={palette.success} strokeWidth={2.6} /> : null}
+                    <Text className={active ? "text-white" : done ? "text-success-500" : "text-text-secondary"} style={{ fontFamily: font.semibold, fontSize: 13 }}>
+                      {i + 1}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </ScrollView>
+          </WebContainer>
+        </View>
+
+        <ScrollView className="flex-1" contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 160 }} keyboardShouldPersistTaps="handled">
+          <WebContainer maxWidth={720}>
+            {current ? (
+              <>
+                <Text className="text-text-muted text-[11px] uppercase mb-1" style={{ fontFamily: font.semibold, letterSpacing: 1.5 }}>
+                  Exercício {idx + 1} de {exercises.length}
+                  {current.exercise?.muscle_group?.name ? ` · ${current.exercise.muscle_group.name}` : ""}
+                </Text>
+                <Text className="text-text-primary text-2xl mb-3" style={{ fontFamily: font.bold, letterSpacing: -0.3 }}>
+                  {current.exercise?.name ?? "Exercício"}
+                </Text>
+
+                <View className="flex-row flex-wrap gap-2 mb-4">
+                  <Chip icon="target" label={`${current.target_sets} × ${current.target_reps ?? "—"}`} />
+                  {current.target_weight_kg ? <Chip icon="weight" label={formatKg(current.target_weight_kg)} /> : null}
+                  <Chip icon="timer" label={`${current.rest_seconds ?? 60}s descanso`} />
+                  {current.target_rpe ? <Chip icon="gauge" label={`RPE ${current.target_rpe}`} /> : null}
+                  {current.tempo ? <Chip icon="clock" label={`Cadência ${current.tempo}`} /> : null}
+                </View>
+
+                <View className="flex-row gap-2 mb-4">
+                  {current.exercise?.video_url ? (
+                    <SmallAction icon="play" label="Ver vídeo" onPress={() => setVideoUrl(current.exercise?.video_url ?? null)} />
+                  ) : null}
+                  {instructions ? (
+                    <SmallAction icon="book" label={showHowTo ? "Ocultar execução" : "Como executar"} onPress={() => setShowHowTo((v) => !v)} />
+                  ) : null}
+                </View>
+
+                {showHowTo && instructions ? (
+                  <View className="bg-surface-card border border-surface-border rounded-2xl p-4 mb-4">
+                    <Text className="text-sm text-text-secondary leading-6" style={{ fontFamily: font.regular }}>
+                      {instructions}
                     </Text>
                   </View>
                 ) : null}
-                <View className="flex-row items-center gap-2 mt-3">
-                  <AppIcon name="scale" size={16} color="#6E6382" strokeWidth={2} />
-                  <Text
-                    className="text-xs text-text-secondary"
-                    style={{ fontFamily: font.regular }}
-                  >
-                    Peso:
-                  </Text>
-                  <TextInput
-                    className="bg-surface-card/80 border border-surface-border rounded-2xl px-3 py-2 text-sm text-text-primary w-20 text-center"
-                    style={{ fontFamily: font.regular }}
-                    placeholderTextColor="#6E6382"
-                    placeholder={String(lastPerf.suggestedWeight ?? lastPerf.lastWeight)}
-                    value={customWeight}
-                    onChangeText={setCustomWeight}
-                    keyboardType="numeric"
-                  />
-                  <Text
-                    className="text-xs text-text-secondary"
-                    style={{ fontFamily: font.regular }}
-                  >
-                    kg
-                  </Text>
-                </View>
-              </View>
-            ) : null}
 
-            <View className="gap-2 mb-6">
-              {Array.from({
-                length: currentExercise.target_sets ?? 3,
-              }).map((_, idx) => {
-                const isCompleted = idx < completedSets.length;
-                const isCurrent = idx === completedSets.length;
-                return (
-                  <View
-                    key={idx}
-                    className={`flex-row items-center justify-between p-4 rounded-2xl ${
-                      isCompleted
-                        ? "bg-success-500/10"
-                        : isCurrent
-                          ? "bg-violet-500/10 border border-violet-500/40"
-                          : "bg-surface-card border border-surface-border"
-                    }`}
-                  >
-                    <Text
-                      className={isCompleted ? "text-success-600" : "text-text-secondary"}
-                      style={{ fontFamily: font.semibold }}
-                    >
-                      Serie {idx + 1}
+                {current.notes ? (
+                  <View className="bg-violet-500/10 border border-violet-500/25 rounded-2xl p-4 mb-4">
+                    <Text className="text-[11px] text-violet-300 uppercase mb-1" style={{ fontFamily: font.semibold, letterSpacing: 1.5 }}>
+                      Nota do treinador
                     </Text>
-                    {isCompleted ? (
-                      <View className="flex-row items-center gap-1.5">
-                        <AppIcon name="check-circle" size={16} color="#34D399" strokeWidth={2} />
-                        <Text
-                          className="text-success-600"
-                          style={{ fontFamily: font.medium }}
-                        >
-                          Concluida
-                        </Text>
-                      </View>
-                    ) : null}
+                    <Text className="text-sm text-text-primary" style={{ fontFamily: font.regular }}>
+                      {current.notes}
+                    </Text>
                   </View>
-                );
-              })}
-            </View>
+                ) : null}
 
-            <View className="gap-3 mt-auto mb-6">
-              {completedSets.length < (currentExercise.target_sets ?? 3) ? (
-                <Pressable
-                  onPress={handleLogSet}
-                  disabled={logSetMutation.isPending}
-                  style={amethystGlow}
-                >
-                  <LinearGradient
-                    colors={
-                      logSetMutation.isPending
-                        ? ["#50107D", "#86169E"]
-                        : amethystGradient
-                    }
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0.9 }}
-                    className="flex-row gap-2 rounded-2xl py-4 items-center justify-center"
-                  >
-                    <AppIcon name="check" size={20} color="#FFFFFF" strokeWidth={2} />
-                    <Text
-                      className="text-white text-base"
-                      style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
-                    >
-                      Completar serie {completedSets.length + 1}
+                {lastPerf && lastPerf.lastSets.length > 0 ? (
+                  <View className="flex-row items-center gap-2 mb-4">
+                    <AppIcon name={lastPerf.increase ? "trend" : "repeat"} size={16} color={lastPerf.increase ? palette.success : palette.textMuted} strokeWidth={2} />
+                    <Text className="text-xs text-text-secondary flex-1" style={{ fontFamily: font.medium }}>
+                      {lastPerf.increase
+                        ? `Você completou todas as repetições na última vez. Sugestão: ${formatKg(lastPerf.suggestedWeight)}.`
+                        : `Última vez${lastPerf.lastDate ? ` (${new Date(lastPerf.lastDate).toLocaleDateString("pt-BR")})` : ""}: mantenha ${formatKg(lastPerf.suggestedWeight)} e busque mais repetições.`}
                     </Text>
-                  </LinearGradient>
-                </Pressable>
-              ) : activeExerciseIdx >= exercises.length - 1 ? (
+                  </View>
+                ) : null}
+
+                {/* Set table */}
+                <View className="flex-row items-center gap-2 px-2 mb-2">
+                  <HeaderCell className="w-9 text-center" label="Série" />
+                  <HeaderCell className="flex-1" label="Anterior" />
+                  <HeaderCell className="w-[72px] text-center" label="kg" />
+                  <HeaderCell className="w-[60px] text-center" label="Reps" />
+                  <View className="w-11" />
+                </View>
+                <View className="gap-2">
+                  {Array.from({ length: rowCount }).map((_, i) => {
+                    const setNumber = i + 1;
+                    const logged = exerciseSets.find((s) => s.setNumber === setNumber);
+                    const prev = lastPerf?.lastSets.find((s) => s.setNumber === setNumber);
+                    const prevInSession = exerciseSets.find((s) => s.setNumber === setNumber - 1);
+                    const placeholderWeight =
+                      prevInSession?.weightKg ??
+                      (lastPerf?.increase ? lastPerf.suggestedWeight : prev?.weightKg ?? lastPerf?.suggestedWeight) ??
+                      current.target_weight_kg ??
+                      null;
+                    const placeholderReps = prev?.reps ?? repTarget.min ?? repTarget.max;
+                    return (
+                      <SetRow
+                        key={`${current.id}-${setNumber}`}
+                        setNumber={setNumber}
+                        logged={logged}
+                        previousLabel={prev ? `${prev.weightKg !== null ? formatKg(prev.weightKg) : "—"} × ${prev.reps ?? "—"}` : "—"}
+                        placeholderWeight={placeholderWeight}
+                        placeholderReps={placeholderReps}
+                        onComplete={(v) => handleComplete(current, setNumber, v)}
+                        onEdit={(v) => logged && handleComplete(current, setNumber, v, logged)}
+                        onUncomplete={() => logged && handleUncomplete(logged)}
+                        onRetry={() => logged && pushSet(logged)}
+                      />
+                    );
+                  })}
+                </View>
                 <Pressable
-                  onPress={handleNextExercise}
-                  disabled
-                  className="flex-row gap-2 rounded-2xl py-4 items-center justify-center bg-surface-border"
+                  onPress={() => setExtraSets((m) => ({ ...m, [current.id]: (m[current.id] ?? 0) + 1 }))}
+                  accessibilityRole="button"
+                  className="flex-row items-center justify-center gap-2 py-3 mt-2 rounded-2xl active:bg-surface-hover"
                 >
-                  <AppIcon name="check-all" size={20} color="#FFFFFF" strokeWidth={2} />
-                  <Text
-                    className="text-white text-base"
-                    style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
-                  >
-                    Ultimo exercicio
+                  <AppIcon name="plus" size={16} color={palette.violet300} strokeWidth={2.2} />
+                  <Text className="text-violet-300 text-sm" style={{ fontFamily: font.semibold }}>
+                    Adicionar série
                   </Text>
                 </Pressable>
-              ) : (
-                <Pressable onPress={handleNextExercise} style={amethystGlow}>
-                  <LinearGradient
-                    colors={amethystGradient}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0.9 }}
-                    className="flex-row gap-2 rounded-2xl py-4 items-center justify-center"
-                  >
-                    <Text
-                      className="text-white text-base"
-                      style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
-                    >
-                      Proximo exercicio
-                    </Text>
-                    <AppIcon name="arrow-right" size={20} color="#FFFFFF" strokeWidth={2} />
-                  </LinearGradient>
+
+                {errorMsg ? <Notice tone="danger" text={errorMsg} /> : null}
+
+                <View className="flex-row gap-3 mt-6">
+                  {idx > 0 ? (
+                    <View className="flex-1">
+                      <Button title="Anterior" variant="secondary" onPress={() => goTo(idx - 1)} />
+                    </View>
+                  ) : null}
+                  <View className="flex-1">
+                    {isLast ? (
+                      <Button title="Finalizar treino" variant={exerciseDone ? "primary" : "secondary"} onPress={requestFinish} loading={store.finishing} />
+                    ) : (
+                      <Button title="Próximo exercício" variant={exerciseDone ? "primary" : "secondary"} onPress={() => goTo(idx + 1)} />
+                    )}
+                  </View>
+                </View>
+
+                <Pressable onPress={() => setDialog("discard")} accessibilityRole="button" className="items-center py-6">
+                  <Text className="text-text-muted text-xs" style={{ fontFamily: font.medium }}>
+                    Cancelar treino
+                  </Text>
                 </Pressable>
-              )}
-            </View>
-          </View>
-        ) : null}
-      </View>
+              </>
+            ) : null}
+          </WebContainer>
+        </ScrollView>
+      </KeyboardAvoidingView>
 
       <RestTimer />
-      <VideoPlayerModal visible={!!playingVideoUrl} videoUrl={playingVideoUrl} onClose={() => setPlayingVideoUrl(null)} />
+      <VideoPlayerModal visible={!!videoUrl} videoUrl={videoUrl} onClose={() => setVideoUrl(null)} />
+      <ConfirmDialog
+        visible={dialog === "finish"}
+        title="Finalizar treino?"
+        message={
+          workingDone < totalTargetSets
+            ? `Você completou ${workingDone} de ${totalTargetSets} séries prescritas. As séries registradas serão salvas.`
+            : "Todas as séries foram registradas. Bom trabalho!"
+        }
+        confirmLabel="Finalizar"
+        loading={store.finishing}
+        onCancel={() => setDialog(null)}
+        onConfirm={finish}
+      />
+      <ConfirmDialog
+        visible={dialog === "finish-empty"}
+        title="Nenhuma série registrada"
+        message="Marque ao menos uma série para salvar o treino, ou cancele esta sessão."
+        confirmLabel="Cancelar sessão"
+        cancelLabel="Continuar treinando"
+        destructive
+        onCancel={() => setDialog(null)}
+        onConfirm={discardSession}
+      />
+      <ConfirmDialog
+        visible={dialog === "discard"}
+        title="Cancelar treino?"
+        message="As séries registradas nesta sessão serão descartadas. Esta ação não pode ser desfeita."
+        confirmLabel="Descartar sessão"
+        cancelLabel="Voltar ao treino"
+        destructive
+        onCancel={() => setDialog(null)}
+        onConfirm={discardSession}
+      />
     </SafeAreaView>
+  );
+}
+
+function BackLink() {
+  return (
+    <Pressable
+      onPress={() => (router.canGoBack() ? router.back() : router.replace("/(student)/(workouts)" as never))}
+      accessibilityRole="button"
+      className="flex-row items-center gap-1.5 mb-4 self-start py-1"
+    >
+      <AppIcon name="arrow-left" size={18} color={palette.violet400} strokeWidth={2} />
+      <Text className="text-violet-400" style={{ fontFamily: font.medium }}>
+        Voltar
+      </Text>
+    </Pressable>
+  );
+}
+
+function Chip({ icon, label }: { icon: "target" | "weight" | "timer" | "gauge" | "clock"; label: string }) {
+  return (
+    <View className="flex-row items-center gap-1.5 bg-surface-card border border-surface-border rounded-full px-3 py-1.5">
+      <AppIcon name={icon} size={14} color={palette.textMuted} strokeWidth={2} />
+      <Text className="text-xs text-text-secondary" style={{ fontFamily: font.medium }}>
+        {label}
+      </Text>
+    </View>
+  );
+}
+
+function SmallAction({ icon, label, onPress }: { icon: "play" | "book"; label: string; onPress: () => void }) {
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      className="flex-row items-center gap-1.5 bg-violet-500/10 border border-violet-500/25 rounded-xl px-3 py-2 active:bg-violet-500/20"
+    >
+      <AppIcon name={icon} size={14} color={palette.violet300} strokeWidth={2.2} />
+      <Text className="text-violet-300 text-xs" style={{ fontFamily: font.semibold }}>
+        {label}
+      </Text>
+    </Pressable>
+  );
+}
+
+function HeaderCell({ label, className }: { label: string; className: string }) {
+  return (
+    <Text className={`text-[11px] text-text-muted uppercase ${className}`} style={{ fontFamily: font.semibold, letterSpacing: 1 }}>
+      {label}
+    </Text>
+  );
+}
+
+function Notice({
+  tone,
+  text,
+  actionLabel,
+  onAction,
+}: {
+  tone: "info" | "warning" | "danger";
+  text: string;
+  actionLabel?: string;
+  onAction?: () => void;
+}) {
+  const styles = {
+    info: { box: "bg-violet-500/10 border-violet-500/25", color: palette.violet300, icon: "info" as const },
+    warning: { box: "bg-warning-500/10 border-warning-500/30", color: palette.warning, icon: "warning" as const },
+    danger: { box: "bg-danger-500/10 border-danger-500/30", color: palette.danger, icon: "alert" as const },
+  }[tone];
+  return (
+    <View accessibilityRole={tone === "danger" ? "alert" : undefined} className={`flex-row items-center gap-3 border rounded-2xl p-4 my-3 ${styles.box}`}>
+      <AppIcon name={styles.icon} size={18} color={styles.color} strokeWidth={2} />
+      <Text className="flex-1 text-sm text-text-primary" style={{ fontFamily: font.regular }}>
+        {text}
+      </Text>
+      {actionLabel && onAction ? (
+        <Pressable onPress={onAction} accessibilityRole="button" className="px-3 py-2 rounded-xl bg-surface-elevated">
+          <Text className="text-xs text-text-primary" style={{ fontFamily: font.semibold }}>
+            {actionLabel}
+          </Text>
+        </Pressable>
+      ) : null}
+    </View>
   );
 }

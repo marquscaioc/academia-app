@@ -41,6 +41,8 @@ export interface WorkoutExercise {
   exercise?: {
     id: string;
     name: string;
+    description?: string | null;
+    instructions?: string | null;
     video_url: string | null;
     thumbnail_url: string | null;
     muscle_group?: { name: string } | null;
@@ -106,6 +108,47 @@ export interface WorkoutSession {
   notes: string | null;
   mood: string | null;
   workout?: { name: string; plan: { name: string } } | null;
+}
+
+export interface OpenSession {
+  id: string;
+  started_at: string;
+  sets: {
+    id: string;
+    workout_exercise_id: string | null;
+    exercise_id: string;
+    set_number: number;
+    reps: number | null;
+    weight_kg: number | null;
+    is_warmup: boolean | null;
+  }[];
+}
+
+/**
+ * Most recent unfinished session of this workout started in the last 24h — lets the
+ * student resume after reinstalling, switching device or clearing local storage.
+ */
+export function useOpenSession(workoutId?: string, userId?: string) {
+  return useQuery({
+    queryKey: ["workouts", "openSession", { workoutId, userId }],
+    queryFn: async () => {
+      const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+      const { data, error } = await supabase
+        .from("workout_sessions")
+        .select("id, started_at, sets:workout_session_sets(id, workout_exercise_id, exercise_id, set_number, reps, weight_kg, is_warmup)")
+        .eq("user_id", userId!)
+        .eq("workout_id", workoutId!)
+        .is("finished_at", null)
+        .gte("started_at", since)
+        .order("started_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (error) throw error;
+      return (data as OpenSession | null) ?? null;
+    },
+    enabled: !!workoutId && !!userId,
+    staleTime: 0,
+  });
 }
 
 export function useWorkoutSessions(userId?: string) {
