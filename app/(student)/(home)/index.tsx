@@ -24,7 +24,7 @@ import { pluralize } from "../../../lib/utils/plural";
 
 function QuickAction({ icon, label, href, index }: { icon: IconName; label: string; href: string; index: number }) {
   return (
-    <Animated.View entering={FadeInDown.delay(500 + index * 70).springify()} className="grow basis-[200px]" style={{ flex: 1 }}>
+    <Animated.View entering={FadeInDown.delay(500 + index * 70).springify()} className="grow shrink basis-[200px]" style={{ flex: 1 }}>
       <Link href={href as never} asChild>
         <Pressable className="bg-surface-card border border-surface-border rounded-2xl py-5 items-center active:bg-surface-hover overflow-hidden">
 

@@ -121,10 +121,10 @@ export default function ProgressScreen() {
         {/* Adherence rings */}
         <QuerySection query={adherenceQuery} label="adesão">
         {adherence ? (
-          <View className="flex-row justify-around mb-6 bg-surface-card border border-surface-border rounded-3xl py-6">
-            <AdherenceRing score={adherence.workoutScore} label="Treino" emptyHint="Plano sem dias definidos" />
-            <AdherenceRing score={adherence.checkinScore} label="Check-ins" emptyHint="Nenhum solicitado" />
-            <AdherenceRing score={adherence.overallScore} label="Geral" emptyHint="Sem dados" />
+          <View className="flex-row justify-around mb-6 bg-surface-card border border-surface-border rounded-3xl py-6 px-2">
+            <AdherenceRing score={adherence.workoutScore} size={84} label="Treino" emptyHint="Plano sem dias definidos" />
+            <AdherenceRing score={adherence.checkinScore} size={84} label="Check-ins" emptyHint="Nenhum solicitado" />
+            <AdherenceRing score={adherence.overallScore} size={84} label="Geral" emptyHint="Sem dados" />
           </View>
         ) : null}
         </QuerySection>
@@ -132,27 +132,27 @@ export default function ProgressScreen() {
         {/* Quick actions */}
         <View className="flex-row gap-3 mb-6">
           <Link href="/(student)/(progress)/add-measurement" asChild>
-            <Pressable className="flex-1 bg-surface-card border border-surface-border rounded-2xl py-4 items-center active:bg-surface-hover">
+            <Pressable className="flex-1 bg-surface-card border border-surface-border rounded-2xl py-4 px-2 items-center active:bg-surface-hover">
               <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-2">
                 <AppIcon name="ruler" size={18} color="#3F3F46" strokeWidth={2} />
               </View>
-              <Text className="text-xs text-text-secondary" style={{ fontFamily: font.semibold }}>Registrar medidas</Text>
+              <Text className="text-xs text-text-secondary text-center" style={{ fontFamily: font.semibold }}>Registrar medidas</Text>
             </Pressable>
           </Link>
           <Link href="/(student)/(progress)/add-photo" asChild>
-            <Pressable className="flex-1 bg-surface-card border border-surface-border rounded-2xl py-4 items-center active:bg-surface-hover">
+            <Pressable className="flex-1 bg-surface-card border border-surface-border rounded-2xl py-4 px-2 items-center active:bg-surface-hover">
               <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-2">
                 <AppIcon name="camera" size={18} color="#3F3F46" strokeWidth={2} />
               </View>
-              <Text className="text-xs text-text-secondary" style={{ fontFamily: font.semibold }}>Tirar foto</Text>
+              <Text className="text-xs text-text-secondary text-center" style={{ fontFamily: font.semibold }}>Tirar foto</Text>
             </Pressable>
           </Link>
           <Link href="/(student)/(progress)/export-report" asChild>
-            <Pressable className="flex-1 bg-surface-card border border-surface-border rounded-2xl py-4 items-center active:bg-surface-hover">
+            <Pressable className="flex-1 bg-surface-card border border-surface-border rounded-2xl py-4 px-2 items-center active:bg-surface-hover">
               <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-2">
                 <AppIcon name="file" size={18} color="#3F3F46" strokeWidth={2} />
               </View>
-              <Text className="text-xs text-text-secondary" style={{ fontFamily: font.semibold }}>Exportar PDF</Text>
+              <Text className="text-xs text-text-secondary text-center" style={{ fontFamily: font.semibold }}>Exportar PDF</Text>
             </Pressable>
           </Link>
         </View>
@@ -269,7 +269,7 @@ export default function ProgressScreen() {
           ) : (
             <View className="flex-row flex-wrap gap-2">
               {measurements.slice(0, 5).map((m) => (
-                <Card key={m.id} variant="outlined" className="grow basis-[300px]">
+                <Card key={m.id} variant="outlined" className="grow shrink basis-[300px]">
                   <View className="flex-row justify-between items-center">
                     <Text className="text-sm text-text-secondary" style={{ fontFamily: font.medium }}>
                       {new Date(m.measured_at).toLocaleDateString("pt-BR")}

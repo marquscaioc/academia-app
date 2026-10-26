@@ -55,11 +55,13 @@ function StudentTabs() {
                   paddingTop: 8,
                   height: 65,
                 },
+            tabBarItemStyle: { paddingHorizontal: 0 },
             tabBarLabelStyle: {
               fontFamily: "Geist_600SemiBold",
-              fontSize: 10,
+              // Five tabs share ~72px each on a 360px phone; at 10px with tracking "PROGRESSO" was truncated.
+              fontSize: 9,
               fontWeight: "700",
-              letterSpacing: 0.5,
+              letterSpacing: 0,
               textTransform: "uppercase",
             },
           }}

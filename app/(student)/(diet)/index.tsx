@@ -306,7 +306,7 @@ export default function DietScreen() {
                 key={meal.id}
                 onPress={() => handleLogMeal(meal.id)}
                 disabled={isLogged}
-                className={`grow basis-[360px] border rounded-3xl p-4 ${
+                className={`grow shrink basis-[360px] border rounded-3xl p-4 ${
                   isLogged ? "bg-success-500/5 border-success-500/30" : "bg-surface-card border-surface-border active:bg-surface-hover"
                 }`}
               >

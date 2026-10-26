@@ -9,7 +9,7 @@ import { WebContainer } from "../../components/layout/WebContainer";
 
 function MetricBox({ value, label, icon }: { value: string; label: string; icon: IconName }) {
   return (
-    <View className="grow basis-[200px] bg-surface-card border border-surface-border rounded-3xl p-5">
+    <View className="grow shrink basis-[200px] bg-surface-card border border-surface-border rounded-3xl p-5">
       <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
         <AppIcon name={icon} size={18} color="#3F3F46" strokeWidth={2} />
       </View>

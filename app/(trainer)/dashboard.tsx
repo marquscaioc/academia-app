@@ -64,8 +64,8 @@ export default function TrainerDashboardScreen() {
       <ScrollView className="flex-1 px-6 pt-8" contentContainerStyle={{ paddingBottom: 32 }}>
         <WebContainer>
         {/* Header */}
-        <View className="flex-row items-center justify-between mb-8">
-          <View>
+        <View className="flex-row items-start justify-between gap-4 mb-8">
+          <View className="flex-1">
             <SectionLabel tone="accent" className="mb-2">
               ÁREA PROFISSIONAL
             </SectionLabel>

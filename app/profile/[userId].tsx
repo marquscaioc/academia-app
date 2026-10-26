@@ -181,7 +181,7 @@ export default function PublicProfileScreen() {
                   <Animated.View
                     key={a.id}
                     entering={FadeInDown.delay(460 + idx * 40).springify()}
-                    className="grow basis-[200px]"
+                    className="grow shrink basis-[200px]"
                   >
                     <View className="bg-surface-card border border-surface-border rounded-2xl p-4 items-center overflow-hidden">
 

@@ -87,8 +87,8 @@ export default function NotificationsScreen() {
     <SafeAreaView className="flex-1 bg-dark-400">
       <View className="flex-1">
         <WebContainer maxWidth={640}>
-        <View className="flex-row items-center justify-between px-6 pt-6 pb-4">
-          <View className="flex-row items-center gap-3">
+        <View className="flex-row flex-wrap items-center justify-between gap-x-3 gap-y-2 px-6 pt-6 pb-4">
+          <View className="flex-row items-center gap-3 shrink">
             <Pressable
               onPress={() => router.back()}
               className="w-10 h-10 rounded-2xl bg-surface-card border border-surface-border items-center justify-center"
@@ -107,7 +107,8 @@ export default function NotificationsScreen() {
           {unreadCount > 0 ? (
             <Pressable
               onPress={() => markAllRead.mutate()}
-              className="flex-row items-center gap-1.5"
+              accessibilityRole="button"
+              className="flex-row items-center gap-1.5 py-1"
             >
               <AppIcon name="check-all" size={16} color="#3F3F46" strokeWidth={2} />
               <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>

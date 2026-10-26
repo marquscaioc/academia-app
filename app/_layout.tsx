@@ -1,4 +1,5 @@
 import "../global.css";
+import "../lib/design/nativewindInterop";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Slot, type ErrorBoundaryProps } from "expo-router";
 import { StatusBar } from "expo-status-bar";

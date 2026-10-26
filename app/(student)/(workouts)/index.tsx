@@ -193,7 +193,7 @@ export default function WorkoutsScreen() {
             {allWorkouts.map((w, idx) => (
               <Animated.View
                 key={w.id}
-                className="grow basis-[360px]"
+                className="grow shrink basis-[360px]"
                 entering={FadeInDown.delay(300 + idx * 60).springify()}
               >
                 <Link href={`/(student)/(workouts)/treino/${w.id}`} asChild>

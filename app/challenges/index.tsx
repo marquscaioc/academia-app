@@ -61,7 +61,7 @@ export default function ChallengesScreen() {
           Desafios.
         </DisplayHeading>
 
-        <View className="flex-row gap-2 mb-5">
+        <View className="flex-row flex-wrap gap-2 mb-5">
           {filters.map((f) => (
             <Pressable
               key={f.value}

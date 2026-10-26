@@ -106,7 +106,7 @@ export default function HealthSyncScreen() {
                 <Text className="text-xs text-text-muted mb-3 uppercase" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>Treinos externos</Text>
                 <View className="flex-row flex-wrap gap-4">
                 {healthData.workouts.map((w, idx) => (
-                  <Card key={idx} variant="outlined" className="grow basis-[300px] mb-2 flex-row items-center gap-3">
+                  <Card key={idx} variant="outlined" className="grow shrink basis-[300px] mb-2 flex-row items-center gap-3">
                     <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
                       <AppIcon name="activity" size={18} color="#3F3F46" strokeWidth={2} />
                     </View>

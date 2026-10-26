@@ -41,7 +41,7 @@ export default function StudentCoursesScreen() {
               <Pressable
                 key={c.id}
                 onPress={() => router.push(`/(student)/(courses)/curso/${c.id}`)}
-                className="grow basis-[360px] bg-surface-card border border-surface-border rounded-3xl p-5 active:bg-surface-hover"
+                className="grow shrink basis-[360px] bg-surface-card border border-surface-border rounded-3xl p-5 active:bg-surface-hover"
               >
                 <View className="flex-row items-center gap-4">
                   {c.cover_url ? (
