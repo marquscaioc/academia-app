@@ -9,6 +9,11 @@
 import { createClient } from "@supabase/supabase-js";
 import { execSync } from "node:child_process";
 import crypto from "node:crypto";
+import { runPrivateFeedApiTests } from "./private-feed-api-tests.mjs";
+import { runChallengeScoringApiScenarios } from "./challenge-scoring-api-scenarios.mjs";
+import { runWorkoutEditApiTests } from "./workout-edit-api-tests.mjs";
+import { runCourseAccessApiScenarios } from "./course-access-api-scenarios.mjs";
+import { runProfessionalPartnerApiScenarios } from "./professional-partners-api-scenarios.mjs";
 
 function loadEnv() {
   let url = process.env.SUPABASE_URL;
@@ -316,6 +321,12 @@ await check("student deletes own progress photo", async () => {
   assert(!error && data?.length === 1, error?.message ?? "nothing removed");
   uploaded.length = 0;
 });
+
+await runWorkoutEditApiTests({ admin, trainer, otherTrainer, student, ex, check, assert });
+await runChallengeScoringApiScenarios({ admin, trainer, student, attacker, check, assert });
+await runPrivateFeedApiTests({ admin, student, trainer, otherTrainer, attacker, run, png, uploaded, check, assert });
+await runCourseAccessApiScenarios({ admin, trainer, student, attacker, check, assert, uploaded, run });
+await runProfessionalPartnerApiScenarios({ admin, trainer, otherTrainer, student, attacker, check, assert, run });
 
 // ---- cleanup ----------------------------------------------------------------------
 for (const [bucket, path] of uploaded) await admin.storage.from(bucket).remove([path]);

@@ -10,6 +10,11 @@ import { pg_trgm } from "@electric-sql/pglite/contrib/pg_trgm";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { runWorkoutEditScenarios } from "./workout-edit-scenarios.mjs";
+import { runPrivateFeedScenarios } from "./private-feed-scenarios.mjs";
+import { runChallengeScoringTests } from "./challenge-scoring-tests.mjs";
+import { runCourseAccessScenarios } from "./course-access-scenarios.mjs";
+import { runProfessionalPartnerScenarios } from "./professional-partners-scenarios.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const migrationsDir = path.join(here, "..", "migrations");
@@ -618,6 +623,11 @@ await check("consume_rate_limit: counts per key and window; app users cannot cal
 });
 
 // ---------------------------------------------------------------------------
+await runWorkoutEditScenarios({ as, asSuper, check, expectError, eq, U, exercise });
+await runChallengeScoringTests({ asSuper, as, check, expectError, eq, U });
+await runPrivateFeedScenarios({ as, asSuper, U, check, eq });
+await runCourseAccessScenarios({ asSuper, as, check, expectError, eq, U });
+await runProfessionalPartnerScenarios({ as, asSuper, check, expectError, eq, U });
 for (const [status, name] of results) console.log(`${status}  ${name}`);
 console.log(`\n${results.filter((r) => r[0] === "PASS").length} passed, ${failures} failed`);
 process.exit(failures ? 1 : 0);
