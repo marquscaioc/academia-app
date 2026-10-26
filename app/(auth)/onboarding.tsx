@@ -1,0 +1,220 @@
+import { router } from "expo-router";
+import { useState } from "react";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
+import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
+import { supabase } from "../../lib/supabase/client";
+import { useAuth } from "../../lib/auth/provider";
+import { Logo, DisplayHeading, SectionLabel, AppIcon, type IconName } from "../../components/ui";
+import { font, amethystGlow } from "../../lib/design/tokens";
+
+type Role = "student" | "trainer";
+
+const roles: { value: Role; icon: IconName; label: string; description: string; features: string[] }[] = [
+  {
+    value: "student",
+    icon: "workout",
+    label: "Aluno",
+    description: "Acompanhe treinos, dieta e evolucao",
+    features: ["Treinos prescritos", "Dieta personalizada", "Acompanhamento de progresso", "Desafios e competicoes"],
+  },
+  {
+    value: "trainer",
+    icon: "clipboard",
+    label: "Personal Trainer",
+    description: "Gerencie alunos, prescreva treinos e dietas",
+    features: ["Gestao de alunos", "Builder de treinos", "Acompanhamento de progresso", "Dashboard financeiro"],
+  },
+];
+
+export default function OnboardingScreen() {
+  const { user, refreshProfile } = useAuth();
+  const [selectedRole, setSelectedRole] = useState<Role | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const [error, setError] = useState("");
+
+  const handleContinue = async () => {
+    if (!selectedRole || !user) return;
+    setError("");
+    setLoading(true);
+
+    const { error: updateError } = await supabase
+      .from("profiles")
+      .update({ role: selectedRole, onboarding_completed: true })
+      .eq("id", user.id);
+
+    if (updateError) {
+      setError(updateError.message);
+      setLoading(false);
+      return;
+    }
+
+    // Create trainer_profiles record if trainer
+    if (selectedRole === "trainer") {
+      await supabase.from("trainer_profiles").upsert({ id: user.id });
+    }
+
+    await refreshProfile();
+    setLoading(false);
+    router.replace("/");
+  };
+
+  return (
+    <SafeAreaView className="flex-1 bg-dark-400">
+      <LinearGradient
+        colors={["rgba(120,27,182,0.28)", "transparent"]}
+        start={{ x: 0.2, y: 0 }}
+        end={{ x: 0.8, y: 1 }}
+        style={{ position: "absolute", top: 0, left: 0, right: 0, height: 420 }}
+        pointerEvents="none"
+      />
+      <View className="flex-1 justify-center px-8 max-w-[500px] w-full self-center">
+        <Animated.View entering={FadeIn.duration(400)} className="items-center mb-6">
+          <Logo size="lg" />
+        </Animated.View>
+        <Animated.View entering={FadeInDown.delay(80).springify()} className="mb-10">
+          <SectionLabel tone="accent" className="mb-3">
+            PASSO FINAL · ONBOARDING
+          </SectionLabel>
+          <DisplayHeading size="md" italic tone="muted">
+            Escolha
+          </DisplayHeading>
+          <DisplayHeading size="lg" className="mt-1">
+            um perfil.
+          </DisplayHeading>
+          <Text className="text-sm text-text-muted mt-4 leading-6" style={{ fontFamily: font.regular }}>
+            Você é <Text style={{ fontFamily: font.semibold }} className="text-text-primary">aluno</Text> ou <Text style={{ fontFamily: font.semibold }} className="text-text-primary">personal</Text> — não os dois. Essa decisão define toda a experiência no app.
+          </Text>
+        </Animated.View>
+
+        {error ? (
+          <View className="bg-danger-500/10 border border-danger-500/20 rounded-2xl p-4 mb-4">
+            <Text className="text-danger-500 text-center text-sm font-medium">{error}</Text>
+          </View>
+        ) : null}
+
+        <View>
+          {roles.map((role, idx) => {
+            const isSelected = selectedRole === role.value;
+            const otherSelected = selectedRole !== null && !isSelected;
+            return (
+              <View key={role.value}>
+                <Pressable
+                  onPress={() => setSelectedRole(role.value)}
+                  style={isSelected ? amethystGlow : undefined}
+                  className={`rounded-3xl p-6 border ${
+                    isSelected
+                      ? "bg-surface-elevated border-violet-400/80"
+                      : otherSelected
+                        ? "bg-surface-card border-surface-border opacity-40"
+                        : "bg-surface-card border-surface-border active:border-surface-hover"
+                  }`}
+                >
+                  <View className="flex-row items-center gap-4 mb-4">
+                    <View className={`w-14 h-14 rounded-2xl items-center justify-center border ${
+                      isSelected ? "bg-violet-500/20 border-violet-500/30" : "bg-surface-elevated border-surface-border"
+                    }`}>
+                      <AppIcon name={role.icon} size={24} color={isSelected ? "#9B40D8" : "#A99FBA"} strokeWidth={2} />
+                    </View>
+                    <View className="flex-1">
+                      <Text
+                        className={isSelected ? "text-violet-300" : "text-text-primary"}
+                        style={{ fontFamily: font.bold, fontSize: 20, letterSpacing: -0.3 }}
+                      >
+                        {role.label}
+                      </Text>
+                      <Text
+                        className="text-xs text-text-muted mt-1"
+                        style={{ fontFamily: font.regular }}
+                      >
+                        {role.description}
+                      </Text>
+                    </View>
+                    <View className={`w-6 h-6 rounded-full border-2 items-center justify-center ${
+                      isSelected ? "border-violet-500 bg-violet-500" : "border-surface-border"
+                    }`}>
+                      {isSelected ? (
+                        <AppIcon name="check" size={14} color="#FFFFFF" strokeWidth={3} />
+                      ) : null}
+                    </View>
+                  </View>
+
+                  <View className="flex-row flex-wrap gap-2">
+                    {role.features.map((f) => (
+                      <View key={f} className={`px-3 py-1.5 rounded-full ${
+                        isSelected ? "bg-violet-500/10" : "bg-dark-300"
+                      }`}>
+                        <Text
+                          className={isSelected ? "text-violet-300" : "text-text-muted"}
+                          style={{ fontFamily: font.medium, fontSize: 11 }}
+                        >
+                          {f}
+                        </Text>
+                      </View>
+                    ))}
+                  </View>
+                </Pressable>
+
+                {idx === 0 ? (
+                  <View className="flex-row items-center my-4">
+                    <View className="flex-1 h-px bg-surface-border" />
+                    <View className="mx-4 w-10 h-10 rounded-full bg-dark-300 border border-surface-border items-center justify-center">
+                      <Text
+                        className="text-text-muted"
+                        style={{ fontFamily: font.bold, fontSize: 12, letterSpacing: 1 }}
+                      >
+                        OU
+                      </Text>
+                    </View>
+                    <View className="flex-1 h-px bg-surface-border" />
+                  </View>
+                ) : null}
+              </View>
+            );
+          })}
+        </View>
+
+        <Pressable
+          onPress={handleContinue}
+          disabled={!selectedRole || loading}
+          className="rounded-2xl overflow-hidden mt-8"
+          style={selectedRole ? amethystGlow : undefined}
+        >
+          {selectedRole ? (
+            <LinearGradient
+              colors={loading ? ["#50107D", "#86169E"] : ["#781BB6", "#C636E0"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0.9 }}
+              style={{ paddingVertical: 18, alignItems: "center" }}
+            >
+              {loading ? (
+                <ActivityIndicator color="#FFFFFF" />
+              ) : (
+                <View className="flex-row items-center gap-2">
+                  <Text
+                    className="text-white text-base"
+                    style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
+                  >
+                    Continuar
+                  </Text>
+                  <AppIcon name="arrow-right" size={18} color="#FFFFFF" strokeWidth={2} />
+                </View>
+              )}
+            </LinearGradient>
+          ) : (
+            <View className="bg-surface-border items-center" style={{ paddingVertical: 18 }}>
+              <Text
+                className="text-text-muted text-base"
+                style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
+              >
+                Selecione um perfil
+              </Text>
+            </View>
+          )}
+        </Pressable>
+      </View>
+    </SafeAreaView>
+  );
+}

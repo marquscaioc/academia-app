@@ -1,0 +1,128 @@
+-- 00024_cron_edge_functions.sql.template
+-- =============================================================================
+-- TEMPLATE — NAO e aplicado automaticamente (extensao .template de proposito).
+-- Agenda as edge functions de re-engajamento via pg_cron + pg_net (T0-03).
+-- Preencha, confira e rode no Supabase Dashboard > SQL Editor.
+-- =============================================================================
+--
+-- PRE-REQUISITOS (sem eles o cron dispara mas falha):
+--
+--   1) As edge functions precisam estar DEPLOYADAS:
+--        supabase functions deploy auto-checkin hydration-reminder \
+--          plan-expiring smart-nudge weekly-digest
+--
+--   2) Guardar a service_role key no Vault UMA vez (nao hardcode em cada job):
+--        select vault.create_secret('<SUA_SERVICE_ROLE_KEY>', 'service_role_key');
+--      (conferir: select name from vault.secrets;)
+--
+--   3) Horarios em UTC. Brasil = UTC-3, entao 11:00 UTC = 08:00 BRT.
+--      Ajuste as expressoes cron abaixo conforme sua preferencia.
+--
+--   4) weekly-digest so envia email se a function tiver provedor (Resend/SendGrid)
+--      configurado; senao apenas insere notification.
+--
+-- Idempotencia: em pg_cron 1.4+ (Supabase) cron.schedule(jobname, ...) SUBSTITUI
+-- o job de mesmo nome ao re-rodar. Para remover: select cron.unschedule('nome');
+-- =============================================================================
+
+create extension if not exists pg_cron;
+create extension if not exists pg_net;
+
+-- Atalho: o POST autenticado para uma function. (inline em cada job abaixo)
+--   headers usam a key do Vault, body '{}' (as functions iteram usuarios internamente).
+
+-- ===== auto-checkin — gera check-ins agendados (diario 08:00 BRT) =====
+select cron.schedule(
+  'auto-checkin-daily',
+  '0 11 * * *',
+  $$
+  select net.http_post(
+    url := 'https://yxsdspynguyaizwtcjfk.supabase.co/functions/v1/auto-checkin',
+    headers := jsonb_build_object(
+      'Content-Type', 'application/json',
+      'Authorization', 'Bearer ' || (select decrypted_secret from vault.decrypted_secrets where name = 'service_role_key')
+    ),
+    body := '{}'::jsonb
+  );
+  $$
+);
+
+-- ===== hydration-reminder — lembrete de agua (diario 10:00 BRT) =====
+select cron.schedule(
+  'hydration-reminder-daily',
+  '0 13 * * *',
+  $$
+  select net.http_post(
+    url := 'https://yxsdspynguyaizwtcjfk.supabase.co/functions/v1/hydration-reminder',
+    headers := jsonb_build_object(
+      'Content-Type', 'application/json',
+      'Authorization', 'Bearer ' || (select decrypted_secret from vault.decrypted_secrets where name = 'service_role_key')
+    ),
+    body := '{}'::jsonb
+  );
+  $$
+);
+
+-- ===== plan-expiring — aviso de plano vencendo (diario 09:00 BRT) =====
+select cron.schedule(
+  'plan-expiring-daily',
+  '0 12 * * *',
+  $$
+  select net.http_post(
+    url := 'https://yxsdspynguyaizwtcjfk.supabase.co/functions/v1/plan-expiring',
+    headers := jsonb_build_object(
+      'Content-Type', 'application/json',
+      'Authorization', 'Bearer ' || (select decrypted_secret from vault.decrypted_secrets where name = 'service_role_key')
+    ),
+    body := '{}'::jsonb
+  );
+  $$
+);
+
+-- ===== smart-nudge — incentivo se 3+ dias sem treino (diario 18:00 BRT) =====
+select cron.schedule(
+  'smart-nudge-daily',
+  '0 21 * * *',
+  $$
+  select net.http_post(
+    url := 'https://yxsdspynguyaizwtcjfk.supabase.co/functions/v1/smart-nudge',
+    headers := jsonb_build_object(
+      'Content-Type', 'application/json',
+      'Authorization', 'Bearer ' || (select decrypted_secret from vault.decrypted_secrets where name = 'service_role_key')
+    ),
+    body := '{}'::jsonb
+  );
+  $$
+);
+
+-- ===== weekly-digest — resumo semanal (segunda 08:00 BRT) =====
+select cron.schedule(
+  'weekly-digest-monday',
+  '0 11 * * 1',
+  $$
+  select net.http_post(
+    url := 'https://yxsdspynguyaizwtcjfk.supabase.co/functions/v1/weekly-digest',
+    headers := jsonb_build_object(
+      'Content-Type', 'application/json',
+      'Authorization', 'Bearer ' || (select decrypted_secret from vault.decrypted_secrets where name = 'service_role_key')
+    ),
+    body := '{}'::jsonb
+  );
+  $$
+);
+
+-- =============================================================================
+-- VERIFICACAO
+--   select jobid, jobname, schedule, active from cron.job order by jobname;
+--   select jobname, status, return_message, start_time
+--     from cron.job_run_details order by start_time desc limit 20;
+--   -- respostas HTTP do pg_net:
+--   select id, status_code, created from net._http_response order by created desc limit 20;
+--
+-- REMOVER (se precisar):
+--   select cron.unschedule('auto-checkin-daily');
+--   select cron.unschedule('hydration-reminder-daily');
+--   select cron.unschedule('plan-expiring-daily');
+--   select cron.unschedule('smart-nudge-daily');
+--   select cron.unschedule('weekly-digest-monday');
+-- =============================================================================

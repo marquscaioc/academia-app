@@ -1,0 +1,315 @@
+import { Link } from "expo-router";
+import { ActivityIndicator, FlatList, Modal, Pressable, ScrollView, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "../../../lib/auth/provider";
+import { supabase } from "../../../lib/supabase/client";
+import { useRevenueStats, useSubscriptionPlans, usePaymentRecords } from "../../../hooks/queries/useFinancial";
+import { useMarkPaymentPaid, useCreateSubscription, useRecordPayment } from "../../../hooks/mutations/useFinancialMutations";
+import { Card } from "../../../components/ui/Card";
+import { DisplayHeading } from "../../../components/ui/DisplayHeading";
+import { AppIcon } from "../../../components/ui";
+import { font } from "../../../lib/design/tokens";
+import { useState } from "react";
+
+function formatCurrency(cents: number): string {
+  return `R$ ${(cents / 100).toFixed(2).replace(".", ",")}`;
+}
+
+function AssignPlanModal({
+  plan,
+  trainerId,
+  onClose,
+}: {
+  plan: { id: string; name: string; price_cents: number };
+  trainerId: string;
+  onClose: () => void;
+}) {
+  const createSub = useCreateSubscription();
+  const recordPayment = useRecordPayment();
+  const { data: students } = useQuery({
+    queryKey: ["trainer", "students-active", trainerId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("trainer_students")
+        .select("student_id, student:profiles!student_id(full_name, avatar_url)")
+        .eq("trainer_id", trainerId)
+        .eq("status", "active");
+      if (error) throw error;
+      return data as unknown as { student_id: string; student: { full_name: string; avatar_url: string | null } | null }[];
+    },
+  });
+
+  const busy = createSub.isPending || recordPayment.isPending;
+
+  const assign = async (studentId: string) => {
+    try {
+      const sub = await createSub.mutateAsync({ student_id: studentId, plan_id: plan.id, trainer_id: trainerId });
+      // Gera a 1a cobranca pendente do periodo
+      await recordPayment.mutateAsync({
+        subscription_id: sub.id,
+        trainer_id: trainerId,
+        student_id: studentId,
+        amount_cents: plan.price_cents,
+        status: "pending",
+        due_date: new Date().toISOString(),
+      });
+      onClose();
+    } catch {
+      // mantem o modal aberto; o aluno pode ja ter o plano
+    }
+  };
+
+  return (
+    <Modal visible animationType="slide" transparent>
+      <View className="flex-1 justify-end">
+        <Pressable className="flex-1" onPress={onClose} />
+        <View className="bg-dark-200 border-t border-surface-border rounded-t-3xl px-6 pt-6 pb-10 max-h-[70%]">
+          <View className="flex-row items-center justify-between mb-1">
+            <Text className="text-lg text-text-primary" style={{ fontFamily: font.bold }}>Atribuir plano</Text>
+            <Pressable onPress={onClose} className="w-9 h-9 rounded-full items-center justify-center active:bg-surface-hover">
+              <AppIcon name="close" size={20} color="#A99FBA" strokeWidth={2} />
+            </Pressable>
+          </View>
+          <Text className="text-xs text-text-muted mb-4" style={{ fontFamily: font.regular }}>
+            {plan.name} · {formatCurrency(plan.price_cents)}
+          </Text>
+          {!students?.length ? (
+            <Text className="text-sm text-text-muted text-center py-6" style={{ fontFamily: font.regular }}>Nenhum aluno ativo.</Text>
+          ) : (
+            <ScrollView>
+              {students.map((s) => (
+                <Pressable
+                  key={s.student_id}
+                  onPress={() => assign(s.student_id)}
+                  disabled={busy}
+                  className="flex-row items-center gap-3 p-4 mb-2 rounded-2xl border border-surface-border bg-surface-card active:bg-surface-hover"
+                >
+                  <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+                    <AppIcon name="user" size={18} color="#9B40D8" strokeWidth={2} />
+                  </View>
+                  <Text className="flex-1 text-sm text-text-primary" style={{ fontFamily: font.semibold }}>{s.student?.full_name ?? "Aluno"}</Text>
+                  <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>Atribuir</Text>
+                  <AppIcon name="chevron-right" size={18} color="#6E6382" strokeWidth={2} />
+                </Pressable>
+              ))}
+            </ScrollView>
+          )}
+        </View>
+      </View>
+    </Modal>
+  );
+}
+
+export default function FinancialScreen() {
+  const { user } = useAuth();
+  const { data: stats, isLoading: statsLoading } = useRevenueStats(user?.id);
+  const { data: plans } = useSubscriptionPlans(user?.id);
+  const { data: payments } = usePaymentRecords(user?.id);
+  const markPaid = useMarkPaymentPaid();
+  const [tab, setTab] = useState<"overview" | "plans" | "payments">("overview");
+  const [assignPlan, setAssignPlan] = useState<{ id: string; name: string; price_cents: number } | null>(null);
+
+  return (
+    <SafeAreaView className="flex-1 bg-dark-400">
+      <ScrollView className="flex-1 px-6 pt-6">
+        <View className="flex-row items-center justify-between mb-6">
+          <DisplayHeading size="xl">Financeiro.</DisplayHeading>
+          <Link href="/(trainer)/financial/create-plan" asChild>
+            <Pressable className="bg-violet-500 px-4 py-2 rounded-xl active:bg-violet-600 flex-row items-center gap-1.5">
+              <AppIcon name="plus" size={16} color="#FFFFFF" strokeWidth={2} />
+              <Text className="text-white text-xs" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Plano</Text>
+            </Pressable>
+          </Link>
+        </View>
+
+        {/* Revenue cards */}
+        <View className="flex-row gap-3 mb-6">
+          <View className="flex-1 bg-surface-card border border-surface-border rounded-2xl p-5">
+            <View className="flex-row items-center gap-2 mb-2">
+              <View className="w-8 h-8 rounded-xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+                <AppIcon name="money" size={16} color="#9B40D8" strokeWidth={2} />
+              </View>
+              <Text className="text-[10px] text-text-muted uppercase" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>MRR</Text>
+            </View>
+            <Text className="text-3xl text-violet-400" style={{ fontFamily: font.display, letterSpacing: -0.5 }}>
+              {statsLoading ? "..." : formatCurrency(stats?.mrr ?? 0)}
+            </Text>
+          </View>
+          <View className="flex-1 bg-surface-card border border-surface-border rounded-2xl p-5">
+            <View className="flex-row items-center gap-2 mb-2">
+              <View className="w-8 h-8 rounded-xl bg-ice-500/15 border border-ice-500/25 items-center justify-center">
+                <AppIcon name="social" size={16} color="#A99FBA" strokeWidth={2} />
+              </View>
+              <Text className="text-[10px] text-text-muted uppercase" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>Alunos</Text>
+            </View>
+            <Text className="text-3xl text-ice-400" style={{ fontFamily: font.display, letterSpacing: -0.5 }}>
+              {statsLoading ? "..." : stats?.activeStudents}
+            </Text>
+          </View>
+        </View>
+
+        {stats?.pendingPayments ? (
+          <View className="bg-warning-500/10 border border-warning-500/20 rounded-2xl p-4 mb-6 flex-row items-center gap-3">
+            <View className="w-10 h-10 rounded-2xl bg-warning-500/15 border border-warning-500/25 items-center justify-center">
+              <AppIcon name="warning" size={18} color="#FBBF24" strokeWidth={2} />
+            </View>
+            <Text className="text-sm text-warning-500 flex-1" style={{ fontFamily: font.semibold }}>
+              {stats.pendingPayments} pagamento(s) pendente(s)
+            </Text>
+          </View>
+        ) : null}
+
+        {/* Tabs */}
+        <View className="flex-row border-b border-surface-border mb-4">
+          {(["overview", "plans", "payments"] as const).map((t) => (
+            <Pressable
+              key={t}
+              onPress={() => setTab(t)}
+              className={`flex-1 py-3 items-center border-b-2 ${
+                tab === t ? "border-violet-500" : "border-transparent"
+              }`}
+            >
+              <Text
+                className={`text-[10px] uppercase ${tab === t ? "text-violet-400" : "text-text-muted"}`}
+                style={{ fontFamily: font.semibold, letterSpacing: 2 }}
+              >
+                {t === "overview" ? "Resumo" : t === "plans" ? "Planos" : "Pagamentos"}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+
+        {/* Tab content */}
+        {tab === "overview" ? (
+          <View className="gap-3 mb-10">
+            <Card variant="outlined">
+              <View className="flex-row items-center gap-2 mb-3">
+                <AppIcon name="trend" size={14} color="#6E6382" strokeWidth={2} />
+                <Text className="text-[10px] text-text-muted uppercase" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>
+                  Receita prevista (mensal)
+                </Text>
+              </View>
+              <Text className="text-4xl text-text-primary" style={{ fontFamily: font.display, letterSpacing: -0.5 }}>
+                {formatCurrency(stats?.mrr ?? 0)}
+              </Text>
+              <Text className="text-xs text-text-muted mt-1" style={{ fontFamily: font.regular }}>
+                Baseado em {stats?.activeStudents ?? 0} assinaturas ativas
+              </Text>
+            </Card>
+          </View>
+        ) : tab === "plans" ? (
+          <View className="gap-3 mb-10">
+            {!plans?.length ? (
+              <Card variant="outlined">
+                <View className="items-center py-6">
+                  <View className="w-16 h-16 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
+                    <AppIcon name="banknote" size={28} color="#9B40D8" strokeWidth={2} />
+                  </View>
+                  <Text className="text-lg text-text-primary text-center" style={{ fontFamily: font.display }}>
+                    Nenhum plano criado
+                  </Text>
+                  <Text className="text-sm text-text-secondary text-center mt-1" style={{ fontFamily: font.regular }}>
+                    Crie seu primeiro plano!
+                  </Text>
+                </View>
+              </Card>
+            ) : (
+              plans.map((plan) => (
+                <Card key={plan.id} variant="outlined">
+                  <View className="flex-row items-center justify-between mb-2">
+                    <View className="flex-row items-center gap-3 flex-1">
+                      <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
+                        <AppIcon name="banknote" size={18} color="#9B40D8" strokeWidth={2} />
+                      </View>
+                      <Text className="text-base text-text-primary" style={{ fontFamily: font.semibold }}>{plan.name}</Text>
+                    </View>
+                    <View className={`px-2 py-1 rounded-full ${plan.is_active ? "bg-violet-500/10" : "bg-surface-elevated"}`}>
+                      <Text className={`text-[10px] ${plan.is_active ? "text-violet-400" : "text-text-muted"}`} style={{ fontFamily: font.semibold }}>
+                        {plan.is_active ? "Ativo" : "Inativo"}
+                      </Text>
+                    </View>
+                  </View>
+                  <Text className="text-xl text-violet-400" style={{ fontFamily: font.bold }}>
+                    {formatCurrency(plan.price_cents)}
+                    <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>/{plan.billing_interval === "monthly" ? "mes" : plan.billing_interval}</Text>
+                  </Text>
+                  {plan.description ? (
+                    <Text className="text-xs text-text-muted mt-2" style={{ fontFamily: font.regular }}>{plan.description}</Text>
+                  ) : null}
+                  <Pressable
+                    onPress={() => setAssignPlan({ id: plan.id, name: plan.name, price_cents: plan.price_cents })}
+                    className="border border-violet-500/30 rounded-xl py-2.5 items-center mt-3 active:bg-violet-500/10 flex-row justify-center gap-2"
+                  >
+                    <AppIcon name="user-add" size={16} color="#9B40D8" strokeWidth={2} />
+                    <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>Atribuir a aluno</Text>
+                  </Pressable>
+                </Card>
+              ))
+            )}
+          </View>
+        ) : (
+          <View className="gap-2 mb-10">
+            {!payments?.length ? (
+              <Card variant="outlined">
+                <View className="items-center py-6">
+                  <View className="w-16 h-16 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
+                    <AppIcon name="banknote" size={28} color="#9B40D8" strokeWidth={2} />
+                  </View>
+                  <Text className="text-lg text-text-primary text-center" style={{ fontFamily: font.display }}>
+                    Nenhum pagamento
+                  </Text>
+                  <Text className="text-sm text-text-secondary text-center mt-1" style={{ fontFamily: font.regular }}>
+                    Nenhum pagamento registrado ainda.
+                  </Text>
+                </View>
+              </Card>
+            ) : (
+              payments.map((p) => (
+                <Pressable
+                  key={p.id}
+                  onPress={() => p.status === "pending" && markPaid.mutate(p.id)}
+                  className="bg-surface-card border border-surface-border rounded-2xl p-4 flex-row items-center gap-3"
+                >
+                  <View className={`w-10 h-10 rounded-2xl border items-center justify-center ${
+                    p.status === "paid"
+                      ? "bg-success-500/15 border-success-500/25"
+                      : p.status === "pending"
+                      ? "bg-warning-500/15 border-warning-500/25"
+                      : "bg-danger-500/15 border-danger-500/25"
+                  }`}>
+                    <AppIcon
+                      name={p.status === "paid" ? "check-circle" : p.status === "pending" ? "clock" : "x-circle"}
+                      size={18}
+                      color={p.status === "paid" ? "#34D399" : p.status === "pending" ? "#FBBF24" : "#FB7185"}
+                      strokeWidth={2}
+                    />
+                  </View>
+                  <View className="flex-1">
+                    <Text className="text-sm text-text-primary" style={{ fontFamily: font.semibold }}>{p.student?.full_name}</Text>
+                    <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>
+                      {p.due_date ? new Date(p.due_date).toLocaleDateString("pt-BR") : ""}
+                    </Text>
+                  </View>
+                  <View className="items-end">
+                    <Text className="text-sm text-text-primary" style={{ fontFamily: font.bold }}>{formatCurrency(p.amount_cents)}</Text>
+                    <Text
+                      className={`text-[10px] ${p.status === "paid" ? "text-success-500" : p.status === "pending" ? "text-warning-500" : "text-danger-500"}`}
+                      style={{ fontFamily: font.semibold }}
+                    >
+                      {p.status === "paid" ? "Pago" : p.status === "pending" ? "Pendente" : "Falhou"}
+                    </Text>
+                  </View>
+                </Pressable>
+              ))
+            )}
+          </View>
+        )}
+      </ScrollView>
+
+      {assignPlan && user ? (
+        <AssignPlanModal plan={assignPlan} trainerId={user.id} onClose={() => setAssignPlan(null)} />
+      ) : null}
+    </SafeAreaView>
+  );
+}

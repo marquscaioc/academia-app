@@ -1,0 +1,17 @@
+services:
+  evolution-api:
+    image: atendai/evolution-api:v1.8.1
+    ports:
+      - "8080:8080"
+    volumes:
+      - evolution_store:/evolution/store
+    environment:
+      AUTHENTICATION_API_KEY: teste123
+      AUTHENTICATION_EXPOSE_IN_FETCH_INSTANCES: "true"
+      DATABASE_ENABLED: "false"
+      SERVER_URL: http://localhost:8080
+      QRCODE_LIMIT: 6
+      LOG_LEVEL: WARN
+
+volumes:
+  evolution_store:
