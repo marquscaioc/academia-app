@@ -3,6 +3,7 @@
 // Sends personalized push to students who haven't trained in 3+ days
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { requireServiceRole } from "../_shared/auth.ts";
 
 const EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send";
 
@@ -12,7 +13,9 @@ const messages = [
   { days: 7, title: "Nao desista! 🔥", body: (name: string) => `${name}, ja faz 1 semana! Lembre-se: consistencia vence intensidade. Um treino hoje faz toda a diferenca.` },
 ];
 
-Deno.serve(async (_req) => {
+Deno.serve(async (req) => {
+  const denied = requireServiceRole(req);
+  if (denied) return denied;
   try {
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,

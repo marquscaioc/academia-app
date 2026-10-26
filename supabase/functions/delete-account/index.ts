@@ -17,7 +17,7 @@ const json = (body: unknown, status = 200) =>
   });
 
 // Buckets whose object paths are prefixed with the owner's user id.
-const USER_BUCKETS = ["avatars", "feed-media", "exercise-videos", "brand-assets"];
+const USER_BUCKETS = ["avatars", "feed-media", "exercise-videos", "brand-assets", "progress-photos", "chat-media"];
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });

@@ -3,8 +3,11 @@
 // Sends email summary to students: workouts, streak, check-ins, achievements
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { requireServiceRole } from "../_shared/auth.ts";
 
-Deno.serve(async (_req) => {
+Deno.serve(async (req) => {
+  const denied = requireServiceRole(req);
+  if (denied) return denied;
   try {
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,

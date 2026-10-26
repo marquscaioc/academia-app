@@ -3,10 +3,13 @@
 // Sends push notification 7 days and 1 day before plan expires
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { requireServiceRole } from "../_shared/auth.ts";
 
 const EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send";
 
-Deno.serve(async (_req) => {
+Deno.serve(async (req) => {
+  const denied = requireServiceRole(req);
+  if (denied) return denied;
   try {
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,

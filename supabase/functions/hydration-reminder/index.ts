@@ -3,10 +3,13 @@
 // Sends push to students who haven't logged water recently
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { requireServiceRole } from "../_shared/auth.ts";
 
 const EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send";
 
-Deno.serve(async (_req) => {
+Deno.serve(async (req) => {
+  const denied = requireServiceRole(req);
+  if (denied) return denied;
   try {
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
@@ -39,7 +42,7 @@ Deno.serve(async (_req) => {
         .from("water_logs")
         .select("id")
         .eq("user_id", student.id)
-        .gte("created_at", twoHoursAgo)
+        .gte("logged_at", twoHoursAgo)
         .limit(1);
 
       if (recentLogs && recentLogs.length > 0) continue;
@@ -49,7 +52,7 @@ Deno.serve(async (_req) => {
         .from("water_logs")
         .select("amount_ml")
         .eq("user_id", student.id)
-        .gte("created_at", todayStart);
+        .gte("logged_at", todayStart);
 
       const totalToday = (todayLogs ?? []).reduce((sum, l) => sum + l.amount_ml, 0);
       const remaining = (student.water_goal_ml ?? 2500) - totalToday;

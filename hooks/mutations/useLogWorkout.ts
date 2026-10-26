@@ -113,7 +113,7 @@ export function useFinishSession() {
 
       const { data: profile } = await supabase
         .from("profiles")
-        .select("current_streak, full_name")
+        .select("current_streak")
         .eq("id", userId)
         .single();
 
@@ -121,11 +121,8 @@ export function useFinishSession() {
         createAutoShoutout(userId, "streak_milestone", { days: profile.current_streak }).catch(() => {});
       }
 
-      supabase.functions
-        .invoke("social-notification", {
-          body: { user_id: userId, user_name: profile?.full_name ?? "Alguem" },
-        })
-        .catch(() => {});
+      // The function identifies the actor from the JWT; no body needed.
+      supabase.functions.invoke("social-notification", { body: {} }).catch(() => {});
     },
   });
 }
