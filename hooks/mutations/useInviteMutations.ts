@@ -34,6 +34,10 @@ export function useAcceptInvite() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["invites"] });
       queryClient.invalidateQueries({ queryKey: ["chat", "conversations"] });
+      // The new link changes tenant-scoped data (plans, branding, recipes, challenges).
+      queryClient.invalidateQueries({ queryKey: ["trainer-students"] });
+      queryClient.invalidateQueries({ queryKey: ["workouts", "plans"] });
+      queryClient.invalidateQueries({ queryKey: ["branding"] });
     },
   });
 }

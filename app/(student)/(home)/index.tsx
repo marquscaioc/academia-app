@@ -16,9 +16,11 @@ import { useAcceptInvite } from "../../../hooks/mutations/useInviteMutations";
 import { useWorkoutPlans, useWorkoutSessions } from "../../../hooks/queries/useWorkouts";
 import { useUnreadCount } from "../../../hooks/queries/useUnreadNotifications";
 import { useCheckIns } from "../../../hooks/queries/useCheckins";
+import { useLinkedTrainerIds } from "../../../hooks/queries/useLinkedTrainerIds";
 import { AppIcon, BigStat, DisplayHeading, GradientCard, Logo, SectionLabel, type IconName } from "../../../components/ui";
 import { WebContainer } from "../../../components/layout/WebContainer";
 import { font } from "../../../lib/design/tokens";
+import { recommendNextWorkout } from "../../../lib/workout/schedule";
 
 function QuickAction({ icon, label, href, index }: { icon: IconName; label: string; href: string; index: number }) {
   return (
@@ -61,6 +63,9 @@ export default function StudentHomeScreen() {
   const { data: unreadCount } = useUnreadCount(user?.id);
   const { data: pendingCheckins } = useCheckIns(user?.id, "pending");
   const { data: sessions } = useWorkoutSessions(user?.id);
+  const { data: trainerIds } = useLinkedTrainerIds(user?.id);
+  // Only offer the invite code to students without an active trainer (hidden while loading).
+  const needsTrainer = trainerIds !== undefined && trainerIds.length === 0;
   const activePlan = workoutPlans?.[0];
   const daysUntilExpiry = activePlan?.ends_at
     ? Math.ceil((new Date(activePlan.ends_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
@@ -70,11 +75,8 @@ export default function StudentHomeScreen() {
     () => (activePlan?.workouts ?? []).slice().sort((a, b) => a.sort_order - b.sort_order),
     [activePlan],
   );
-  const todayWorkout = useMemo(() => {
-    if (!planWorkouts.length) return null;
-    const dow = new Date().getDay();
-    return planWorkouts.find((w) => w.day_of_week?.includes(dow)) ?? planWorkouts[0];
-  }, [planWorkouts]);
+  // Weekday schedule first, then A→B→C rotation based on real session history.
+  const todayWorkout = useMemo(() => recommendNextWorkout(planWorkouts, sessions ?? []), [planWorkouts, sessions]);
   const todayExerciseCount = todayWorkout?.exercises?.length ?? 0;
 
   const finishedThisWeek = useMemo(() => {
@@ -93,7 +95,7 @@ export default function StudentHomeScreen() {
       student_id: user.id,
     });
     if (!result.success) {
-      setInviteError(result.error ?? "Codigo invalido");
+      setInviteError(result.error ?? "Código inválido");
       return;
     }
     setInviteSuccess(true);
@@ -191,7 +193,7 @@ export default function StudentHomeScreen() {
         ) : null}
 
         {/* Invite — brief, compact */}
-        {!inviteSuccess ? (
+        {needsTrainer && !inviteSuccess ? (
           <Animated.View entering={FadeInDown.delay(220).springify()} className="mb-6">
             {!showInvite ? (
               <Pressable
@@ -264,7 +266,7 @@ export default function StudentHomeScreen() {
               </View>
             )}
           </Animated.View>
-        ) : (
+        ) : inviteSuccess ? (
           <Animated.View
             entering={FadeInDown.springify()}
             className="bg-success-500/10 border border-success-500/20 rounded-2xl p-4 mb-6 flex-row items-center gap-3"
@@ -276,13 +278,13 @@ export default function StudentHomeScreen() {
               Conectado ao seu personal! Confira o chat.
             </Text>
           </Animated.View>
-        )}
+        ) : null}
 
         {/* Feature block — "Treino de hoje" — gradient border hero */}
         <Animated.View entering={FadeInDown.delay(300).springify()} className="mb-8">
           <GradientCard variant="border" tone="amethyst" rounded="3xl" padding={false}>
             {todayWorkout ? (
-              <Link href={`/(student)/(workouts)/${todayWorkout.id}` as never} asChild>
+              <Link href={`/(student)/(workouts)/treino/${todayWorkout.id}` as never} asChild>
                 <Pressable className="p-7 active:opacity-90">
                   <View className="flex-row items-center gap-2 mb-4">
                     <View className="w-1.5 h-1.5 rounded-full bg-fuchsia-400" />
