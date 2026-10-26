@@ -263,7 +263,33 @@ await check("student cannot mark a payment as paid", async () => {
   assert((upd ?? []).length === 0, "student updated payment");
 });
 
+// ---- storage (real Storage API) -----------------------------------------------------
+const png = new Blob([Uint8Array.from([137, 80, 78, 71, 13, 10, 26, 10])], { type: "image/png" });
+const uploaded = [];
+await check("student uploads a progress photo to own folder; linked trainer can read it", async () => {
+  const path = `${student.id}/${run}.png`;
+  const { error } = await student.client.storage.from("progress-photos").upload(path, png);
+  assert(!error, error?.message);
+  uploaded.push(["progress-photos", path]);
+  const t = await trainer.client.storage.from("progress-photos").download(path);
+  assert(!t.error, `linked trainer: ${t.error?.message}`);
+  const o = await otherTrainer.client.storage.from("progress-photos").download(path);
+  assert(o.error, "other trainer should not read the photo");
+});
+
+await check("feed-media rejects uploads into someone else's folder", async () => {
+  const { error } = await attacker.client.storage.from("feed-media").upload(`${student.id}/${run}-evil.png`, png);
+  assert(error, "upload into another user's folder should fail");
+});
+
+await check("student deletes own progress photo", async () => {
+  const { data, error } = await student.client.storage.from("progress-photos").remove([`${student.id}/${run}.png`]);
+  assert(!error && data?.length === 1, error?.message ?? "nothing removed");
+  uploaded.length = 0;
+});
+
 // ---- cleanup ----------------------------------------------------------------------
+for (const [bucket, path] of uploaded) await admin.storage.from(bucket).remove([path]);
 for (const u of [trainer, otherTrainer, student, attacker]) await admin.auth.admin.deleteUser(u.id);
 await admin.from("exercises").delete().eq("id", ex.id);
 

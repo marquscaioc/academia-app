@@ -421,6 +421,113 @@ await check("trainer can still edit the prescription; history is preserved", asy
   eq(s.rows[0].workout_id, null, "session kept, workout link nulled");
 });
 
+// ---- check-ins (00036) -------------------------------------------------------------
+await asSuper("GRANT SELECT, INSERT, UPDATE, DELETE ON storage.objects TO authenticated");
+const tpl = (
+  await asSuper("INSERT INTO public.questionnaire_templates (created_by, title) VALUES ($1, 'Semanal') RETURNING id", [U.trainerA])
+).rows[0].id;
+const question = (
+  await asSuper(
+    "INSERT INTO public.questionnaire_questions (template_id, question_text, question_type) VALUES ($1, 'Sono?', 'scale') RETURNING id",
+    [tpl],
+  )
+).rows[0].id;
+const otherTpl = (
+  await asSuper("INSERT INTO public.questionnaire_templates (created_by, title) VALUES ($1, 'Outro') RETURNING id", [U.trainerA])
+).rows[0].id;
+const otherQuestion = (
+  await asSuper(
+    "INSERT INTO public.questionnaire_questions (template_id, question_text, question_type) VALUES ($1, 'x', 'text') RETURNING id",
+    [otherTpl],
+  )
+).rows[0].id;
+const checkIn = (
+  await asSuper(
+    "INSERT INTO public.check_ins (user_id, template_id, trainer_id) VALUES ($1, $2, $3) RETURNING id",
+    [U.studentA, tpl, U.trainerA],
+  )
+).rows[0].id;
+
+await check("student answers a pending check-in", async () => {
+  await as(U.studentA, "INSERT INTO public.check_in_answers (check_in_id, question_id, answer_number) VALUES ($1, $2, 7)", [
+    checkIn,
+    question,
+  ]);
+});
+
+await check("student cannot answer a question from another template", async () => {
+  await expectError(
+    as(U.studentA, "INSERT INTO public.check_in_answers (check_in_id, question_id, answer_text) VALUES ($1, $2, 'x')", [
+      checkIn,
+      otherQuestion,
+    ]),
+  );
+});
+
+await check("answers are frozen once the check-in is submitted", async () => {
+  await as(U.studentA, "UPDATE public.check_ins SET status = 'submitted', submitted_at = now() WHERE id = $1", [checkIn]);
+  const r = await as(U.studentA, "UPDATE public.check_in_answers SET answer_number = 10 WHERE check_in_id = $1 RETURNING id", [
+    checkIn,
+  ]);
+  eq(r.rows.length, 0, "rows updated after submit");
+  const seen = await as(U.studentA, "SELECT answer_number FROM public.check_in_answers WHERE check_in_id = $1", [checkIn]);
+  eq(Number(seen.rows[0]?.answer_number), 7, "student can still read own answer");
+});
+
+await check("deleting a trainer keeps the student's check-in history (LGPD FKs)", async () => {
+  await asSuper("DELETE FROM public.questionnaire_templates WHERE id = $1", [tpl]);
+  const r = await asSuper("SELECT template_id FROM public.check_ins WHERE id = $1", [checkIn]);
+  // Template delete cascades its questions; the check-in survives with template/question links nulled.
+  eq(r.rows.length, 1, "check-in kept");
+  eq(r.rows[0].template_id, null, "template link nulled");
+});
+
+// ---- storage (00036) ---------------------------------------------------------------
+await check("feed-media uploads only into the uploader's own folder", async () => {
+  await as(U.studentA, "INSERT INTO storage.objects (bucket_id, name) VALUES ('feed-media', $1)", [`${U.studentA}/a.jpg`]);
+  await expectError(
+    as(U.attacker, "INSERT INTO storage.objects (bucket_id, name) VALUES ('feed-media', $1)", [`${U.studentA}/evil.jpg`]),
+  );
+});
+
+await check("linked trainer reads student progress photos; other trainer cannot", async () => {
+  await asSuper("INSERT INTO storage.objects (bucket_id, name) VALUES ('progress-photos', $1)", [`${U.studentA}/front.jpg`]);
+  const a = await as(U.trainerA, "SELECT name FROM storage.objects WHERE bucket_id = 'progress-photos'");
+  eq(a.rows.length, 1, "trainer A sees 1");
+  const b = await as(U.trainerB, "SELECT name FROM storage.objects WHERE bucket_id = 'progress-photos'");
+  eq(b.rows.length, 0, "trainer B sees 0");
+});
+
+await check("student can delete own progress photo", async () => {
+  const r = await as(U.studentA, "DELETE FROM storage.objects WHERE bucket_id = 'progress-photos' RETURNING id");
+  eq(r.rows.length, 1, "deleted rows");
+});
+
+await check("only trainers upload brand assets", async () => {
+  await as(U.trainerA, "INSERT INTO storage.objects (bucket_id, name) VALUES ('brand-assets', $1)", [`${U.trainerA}/logo.jpg`]);
+  await expectError(
+    as(U.studentA, "INSERT INTO storage.objects (bucket_id, name) VALUES ('brand-assets', $1)", [`${U.studentA}/logo.jpg`]),
+  );
+});
+
+await check("chat media: members only", async () => {
+  const conv = (
+    await asSuper("INSERT INTO public.conversations (conversation_type, created_by) VALUES ('direct', $1) RETURNING id", [U.trainerA])
+  ).rows[0].id;
+  await asSuper(
+    "INSERT INTO public.conversation_members (conversation_id, user_id) VALUES ($1, $2), ($1, $3)",
+    [conv, U.trainerA, U.studentA],
+  );
+  await as(U.studentA, "INSERT INTO storage.objects (bucket_id, name) VALUES ('chat-media', $1)", [`${U.studentA}/${conv}/a.jpg`]);
+  const t = await as(U.trainerA, "SELECT 1 FROM storage.objects WHERE bucket_id = 'chat-media'");
+  eq(t.rows.length, 1, "member reads");
+  const x = await as(U.attacker, "SELECT 1 FROM storage.objects WHERE bucket_id = 'chat-media'");
+  eq(x.rows.length, 0, "outsider reads");
+  await expectError(
+    as(U.attacker, "INSERT INTO storage.objects (bucket_id, name) VALUES ('chat-media', $1)", [`${U.attacker}/${conv}/b.jpg`]),
+  );
+});
+
 // ---------------------------------------------------------------------------
 for (const [status, name] of results) console.log(`${status}  ${name}`);
 console.log(`\n${results.filter((r) => r[0] === "PASS").length} passed, ${failures} failed`);
