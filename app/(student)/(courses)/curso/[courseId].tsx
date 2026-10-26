@@ -1,6 +1,6 @@
 import { router, useLocalSearchParams } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
-import { Pressable, ScrollView, Text, View, Platform } from "react-native";
+import { Pressable, ScrollView, Text, View, Linking } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../../../lib/auth/provider";
 import { useCourseDetail } from "../../../../hooks/queries/useCourses";
@@ -9,18 +9,23 @@ import { LoadingScreen } from "../../../../components/ui/LoadingScreen";
 import { AppIcon } from "../../../../components/ui";
 import { font, amethystGlow } from "../../../../lib/design/tokens";
 import { WebContainer } from "../../../../components/layout/WebContainer";
+import { LessonVideo } from "../../../../components/courses/LessonVideo";
+import { toast } from "../../../../stores/useToastStore";
 import { useState } from "react";
 
 export default function StudentCourseDetailScreen() {
   const { courseId } = useLocalSearchParams<{ courseId: string }>();
   const { user } = useAuth();
-  const { data: course, isLoading } = useCourseDetail(courseId ?? "", user?.id);
+  const { data: course, isLoading, error, refetch } = useCourseDetail(courseId ?? "", user?.id);
   const markComplete = useMarkLessonComplete();
   const [activeLessonIdx, setActiveLessonIdx] = useState<number | null>(null);
 
-  if (isLoading || !course) {
-    return <LoadingScreen />;
-  }
+  if (isLoading) return <LoadingScreen />;
+  if (error || !course) return <SafeAreaView className="flex-1 bg-dark-400 justify-center items-center gap-4 px-6">
+    <Text className="text-text-primary font-sans">Não foi possível abrir este curso.</Text>
+    <Pressable onPress={() => refetch()}><Text className="text-violet-400 font-sans">Tentar novamente</Text></Pressable>
+    <Pressable onPress={() => router.back()}><Text className="text-text-muted font-sans">Voltar</Text></Pressable>
+  </SafeAreaView>;
 
   const completedCount = course.lessons?.filter((l) => l.progress?.completed).length ?? 0;
   const totalCount = course.lessons?.length ?? 0;
@@ -28,8 +33,7 @@ export default function StudentCourseDetailScreen() {
 
   const handleComplete = () => {
     if (!user || !activeLesson) return;
-    markComplete.mutate({ user_id: user.id, lesson_id: activeLesson.id });
-    setActiveLessonIdx(null);
+    markComplete.mutate({ user_id: user.id, lesson_id: activeLesson.id }, { onSuccess: () => setActiveLessonIdx(null) });
   };
 
   return (
@@ -53,6 +57,9 @@ export default function StudentCourseDetailScreen() {
           </Text>
         ) : null}
 
+        {!course.is_free ? <View className="bg-surface-card border border-surface-border rounded-2xl p-4 mb-4">
+          <Text className="text-text-muted font-sans">Este curso possui conteúdo restrito. Sua conta pode acessar as prévias gratuitas abaixo.</Text>
+        </View> : null}
         {/* Progress bar */}
         <View className="bg-surface-card border border-surface-border rounded-3xl p-5 mb-6">
           <View className="flex-row items-center justify-between mb-3">
@@ -80,22 +87,16 @@ export default function StudentCourseDetailScreen() {
         </View>
 
         {/* Active video player */}
-        {activeLesson?.video_url ? (
+        {activeLesson ? (
           <View className="bg-black border border-surface-border rounded-3xl overflow-hidden mb-6">
-            {Platform.OS === "web" ? (
-              <video
-                src={activeLesson.video_url}
-                controls
-                autoPlay
-                style={{ width: "100%", aspectRatio: "16/9" }}
-              />
-            ) : (
-              <View className="items-center justify-center" style={{ aspectRatio: 16 / 9 }}>
-                <Text className="text-white" style={{ fontFamily: font.regular }}>
-                  Player de vídeo indisponível na versão web
-                </Text>
-              </View>
-            )}
+            {activeLesson.video_url ? <LessonVideo key={activeLesson.id} uri={activeLesson.video_url} /> : null}
+            {activeLesson.description ? <Text className="text-text-secondary bg-surface-card p-4 font-sans">{activeLesson.description}</Text> : null}
+            {activeLesson.document_url ? <Pressable accessibilityRole="link" className="bg-surface-card px-4 py-4"
+              onPress={async () => {
+                const url = activeLesson.document_url!;
+                if (!/^https?:\/\//i.test(url)) { toast.error("Documento indisponível"); return; }
+                try { await Linking.openURL(url); } catch { toast.error("Não foi possível abrir o PDF", "Tente novamente."); }
+              }}><Text className="text-violet-400 font-sans">Abrir e-book / PDF</Text></Pressable> : null}
             <View className="p-4 bg-surface-card flex-row items-center justify-between gap-3">
               <Text
                 className="text-sm text-text-primary flex-1"
@@ -104,7 +105,7 @@ export default function StudentCourseDetailScreen() {
                 {activeLesson.title}
               </Text>
               {!activeLesson.progress?.completed ? (
-                <Pressable onPress={handleComplete} style={amethystGlow} className="rounded-2xl overflow-hidden">
+                <Pressable onPress={handleComplete} disabled={markComplete.isPending} style={amethystGlow} className="rounded-2xl overflow-hidden">
                   <LinearGradient
                     colors={["#781BB6", "#C636E0"]}
                     start={{ x: 0, y: 0 }}
@@ -115,7 +116,7 @@ export default function StudentCourseDetailScreen() {
                       className="text-white text-xs"
                       style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}
                     >
-                      Marcar concluída
+                      {markComplete.isPending ? "Salvando..." : "Marcar concluída"}
                     </Text>
                   </LinearGradient>
                 </Pressable>
@@ -143,6 +144,7 @@ export default function StudentCourseDetailScreen() {
         >
           Aulas
         </Text>
+        {!course.lessons?.length ? <Text className="text-text-muted mb-4 font-sans">Nenhuma aula disponível para sua conta neste momento.</Text> : null}
         <View className="gap-2 pb-10">
           {course.lessons?.map((l, idx) => {
             const isActive = activeLessonIdx === idx;
@@ -185,7 +187,7 @@ export default function StudentCourseDetailScreen() {
                     </View>
                   ) : null}
                 </View>
-                {l.video_url ? (
+                {l.video_url || l.document_url ? (
                   <View className="w-8 h-8 rounded-xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
                     <AppIcon name="play" size={15} color="#9B40D8" strokeWidth={2} />
                   </View>

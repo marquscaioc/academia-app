@@ -1,4 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "../../lib/auth/provider";
+import { getSignedUrls } from "../../lib/supabase/media";
 import { supabase } from "../../lib/supabase/client";
 
 export interface Lesson {
@@ -7,6 +9,7 @@ export interface Lesson {
   title: string;
   description: string | null;
   video_url: string | null;
+  document_url: string | null;
   thumbnail_url: string | null;
   duration_seconds: number | null;
   sort_order: number;
@@ -61,8 +64,10 @@ export function useCourses(opts: { studentId?: string; trainerId?: string }) {
 }
 
 export function useCourseDetail(courseId: string, userId?: string) {
+  const { user } = useAuth();
   return useQuery({
-    queryKey: ["courses", "detail", courseId, userId],
+    queryKey: ["courses", "detail", courseId, userId, user?.id],
+    refetchInterval: 10 * 60 * 1000,
     queryFn: async () => {
       const { data: course, error } = await supabase
         .from("courses")
@@ -74,19 +79,28 @@ export function useCourseDetail(courseId: string, userId?: string) {
       // Fetch progress
       if (userId && course.lessons?.length) {
         const lessonIds = (course.lessons as Lesson[]).map((l) => l.id);
-        const { data: progress } = await supabase
+        const { data: progress, error: progressError } = await supabase
           .from("lesson_progress")
           .select("*")
           .eq("user_id", userId)
           .in("lesson_id", lessonIds);
+        if (progressError) throw progressError;
         const progressMap = new Map(progress?.map((p) => [p.lesson_id, p]) ?? []);
         course.lessons = (course.lessons as Lesson[])
           .map((l) => ({ ...l, progress: progressMap.get(l.id) ?? null }))
           .sort((a, b) => a.sort_order - b.sort_order);
       }
 
+      const lessons = (course.lessons ?? []) as Lesson[];
+      const privateValues = lessons.flatMap((lesson) => [lesson.video_url, lesson.document_url])
+        .filter((value): value is string => !!value && (!/^https?:\/\//i.test(value) || value.includes("/course-media/")));
+      const signed = await getSignedUrls("course-media", privateValues, 900);
+      const resolve = (value: string | null) => value && privateValues.includes(value) ? signed[value] ?? null : value;
+      course.lessons = lessons.map((lesson) => ({ ...lesson,
+        video_url: resolve(lesson.video_url), document_url: resolve(lesson.document_url),
+      })).sort((a, b) => a.sort_order - b.sort_order);
       return course as Course;
     },
-    enabled: !!courseId,
+    enabled: !!courseId && !!user,
   });
 }
