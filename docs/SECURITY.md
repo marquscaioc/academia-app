@@ -35,7 +35,7 @@ Legacy course URLs in public `exercise-videos` or external providers remain unch
 
 - `push-notification`: service role or authorized JWT actor; per-caller30/min limit and input caps.
 - `food-lookup`: verified session, per-user30/min limit, validated input and escaped LIKE wildcards.
-- `social-notification`: actor from JWT, recently finished owned session.
+- `social-notification`: actor from JWT, recently finished owned session, one announcement per session (`social:<session id>` key in `consume_rate_limit`), CORS for web.
 - `delete-account`: caller JWT, own files including nested course media, then auth user. Cleanup is best effort; recursive cleanup needs deployed-runtime verification.
 - Cron functions require the service-role bearer. `weekly-digest` no longer reads/stores email in notifications.
 

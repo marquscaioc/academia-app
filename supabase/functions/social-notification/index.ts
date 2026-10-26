@@ -2,15 +2,25 @@
 // Called by the app after a workout is completed. Notifies followers who opted in.
 // The actor is ALWAYS the authenticated caller (JWT) — the request body is ignored,
 // so nobody can send "X just trained" pushes on behalf of another user.
+// Each finished session notifies followers at most once (repeat calls are no-ops).
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { consumeRateLimit } from "../_shared/rateLimit.ts";
 
 const EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send";
 
+const CORS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
+
 const json = (body: unknown, status = 200) =>
-  new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } });
+  new Response(JSON.stringify(body), { status, headers: { ...CORS, "Content-Type": "application/json" } });
 
 Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
+  if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
   try {
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
@@ -31,8 +41,14 @@ Deno.serve(async (req) => {
       .select("id")
       .eq("user_id", userId)
       .gte("finished_at", since)
+      .order("finished_at", { ascending: false })
       .limit(1);
     if (!recent?.length) return json({ sent: 0 });
+
+    // One announcement per session: a window longer than the 10-minute eligibility makes the key single-use.
+    if (!(await consumeRateLimit(supabase, `social:${recent[0].id}`, 1, 3600))) {
+      return json({ sent: 0, reason: "already_notified" });
+    }
 
     const { data: profile } = await supabase
       .from("profiles")
@@ -68,6 +84,7 @@ Deno.serve(async (req) => {
 
     return json({ sent: messages.length });
   } catch (error) {
-    return json({ error: String(error) }, 500);
+    console.error(`social-notification failed: ${String(error)}`);
+    return json({ error: "internal_error" }, 500);
   }
 });
