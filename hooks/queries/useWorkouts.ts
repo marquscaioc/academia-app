@@ -12,6 +12,7 @@ export interface WorkoutPlan {
   starts_at: string | null;
   ends_at: string | null;
   created_at: string;
+  updated_at: string;
   workouts?: Workout[];
 }
 
@@ -98,6 +99,23 @@ export function useTrainerPlans(trainerId?: string) {
       return data as unknown as TrainerPlanSummary[];
     },
     enabled: !!trainerId,
+  });
+}
+
+/** Scoped to the owner even when another trainer knows a plan UUID. */
+export function useTrainerPlanDetail(planId?: string, trainerId?: string) {
+  return useQuery({
+    queryKey: ["workouts", "planDetail", { planId, trainerId }],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("workout_plans")
+        .select("*, workouts(*, exercises:workout_exercises(*, exercise:exercises(name)))")
+        .eq("id", planId!).eq("trainer_id", trainerId!).single();
+      if (error) throw error;
+      return data as WorkoutPlan;
+    },
+    enabled: !!planId && !!trainerId,
+    staleTime: 0,
+    refetchOnWindowFocus: false,
   });
 }
 

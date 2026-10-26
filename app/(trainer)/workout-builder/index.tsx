@@ -1,4 +1,4 @@
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import {
   ActivityIndicator,
@@ -16,11 +16,12 @@ import { font, amethystGlow } from "../../../lib/design/tokens";
 import { DisplayHeading } from "../../../components/ui/DisplayHeading";
 import { SectionLabel } from "../../../components/ui/SectionLabel";
 import { AppIcon } from "../../../components/ui";
+import { ConfirmDialog } from "../../../components/ui/ConfirmDialog";
 import { useAuth } from "../../../lib/auth/provider";
 import { supabase } from "../../../lib/supabase/client";
 import { useExercises } from "../../../hooks/queries/useExercises";
-import { useTrainerPlans } from "../../../hooks/queries/useWorkouts";
-import { useCopyWorkoutPlan, useCreateWorkoutPlan } from "../../../hooks/mutations/useExerciseMutations";
+import { useTrainerPlans, useTrainerPlanDetail, type WorkoutPlan } from "../../../hooks/queries/useWorkouts";
+import { useCopyWorkoutPlan, useCreateWorkoutPlan, useUpdateWorkoutPlan } from "../../../hooks/mutations/useExerciseMutations";
 import { Avatar } from "../../../components/ui/Avatar";
 import { pluralize } from "../../../lib/utils/plural";
 import { toast } from "../../../stores/useToastStore";
@@ -29,6 +30,8 @@ import {
   WEEKDAY_SHORT,
   buildPlanPayload,
   newExercise,
+  planToDraft,
+  moveItem,
   nextWorkoutName,
   toggleDay,
   toggleSuperset,
@@ -102,22 +105,49 @@ function NumberField({ label, value, onChange, keyboard = "number-pad", placehol
 }
 
 export default function WorkoutBuilderScreen() {
+  const { planId } = useLocalSearchParams<{ planId?: string }>();
+  const { user } = useAuth();
+  const plan = useTrainerPlanDetail(planId, user?.id);
+  if (planId && (!plan.isFetchedAfterMount || plan.isError)) {
+    return (
+      <SafeAreaView className="flex-1 bg-dark-400 items-center justify-center px-6 gap-4">
+        {plan.isError ? (
+          <>
+            <Text className="text-text-primary" style={{ fontFamily: font.semibold }}>Não foi possível abrir este plano.</Text>
+            <GradientButton label="Tentar novamente" enabled onPress={() => { void plan.refetch(); }} />
+          </>
+        ) : <ActivityIndicator color="#3F3F46" accessibilityLabel="Carregando plano" />}
+        <Pressable onPress={() => router.back()} accessibilityRole="button"><Text className="text-violet-400 font-sans">Voltar</Text></Pressable>
+      </SafeAreaView>
+    );
+  }
+  return <WorkoutBuilder key={planId ?? "new"} initialPlan={planId ? plan.data : undefined} />;
+}
+
+function WorkoutBuilder({ initialPlan }: { initialPlan?: WorkoutPlan }) {
   const { user, role } = useAuth();
-  const [step, setStep] = useState<Step>("destination");
-  const [destination, setDestination] = useState<Destination | null>(null);
+  const editing = !!initialPlan;
+  const [step, setStep] = useState<Step>(editing ? "plan-info" : "destination");
+  const [destination, setDestination] = useState<Destination | null>(initialPlan ? {
+    studentId: initialPlan.student_id, label: initialPlan.student_id ? "Aluno do plano" : "Modelo (sem aluno)",
+  } : null);
   const [mode, setMode] = useState<"scratch" | "copy">("scratch");
   const [copySourceId, setCopySourceId] = useState<string | null>(null);
-  const [planName, setPlanName] = useState("");
-  const [planDescription, setPlanDescription] = useState("");
-  const [workouts, setWorkouts] = useState<DraftWorkout[]>([{ name: "Treino A", days: [], exercises: [] }]);
+  const [planName, setPlanName] = useState(initialPlan?.name ?? "");
+  const [planDescription, setPlanDescription] = useState(initialPlan?.description ?? "");
+  const [workouts, setWorkouts] = useState<DraftWorkout[]>(initialPlan ? planToDraft(initialPlan.workouts ?? []).map((w) => ({
+    ...w, exercises: w.exercises.map((e) => ({ ...e, name: translateExerciseName(e.name) })),
+  })) : [{ name: "Treino A", days: [], exercises: [] }]);
   const [active, setActive] = useState(0);
   const [searchExercise, setSearchExercise] = useState("");
+  const [pendingRemoval, setPendingRemoval] = useState<(() => void) | null>(null);
 
   const createPlan = useCreateWorkoutPlan();
   const copyPlan = useCopyWorkoutPlan();
-  const saving = createPlan.isPending || copyPlan.isPending;
+  const updatePlan = useUpdateWorkoutPlan();
+  const saving = createPlan.isPending || copyPlan.isPending || updatePlan.isPending;
 
-  const { data: students } = useQuery({
+  const { data: students, isPending: loadingStudents, isError: studentsError, refetch: retryStudents } = useQuery({
     queryKey: ["trainer", "students", user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -130,8 +160,8 @@ export default function WorkoutBuilderScreen() {
     },
     enabled: !!user,
   });
-  const { data: plans } = useTrainerPlans(user?.id);
-  const { data: exerciseList } = useExercises({ search: searchExercise || undefined, userId: user?.id, role });
+  const { data: plans, isPending: loadingPlans, isError: plansError, refetch: retryPlans } = useTrainerPlans(user?.id);
+  const { data: exerciseList, isPending: loadingExercises, isError: exercisesError, refetch: retryExercises } = useExercises({ search: searchExercise || undefined, userId: user?.id, role });
 
   const current = workouts[active];
   const draftError = validateDraft(planName, workouts);
@@ -173,18 +203,28 @@ export default function WorkoutBuilderScreen() {
   };
 
   const handleSave = async () => {
-    if (!destination || draftError) return;
+    if (!destination || draftError || saving) return;
     try {
-      await createPlan.mutateAsync({
+      if (initialPlan) {
+        await updatePlan.mutateAsync({
+          plan_id: initialPlan.id, expected_updated_at: initialPlan.updated_at,
+          name: planName.trim(), description: planDescription.trim() || null,
+          workouts: buildPlanPayload(workouts),
+        });
+      } else await createPlan.mutateAsync({
         student_id: destination.studentId,
         name: planName.trim(),
         description: planDescription.trim() || undefined,
         workouts: buildPlanPayload(workouts),
       });
-      finish(destination.studentId ? "Plano criado. O aluno já pode treinar." : "Modelo salvo.");
-    } catch {
+      finish(editing ? "Plano atualizado. Histórico preservado." : destination.studentId ? "Plano criado. O aluno já pode treinar." : "Modelo salvo.");
+    } catch (error) {
       // Atomic on the server: nothing was saved, the draft stays here.
-      toast.error("Erro", "Não foi possível salvar o plano. Nada foi gravado; tente novamente.");
+      const code = (error as { code?: string }).code;
+      toast.error("Não foi possível salvar", code === "40001"
+        ? "O plano foi alterado em outra sessão. Reabra o plano para carregar a versão atual."
+        : code === "55000" ? "O aluno está com um treino em andamento. Aguarde a conclusão antes de editar."
+        : "Nada foi gravado; tente novamente.");
     }
   };
 
@@ -196,13 +236,13 @@ export default function WorkoutBuilderScreen() {
       {/* Header */}
       <View className="flex-row items-center justify-between px-6 pt-6 pb-4 border-b border-surface-border">
         <Pressable
-          onPress={() => (step === "destination" ? router.back() : setStep(STEPS[STEPS.indexOf(step) - 1]))}
+          onPress={() => (step === "destination" || (editing && step === "plan-info") ? router.back() : setStep(STEPS[STEPS.indexOf(step) - 1]))}
           accessibilityRole="button"
           className="flex-row items-center gap-1.5"
         >
           <AppIcon name="arrow-left" size={16} color="#6E6382" strokeWidth={2} />
           <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>
-            {step === "destination" ? "Cancelar" : "Voltar"}
+            {step === "destination" || (editing && step === "plan-info") ? "Cancelar" : "Voltar"}
           </Text>
         </Pressable>
         <DisplayHeading size="sm" className="text-text-primary">{title}</DisplayHeading>
@@ -211,8 +251,8 @@ export default function WorkoutBuilderScreen() {
 
       {/* Step indicator */}
       <View className="flex-row px-6 py-3 gap-2">
-        {STEPS.map((s, i) => (
-          <View key={s} className={`flex-1 h-1 rounded-full ${STEPS.indexOf(step) >= i ? "bg-violet-500" : "bg-surface-border"}`} />
+        {(editing ? STEPS.slice(1) : STEPS).map((s) => (
+          <View key={s} className={`flex-1 h-1 rounded-full ${STEPS.indexOf(step) >= STEPS.indexOf(s) ? "bg-violet-500" : "bg-surface-border"}`} />
         ))}
       </View>
 
@@ -223,6 +263,25 @@ export default function WorkoutBuilderScreen() {
           keyExtractor={(item) => item.id}
           contentContainerClassName="px-6 py-4 gap-2"
           ListHeaderComponent={
+            <View>
+              {loadingPlans ? <ActivityIndicator color="#3F3F46" accessibilityLabel="Carregando planos" /> : null}
+              {plansError ? <Pressable accessibilityRole="button" onPress={() => { void retryPlans(); }}>
+                <Text className="text-danger-500 mb-4 font-sans">Falha ao carregar planos. Toque para tentar novamente.</Text>
+              </Pressable> : null}
+              {(plans ?? []).length > 0 ? (
+                <View className="mb-6 gap-2">
+                  <SectionLabel>Editar plano existente</SectionLabel>
+                  {(plans ?? []).map((p) => (
+                    <Pressable key={p.id} onPress={() => router.push({ pathname: "/(trainer)/workout-builder", params: { planId: p.id } })}
+                      accessibilityRole="button" accessibilityLabel={`Editar ${p.name}`}
+                      className="bg-surface-card border border-surface-border rounded-2xl p-4">
+                      <Text className="text-text-primary" style={{ fontFamily: font.semibold }}>{p.name}</Text>
+                      <Text className="text-text-muted text-xs font-sans">{p.student_id ? p.student?.full_name ?? "Aluno" : "Modelo"}</Text>
+                    </Pressable>
+                  ))}
+                </View>
+              ) : null}
+              <SectionLabel className="mb-2">Criar novo plano para</SectionLabel>
             <Pressable
               onPress={() => chooseDestination({ studentId: null, label: "Modelo (sem aluno)" })}
               accessibilityRole="button"
@@ -239,8 +298,14 @@ export default function WorkoutBuilderScreen() {
               </View>
               <AppIcon name="chevron-right" size={18} color="#6E6382" strokeWidth={2} />
             </Pressable>
+            </View>
           }
           ListEmptyComponent={
+            loadingStudents ? <ActivityIndicator color="#3F3F46" accessibilityLabel="Carregando alunos" /> : studentsError ? (
+              <Pressable accessibilityRole="button" onPress={() => { void retryStudents(); }}>
+                <Text className="text-danger-500 py-4 font-sans">Falha ao carregar alunos. Toque para tentar novamente.</Text>
+              </Pressable>
+            ) :
             <View className="items-center py-10">
               <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
                 <AppIcon name="user-add" size={28} color="#9B40D8" strokeWidth={2} />
@@ -276,7 +341,7 @@ export default function WorkoutBuilderScreen() {
             <Text className="text-sm text-violet-400 flex-1" style={{ fontFamily: font.semibold }}>{destination.label}</Text>
           </View>
 
-          <View className="flex-row bg-surface-card border border-surface-border rounded-2xl p-1 mb-6">
+          {!editing ? <View className="flex-row bg-surface-card border border-surface-border rounded-2xl p-1 mb-6">
             {([
               ["scratch", "Do zero"],
               ["copy", "Duplicar existente"],
@@ -291,7 +356,7 @@ export default function WorkoutBuilderScreen() {
                 <Text className={`text-sm ${mode === m ? "text-white" : "text-text-muted"}`} style={{ fontFamily: font.semibold }}>{label}</Text>
               </Pressable>
             ))}
-          </View>
+          </View> : <Text className="text-text-muted text-sm mb-6 font-sans">Editando plano existente. As sessões e cargas já registradas serão preservadas.</Text>}
 
           {mode === "copy" ? (
             <View className="gap-2 mb-6">
@@ -412,7 +477,7 @@ export default function WorkoutBuilderScreen() {
                 style={{ fontFamily: font.regular }}
               />
               {workouts.length > 1 ? (
-                <Pressable onPress={removeWorkout} accessibilityRole="button" accessibilityLabel={`Remover ${current.name}`} className="p-3">
+                <Pressable onPress={() => setPendingRemoval(() => removeWorkout)} accessibilityRole="button" accessibilityLabel={`Remover ${current.name}`} className="p-3">
                   <AppIcon name="trash" size={16} color="#FB7185" strokeWidth={2} />
                 </Pressable>
               ) : null}
@@ -458,6 +523,11 @@ export default function WorkoutBuilderScreen() {
               className="max-h-48 grow-0"
               keyboardShouldPersistTaps="handled"
               ListEmptyComponent={
+                loadingExercises ? <ActivityIndicator color="#3F3F46" accessibilityLabel="Buscando exercícios" /> : exercisesError ? (
+                  <Pressable accessibilityRole="button" onPress={() => { void retryExercises(); }}>
+                    <Text className="text-danger-500 py-2 font-sans">Falha na busca. Toque para tentar novamente.</Text>
+                  </Pressable>
+                ) :
                 <Text className="text-xs text-text-muted py-2" style={{ fontFamily: font.regular }}>Nenhum exercício encontrado.</Text>
               }
               renderItem={({ item }) => (
@@ -484,6 +554,9 @@ export default function WorkoutBuilderScreen() {
           ) : null}
 
           <ScrollView className="flex-1 px-6 py-4" keyboardShouldPersistTaps="handled">
+            <TextInput value={current.notes ?? ""} onChangeText={(v) => updateWorkout({ notes: v })}
+              placeholder="Orientações deste treino" placeholderTextColor="#71717A" accessibilityLabel="Orientações do treino"
+              multiline className="bg-surface-card border border-surface-border rounded-2xl p-3 text-text-primary mb-3 font-sans" />
             {current.exercises.length === 0 ? (
               <View className="items-center py-10">
                 <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
@@ -502,7 +575,7 @@ export default function WorkoutBuilderScreen() {
                           {idx + 1}. {ex.name}
                         </Text>
                         <Pressable
-                          onPress={() => updateWorkout({ exercises: current.exercises.filter((_, i) => i !== idx) })}
+                          onPress={() => setPendingRemoval(() => () => updateWorkout({ exercises: current.exercises.filter((_, i) => i !== idx) }))}
                           accessibilityRole="button"
                           accessibilityLabel={`Remover ${ex.name}`}
                           className="flex-row items-center gap-1"
@@ -510,6 +583,19 @@ export default function WorkoutBuilderScreen() {
                           <AppIcon name="trash" size={14} color="#FB7185" strokeWidth={2} />
                           <Text className="text-danger-500 text-xs" style={{ fontFamily: font.semibold }}>Remover</Text>
                         </Pressable>
+                      </View>
+                      <View className="flex-row gap-4 mb-3">
+                        {([-1, 1] as const).map((offset) => (
+                          <Pressable key={offset} accessibilityRole="button"
+                            accessibilityLabel={`${offset < 0 ? "Subir" : "Descer"} ${ex.name}`}
+                            disabled={idx + offset < 0 || idx + offset >= current.exercises.length}
+                            aria-disabled={idx + offset < 0 || idx + offset >= current.exercises.length}
+                            onPress={() => updateWorkout({ exercises: moveItem(current.exercises, idx, idx + offset) })}>
+                            <Text className={idx + offset < 0 || idx + offset >= current.exercises.length ? "text-text-muted text-xs" : "text-violet-400 text-xs"} style={{ fontFamily: font.regular }}>
+                              {offset < 0 ? "↑ Subir" : "↓ Descer"}
+                            </Text>
+                          </Pressable>
+                        ))}
                       </View>
                       <View className="flex-row gap-2">
                         <NumberField label="Séries" value={String(ex.sets || "")} onChange={(v) => updateExercise(idx, { sets: parseInt(v) || 0 })} />
@@ -523,6 +609,9 @@ export default function WorkoutBuilderScreen() {
                           <NumberField label="Tempo (cadência)" value={ex.tempo} keyboard="default" placeholder="2-0-1-0" onChange={(v) => updateExercise(idx, { tempo: v })} />
                         </View>
                       </View>
+                      <TextInput value={ex.notes} onChangeText={(v) => updateExercise(idx, { notes: v })}
+                        placeholder="Nota técnica para o aluno" placeholderTextColor="#71717A" accessibilityLabel={`Nota de ${ex.name}`}
+                        multiline className="bg-dark-300 border border-surface-border rounded-xl p-3 text-text-primary mt-2 font-sans" />
                       {idx > 0 ? (
                         <Pressable
                           onPress={() => updateWorkout({ exercises: toggleSuperset(current.exercises, idx) })}
@@ -613,11 +702,15 @@ export default function WorkoutBuilderScreen() {
               <Text className="text-text-secondary text-sm" style={{ fontFamily: font.semibold }}>Editar</Text>
             </Pressable>
             <View className="flex-1">
-              <GradientButton label={destination.studentId ? "Salvar plano" : "Salvar modelo"} enabled={!draftError} loading={saving} onPress={handleSave} />
+              <GradientButton label={editing ? "Salvar alterações" : destination.studentId ? "Salvar plano" : "Salvar modelo"} enabled={!draftError} loading={saving} onPress={handleSave} />
             </View>
           </View>
         </ScrollView>
       ) : null}
+      <ConfirmDialog visible={!!pendingRemoval} title="Remover da prescrição?"
+        message="A remoção será aplicada ao salvar o plano. O histórico de sessões será mantido."
+        confirmLabel="Remover" destructive onCancel={() => setPendingRemoval(null)}
+        onConfirm={() => { pendingRemoval?.(); setPendingRemoval(null); }} />
     </SafeAreaView>
   );
 }
