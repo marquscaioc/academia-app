@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "../../lib/supabase/client";
+import { toast } from "../../stores/useToastStore";
 
 export function useCreatePost() {
   const queryClient = useQueryClient();
@@ -28,22 +29,26 @@ export function useToggleReaction() {
   return useMutation({
     mutationFn: async (input: { post_id: string; user_id: string; reaction_type: string }) => {
       // Check if reaction exists
-      const { data: existing } = await supabase
+      const { data: existing, error: lookupError } = await supabase
         .from("feed_reactions")
         .select("id")
         .eq("post_id", input.post_id)
         .eq("user_id", input.user_id)
         .eq("reaction_type", input.reaction_type)
         .maybeSingle();
+      if (lookupError) throw lookupError;
 
       if (existing) {
-        await supabase.from("feed_reactions").delete().eq("id", existing.id);
+        const { error } = await supabase.from("feed_reactions").delete().eq("id", existing.id);
+        if (error) throw error;
         return { removed: true };
       } else {
-        await supabase.from("feed_reactions").insert(input);
+        const { error } = await supabase.from("feed_reactions").insert(input);
+        if (error) throw error;
         return { removed: false };
       }
     },
+    onError: () => toast.error("Não foi possível atualizar a reação", "Tente novamente."),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["feed"] }),
   });
 }
@@ -56,6 +61,7 @@ export function useCreateComment() {
       if (error) throw error;
       return data;
     },
+    onError: () => toast.error("Comentário não enviado", "Seu texto foi mantido. Tente novamente."),
     onSuccess: (_, vars) => {
       queryClient.invalidateQueries({ queryKey: ["feed", "comments", vars.post_id] });
       queryClient.invalidateQueries({ queryKey: ["feed", "posts"] });

@@ -12,6 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../lib/auth/provider";
 import { supabase } from "../../lib/supabase/client";
+import { FEED_MEDIA_REFRESH_MS, resolveFeedMedia } from "../../lib/supabase/feedMedia";
 import { FeedPost } from "../../components/social/FeedPost";
 import { WebContainer } from "../../components/layout/WebContainer";
 import { Avatar } from "../../components/ui/Avatar";
@@ -38,7 +39,7 @@ export default function GroupDetailScreen() {
   });
 
   const { data: posts, isLoading: postsLoading } = useQuery({
-    queryKey: ["feed", "group", groupId],
+    queryKey: ["feed", "group", groupId, user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("feed_posts")
@@ -47,9 +48,10 @@ export default function GroupDetailScreen() {
         .order("created_at", { ascending: false })
         .limit(50);
       if (error) throw error;
-      return data;
+      return resolveFeedMedia(data ?? []);
     },
-    enabled: !!groupId,
+    enabled: !!groupId && !!user,
+    refetchInterval: FEED_MEDIA_REFRESH_MS,
   });
 
   const { data: members } = useQuery({
