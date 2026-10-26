@@ -14,6 +14,7 @@ interface CreateChallengeInput {
   require_photo_proof?: boolean;
   team_mode?: boolean;
   pose_verification?: boolean;
+  instagram_url?: string | null;
 }
 
 export function useCreateChallenge() {

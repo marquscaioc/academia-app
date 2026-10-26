@@ -1,5 +1,5 @@
 import { useLocalSearchParams, router } from "expo-router";
-import { ActivityIndicator, Modal, Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Linking, Modal, Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -28,6 +28,7 @@ import { DisplayHeading } from "../../components/ui/DisplayHeading";
 import { LoadingScreen } from "../../components/ui/LoadingScreen";
 import { shareLeaderboardCard } from "../../lib/utils/generateLeaderboardCard";
 import { readUploadBody } from "../../lib/supabase/uploadBody";
+import { normalizeInstagramLink } from "../../lib/utils/instagram";
 import { supabase } from "../../lib/supabase/client";
 import { font, surfaceShadow } from "../../lib/design/tokens";
 import { useState } from "react";
@@ -205,6 +206,22 @@ export default function ChallengeDetailScreen() {
 
           {challenge.description ? (
             <Text className="text-sm text-text-muted mb-4" style={{ fontFamily: font.regular }}>{challenge.description}</Text>
+          ) : null}
+
+          {challenge.instagram_url ? (
+            <Pressable
+              onPress={() => {
+                // Re-check the stored value before leaving the app; the DB constraint is the primary guard.
+                const link = normalizeInstagramLink(challenge.instagram_url ?? "");
+                if (!("url" in link) || !link.url) return;
+                Linking.openURL(link.url).catch(() => toast.error("Não foi possível abrir o Instagram", "Tente novamente."));
+              }}
+              accessibilityRole="link"
+              className="flex-row items-center justify-center gap-2 border border-violet-500/30 bg-violet-500/10 rounded-2xl py-3 mb-5"
+            >
+              <AppIcon name="external" size={16} color="#9B40D8" strokeWidth={2} />
+              <Text className="text-violet-400 text-sm" style={{ fontFamily: font.semibold }}>Ver no Instagram</Text>
+            </Pressable>
           ) : null}
 
           {/* Stats */}

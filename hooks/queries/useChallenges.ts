@@ -18,6 +18,7 @@ export interface Challenge {
   require_photo_proof: boolean;
   team_mode: boolean;
   pose_verification: boolean;
+  instagram_url: string | null;
   status: "upcoming" | "active" | "ended";
   created_at: string;
   participant_count?: number;
