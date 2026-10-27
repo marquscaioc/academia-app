@@ -28,8 +28,9 @@ export default function Index() {
 
   if (isLoading) return loader;
 
+  // Visitors see the presentation page first; it links to register and login.
   if (!session) {
-    return <Redirect href="/(auth)/login" />;
+    return <Redirect href="/bem-vindo" />;
   }
 
   // Session present but the profile hasn't resolved yet — right after login the

@@ -8,6 +8,7 @@ import { useCreateChallenge } from "../../hooks/mutations/useChallengeMutations"
 import { AppIcon } from "../../components/ui";
 import { WebContainer } from "../../components/layout/WebContainer";
 import { font, surfaceShadow } from "../../lib/design/tokens";
+import { normalizeInstagramLink } from "../../lib/utils/instagram";
 
 const scoringModes = [
   { value: "days_active", label: "Dias ativos", desc: "1 ponto por dia que treinar" },
@@ -17,6 +18,14 @@ const scoringModes = [
   { value: "active_minutes", label: "Minutos ativos", desc: "Pontos por minuto de atividade" },
   { value: "custom_points", label: "Hustle Points", desc: "Tabela de pontos customizada" },
 ] as const;
+
+// Ready-made 30-day challenge. Scores habits the app can verify (finished workouts), never body results.
+const PRESET_30_DAYS = {
+  title: "Desafio 30 dias",
+  description: "30 dias de treino e hábitos. Cada treino finalizado no app vale 1 ponto. Acompanhe o ranking e as novidades no nosso Instagram.",
+  scoringMode: "workouts_completed",
+  durationDays: "30",
+};
 
 export default function CreateChallengeScreen() {
   const { user } = useAuth();
@@ -28,7 +37,16 @@ export default function CreateChallengeScreen() {
   const [requirePhoto, setRequirePhoto] = useState(true);
   const [teamMode, setTeamMode] = useState(false);
   const [poseVerification, setPoseVerification] = useState(false);
+  const [instagram, setInstagram] = useState("");
   const [error, setError] = useState("");
+
+  const applyPreset = () => {
+    setTitle(PRESET_30_DAYS.title);
+    setDescription(PRESET_30_DAYS.description);
+    setScoringMode(PRESET_30_DAYS.scoringMode);
+    setDurationDays(PRESET_30_DAYS.durationDays);
+    setError("");
+  };
 
   const handleCreate = async () => {
     if (!title.trim()) {
@@ -36,14 +54,21 @@ export default function CreateChallengeScreen() {
       return;
     }
     if (!user) return;
+    const link = normalizeInstagramLink(instagram);
+    if ("error" in link) {
+      setError(link.error);
+      return;
+    }
 
     setError("");
     const days = parseInt(durationDays) || 30;
     const startsAt = new Date();
     const endsAt = new Date(startsAt.getTime() + days * 24 * 60 * 60 * 1000);
 
-    await createChallenge.mutateAsync({
-      created_by: user.id,
+    let createdId: string;
+    try {
+      const created = await createChallenge.mutateAsync({
+        created_by: user.id,
       title: title.trim(),
       description: description.trim() || undefined,
       scoring_mode: scoringMode as any,
@@ -51,10 +76,17 @@ export default function CreateChallengeScreen() {
       ends_at: endsAt.toISOString(),
       require_photo_proof: requirePhoto,
       team_mode: teamMode,
-      pose_verification: poseVerification,
-    });
+        pose_verification: poseVerification,
+        instagram_url: link.url,
+      });
+      createdId = created.id;
+    } catch {
+      setError("Não foi possível criar o desafio. Verifique os dados e tente novamente.");
+      return;
+    }
 
-    router.back();
+    // Open the new challenge (works also when this screen was opened directly by URL, with no history).
+    router.replace(`/challenges/${createdId}`);
   };
 
   return (
@@ -77,6 +109,18 @@ export default function CreateChallengeScreen() {
         ) : null}
 
         <View className="gap-5">
+          <Pressable
+            onPress={applyPreset}
+            accessibilityRole="button"
+            className="flex-row items-center border border-violet-500/40 bg-violet-500/10 rounded-2xl p-4"
+          >
+            <AppIcon name="calendar-check" size={20} color="#3F3F46" strokeWidth={2} />
+            <View className="flex-1 ml-3">
+              <Text className="text-sm text-violet-400" style={{ fontFamily: font.semibold }}>Usar modelo “Desafio 30 dias”</Text>
+              <Text className="text-xs text-text-muted mt-0.5" style={{ fontFamily: font.regular }}>Preenche título, regras, 30 dias e 1 ponto por treino finalizado</Text>
+            </View>
+          </Pressable>
+
           <View>
             <Text className="text-text-muted mb-2 ml-1 uppercase" style={{ fontFamily: font.semibold, fontSize: 11, letterSpacing: 2 }}>Título *</Text>
             <TextInput
@@ -100,6 +144,23 @@ export default function CreateChallengeScreen() {
               multiline
               style={{ minHeight: 80, textAlignVertical: "top", fontFamily: font.regular }}
             />
+          </View>
+
+          <View>
+            <Text className="text-text-muted mb-2 ml-1 uppercase" style={{ fontFamily: font.semibold, fontSize: 11, letterSpacing: 2 }}>Instagram do desafio</Text>
+            <TextInput
+              className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
+              placeholder="@seuperfil ou link do post"
+              placeholderTextColor="#71717A"
+              value={instagram}
+              onChangeText={setInstagram}
+              autoCapitalize="none"
+              autoCorrect={false}
+              keyboardType="url"
+              accessibilityLabel="Instagram do desafio"
+              style={{ fontFamily: font.regular }}
+            />
+            <Text className="text-xs text-text-muted mt-1.5 ml-1" style={{ fontFamily: font.regular }}>Opcional. Aparece como botão “Ver no Instagram” para os participantes.</Text>
           </View>
 
           <View>

@@ -1,11 +1,10 @@
 // Supabase Edge Function: hydration-reminder
-// Scheduled every 2 hours via pg_cron or external scheduler
+// Scheduled daily via pg_cron (see 00024_cron_edge_functions.sql.template)
 // Sends push to students who haven't logged water recently
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { requireServiceRole } from "../_shared/auth.ts";
-
-const EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send";
+import { type ExpoMessage, sendExpoPush } from "../_shared/expoPush.ts";
 
 Deno.serve(async (req) => {
   const denied = requireServiceRole(req);
@@ -34,7 +33,8 @@ Deno.serve(async (req) => {
       });
     }
 
-    let sentCount = 0;
+    const pushes: ExpoMessage[] = [];
+    const rows: Record<string, unknown>[] = [];
 
     for (const student of students) {
       // Check if student logged water in the last 2 hours
@@ -59,36 +59,31 @@ Deno.serve(async (req) => {
 
       if (remaining <= 0) continue;
 
-      // Send push
-      await fetch(EXPO_PUSH_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          to: student.push_token,
-          title: "Hora de beber agua! 💧",
-          body: `Voce ainda precisa de ${remaining}ml para atingir sua meta de ${student.water_goal_ml}ml.`,
-          data: { type: "hydration_reminder", screen: "diet" },
-          sound: "default",
-        }),
+      pushes.push({
+        to: student.push_token,
+        title: "Hora de beber água! 💧",
+        body: `Você ainda precisa de ${remaining} ml para atingir sua meta de ${student.water_goal_ml} ml.`,
+        data: { type: "hydration_reminder", screen: "diet" },
+        sound: "default",
       });
-
-      // Save notification
-      await supabase.from("notifications").insert({
+      rows.push({
         user_id: student.id,
         type: "hydration_reminder",
-        title: "Hora de beber agua!",
-        body: `Faltam ${remaining}ml para sua meta.`,
+        title: "Hora de beber água!",
+        body: `Faltam ${remaining} ml para sua meta.`,
         is_pushed: true,
       });
-
-      sentCount++;
     }
 
-    return new Response(JSON.stringify({ sent: sentCount }), {
+    if (rows.length) await supabase.from("notifications").insert(rows);
+    const push = await sendExpoPush(supabase, pushes);
+
+    return new Response(JSON.stringify({ sent: push.accepted, failed: push.failed, removed_tokens: push.removedTokens }), {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: String(error) }), {
+    console.error(`hydration-reminder failed: ${String(error)}`);
+    return new Response(JSON.stringify({ error: "internal_error" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });

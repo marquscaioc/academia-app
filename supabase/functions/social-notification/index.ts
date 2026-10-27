@@ -2,15 +2,24 @@
 // Called by the app after a workout is completed. Notifies followers who opted in.
 // The actor is ALWAYS the authenticated caller (JWT) — the request body is ignored,
 // so nobody can send "X just trained" pushes on behalf of another user.
+// Each finished session notifies followers at most once (repeat calls are no-ops).
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { type ExpoMessage, sendExpoPush } from "../_shared/expoPush.ts";
+import { consumeRateLimit } from "../_shared/rateLimit.ts";
 
-const EXPO_PUSH_URL = "https://exp.host/--/api/v2/push/send";
+const CORS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
 
 const json = (body: unknown, status = 200) =>
-  new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } });
+  new Response(JSON.stringify(body), { status, headers: { ...CORS, "Content-Type": "application/json" } });
 
 Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
+  if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
   try {
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
@@ -31,8 +40,15 @@ Deno.serve(async (req) => {
       .select("id")
       .eq("user_id", userId)
       .gte("finished_at", since)
+      .order("finished_at", { ascending: false })
       .limit(1);
     if (!recent?.length) return json({ sent: 0 });
+
+    // One announcement per session. The 1-day window (aligned to UTC midnight; the longest that
+    // consume_rate_limit keeps) covers the 10-minute eligibility unless it straddles midnight UTC.
+    if (!(await consumeRateLimit(supabase, `social:${recent[0].id}`, 1, 24 * 60 * 60))) {
+      return json({ sent: 0, reason: "already_notified" });
+    }
 
     const { data: profile } = await supabase
       .from("profiles")
@@ -46,28 +62,21 @@ Deno.serve(async (req) => {
       .select("follower_id, follower:profiles!follower_id(push_token, notify_follower_workouts)")
       .eq("following_id", userId);
 
-    const messages = (followers ?? [])
+    const messages: ExpoMessage[] = (followers ?? [])
       .map((f) => f.follower as unknown as { push_token: string | null; notify_follower_workouts: boolean } | null)
       .filter((f) => f?.push_token && f.notify_follower_workouts)
       .map((f) => ({
-        to: f!.push_token,
+        to: f!.push_token!,
         title: `${name} acabou de treinar! 💪`,
         body: "Bora treinar também?",
         data: { type: "social_workout", screen: "social" },
-        sound: "default",
+        sound: "default" as const,
       }));
 
-    // Expo accepts up to 100 messages per request.
-    for (let i = 0; i < messages.length; i += 100) {
-      await fetch(EXPO_PUSH_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(messages.slice(i, i + 100)),
-      });
-    }
-
-    return json({ sent: messages.length });
+    const push = await sendExpoPush(supabase, messages);
+    return json({ sent: push.accepted, failed: push.failed });
   } catch (error) {
-    return json({ error: String(error) }, 500);
+    console.error(`social-notification failed: ${String(error)}`);
+    return json({ error: "internal_error" }, 500);
   }
 });
