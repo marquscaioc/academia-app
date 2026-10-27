@@ -58,13 +58,13 @@ export function ChallengeCard({
       </View>
 
       {description ? (
-        <Text className="text-sm text-text-muted mb-3" numberOfLines={2}>
+        <Text className="text-sm text-text-muted mb-3 font-sans" numberOfLines={2}>
           {description}
         </Text>
       ) : null}
 
       <View className="flex-row flex-wrap gap-3">
-        <Text className="text-xs text-text-muted">
+        <Text className="text-xs text-text-muted font-sans">
           {formatDate(startsAt)} - {formatDate(endsAt)}
         </Text>
         <Text className="text-xs text-violet-400 font-bold">
@@ -72,14 +72,14 @@ export function ChallengeCard({
         </Text>
         {requirePhoto ? (
           <View className="flex-row items-center gap-1">
-            <AppIcon name="camera" size={14} color="#6E6382" strokeWidth={2} />
-            <Text className="text-xs text-text-muted">Foto obrigatória</Text>
+            <AppIcon name="camera" size={14} color="#71717A" strokeWidth={2} />
+            <Text className="text-xs text-text-muted font-sans">Foto obrigatória</Text>
           </View>
         ) : null}
       </View>
 
       {creatorName ? (
-        <Text className="text-xs text-text-muted mt-2">por {creatorName}</Text>
+        <Text className="text-xs text-text-muted mt-2 font-sans">por {creatorName}</Text>
       ) : null}
     </Pressable>
   );

@@ -3,11 +3,11 @@ import { TimelineEvent } from "../../hooks/queries/useStudentTimeline";
 import { AppIcon, type IconName } from "../ui";
 
 const typeConfig: Record<string, { icon: IconName; color: string; iconColor: string }> = {
-  workout: { icon: "workout", color: "bg-violet-500/15", iconColor: "#8B5CF6" },
-  checkin: { icon: "clipboard", color: "bg-ice-400/15", iconColor: "#38BDF8" },
-  measurement: { icon: "ruler", color: "bg-success-500/15", iconColor: "#22C55E" },
-  photo: { icon: "camera", color: "bg-warning-500/15", iconColor: "#F59E0B" },
-  note: { icon: "notebook", color: "bg-fuchsia-400/15", iconColor: "#E879F9" },
+  workout: { icon: "workout", color: "bg-violet-500/15", iconColor: "#52525B" },
+  checkin: { icon: "clipboard", color: "bg-ice-400/15", iconColor: "#52525B" },
+  measurement: { icon: "ruler", color: "bg-success-500/15", iconColor: "#52525B" },
+  photo: { icon: "camera", color: "bg-warning-500/15", iconColor: "#52525B" },
+  note: { icon: "notebook", color: "bg-fuchsia-400/15", iconColor: "#52525B" },
 };
 
 interface TimelineItemProps {
@@ -41,9 +41,9 @@ export function TimelineItem({ event, onPress }: TimelineItemProps) {
       >
         <Text className="text-sm font-bold text-text-primary">{event.title}</Text>
         {event.subtitle ? (
-          <Text className="text-xs text-text-muted mt-0.5">{event.subtitle}</Text>
+          <Text className="text-xs text-text-muted mt-0.5 font-sans">{event.subtitle}</Text>
         ) : null}
-        <Text className="text-[10px] text-text-muted mt-1">{date}</Text>
+        <Text className="text-[10px] text-text-muted mt-1 font-sans">{date}</Text>
       </Pressable>
     </View>
   );

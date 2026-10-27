@@ -148,7 +148,7 @@ export default function DietScreen() {
   if (isLoading) {
     return (
       <SafeAreaView className="flex-1 bg-dark-400 items-center justify-center">
-        <ActivityIndicator size="large" color="#9B40D8" />
+        <ActivityIndicator size="large" color="#3F3F46" />
         <Text className="text-text-muted text-sm mt-3" style={{ fontFamily: font.regular }}>Carregando dieta…</Text>
       </SafeAreaView>
     );
@@ -157,7 +157,7 @@ export default function DietScreen() {
   if (isError) {
     return (
       <SafeAreaView className="flex-1 bg-dark-400 items-center justify-center px-8">
-        <AppIcon name="warning" size={32} color="#FB7185" strokeWidth={1.5} />
+        <AppIcon name="warning" size={32} color="#3F3F46" strokeWidth={1.5} />
         <Text className="text-text-primary text-base mt-3 mb-1 text-center" style={{ fontFamily: font.semibold }}>
           Erro ao carregar dieta
         </Text>
@@ -223,10 +223,10 @@ export default function DietScreen() {
         <SectionLabel className="mb-2.5">Consumido hoje</SectionLabel>
         <Card variant="outlined" className="mb-6 gap-3 py-4">
           {[
-            { label: "Calorias", consumed: consumedCal,  goal: metaCal,  unit: "kcal", color: "#9B40D8", textColor: "text-violet-400" },
-            { label: "Proteína", consumed: consumedProt, goal: metaProt, unit: "g",    color: "#A78BFA", textColor: "text-violet-300" },
-            { label: "Carbos",   consumed: consumedCarb, goal: metaCarb, unit: "g",    color: "#67E8F9", textColor: "text-cyan-300"   },
-            { label: "Gordura",  consumed: consumedFat,  goal: metaFat,  unit: "g",    color: "#FCD34D", textColor: "text-warning-400"},
+            { label: "Calorias", consumed: consumedCal,  goal: metaCal,  unit: "kcal", color: "#3F3F46", textColor: "text-violet-400" },
+            { label: "Proteína", consumed: consumedProt, goal: metaProt, unit: "g",    color: "#52525B", textColor: "text-violet-300" },
+            { label: "Carbos",   consumed: consumedCarb, goal: metaCarb, unit: "g",    color: "#52525B", textColor: "text-cyan-300"   },
+            { label: "Gordura",  consumed: consumedFat,  goal: metaFat,  unit: "g",    color: "#71717A", textColor: "text-warning-400"},
           ].map(({ label, consumed, goal, unit, color, textColor }) => {
             const pct = goal > 0 ? Math.min((consumed / goal) * 100, 100) : 0;
             return (
@@ -281,7 +281,7 @@ export default function DietScreen() {
           onPress={handleLogWater}
           className="bg-blue-500/10 rounded-2xl py-3.5 items-center mb-6 active:bg-blue-500/20 flex-row justify-center gap-2"
         >
-          <AppIcon name="water" size={18} color="#60A5FA" strokeWidth={2} />
+          <AppIcon name="water" size={18} color="#71717A" strokeWidth={2} />
           <Text className="text-blue-400 text-sm" style={{ fontFamily: font.semibold }}>+ 250ml de água</Text>
         </Pressable>
 
@@ -290,10 +290,10 @@ export default function DietScreen() {
           onPress={() => router.push("/(student)/(diet)/recipes" as never)}
           className="bg-violet-500/10 border border-violet-500/20 rounded-2xl py-3.5 items-center mb-6 active:bg-violet-500/20 flex-row justify-center gap-2"
         >
-          <AppIcon name="food" size={18} color="#9B40D8" strokeWidth={2} />
+          <AppIcon name="food" size={18} color="#3F3F46" strokeWidth={2} />
           <Text className="text-violet-400 text-sm" style={{ fontFamily: font.semibold }}>Receitas Fitness</Text>
           <View className="flex-1" />
-          <AppIcon name="chevron-right" size={18} color="#9B40D8" strokeWidth={2} />
+          <AppIcon name="chevron-right" size={18} color="#3F3F46" strokeWidth={2} />
         </Pressable>
 
         {/* Meals */}
@@ -306,7 +306,7 @@ export default function DietScreen() {
                 key={meal.id}
                 onPress={() => handleLogMeal(meal.id)}
                 disabled={isLogged}
-                className={`grow basis-[360px] border rounded-3xl p-4 ${
+                className={`grow shrink basis-[360px] border rounded-3xl p-4 ${
                   isLogged ? "bg-success-500/5 border-success-500/30" : "bg-surface-card border-surface-border active:bg-surface-hover"
                 }`}
               >
@@ -355,7 +355,7 @@ export default function DietScreen() {
           <View className="flex-row items-center justify-between mb-3">
             <DisplayHeading size="sm">Registro livre</DisplayHeading>
             <Pressable onPress={() => setShowAddFood(true)} className="bg-violet-500/10 px-3 py-1.5 rounded-full flex-row items-center gap-1">
-              <AppIcon name="plus" size={14} color="#9B40D8" strokeWidth={2.5} />
+              <AppIcon name="plus" size={14} color="#3F3F46" strokeWidth={2.5} />
               <Text className="text-violet-400 text-xs" style={{ fontFamily: font.bold }}>Alimento</Text>
             </Pressable>
           </View>
@@ -366,7 +366,7 @@ export default function DietScreen() {
               {foodLogs.map((f) => (
                 <View key={f.id} className="bg-surface-card border border-surface-border rounded-2xl p-3 flex-row items-center gap-3">
                   <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
-                    <AppIcon name="apple" size={18} color="#9B40D8" strokeWidth={2} />
+                    <AppIcon name="apple" size={18} color="#3F3F46" strokeWidth={2} />
                   </View>
                   <View className="flex-1">
                     <Text className="text-sm text-text-primary" style={{ fontFamily: font.semibold }}>{f.food_name}</Text>
@@ -375,7 +375,7 @@ export default function DietScreen() {
                     </Text>
                   </View>
                   <Pressable onPress={() => deleteFoodLog.mutate(f.id)} className="w-9 h-9 rounded-xl items-center justify-center active:bg-danger-500/10">
-                    <AppIcon name="trash" size={18} color="#FB7185" strokeWidth={2} />
+                    <AppIcon name="trash" size={18} color="#3F3F46" strokeWidth={2} />
                   </Pressable>
                 </View>
               ))}
@@ -390,7 +390,7 @@ export default function DietScreen() {
           onPress={() => router.push("/sobre-dados" as never)}
           className="flex-row items-center justify-center gap-1.5 py-3 mb-6"
         >
-          <AppIcon name="info" size={13} color="#6E6382" strokeWidth={2} />
+          <AppIcon name="info" size={13} color="#71717A" strokeWidth={2} />
           <Text className="text-[11px] text-text-muted" style={{ fontFamily: font.regular }}>
             Dados: TACO (NEPA/UNICAMP) · Open Food Facts (ODbL)
           </Text>
@@ -417,7 +417,7 @@ export default function DietScreen() {
             <TextInput
               className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary mb-2"
               placeholder="Buscar alimento (TACO) ou digitar"
-              placeholderTextColor="#6E6382"
+              placeholderTextColor="#71717A"
               style={{ fontFamily: font.regular }}
               value={fName}
               onChangeText={(v) => { setFName(v); if (selectedFood && v !== selectedFood.name) setSelectedFood(null); }}
@@ -438,7 +438,7 @@ export default function DietScreen() {
                 <TextInput
                   className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
                   placeholder="100"
-                  placeholderTextColor="#6E6382"
+                  placeholderTextColor="#71717A"
                   style={{ fontFamily: font.regular }}
                   keyboardType="numeric"
                   value={grams}
@@ -447,12 +447,12 @@ export default function DietScreen() {
               </View>
             ) : null}
             <View className="flex-row gap-2 mb-2">
-              <TextInput className="flex-1 bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary" placeholder="Kcal" placeholderTextColor="#6E6382" style={{ fontFamily: font.regular }} keyboardType="numeric" value={fCal} onChangeText={setFCal} />
-              <TextInput className="flex-1 bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary" placeholder="Prot (g)" placeholderTextColor="#6E6382" style={{ fontFamily: font.regular }} keyboardType="numeric" value={fProt} onChangeText={setFProt} />
+              <TextInput className="flex-1 bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary" placeholder="Kcal" placeholderTextColor="#71717A" style={{ fontFamily: font.regular }} keyboardType="numeric" value={fCal} onChangeText={setFCal} />
+              <TextInput className="flex-1 bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary" placeholder="Prot (g)" placeholderTextColor="#71717A" style={{ fontFamily: font.regular }} keyboardType="numeric" value={fProt} onChangeText={setFProt} />
             </View>
             <View className="flex-row gap-2 mb-4">
-              <TextInput className="flex-1 bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary" placeholder="Carb (g)" placeholderTextColor="#6E6382" style={{ fontFamily: font.regular }} keyboardType="numeric" value={fCarb} onChangeText={setFCarb} />
-              <TextInput className="flex-1 bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary" placeholder="Gord (g)" placeholderTextColor="#6E6382" style={{ fontFamily: font.regular }} keyboardType="numeric" value={fFat} onChangeText={setFFat} />
+              <TextInput className="flex-1 bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary" placeholder="Carb (g)" placeholderTextColor="#71717A" style={{ fontFamily: font.regular }} keyboardType="numeric" value={fCarb} onChangeText={setFCarb} />
+              <TextInput className="flex-1 bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary" placeholder="Gord (g)" placeholderTextColor="#71717A" style={{ fontFamily: font.regular }} keyboardType="numeric" value={fFat} onChangeText={setFFat} />
             </View>
             <Pressable onPress={handleAddFood} disabled={!fName.trim() || logFood.isPending} className={`rounded-2xl py-4 items-center ${fName.trim() ? "bg-violet-500" : "bg-surface-border"}`}>
               <Text className={fName.trim() ? "text-white" : "text-text-muted"} style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>{logFood.isPending ? "Salvando..." : "Registrar"}</Text>

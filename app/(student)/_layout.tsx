@@ -45,20 +45,23 @@ function StudentTabs() {
           screenOptions={{
             headerShown: false,
             tabBarActiveTintColor: primaryColor,
-            tabBarInactiveTintColor: "#6E6382",
+            tabBarInactiveTintColor: "#71717A",
             tabBarStyle: hideTabBar
               ? { display: "none" as const }
               : {
-                  backgroundColor: "#14101B",
+                  backgroundColor: "#FFFFFF",
                   borderTopWidth: 1,
-                  borderTopColor: "#2E2740",
+                  borderTopColor: "#E4E4E7",
                   paddingTop: 8,
                   height: 65,
                 },
+            tabBarItemStyle: { paddingHorizontal: 0 },
             tabBarLabelStyle: {
-              fontSize: 10,
+              fontFamily: "Geist_600SemiBold",
+              // Five tabs share ~72px each on a 360px phone; at 10px with tracking "PROGRESSO" was truncated.
+              fontSize: 9,
               fontWeight: "700",
-              letterSpacing: 0.5,
+              letterSpacing: 0,
               textTransform: "uppercase",
             },
           }}

@@ -22,25 +22,25 @@ export function WorkoutSummaryCard({
       </View>
 
       <Text className="text-2xl font-black text-text-primary mb-1">{workoutName}</Text>
-      <Text className="text-xs text-text-muted mb-6">{date}</Text>
+      <Text className="text-xs text-text-muted mb-6 font-sans">{date}</Text>
 
       <View className="flex-row gap-3">
         <View className="flex-1 bg-violet-500/10 rounded-2xl p-3 items-center">
           <Text className="text-lg font-black text-violet-400">{duration}</Text>
-          <Text className="text-[10px] text-text-muted">Duração</Text>
+          <Text className="text-[10px] text-text-muted font-sans">Duração</Text>
         </View>
         <View className="flex-1 bg-ice-400/10 rounded-2xl p-3 items-center">
           <Text className="text-lg font-black text-ice-400">{totalVolume}kg</Text>
-          <Text className="text-[10px] text-text-muted">Volume</Text>
+          <Text className="text-[10px] text-text-muted font-sans">Volume</Text>
         </View>
         <View className="flex-1 bg-success-500/10 rounded-2xl p-3 items-center">
           <Text className="text-lg font-black text-success-500">{setsCompleted}</Text>
-          <Text className="text-[10px] text-text-muted">Séries</Text>
+          <Text className="text-[10px] text-text-muted font-sans">Séries</Text>
         </View>
       </View>
 
       <View className="mt-4 items-center">
-        <Text className="text-[10px] text-text-muted">{exerciseCount} {exerciseCount === 1 ? "exercício" : "exercícios"}</Text>
+        <Text className="text-[10px] text-text-muted font-sans">{exerciseCount} {exerciseCount === 1 ? "exercício" : "exercícios"}</Text>
       </View>
     </View>
   );

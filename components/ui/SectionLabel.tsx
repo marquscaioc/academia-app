@@ -13,19 +13,19 @@ const TONE_MAP: Record<NonNullable<Props["tone"]>, string> = {
   primary: "text-text-secondary",
 };
 
-const LABEL_STYLE = { fontFamily: font.semibold, letterSpacing: 2.5 } as const;
+const LABEL_STYLE = { fontFamily: font.semibold, letterSpacing: 0.9 } as const;
 
 export function SectionLabel({ children, tone = "muted", withRule = false, className, style, ...rest }: Props) {
   if (!withRule) {
     return (
-      <Text className={`text-[10px] uppercase ${TONE_MAP[tone]} ${className ?? ""}`} style={[LABEL_STYLE, style]} {...rest}>
+      <Text className={`text-[11px] uppercase ${TONE_MAP[tone]} ${className ?? ""}`} style={[LABEL_STYLE, style]} {...rest}>
         {children}
       </Text>
     );
   }
   return (
     <View className="flex-row items-center gap-3">
-      <Text className={`text-[10px] uppercase ${TONE_MAP[tone]}`} style={LABEL_STYLE}>
+      <Text className={`text-[11px] uppercase ${TONE_MAP[tone]}`} style={LABEL_STYLE}>
         {children}
       </Text>
       <View className="flex-1 h-px bg-surface-border" />

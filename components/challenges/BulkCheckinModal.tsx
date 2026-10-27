@@ -45,11 +45,11 @@ export function BulkCheckinModal({ visible, rules, onSubmit, onClose }: BulkChec
           <View className="flex-row items-center justify-between mb-5">
             <Text className="text-lg font-black text-text-primary">Registrar Atividades</Text>
             <Pressable onPress={onClose}>
-              <AppIcon name="close" size={18} color="#6E6382" strokeWidth={2} />
+              <AppIcon name="close" size={18} color="#71717A" strokeWidth={2} />
             </Pressable>
           </View>
 
-          <Text className="text-xs text-text-muted mb-4">
+          <Text className="text-xs text-text-muted mb-4 font-sans">
             Selecione todas as atividades realizadas hoje:
           </Text>
 
@@ -70,7 +70,7 @@ export function BulkCheckinModal({ visible, rules, onSubmit, onClose }: BulkChec
                       <AppIcon name="check" size={14} color="#FFFFFF" strokeWidth={3} />
                     ) : null}
                   </View>
-                  <AppIcon name={activityIcons[rule.activity_type] ?? "star"} size={20} color="#6E6382" strokeWidth={2} />
+                  <AppIcon name={activityIcons[rule.activity_type] ?? "star"} size={20} color="#71717A" strokeWidth={2} />
                   <Text className={`text-sm font-bold ${selected.has(rule.id) ? "text-violet-400" : "text-text-primary"}`}>
                     {rule.label}
                   </Text>
@@ -81,7 +81,7 @@ export function BulkCheckinModal({ visible, rules, onSubmit, onClose }: BulkChec
           </ScrollView>
 
           <View className="flex-row items-center justify-between mb-4">
-            <Text className="text-sm text-text-muted">Total</Text>
+            <Text className="text-sm text-text-muted font-sans">Total</Text>
             <Text className="text-lg font-black text-violet-400">+{totalPoints} pts</Text>
           </View>
 

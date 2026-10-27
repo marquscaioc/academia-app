@@ -19,9 +19,9 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
   return (
     <View className="flex-row items-end gap-2 px-4 py-3 border-t border-surface-border bg-dark-300">
       <TextInput
-        className="flex-1 bg-surface-card border border-surface-border rounded-2xl px-4 py-3 text-sm text-text-primary max-h-24"
+        className="flex-1 bg-surface-card border border-surface-border rounded-2xl px-4 py-3 text-sm text-text-primary max-h-24 font-sans"
         placeholder="Mensagem..."
-        placeholderTextColor="#6E6580"
+        placeholderTextColor="#71717A"
         value={text}
         onChangeText={setText}
         multiline
@@ -34,7 +34,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
           text.trim() ? "bg-violet-500 active:bg-violet-600" : "bg-surface-border"
         }`}
       >
-        <Text className={`text-lg ${text.trim() ? "text-white" : "text-text-muted"}`}>↑</Text>
+        <Text className={`text-lg ${text.trim() ? "text-white" : "text-text-muted"}`} style={{ fontFamily: "Geist_400Regular" }}>↑</Text>
       </Pressable>
     </View>
   );

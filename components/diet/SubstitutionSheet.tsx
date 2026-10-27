@@ -26,15 +26,15 @@ export function SubstitutionSheet({
           <View className="flex-row items-center justify-between mb-5">
             <Text className="text-lg font-black text-text-primary">Substituições</Text>
             <Pressable onPress={onClose}>
-              <AppIcon name="close" size={20} color="#6E6382" strokeWidth={2} />
+              <AppIcon name="close" size={20} color="#71717A" strokeWidth={2} />
             </Pressable>
           </View>
 
           <View className="bg-surface-card rounded-2xl p-4 mb-4">
-            <Text className="text-xs text-text-muted uppercase mb-1">Original</Text>
+            <Text className="text-xs text-text-muted uppercase mb-1 font-sans">Original</Text>
             <Text className="text-sm font-bold text-text-primary">{originalName}</Text>
             {originalCalories ? (
-              <Text className="text-xs text-text-muted mt-1">
+              <Text className="text-xs text-text-muted mt-1 font-sans">
                 {originalCalories} kcal | {originalProtein ?? 0}g prot
               </Text>
             ) : null}
@@ -42,7 +42,7 @@ export function SubstitutionSheet({
 
           {!subs || subs.length === 0 ? (
             <View className="items-center py-8">
-              <Text className="text-text-muted text-sm">Nenhuma substituição disponível</Text>
+              <Text className="text-text-muted text-sm font-sans">Nenhuma substituição disponível</Text>
             </View>
           ) : (
             <ScrollView className="gap-3">
@@ -54,24 +54,24 @@ export function SubstitutionSheet({
                 >
                   <Text className="text-sm font-bold text-text-primary">{sub.substitute_food_name}</Text>
                   <View className="flex-row gap-3 mt-2">
-                    <Text className="text-xs text-text-muted">
+                    <Text className="text-xs text-text-muted font-sans">
                       {sub.substitute_quantity}{sub.substitute_unit}
                     </Text>
-                    <Text className="text-xs text-violet-400">
+                    <Text className="text-xs text-violet-400 font-sans">
                       {sub.substitute_calories} kcal
                     </Text>
-                    <Text className="text-xs text-text-muted">
+                    <Text className="text-xs text-text-muted font-sans">
                       P: {sub.substitute_protein_g}g
                     </Text>
-                    <Text className="text-xs text-text-muted">
+                    <Text className="text-xs text-text-muted font-sans">
                       C: {sub.substitute_carbs_g}g
                     </Text>
-                    <Text className="text-xs text-text-muted">
+                    <Text className="text-xs text-text-muted font-sans">
                       G: {sub.substitute_fat_g}g
                     </Text>
                   </View>
                   {sub.notes ? (
-                    <Text className="text-xs text-text-muted mt-2 italic">{sub.notes}</Text>
+                    <Text className="text-xs text-text-muted mt-2 italic font-sans">{sub.notes}</Text>
                   ) : null}
                 </Pressable>
               ))}

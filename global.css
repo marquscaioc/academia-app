@@ -1,3 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html, body {
+    background-color: #f7f7f8;
+    color: #202024;
+    font-family: "Geist_400Regular", "Geist", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  :focus-visible {
+    outline: 2px solid #71717a;
+    outline-offset: 3px;
+  }
+  ::selection { background-color: #e4e4e7; color: #18181b; }
+}

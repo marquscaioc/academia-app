@@ -11,7 +11,7 @@ interface BrandingContextType {
 
 const BrandingContext = createContext<BrandingContextType>({
   brand: null,
-  primaryColor: "#781BB6",
+  primaryColor: "#27272A",
   brandName: null,
   logoUrl: null,
 });
@@ -24,7 +24,7 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
     <BrandingContext.Provider
       value={{
         brand: brand ?? null,
-        primaryColor: brand?.brandPrimaryColor ?? "#781BB6",
+        primaryColor: "#27272A",
         brandName: brand?.brandName ?? null,
         logoUrl: brand?.brandLogoUrl ?? null,
       }}

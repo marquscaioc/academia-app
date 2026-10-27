@@ -48,7 +48,7 @@ export function PhotoCaptureModal({
               <Text className="text-white font-bold">Permitir Câmera</Text>
             </Pressable>
             <Pressable onPress={onClose} className="mt-4">
-              <Text className="text-text-muted">Cancelar</Text>
+              <Text className="text-text-muted font-sans">Cancelar</Text>
             </Pressable>
           </View>
         ) : capturedUri ? (
@@ -70,7 +70,7 @@ export function PhotoCaptureModal({
               {poseVerification && poseEmoji ? (
                 <View className="absolute top-20 left-0 right-0 items-center">
                   <View className="bg-black/70 rounded-2xl px-6 py-4 items-center">
-                    <Text className="text-4xl mb-2">{poseEmoji}</Text>
+                    <Text className="text-4xl mb-2 font-sans">{poseEmoji}</Text>
                     <Text className="text-white font-bold text-sm text-center">
                       Pose do dia: {poseDescription}
                     </Text>

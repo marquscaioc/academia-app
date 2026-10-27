@@ -39,7 +39,7 @@ export function PointRuleSelector({ rules, selectedRuleId, onSelect }: PointRule
             <AppIcon
               name={activityIcons[rule.activity_type] ?? "star"}
               size={22}
-              color={selectedRuleId === rule.id ? "#A78BFA" : "#6E6382"}
+              color={selectedRuleId === rule.id ? "#52525B" : "#71717A"}
               strokeWidth={2}
             />
             <View>
@@ -47,7 +47,7 @@ export function PointRuleSelector({ rules, selectedRuleId, onSelect }: PointRule
                 {rule.label}
               </Text>
               {rule.max_per_day ? (
-                <Text className="text-[10px] text-text-muted">Max {rule.max_per_day}x/dia</Text>
+                <Text className="text-[10px] text-text-muted font-sans">Max {rule.max_per_day}x/dia</Text>
               ) : null}
             </View>
           </View>

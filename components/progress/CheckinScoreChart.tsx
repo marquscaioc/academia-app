@@ -35,7 +35,7 @@ export function CheckinScoreChart({ data, height = 120 }: CheckinScoreChartProps
       <View className="flex-row mt-1">
         {data.map((d, idx) => (
           <View key={idx} className="flex-1 items-center">
-            <Text className="text-[8px] text-text-muted">{d.weekLabel}</Text>
+            <Text className="text-[8px] text-text-muted font-sans">{d.weekLabel}</Text>
           </View>
         ))}
       </View>

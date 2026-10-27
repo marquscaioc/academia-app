@@ -54,7 +54,7 @@ export default function CheckInResponsesScreen() {
       <View className="flex-1">
         <View className="flex-row items-center justify-between px-6 pt-6 pb-4">
           <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5">
-            <AppIcon name="arrow-left" size={18} color="#6E6382" strokeWidth={2} />
+            <AppIcon name="arrow-left" size={18} color="#71717A" strokeWidth={2} />
             <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>Voltar</Text>
           </Pressable>
           <Text className="text-2xl text-text-primary" style={{ fontFamily: font.display }}>Respostas.</Text>
@@ -63,12 +63,12 @@ export default function CheckInResponsesScreen() {
 
         {isLoading ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" color="#781BB6" />
+            <ActivityIndicator size="large" color="#27272A" />
           </View>
         ) : !checkIns?.length ? (
           <View className="flex-1 items-center justify-center px-8">
             <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
-              <AppIcon name="clipboard" size={28} color="#9B40D8" strokeWidth={2} />
+              <AppIcon name="clipboard" size={28} color="#3F3F46" strokeWidth={2} />
             </View>
             <Text className="text-xl text-text-primary" style={{ fontFamily: font.display }}>Nenhuma resposta</Text>
             <Text className="text-sm text-text-muted text-center mt-2" style={{ fontFamily: font.regular }}>
@@ -136,7 +136,7 @@ export default function CheckInResponsesScreen() {
                       <TextInput
                         className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
                         placeholder="Feedback para o aluno (opcional)"
-                        placeholderTextColor="#6E6382"
+                        placeholderTextColor="#71717A"
                         value={notes[item.id] ?? ""}
                         onChangeText={(t) => setNotes((n) => ({ ...n, [item.id]: t }))}
                         multiline
@@ -154,7 +154,7 @@ export default function CheckInResponsesScreen() {
                   ) : item.status === "reviewed" && item.trainer_notes ? (
                     <View className="mt-3 bg-success-500/5 border border-success-500/20 rounded-2xl p-3">
                       <View className="flex-row items-center gap-1.5 mb-1">
-                        <AppIcon name="message" size={14} color="#34D399" strokeWidth={2} />
+                        <AppIcon name="message" size={14} color="#52525B" strokeWidth={2} />
                         <Text className="text-[10px] text-success-500 uppercase" style={{ fontFamily: font.semibold, letterSpacing: 1.5 }}>Feedback do coach</Text>
                       </View>
                       <Text className="text-sm text-text-secondary" style={{ fontFamily: font.regular }}>{item.trainer_notes}</Text>
@@ -163,7 +163,7 @@ export default function CheckInResponsesScreen() {
 
                   {/* Date */}
                   <View className="flex-row items-center gap-1.5 mt-3">
-                    <AppIcon name="calendar" size={14} color="#6E6382" strokeWidth={2} />
+                    <AppIcon name="calendar" size={14} color="#71717A" strokeWidth={2} />
                     <Text className="text-[10px] text-text-muted" style={{ fontFamily: font.regular }}>
                       {item.submitted_at
                         ? `Respondido em ${new Date(item.submitted_at).toLocaleDateString("pt-BR")}`

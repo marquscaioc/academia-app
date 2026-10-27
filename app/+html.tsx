@@ -16,15 +16,15 @@ export default function Root({ children }: PropsWithChildren) {
           content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover"
         />
 
-        <title>Projeto Gaab — Treino e dieta com seu personal</title>
+        <title>Projeto Academia — Treino e dieta com seu personal</title>
         <meta
           name="description"
           content="Plataforma para personal trainers e nutricionistas acompanharem alunos: treinos, dietas, check-ins, desafios e progresso em um só lugar."
         />
-        <meta name="theme-color" content="#0B0811" />
+        <meta name="theme-color" content="#F7F7F8" />
 
         {/* Open Graph / social preview */}
-        <meta property="og:title" content="Projeto Gaab — Treino e dieta com seu personal" />
+        <meta property="og:title" content="Projeto Academia — Treino e dieta com seu personal" />
         <meta
           property="og:description"
           content="Treinos, dietas, check-ins e progresso com seu personal trainer."
@@ -34,7 +34,7 @@ export default function Root({ children }: PropsWithChildren) {
         {/* Disable body scrolling on web so ScrollView components work as expected. */}
         <ScrollViewStyleReset />
 
-        {/* Dark background everywhere to avoid a white flash before React mounts. */}
+        {/* Light background matches the application before React mounts. */}
         <style dangerouslySetInnerHTML={{ __html: responsiveBackground }} />
       </head>
       <body>{children}</body>
@@ -43,10 +43,7 @@ export default function Root({ children }: PropsWithChildren) {
 }
 
 const responsiveBackground = `
-html, body { background-color: #0B0811; }
-@media (prefers-color-scheme: light) {
-  html, body { background-color: #0B0811; }
-}
+html, body { background-color: #F7F7F8; color-scheme: light; }
 /* Smooth font rendering on desktop browsers */
 * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 `;

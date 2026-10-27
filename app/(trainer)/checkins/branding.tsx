@@ -7,16 +7,13 @@ import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
 import { useAuth } from "../../../lib/auth/provider";
 import { supabase } from "../../../lib/supabase/client";
-import { font, amethystGlow } from "../../../lib/design/tokens";
+import { font, surfaceShadow } from "../../../lib/design/tokens";
 import { AppIcon } from "../../../components/ui";
 
 const colorPresets = [
-  { name: "Limao", primary: "#781BB6", secondary: "#00E5FF" },
-  { name: "Roxo", primary: "#8B5CF6", secondary: "#EC4899" },
-  { name: "Azul", primary: "#3B82F6", secondary: "#06B6D4" },
-  { name: "Laranja", primary: "#F97316", secondary: "#EAB308" },
-  { name: "Vermelho", primary: "#EF4444", secondary: "#F97316" },
-  { name: "Verde", primary: "#22C55E", secondary: "#14B8A6" },
+  { name: "Grafite", primary: "#27272A", secondary: "#71717A" },
+  { name: "Carvão", primary: "#3F3F46", secondary: "#A1A1AA" },
+  { name: "Cinza", primary: "#52525B", secondary: "#D4D4D8" },
 ];
 
 export default function BrandingScreen() {
@@ -78,15 +75,15 @@ export default function BrandingScreen() {
       <ScrollView className="flex-1 px-6 pt-6" keyboardShouldPersistTaps="handled">
         <View className="flex-row items-center justify-between mb-6">
           <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5 active:opacity-70">
-            <AppIcon name="arrow-left" size={16} color="#6E6382" strokeWidth={2} />
+            <AppIcon name="arrow-left" size={16} color="#71717A" strokeWidth={2} />
             <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>Voltar</Text>
           </Pressable>
-          <Text className="text-2xl text-text-primary" style={{ fontFamily: font.display }}>Portal branded.</Text>
+          <Text className="text-2xl text-text-primary" style={{ fontFamily: font.display }}>Perfil profissional</Text>
           <View className="w-16" />
         </View>
 
         <View className="bg-surface-card border border-surface-border rounded-3xl p-5 mb-6">
-          <Text className="text-violet-400 uppercase mb-2" style={{ fontFamily: font.semibold, fontSize: 10, letterSpacing: 2 }}>Preview</Text>
+          <Text className="text-violet-400 uppercase mb-2" style={{ fontFamily: font.semibold, fontSize: 10, letterSpacing: 2 }}>Prévia</Text>
           <View className="items-center py-6" style={{ backgroundColor: colorPresets[selectedPreset].primary + "10", borderRadius: 16 }}>
             {logoUri ? (
               <Image source={{ uri: logoUri }} style={{ width: 64, height: 64, borderRadius: 16 }} contentFit="cover" className="mb-3" />
@@ -101,7 +98,7 @@ export default function BrandingScreen() {
               </View>
             )}
             <Text className="text-xl text-text-primary" style={{ fontFamily: font.display }}>
-              {brandName || "Seu Brand"}
+              {brandName || "Seu nome profissional"}
             </Text>
             {tagline ? <Text className="text-xs text-text-muted mt-1" style={{ fontFamily: font.regular }}>{tagline}</Text> : null}
             {cref ? <Text className="text-xs text-text-muted mt-0.5" style={{ fontFamily: font.regular }}>CREF: {cref}</Text> : null}
@@ -110,11 +107,11 @@ export default function BrandingScreen() {
 
         <View className="gap-5">
           <View>
-            <Text className="text-text-muted mb-2 ml-1 uppercase" style={{ fontFamily: font.semibold, fontSize: 10, letterSpacing: 2 }}>Nome do seu negocio</Text>
+            <Text className="text-text-muted mb-2 ml-1 uppercase" style={{ fontFamily: font.semibold, fontSize: 10, letterSpacing: 2 }}>Nome profissional</Text>
             <TextInput
               className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
               placeholder="Ex: Fitness Pro, Coach Silva..."
-              placeholderTextColor="#6E6382"
+              placeholderTextColor="#71717A"
               value={brandName}
               onChangeText={setBrandName}
               style={{ fontFamily: font.regular }}
@@ -126,7 +123,7 @@ export default function BrandingScreen() {
             <TextInput
               className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
               placeholder="Ex: Transformando vidas atraves do treino"
-              placeholderTextColor="#6E6382"
+              placeholderTextColor="#71717A"
               value={tagline}
               onChangeText={setTagline}
               style={{ fontFamily: font.regular }}
@@ -140,14 +137,14 @@ export default function BrandingScreen() {
                 <View className="items-center">
                   <Image source={{ uri: logoUri }} style={{ width: 48, height: 48, borderRadius: 12 }} contentFit="cover" />
                   <View className="flex-row items-center gap-1.5 mt-2">
-                    <AppIcon name="refresh" size={14} color="#9B40D8" strokeWidth={2} />
+                    <AppIcon name="refresh" size={14} color="#3F3F46" strokeWidth={2} />
                     <Text className="text-xs text-violet-400" style={{ fontFamily: font.semibold }}>Trocar logo</Text>
                   </View>
                 </View>
               ) : (
                 <View className="items-center">
                   <View className="w-12 h-12 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-2">
-                    <AppIcon name="image" size={20} color="#9B40D8" strokeWidth={2} />
+                    <AppIcon name="image" size={20} color="#3F3F46" strokeWidth={2} />
                   </View>
                   <Text className="text-xs text-text-muted" style={{ fontFamily: font.semibold }}>Adicionar logo</Text>
                 </View>
@@ -160,7 +157,7 @@ export default function BrandingScreen() {
             <TextInput
               className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
               placeholder="000000-G/SP"
-              placeholderTextColor="#6E6382"
+              placeholderTextColor="#71717A"
               value={cref}
               onChangeText={setCref}
               style={{ fontFamily: font.regular }}
@@ -185,7 +182,7 @@ export default function BrandingScreen() {
                   </View>
                   <View className="flex-row items-center gap-1">
                     {selectedPreset === idx ? (
-                      <AppIcon name="check-circle" size={12} color="#9B40D8" strokeWidth={2} />
+                      <AppIcon name="check-circle" size={12} color="#3F3F46" strokeWidth={2} />
                     ) : null}
                     <Text className="text-[10px] text-text-muted" style={{ fontFamily: font.semibold }}>{preset.name}</Text>
                   </View>
@@ -198,10 +195,10 @@ export default function BrandingScreen() {
             onPress={handleSave}
             disabled={saving}
             className="rounded-2xl overflow-hidden mt-4 mb-10"
-            style={amethystGlow}
+            style={surfaceShadow}
           >
             <LinearGradient
-              colors={saving ? ["#50107D", "#86169E"] : ["#781BB6", "#C636E0"]}
+              colors={saving ? ["#18181B", "#3F3F46"] : ["#27272A", "#27272A"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0.9 }}
               style={{ paddingVertical: 18, alignItems: "center" }}
@@ -211,7 +208,7 @@ export default function BrandingScreen() {
               ) : (
                 <View className="flex-row items-center gap-2">
                   <AppIcon name="sparkles" size={18} color="#FFFFFF" strokeWidth={2} />
-                  <Text className="text-white text-base" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Salvar branding</Text>
+                  <Text className="text-white text-base" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Salvar perfil</Text>
                 </View>
               )}
             </LinearGradient>

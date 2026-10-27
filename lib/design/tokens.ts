@@ -1,61 +1,31 @@
-// Editorial Amethyst — shared design tokens.
-// Use `font.*` for inline `style={{ fontFamily }}`; className font utilities
-// (font-display, font-bold, etc.) map to the same families via tailwind.config.
-
+// Projeto Academia — one type family, neutral surfaces and restrained contrast.
 export const font = {
-  /** Instrument Serif — editorial headings + hero numerals. Use large. */
-  display: "InstrumentSerif_400Regular",
-  displayItalic: "InstrumentSerif_400Regular_Italic",
-  /** DM Sans — body / UI. */
-  regular: "DMSans_400Regular",
-  medium: "DMSans_500Medium",
-  semibold: "DMSans_600SemiBold",
-  bold: "DMSans_700Bold",
-  black: "DMSans_900Black",
+  display: "Geist_600SemiBold",
+  displayItalic: "Geist_500Medium",
+  regular: "Geist_400Regular",
+  medium: "Geist_500Medium",
+  semibold: "Geist_600SemiBold",
+  bold: "Geist_700Bold",
+  black: "Geist_900Black",
 } as const;
 
-// Royal Amethyst palette (kept). Mirrors tailwind.config for inline use
-// (gradients, shadows, SVG, chart libs that need raw hex).
 export const palette = {
-  bg: "#0B0811",
-  bgDeep: "#07050C",
-  surface: "#16121E",
-  surfaceElevated: "#201B2A",
-  border: "#2E2740",
-  hover: "#261F33",
-
-  violet300: "#C78FEF",
-  violet400: "#9B40D8",
-  violet500: "#781BB6",
-  violet600: "#641599",
-  violet700: "#50107D",
-
-  fuchsia300: "#F0ABFC",
-  fuchsia400: "#E06BF5",
-  fuchsia500: "#C636E0",
-
-  textPrimary: "#F2EEF8",
-  textSecondary: "#A99FBA",
-  textMuted: "#6E6382",
-
-  success: "#34D399",
-  warning: "#FBBF24",
-  danger: "#FB7185",
+  bg: "#F7F7F8", bgDeep: "#F0F0F2",
+  surface: "#FFFFFF", surfaceElevated: "#F4F4F5",
+  border: "#E4E4E7", hover: "#EFEFF1",
+  // Compatibility keys for existing charts and domain components.
+  violet300: "#52525B", violet400: "#3F3F46", violet500: "#27272A",
+  violet600: "#18181B", violet700: "#18181B",
+  fuchsia300: "#52525B", fuchsia400: "#3F3F46", fuchsia500: "#27272A",
+  textPrimary: "#202024", textSecondary: "#52525B", textMuted: "#71717A",
+  success: "#52525B", warning: "#52525B", danger: "#3F3F46",
 } as const;
 
-/** Signature amethyst gradient (buttons, accents). */
-export const amethystGradient = ["#781BB6", "#C636E0"] as const;
-/** Soft atmospheric glow for backgrounds (top-down wash). */
-export const glowWash = ["rgba(120,27,182,0.22)", "transparent"] as const;
-
-/**
- * Amethyst drop-glow for elevated/active surfaces. Works on web + iOS.
- * (Android elevation ignores shadowColor pre-API 28 — acceptable.)
- */
-export const amethystGlow = {
-  shadowColor: "#9B40D8",
-  shadowOffset: { width: 0, height: 8 },
-  shadowOpacity: 0.35,
-  shadowRadius: 24,
-  elevation: 12,
+// Equal stops keep older gradient-based controls visually flat.
+export const primaryGradient = ["#27272A", "#27272A"] as const;
+export const backgroundWash = ["transparent", "transparent"] as const;
+export const surfaceShadow = {
+  shadowColor: "#18181B",
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.06, shadowRadius: 6, elevation: 2,
 } as const;

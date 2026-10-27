@@ -12,7 +12,7 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery } from "@tanstack/react-query";
-import { font, amethystGlow } from "../../../lib/design/tokens";
+import { font, surfaceShadow } from "../../../lib/design/tokens";
 import { DisplayHeading } from "../../../components/ui/DisplayHeading";
 import { SectionLabel } from "../../../components/ui/SectionLabel";
 import { AppIcon } from "../../../components/ui";
@@ -57,10 +57,10 @@ function GradientButton({ label, onPress, enabled, loading }: { label: string; o
       accessibilityRole="button"
       aria-disabled={!enabled || !!loading}
       className="rounded-2xl overflow-hidden"
-      style={enabled ? amethystGlow : undefined}
+      style={enabled ? surfaceShadow : undefined}
     >
       <LinearGradient
-        colors={enabled ? ["#781BB6", "#C636E0"] : ["#201B2A", "#201B2A"]}
+        colors={enabled ? ["#27272A", "#27272A"] : ["#F4F4F5", "#F4F4F5"]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0.9 }}
         style={{ paddingVertical: 16, alignItems: "center", flexDirection: "row", justifyContent: "center", gap: 8 }}
@@ -72,7 +72,7 @@ function GradientButton({ label, onPress, enabled, loading }: { label: string; o
             <Text className={enabled ? "text-white" : "text-text-muted"} style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>
               {label}
             </Text>
-            <AppIcon name="arrow-right" size={18} color={enabled ? "#FFFFFF" : "#6E6382"} strokeWidth={2} />
+            <AppIcon name="arrow-right" size={18} color={enabled ? "#FFFFFF" : "#71717A"} strokeWidth={2} />
           </>
         )}
       </LinearGradient>
@@ -96,7 +96,7 @@ function NumberField({ label, value, onChange, keyboard = "number-pad", placehol
         onChangeText={onChange}
         keyboardType={keyboard}
         placeholder={placeholder}
-        placeholderTextColor="#6E6382"
+        placeholderTextColor="#71717A"
         accessibilityLabel={label}
         style={{ fontFamily: font.regular }}
       />
@@ -240,7 +240,7 @@ function WorkoutBuilder({ initialPlan }: { initialPlan?: WorkoutPlan }) {
           accessibilityRole="button"
           className="flex-row items-center gap-1.5"
         >
-          <AppIcon name="arrow-left" size={16} color="#6E6382" strokeWidth={2} />
+          <AppIcon name="arrow-left" size={16} color="#71717A" strokeWidth={2} />
           <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>
             {step === "destination" || (editing && step === "plan-info") ? "Cancelar" : "Voltar"}
           </Text>
@@ -288,7 +288,7 @@ function WorkoutBuilder({ initialPlan }: { initialPlan?: WorkoutPlan }) {
               className="bg-surface-card border border-fuchsia-400/30 rounded-3xl p-4 flex-row items-center gap-4 mb-2 active:bg-surface-hover"
             >
               <View className="w-12 h-12 rounded-2xl bg-fuchsia-400/15 items-center justify-center">
-                <AppIcon name="clipboard" size={22} color="#C636E0" strokeWidth={2} />
+                <AppIcon name="clipboard" size={22} color="#27272A" strokeWidth={2} />
               </View>
               <View className="flex-1">
                 <Text className="text-[15px] text-text-primary" style={{ fontFamily: font.semibold }}>Salvar como modelo</Text>
@@ -296,7 +296,7 @@ function WorkoutBuilder({ initialPlan }: { initialPlan?: WorkoutPlan }) {
                   Sem aluno — reutilize depois para vários alunos
                 </Text>
               </View>
-              <AppIcon name="chevron-right" size={18} color="#6E6382" strokeWidth={2} />
+              <AppIcon name="chevron-right" size={18} color="#71717A" strokeWidth={2} />
             </Pressable>
             </View>
           }
@@ -308,7 +308,7 @@ function WorkoutBuilder({ initialPlan }: { initialPlan?: WorkoutPlan }) {
             ) :
             <View className="items-center py-10">
               <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
-                <AppIcon name="user-add" size={28} color="#9B40D8" strokeWidth={2} />
+                <AppIcon name="user-add" size={28} color="#3F3F46" strokeWidth={2} />
               </View>
               <Text className="text-text-muted text-sm" style={{ fontFamily: font.regular }}>Nenhum aluno ativo. Convide um primeiro.</Text>
             </View>
@@ -324,7 +324,7 @@ function WorkoutBuilder({ initialPlan }: { initialPlan?: WorkoutPlan }) {
                 <Text className="text-[15px] text-text-primary" style={{ fontFamily: font.semibold }}>{item.student?.full_name}</Text>
                 <Text className="text-text-secondary text-xs mt-0.5" style={{ fontFamily: font.regular }}>Selecionar aluno</Text>
               </View>
-              <AppIcon name="chevron-right" size={18} color="#6E6382" strokeWidth={2} />
+              <AppIcon name="chevron-right" size={18} color="#71717A" strokeWidth={2} />
             </Pressable>
           )}
         />
@@ -335,7 +335,7 @@ function WorkoutBuilder({ initialPlan }: { initialPlan?: WorkoutPlan }) {
         <ScrollView className="flex-1 px-6 py-6" keyboardShouldPersistTaps="handled">
           <View className="bg-surface-card border border-surface-border rounded-3xl p-4 flex-row items-center gap-3 mb-6">
             <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
-              <AppIcon name={destination.studentId ? "user" : "clipboard"} size={18} color="#9B40D8" strokeWidth={2} />
+              <AppIcon name={destination.studentId ? "user" : "clipboard"} size={18} color="#3F3F46" strokeWidth={2} />
             </View>
             <Text className="text-sm text-text-muted" style={{ fontFamily: font.regular }}>{destination.studentId ? "Aluno:" : "Destino:"}</Text>
             <Text className="text-sm text-violet-400 flex-1" style={{ fontFamily: font.semibold }}>{destination.label}</Text>
@@ -398,7 +398,7 @@ function WorkoutBuilder({ initialPlan }: { initialPlan?: WorkoutPlan }) {
               <TextInput
                 className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
                 placeholder="Ex: Hipertrofia - Março 2026"
-                placeholderTextColor="#6E6382"
+                placeholderTextColor="#71717A"
                 value={planName}
                 onChangeText={setPlanName}
                 accessibilityLabel="Nome do plano"
@@ -411,7 +411,7 @@ function WorkoutBuilder({ initialPlan }: { initialPlan?: WorkoutPlan }) {
                 <TextInput
                   className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
                   placeholder="Observações do plano"
-                  placeholderTextColor="#6E6382"
+                  placeholderTextColor="#71717A"
                   value={planDescription}
                   onChangeText={setPlanDescription}
                   accessibilityLabel="Descrição"
@@ -460,7 +460,7 @@ function WorkoutBuilder({ initialPlan }: { initialPlan?: WorkoutPlan }) {
               accessibilityLabel="Adicionar treino"
               className="px-4 py-2 rounded-xl border border-dashed border-violet-500/50 flex-row items-center gap-1"
             >
-              <AppIcon name="plus" size={14} color="#9B40D8" strokeWidth={2} />
+              <AppIcon name="plus" size={14} color="#3F3F46" strokeWidth={2} />
               <Text className="text-xs text-violet-400" style={{ fontFamily: font.semibold }}>Treino</Text>
             </Pressable>
           </ScrollView>
@@ -472,13 +472,13 @@ function WorkoutBuilder({ initialPlan }: { initialPlan?: WorkoutPlan }) {
                 value={current.name}
                 onChangeText={(v) => updateWorkout({ name: v })}
                 placeholder="Nome do treino"
-                placeholderTextColor="#6E6382"
+                placeholderTextColor="#71717A"
                 accessibilityLabel="Nome do treino"
                 style={{ fontFamily: font.regular }}
               />
               {workouts.length > 1 ? (
                 <Pressable onPress={() => setPendingRemoval(() => removeWorkout)} accessibilityRole="button" accessibilityLabel={`Remover ${current.name}`} className="p-3">
-                  <AppIcon name="trash" size={16} color="#FB7185" strokeWidth={2} />
+                  <AppIcon name="trash" size={16} color="#3F3F46" strokeWidth={2} />
                 </Pressable>
               ) : null}
             </View>
@@ -507,7 +507,7 @@ function WorkoutBuilder({ initialPlan }: { initialPlan?: WorkoutPlan }) {
             <TextInput
               className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
               placeholder="Buscar exercício para adicionar..."
-              placeholderTextColor="#6E6382"
+              placeholderTextColor="#71717A"
               value={searchExercise}
               onChangeText={setSearchExercise}
               accessibilityLabel="Buscar exercício"
@@ -541,11 +541,11 @@ function WorkoutBuilder({ initialPlan }: { initialPlan?: WorkoutPlan }) {
                   className="bg-surface-elevated rounded-2xl p-3 flex-row items-center gap-3"
                 >
                   <View className="w-9 h-9 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
-                    <AppIcon name="workout" size={18} color="#9B40D8" strokeWidth={2} />
+                    <AppIcon name="workout" size={18} color="#3F3F46" strokeWidth={2} />
                   </View>
                   <Text className="text-sm text-text-primary flex-1" style={{ fontFamily: font.regular }}>{translateExerciseName(item.name)}</Text>
                   <View className="flex-row items-center gap-1">
-                    <AppIcon name="plus" size={14} color="#9B40D8" strokeWidth={2} />
+                    <AppIcon name="plus" size={14} color="#3F3F46" strokeWidth={2} />
                     <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>Adicionar</Text>
                   </View>
                 </Pressable>
@@ -560,7 +560,7 @@ function WorkoutBuilder({ initialPlan }: { initialPlan?: WorkoutPlan }) {
             {current.exercises.length === 0 ? (
               <View className="items-center py-10">
                 <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
-                  <AppIcon name="search" size={28} color="#9B40D8" strokeWidth={2} />
+                  <AppIcon name="search" size={28} color="#3F3F46" strokeWidth={2} />
                 </View>
                 <Text className="text-text-muted text-sm" style={{ fontFamily: font.regular }}>Busque e adicione exercícios acima</Text>
               </View>
@@ -580,7 +580,7 @@ function WorkoutBuilder({ initialPlan }: { initialPlan?: WorkoutPlan }) {
                           accessibilityLabel={`Remover ${ex.name}`}
                           className="flex-row items-center gap-1"
                         >
-                          <AppIcon name="trash" size={14} color="#FB7185" strokeWidth={2} />
+                          <AppIcon name="trash" size={14} color="#3F3F46" strokeWidth={2} />
                           <Text className="text-danger-500 text-xs" style={{ fontFamily: font.semibold }}>Remover</Text>
                         </Pressable>
                       </View>
@@ -591,7 +591,7 @@ function WorkoutBuilder({ initialPlan }: { initialPlan?: WorkoutPlan }) {
                             disabled={idx + offset < 0 || idx + offset >= current.exercises.length}
                             aria-disabled={idx + offset < 0 || idx + offset >= current.exercises.length}
                             onPress={() => updateWorkout({ exercises: moveItem(current.exercises, idx, idx + offset) })}>
-                            <Text className={idx + offset < 0 || idx + offset >= current.exercises.length ? "text-text-muted text-xs" : "text-violet-400 text-xs"} style={{ fontFamily: font.regular }}>
+                            <Text className={idx + offset < 0 || idx + offset >= current.exercises.length ? "text-text-muted text-xs" : "text-violet-400 text-xs"} style={{ fontFamily: "Geist_400Regular" }}>
                               {offset < 0 ? "↑ Subir" : "↓ Descer"}
                             </Text>
                           </Pressable>
@@ -622,7 +622,7 @@ function WorkoutBuilder({ initialPlan }: { initialPlan?: WorkoutPlan }) {
                           <View className={`w-5 h-5 rounded items-center justify-center ${linked ? "bg-violet-500" : "bg-surface-elevated border border-surface-border"}`}>
                             {linked ? <AppIcon name="check" size={12} color="#FFFFFF" strokeWidth={2} /> : null}
                           </View>
-                          <AppIcon name="link" size={14} color="#6E6382" strokeWidth={2} />
+                          <AppIcon name="link" size={14} color="#71717A" strokeWidth={2} />
                           <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>Superset com o exercício acima</Text>
                         </Pressable>
                       ) : null}
@@ -649,13 +649,13 @@ function WorkoutBuilder({ initialPlan }: { initialPlan?: WorkoutPlan }) {
           <View className="bg-surface-card border border-violet-500/20 rounded-3xl p-5 mb-4">
             <View className="flex-row items-center gap-3 mb-3">
               <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
-                <AppIcon name="clipboard" size={18} color="#9B40D8" strokeWidth={2} />
+                <AppIcon name="clipboard" size={18} color="#3F3F46" strokeWidth={2} />
               </View>
               <SectionLabel tone="accent">{destination.studentId ? "Plano" : "Modelo"}</SectionLabel>
             </View>
             <DisplayHeading size="sm" className="text-text-primary">{planName}</DisplayHeading>
             <View className="flex-row items-center gap-1.5 mt-1">
-              <AppIcon name="user" size={14} color="#6E6382" strokeWidth={2} />
+              <AppIcon name="user" size={14} color="#71717A" strokeWidth={2} />
               <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>Para: {destination.label}</Text>
             </View>
           </View>
@@ -698,7 +698,7 @@ function WorkoutBuilder({ initialPlan }: { initialPlan?: WorkoutPlan }) {
               accessibilityRole="button"
               className="flex-1 border border-surface-border rounded-2xl py-4 flex-row items-center justify-center gap-2"
             >
-              <AppIcon name="pencil" size={16} color="#A99FBA" strokeWidth={2} />
+              <AppIcon name="pencil" size={16} color="#52525B" strokeWidth={2} />
               <Text className="text-text-secondary text-sm" style={{ fontFamily: font.semibold }}>Editar</Text>
             </Pressable>
             <View className="flex-1">

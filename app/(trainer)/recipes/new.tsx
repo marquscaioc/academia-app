@@ -17,7 +17,7 @@ import { FoodPicker } from "../../../components/diet/FoodPicker";
 import type { FoodPick } from "../../../components/diet/FoodPicker";
 import { WebContainer } from "../../../components/layout/WebContainer";
 import { AppIcon } from "../../../components/ui";
-import { font, amethystGlow } from "../../../lib/design/tokens";
+import { font, surfaceShadow } from "../../../lib/design/tokens";
 import { SectionLabel } from "../../../components/ui/SectionLabel";
 import { toast } from "../../../stores/useToastStore";
 
@@ -115,7 +115,7 @@ export default function NewRecipeScreen() {
           onPress={() => router.back()}
           className="flex-row items-center gap-1.5"
         >
-          <AppIcon name="arrow-left" size={16} color="#6E6382" strokeWidth={2} />
+          <AppIcon name="arrow-left" size={16} color="#71717A" strokeWidth={2} />
           <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>
             Cancelar
           </Text>
@@ -137,7 +137,7 @@ export default function NewRecipeScreen() {
                 className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
                 style={{ fontFamily: font.regular }}
                 placeholder="Ex: Frango grelhado com batata doce"
-                placeholderTextColor="#6E6382"
+                placeholderTextColor="#71717A"
                 value={name}
                 onChangeText={setName}
               />
@@ -150,7 +150,7 @@ export default function NewRecipeScreen() {
                 className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
                 style={{ fontFamily: font.regular }}
                 placeholder="Breve descrição da receita..."
-                placeholderTextColor="#6E6382"
+                placeholderTextColor="#71717A"
                 value={description}
                 onChangeText={setDescription}
                 multiline
@@ -166,7 +166,7 @@ export default function NewRecipeScreen() {
                   className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
                   style={{ fontFamily: font.regular }}
                   placeholder="1"
-                  placeholderTextColor="#6E6382"
+                  placeholderTextColor="#71717A"
                   value={servings}
                   onChangeText={setServings}
                   keyboardType="number-pad"
@@ -206,7 +206,7 @@ export default function NewRecipeScreen() {
               <View className="flex-row items-center justify-between mb-3">
                 <View className="flex-row items-center gap-2">
                   <View className="w-8 h-8 rounded-xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
-                    <AppIcon name="list" size={15} color="#9B40D8" strokeWidth={2} />
+                    <AppIcon name="list" size={15} color="#3F3F46" strokeWidth={2} />
                   </View>
                   <SectionLabel>Ingredientes</SectionLabel>
                 </View>
@@ -242,7 +242,7 @@ export default function NewRecipeScreen() {
                         onPress={() => removeIngredient(idx)}
                         className="w-7 h-7 rounded-lg bg-danger-500/10 items-center justify-center"
                       >
-                        <AppIcon name="close" size={14} color="#FB7185" strokeWidth={2} />
+                        <AppIcon name="close" size={14} color="#3F3F46" strokeWidth={2} />
                       </Pressable>
                     </View>
                   ))}
@@ -253,7 +253,7 @@ export default function NewRecipeScreen() {
                 onPress={() => setPickerVisible(true)}
                 className="border border-dashed border-violet-500/40 rounded-2xl py-3 flex-row items-center justify-center gap-2"
               >
-                <AppIcon name="plus" size={16} color="#9B40D8" strokeWidth={2} />
+                <AppIcon name="plus" size={16} color="#3F3F46" strokeWidth={2} />
                 <Text className="text-violet-400 text-sm" style={{ fontFamily: font.semibold }}>
                   Adicionar ingrediente
                 </Text>
@@ -328,7 +328,7 @@ export default function NewRecipeScreen() {
                 className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
                 style={{ fontFamily: font.regular }}
                 placeholder="Descreva o passo a passo..."
-                placeholderTextColor="#6E6382"
+                placeholderTextColor="#71717A"
                 value={instructions}
                 onChangeText={setInstructions}
                 multiline
@@ -342,10 +342,10 @@ export default function NewRecipeScreen() {
               onPress={handleSave}
               disabled={!canSave}
               className="rounded-2xl overflow-hidden mb-4"
-              style={canSave ? amethystGlow : undefined}
+              style={canSave ? surfaceShadow : undefined}
             >
               <LinearGradient
-                colors={canSave ? ["#781BB6", "#C636E0"] : ["#2E2740", "#2E2740"]}
+                colors={canSave ? ["#27272A", "#27272A"] : ["#E4E4E7", "#E4E4E7"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0.9 }}
                 style={{
@@ -363,7 +363,7 @@ export default function NewRecipeScreen() {
                     <AppIcon
                       name="check-circle"
                       size={18}
-                      color={canSave ? "#FFFFFF" : "#6E6382"}
+                      color={canSave ? "#FFFFFF" : "#71717A"}
                       strokeWidth={2}
                     />
                     <Text

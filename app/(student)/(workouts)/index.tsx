@@ -2,7 +2,6 @@ import { Link } from "expo-router";
 import { useMemo } from "react";
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { LinearGradient } from "expo-linear-gradient";
 import Animated, { FadeInDown, FadeIn } from "react-native-reanimated";
 import { useAuth } from "../../../lib/auth/provider";
 import { useWorkoutPlans, useWorkoutSessions } from "../../../hooks/queries/useWorkouts";
@@ -57,25 +56,19 @@ export default function WorkoutsScreen() {
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
       {/* Atmospheric top wash */}
-      <LinearGradient
-        colors={["rgba(198,54,224,0.15)", "transparent"]}
-        start={{ x: 1, y: 0 }}
-        end={{ x: 0, y: 1 }}
-        style={{ position: "absolute", top: 0, left: 0, right: 0, height: 340 }}
-        pointerEvents="none"
-      />
+
 
       <ScrollView className="flex-1 px-6 pt-4" showsVerticalScrollIndicator={false}>
         <WebContainer maxWidth={1180}>
         {/* Masthead */}
         <Animated.View entering={FadeIn.duration(400)} className="flex-row items-center justify-between mb-6">
-          <View className="flex-row items-center gap-3">
+          <View className="gap-1.5">
             <Logo size="sm" />
             <Text
               className="text-[10px] text-fuchsia-400"
-              style={{ fontFamily: font.semibold, letterSpacing: 3 }}
+              style={{ fontFamily: font.semibold, letterSpacing: 0.8 }}
             >
-              VOL. 01 · TRAINING
+              SEU PROGRAMA
             </Text>
           </View>
           <Link href="/(student)/(workouts)/history" asChild>
@@ -87,7 +80,7 @@ export default function WorkoutsScreen() {
           </Link>
         </Animated.View>
 
-        {/* Editorial headline */}
+        {/* Page heading */}
         <Animated.View entering={FadeInDown.delay(80).springify()} className="mb-2">
           <DisplayHeading size="md" italic tone="muted">
             Seus
@@ -98,12 +91,12 @@ export default function WorkoutsScreen() {
             className="text-text-primary"
             style={{
               fontFamily: font.display,
-              fontSize: 56,
-              lineHeight: 56,
+              fontSize: 40,
+              lineHeight: 48,
               letterSpacing: -1,
             }}
           >
-            Treinos.
+            Treinos
           </Text>
         </Animated.View>
 
@@ -155,7 +148,7 @@ export default function WorkoutsScreen() {
         {/* Workouts list */}
         {isLoading ? (
           <View className="items-center py-10">
-            <ActivityIndicator size="large" color="#781BB6" />
+            <ActivityIndicator size="large" color="#27272A" />
           </View>
         ) : isError ? (
           <View className="bg-surface-card border border-danger-500/30 rounded-3xl p-6 items-center mb-10">
@@ -177,15 +170,9 @@ export default function WorkoutsScreen() {
             entering={FadeInDown.delay(340).springify()}
             className="bg-surface-card border border-surface-border rounded-3xl p-10 items-center overflow-hidden"
           >
-            <LinearGradient
-              colors={["rgba(198,54,224,0.06)", "transparent"]}
-              start={{ x: 0.5, y: 0 }}
-              end={{ x: 0.5, y: 1 }}
-              style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
-              pointerEvents="none"
-            />
+
             <View className="w-16 h-16 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-5">
-              <AppIcon name="workout" size={28} color="#9B40D8" strokeWidth={2} />
+              <AppIcon name="workout" size={28} color="#3F3F46" strokeWidth={2} />
             </View>
             <DisplayHeading size="sm" italic className="text-center mb-2">
               Nenhum treino ainda
@@ -206,20 +193,12 @@ export default function WorkoutsScreen() {
             {allWorkouts.map((w, idx) => (
               <Animated.View
                 key={w.id}
-                className="grow basis-[360px]"
+                className="grow shrink basis-[360px]"
                 entering={FadeInDown.delay(300 + idx * 60).springify()}
               >
                 <Link href={`/(student)/(workouts)/treino/${w.id}`} asChild>
                   <Pressable className="bg-surface-card border border-surface-border rounded-3xl p-5 active:bg-surface-hover overflow-hidden">
-                    {w.id === nextWorkout?.id ? (
-                      <LinearGradient
-                        colors={["rgba(198,54,224,0.12)", "transparent"]}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}
-                        style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
-                        pointerEvents="none"
-                      />
-                    ) : null}
+
 
                     <View className="flex-row items-start gap-4">
                       {/* Index numeral */}
@@ -252,14 +231,14 @@ export default function WorkoutsScreen() {
                         </Text>
                         <View className="flex-row items-center gap-4">
                           <View className="flex-row items-center gap-1.5">
-                            <AppIcon name="list" size={14} color="#9B40D8" strokeWidth={2} />
+                            <AppIcon name="list" size={14} color="#3F3F46" strokeWidth={2} />
                             <Text className="text-[11px] text-violet-300" style={{ fontFamily: font.semibold }}>
                               {pluralize(w.exercises?.length ?? 0, "exercício", "exercícios")}
                             </Text>
                           </View>
                           {w.estimated_duration_minutes ? (
                             <View className="flex-row items-center gap-1.5">
-                              <AppIcon name="clock" size={14} color="#7FD3E0" strokeWidth={2} />
+                              <AppIcon name="clock" size={14} color="#71717A" strokeWidth={2} />
                               <Text className="text-[11px] text-ice-400" style={{ fontFamily: font.semibold }}>
                                 ~{w.estimated_duration_minutes}min
                               </Text>
@@ -285,7 +264,7 @@ export default function WorkoutsScreen() {
                       </View>
 
                       <View className="self-center">
-                        <AppIcon name="chevron-right" size={18} color="#6E6382" strokeWidth={2} />
+                        <AppIcon name="chevron-right" size={18} color="#71717A" strokeWidth={2} />
                       </View>
                     </View>
                   </Pressable>

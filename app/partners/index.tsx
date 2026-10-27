@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Linking, Modal, Pressable, ScrollView, Switch, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../lib/auth/provider";
-import { font, palette } from "../../lib/design/tokens";
+import { font } from "../../lib/design/tokens";
 import { PARTNER_PROFESSIONS, PartnerDraft, PartnerProfession, normalizeProfessionalUrl, validatePartnerDraft, whatsappContactUrl } from "../../lib/partners/contact";
 import { ProfessionalPartner, useDeleteProfessionalPartner, useProfessionalPartners, useSaveProfessionalPartner, useSaveTrainerContact, useTrainerContacts } from "../../hooks/queries/useProfessionalPartners";
 import { AppIcon, Button, DisplayHeading, EmptyState, Input, LoadingScreen } from "../../components/ui";
@@ -78,7 +78,7 @@ function PartnerEditor({ partner, trainerId, onClose }: { partner?: Professional
           <DisplayHeading size="md">{partner ? "Editar profissional" : "Indicar profissional"}</DisplayHeading>
           <Input label="Nome profissional" value={draft.full_name} onChangeText={(v) => field("full_name", v)} maxLength={120} />
           <View className="flex-row flex-wrap gap-2">
-            {(Object.keys(PARTNER_PROFESSIONS) as PartnerProfession[]).map((profession) => <Pressable key={profession} accessibilityRole="radio" aria-checked={draft.profession === profession} onPress={() => field("profession", profession)} className={`rounded-2xl border px-4 py-3 ${draft.profession === profession ? "bg-violet-500/20 border-violet-500" : "border-surface-border"}`}>
+            {(Object.keys(PARTNER_PROFESSIONS) as PartnerProfession[]).map((profession) => <Pressable key={profession} accessibilityRole="radio" accessibilityState={{ checked: draft.profession === profession }} onPress={() => field("profession", profession)} className={`rounded-2xl border px-4 py-3 ${draft.profession === profession ? "bg-violet-500/20 border-violet-500" : "border-surface-border"}`}>
               <Text className="text-sm text-text-primary" style={{ fontFamily: font.semibold }}>{PARTNER_PROFESSIONS[profession]}</Text>
             </Pressable>)}
           </View>
@@ -91,7 +91,7 @@ function PartnerEditor({ partner, trainerId, onClose }: { partner?: Professional
           <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>Preencha ao menos um WhatsApp ou link de agendamento.</Text>
           <View className="flex-row items-center justify-between gap-3">
             <Text className="text-sm text-text-primary flex-1" style={{ fontFamily: font.semibold }}>Visível para seus alunos</Text>
-            <Switch value={draft.is_active} onValueChange={(value) => field("is_active", value)} accessibilityLabel="Visível para seus alunos" trackColor={{ true: palette.violet500 }} />
+            <Switch value={draft.is_active} onValueChange={(value) => field("is_active", value)} accessibilityLabel="Visível para seus alunos" trackColor={{ true: "#27272A" }} />
           </View>
           {error ? <Text accessibilityRole="alert" className="text-sm text-danger-500" style={{ fontFamily: font.regular }}>{error}</Text> : null}
           <Button title="Salvar profissional" onPress={submit} loading={save.isPending} />
@@ -132,19 +132,19 @@ function PartnersContent({ userId, isTrainer }: { userId: string; isTrainer: boo
             {(contacts.data ?? []).filter((contact) => !!contact.contact_whatsapp).map((contact) => <View key={contact.id} className="rounded-3xl border border-surface-border bg-surface-card p-5 gap-3">
               <Text className="text-lg text-text-primary" style={{ fontFamily: font.semibold }}>{contact.brand_name || "Seu treinador"}</Text>
               {contact.specializations?.length ? <Text className="text-sm text-text-secondary" style={{ fontFamily: font.regular }}>{contact.specializations.join(" · ")}</Text> : null}
-              <Button title="Conversar pelo WhatsApp" variant="outline" onPress={() => { void openContact(whatsappContactUrl(contact.contact_whatsapp!, "Olá! Gostaria de conversar sobre meu acompanhamento no Projeto Gaab.")); }} />
+              <Button title="Conversar pelo WhatsApp" variant="outline" onPress={() => { void openContact(whatsappContactUrl(contact.contact_whatsapp!, "Olá! Gostaria de conversar sobre meu acompanhamento no Projeto Academia.")); }} />
             </View>)}
           </View>}
           <Button title={isTrainer ? "Abrir conversas com alunos" : "Conversar pelo chat"} variant="secondary" onPress={chat} />
           <View className="gap-3"><DisplayHeading size="md">Profissionais indicados</DisplayHeading>{isTrainer ? <Button title="Indicar profissional" onPress={() => setEditing("new")} /> : null}</View>
-          <View className="flex-row flex-wrap gap-2">{([null, "nutritionist", "sports_doctor"] as const).map((value) => <Pressable key={value ?? "all"} accessibilityRole="radio" aria-checked={filter === value} onPress={() => setFilter(value)} className={`rounded-2xl border px-4 py-2.5 ${filter === value ? "bg-violet-500/20 border-violet-500" : "border-surface-border"}`}><Text className="text-sm text-text-primary" style={{ fontFamily: font.medium }}>{value ? PARTNER_PROFESSIONS[value] : "Todos"}</Text></Pressable>)}</View>
+          <View className="flex-row flex-wrap gap-2">{([null, "nutritionist", "sports_doctor"] as const).map((value) => <Pressable key={value ?? "all"} accessibilityRole="radio" accessibilityState={{ checked: filter === value }} onPress={() => setFilter(value)} className={`rounded-2xl border px-4 py-2.5 ${filter === value ? "bg-violet-500/20 border-violet-500" : "border-surface-border"}`}><Text className="text-sm text-text-primary" style={{ fontFamily: font.medium }}>{value ? PARTNER_PROFESSIONS[value] : "Todos"}</Text></Pressable>)}</View>
           {partners.isError ? <ErrorNotice retry={() => { void partners.refetch(); }} /> : partners.isLoading ? <Text className="text-sm text-text-muted font-sans">Carregando profissionais…</Text> : !visible.length ? <EmptyState iconName="user" title="Nenhum profissional" description={isTrainer ? "Cadastre um profissional para apresentar sua rede aos alunos." : "Os profissionais indicados pelo seu treinador aparecerão aqui."} /> : visible.map((partner) => <View key={partner.id} className="rounded-3xl border border-surface-border bg-surface-card p-6 gap-3">
             <Text className="text-xs text-violet-300 uppercase" style={{ fontFamily: font.semibold, letterSpacing: 1 }}>{PARTNER_PROFESSIONS[partner.profession]}{!partner.is_active ? " · Oculto" : ""}</Text>
             <DisplayHeading size="sm">{partner.full_name}</DisplayHeading>
             <Text className="text-sm text-text-primary" style={{ fontFamily: font.medium }}>{partner.specialty}</Text>
             {partner.registration ? <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>{partner.registration}</Text> : null}
             {partner.bio ? <Text className="text-sm text-text-secondary leading-6" style={{ fontFamily: font.regular }}>{partner.bio}</Text> : null}
-            {partner.whatsapp_number ? <Button title="Conversar pelo WhatsApp" variant="outline" onPress={() => { void openContact(whatsappContactUrl(partner.whatsapp_number!, `Olá, ${partner.full_name}! Recebi sua indicação pelo Projeto Gaab e gostaria de informações sobre o atendimento.`)); }} /> : null}
+            {partner.whatsapp_number ? <Button title="Conversar pelo WhatsApp" variant="outline" onPress={() => { void openContact(whatsappContactUrl(partner.whatsapp_number!, `Olá, ${partner.full_name}! Recebi sua indicação pelo Projeto Academia e gostaria de informações sobre o atendimento.`)); }} /> : null}
             {partner.booking_url ? <Button title="Agendar atendimento" variant="secondary" onPress={() => { void openContact(normalizeProfessionalUrl(partner.booking_url!)); }} /> : null}
             {partner.content_url ? <Button title="Ver conteúdos do profissional" variant="ghost" onPress={() => { void openContact(normalizeProfessionalUrl(partner.content_url!)); }} /> : null}
             {isTrainer ? <View className="flex-row flex-wrap gap-3 pt-2"><Button title="Editar" variant="ghost" fullWidth={false} onPress={() => setEditing(partner)} /><Button title="Remover" variant="ghost" fullWidth={false} onPress={() => setDeleting(partner)} /></View> : null}

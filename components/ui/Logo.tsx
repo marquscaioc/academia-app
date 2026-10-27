@@ -1,19 +1,7 @@
-import { Image } from "expo-image";
-import { Text, View } from "react-native";
-import { font } from "../../lib/design/tokens";
-
-const LOGO_SRC = require("../../assets/logo-mark.png");
+import { Text } from "react-native";
+import { font, palette } from "../../lib/design/tokens";
 
 type Size = "xs" | "sm" | "md" | "lg" | "xl";
-
-const SIZE_MAP: Record<Size, number> = {
-  xs: 20,
-  sm: 28,
-  md: 40,
-  lg: 64,
-  xl: 120,
-};
-
 interface Props {
   size?: Size;
   withWordmark?: boolean;
@@ -21,35 +9,16 @@ interface Props {
   className?: string;
 }
 
-export function Logo({ size = "md", withWordmark = false, wordmarkTone = "primary", className }: Props) {
-  const dim = SIZE_MAP[size];
-
-  if (!withWordmark) {
-    return (
-      <Image
-        source={LOGO_SRC}
-        style={{ width: dim, height: dim }}
-        contentFit="contain"
-      />
-    );
-  }
-
+// Text-only application name, without an image or monogram.
+export function Logo({ size = "md", wordmarkTone = "primary", className }: Props) {
+  const fontSize = { xs: 12, sm: 14, md: 17, lg: 20, xl: 24 }[size];
   return (
-    <View className={`flex-row items-center gap-2.5 ${className ?? ""}`}>
-      <Image source={LOGO_SRC} style={{ width: dim, height: dim }} contentFit="contain" />
-      <View>
-        <Text
-          className={wordmarkTone === "primary" ? "text-text-primary" : "text-text-muted"}
-          style={{
-            fontFamily: font.display,
-            fontSize: dim * 0.62,
-            lineHeight: dim * 0.64,
-            letterSpacing: -0.5,
-          }}
-        >
-          Projeto Gaab
-        </Text>
-      </View>
-    </View>
+    <Text className={className} style={{
+      fontFamily: font.semibold, fontSize, lineHeight: fontSize * 1.4,
+      letterSpacing: -0.5,
+      color: wordmarkTone === "muted" ? palette.textMuted : palette.textPrimary,
+    }}>
+      Projeto Academia
+    </Text>
   );
 }

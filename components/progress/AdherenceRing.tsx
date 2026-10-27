@@ -11,7 +11,7 @@ interface AdherenceRingProps {
 
 export function AdherenceRing({ score, label, size = 100, emptyHint }: AdherenceRingProps) {
   const clampedScore = score === null ? 0 : Math.max(0, Math.min(100, score));
-  const color = score === null ? "#6E6382" : clampedScore >= 80 ? "#22C55E" : clampedScore >= 50 ? "#FBBF24" : "#EF4444";
+  const color = score === null ? "#71717A" : clampedScore >= 80 ? "#52525B" : clampedScore >= 50 ? "#52525B" : "#3F3F46";
 
   return (
     <View className="items-center">
@@ -44,7 +44,7 @@ export function AdherenceRing({ score, label, size = 100, emptyHint }: Adherence
       </View>
       <Text className="text-xs text-text-muted font-bold mt-2 uppercase tracking-wider">{label}</Text>
       {score === null && emptyHint ? (
-        <Text className="text-[10px] text-text-muted mt-0.5 text-center" style={{ maxWidth: size + 10 }}>{emptyHint}</Text>
+        <Text className="text-[10px] text-text-muted mt-0.5 text-center font-sans" style={{ maxWidth: size + 10 }}>{emptyHint}</Text>
       ) : null}
     </View>
   );

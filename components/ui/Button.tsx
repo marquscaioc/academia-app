@@ -1,6 +1,5 @@
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { amethystGradient, amethystGlow, font } from "../../lib/design/tokens";
+import { font, palette } from "../../lib/design/tokens";
 
 interface ButtonProps {
   title: string;
@@ -13,93 +12,27 @@ interface ButtonProps {
   fullWidth?: boolean;
 }
 
-const sizeStyles = {
-  sm: { container: "py-2.5 px-4 rounded-xl", text: "text-sm", pad: 10 },
-  md: { container: "py-3.5 px-6 rounded-2xl", text: "text-[15px]", pad: 15 },
-  lg: { container: "py-4 px-8 rounded-2xl", text: "text-base", pad: 18 },
-};
-
-const TEXT_STYLE = { fontFamily: font.semibold, letterSpacing: 0.4 } as const;
-
-export function Button({
-  title,
-  onPress,
-  variant = "primary",
-  size = "md",
-  loading = false,
-  disabled = false,
-  icon,
-  fullWidth = true,
-}: ButtonProps) {
-  const s = sizeStyles[size];
+export function Button({ title, onPress, variant = "primary", size = "md", loading = false, disabled = false, icon, fullWidth = true }: ButtonProps) {
   const isDisabled = disabled || loading;
-  const widthCls = fullWidth ? "w-full" : "";
-
-  const Label = ({ color }: { color: string }) =>
-    loading ? (
-      <ActivityIndicator color={color} size="small" />
-    ) : (
-      <View className="flex-row items-center justify-center gap-2">
-        {icon}
-        <Text className={s.text} style={[TEXT_STYLE, { color }]}>
-          {title}
-        </Text>
-      </View>
-    );
-
-  const a11y = {
-    accessibilityRole: "button" as const,
-    accessibilityLabel: title,
-    "aria-disabled": isDisabled,
-    "aria-busy": !!loading,
-  };
-
-  // Gradient variants (primary / danger) — the signature amethyst treatment.
-  if (variant === "primary" || variant === "danger") {
-    const colors =
-      variant === "primary" ? amethystGradient : (["#FB7185", "#F43F5E"] as const);
-    return (
-      <Pressable
-        onPress={onPress}
-        disabled={isDisabled}
-        {...a11y}
-        className={`${widthCls} ${isDisabled ? "opacity-50" : ""}`}
-        style={variant === "primary" && !isDisabled ? amethystGlow : undefined}
-      >
-        <LinearGradient
-          colors={colors}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0.9 }}
-          style={{
-            paddingVertical: s.pad,
-            borderRadius: size === "sm" ? 12 : 16,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Label color="#FFFFFF" />
-        </LinearGradient>
-      </Pressable>
-    );
-  }
-
-  // Flat variants
-  const flat = {
-    secondary: { box: "bg-surface-elevated border border-surface-border active:bg-surface-hover", color: "#F2EEF8" },
-    outline: { box: "border border-surface-border bg-transparent active:bg-surface-hover", color: "#C78FEF" },
-    ghost: { box: "bg-transparent active:bg-surface-hover", color: "#A99FBA" },
-  }[variant];
-
+  const filled = variant === "primary" || variant === "danger";
+  const color = filled ? "#FFFFFF" : palette.textPrimary;
+  const height = { sm: 40, md: 46, lg: 52 }[size];
   return (
     <Pressable
       onPress={onPress}
       disabled={isDisabled}
-      {...a11y}
-      className={`flex-row items-center justify-center ${s.container} ${flat.box} ${widthCls} ${
-        isDisabled ? "opacity-50" : ""
-      }`}
+      accessibilityRole="button"
+      accessibilityLabel={title}
+      accessibilityState={{ disabled: isDisabled, busy: loading }}
+      className={`${fullWidth ? "w-full" : ""} rounded-xl px-5 items-center justify-center ${filled ? "bg-primary-500 active:bg-primary-700" : variant === "ghost" ? "bg-transparent active:bg-surface-hover" : "border border-surface-border bg-white active:bg-surface-hover"} ${isDisabled ? "opacity-50" : ""}`}
+      style={{ minHeight: height }}
     >
-      <Label color={flat.color} />
+      {loading ? <ActivityIndicator color={color} size="small" /> : (
+        <View className="flex-row items-center justify-center gap-2.5">
+          <Text style={{ fontFamily: font.semibold, fontSize: size === "sm" ? 13 : 14, color }}>{title}</Text>
+          {icon}
+        </View>
+      )}
     </Pressable>
   );
 }

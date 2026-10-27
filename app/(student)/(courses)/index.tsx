@@ -23,7 +23,7 @@ export default function StudentCoursesScreen() {
         </View>
 
         {isLoading ? (
-          <View className="items-center py-10"><ActivityIndicator size="large" color="#781BB6" /></View>
+          <View className="items-center py-10"><ActivityIndicator size="large" color="#27272A" /></View>
         ) : error ? (
           <View className="items-center py-10 gap-3">
             <Text className="text-text-muted font-sans">Não foi possível carregar os cursos.</Text>
@@ -41,14 +41,14 @@ export default function StudentCoursesScreen() {
               <Pressable
                 key={c.id}
                 onPress={() => router.push(`/(student)/(courses)/curso/${c.id}`)}
-                className="grow basis-[360px] bg-surface-card border border-surface-border rounded-3xl p-5 active:bg-surface-hover"
+                className="grow shrink basis-[360px] bg-surface-card border border-surface-border rounded-3xl p-5 active:bg-surface-hover"
               >
                 <View className="flex-row items-center gap-4">
                   {c.cover_url ? (
                     <Image source={{ uri: c.cover_url }} style={{ width: 80, height: 80, borderRadius: 12 }} contentFit="cover" />
                   ) : (
                     <View className="w-20 h-20 bg-violet-500/15 border border-violet-500/25 rounded-2xl items-center justify-center">
-                      <AppIcon name="courses" size={28} color="#9B40D8" strokeWidth={2} />
+                      <AppIcon name="courses" size={28} color="#3F3F46" strokeWidth={2} />
                     </View>
                   )}
                   <View className="flex-1">
@@ -63,7 +63,7 @@ export default function StudentCoursesScreen() {
                       <Text className="text-[10px] text-text-muted mt-1" style={{ fontFamily: font.regular }}>por {c.trainer.full_name}</Text>
                     ) : null}
                   </View>
-                  <AppIcon name="chevron-right" size={18} color="#6E6382" strokeWidth={2} />
+                  <AppIcon name="chevron-right" size={18} color="#71717A" strokeWidth={2} />
                 </View>
               </Pressable>
             ))}

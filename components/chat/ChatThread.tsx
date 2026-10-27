@@ -54,7 +54,7 @@ export default function ChatThread() {
       {/* Header */}
       <View className="flex-row items-center gap-3 px-4 py-3 border-b border-surface-border">
         <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5 px-2 py-1">
-          <AppIcon name="arrow-left" size={18} color="#9B40D8" strokeWidth={2} />
+          <AppIcon name="arrow-left" size={18} color="#3F3F46" strokeWidth={2} />
           <Text className="text-violet-400 text-sm" style={{ fontFamily: font.semibold }}>Voltar</Text>
         </Pressable>
       </View>
@@ -62,7 +62,7 @@ export default function ChatThread() {
       {/* Messages */}
       {isLoading ? (
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#781BB6" />
+          <ActivityIndicator size="large" color="#27272A" />
         </View>
       ) : (
         <FlatList
@@ -91,7 +91,7 @@ export default function ChatThread() {
           ListEmptyComponent={
             <View className="flex-1 items-center justify-center py-20 gap-4">
               <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
-                <AppIcon name="chat" size={28} color="#9B40D8" strokeWidth={2} />
+                <AppIcon name="chat" size={28} color="#3F3F46" strokeWidth={2} />
               </View>
               <Text className="text-text-secondary text-sm text-center" style={{ fontFamily: font.regular }}>Nenhuma mensagem ainda. Diga oi!</Text>
             </View>

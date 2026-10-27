@@ -1,20 +1,13 @@
+import { AuthShell } from "../../components/layout/AuthShell";
+import { Button } from "../../components/ui/Button";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { LinearGradient } from "expo-linear-gradient";
+import { Text, TextInput, View } from "react-native";
+
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import { supabase } from "../../lib/supabase/client";
-import { AppIcon, DisplayHeading, Logo } from "../../components/ui";
-import { amethystGlow, font } from "../../lib/design/tokens";
+import { AppIcon, DisplayHeading } from "../../components/ui";
+import { font } from "../../lib/design/tokens";
 
 export default function ResetPasswordScreen() {
   const [password, setPassword] = useState("");
@@ -81,11 +74,11 @@ export default function ResetPasswordScreen() {
 
   if (success) {
     return (
-      <SafeAreaView className="flex-1 bg-dark-400">
-        <View className="flex-1 justify-center items-center px-8 max-w-[440px] w-full self-center">
+      <AuthShell>
+
           <Animated.View entering={FadeIn.duration(400)} className="items-center">
             <View className="w-20 h-20 bg-success-500/15 border border-success-500/25 rounded-3xl items-center justify-center mb-6">
-              <AppIcon name="check-circle" size={32} color="#34D399" strokeWidth={1.8} />
+              <AppIcon name="check-circle" size={32} color="#52525B" strokeWidth={1.8} />
             </View>
             <DisplayHeading size="lg" tone="primary" className="text-center">
               Senha atualizada.
@@ -94,32 +87,20 @@ export default function ResetPasswordScreen() {
               Redirecionando para o login...
             </Text>
           </Animated.View>
-        </View>
-      </SafeAreaView>
+
+      </AuthShell>
     );
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-dark-400">
-      <LinearGradient
-        colors={["rgba(120,27,182,0.24)", "transparent"]}
-        start={{ x: 0.2, y: 0 }}
-        end={{ x: 0.8, y: 1 }}
-        style={{ position: "absolute", top: 0, left: 0, right: 0, height: 400 }}
-        pointerEvents="none"
-      />
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        className="flex-1"
-      >
-        <View className="flex-1 justify-center px-8 max-w-[440px] w-full self-center">
-          <Animated.View entering={FadeIn.duration(400)} className="items-center mb-8">
-            <Logo size="lg" />
-          </Animated.View>
+    <AuthShell>
+
+
+
+
 
           <Animated.View entering={FadeInDown.delay(80).springify()} className="mb-8">
-            <DisplayHeading size="md" italic tone="muted">Defina sua</DisplayHeading>
-            <DisplayHeading size="2xl" tone="primary" className="mt-0.5">Nova senha.</DisplayHeading>
+            <DisplayHeading size="md">Defina sua nova senha</DisplayHeading>
             <Text
               className="text-fuchsia-400 mt-3"
               style={{ fontFamily: font.semibold, fontSize: 10, letterSpacing: 3 }}
@@ -163,7 +144,7 @@ export default function ResetPasswordScreen() {
                 }`}
                 style={{ fontFamily: font.regular }}
                 placeholder="Mínimo 6 caracteres"
-                placeholderTextColor="#6E6382"
+                placeholderTextColor="#71717A"
                 value={password}
                 onChangeText={setPassword}
                 onFocus={() => setFocused("pwd")}
@@ -188,7 +169,7 @@ export default function ResetPasswordScreen() {
                 }`}
                 style={{ fontFamily: font.regular }}
                 placeholder="Repita a senha"
-                placeholderTextColor="#6E6382"
+                placeholderTextColor="#71717A"
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
                 onFocus={() => setFocused("confirm")}
@@ -198,30 +179,10 @@ export default function ResetPasswordScreen() {
               />
             </View>
 
-            <Pressable
-              onPress={handleSubmit}
-              disabled={loading || !sessionReady}
-              className="rounded-2xl overflow-hidden mt-2"
-              style={loading || !sessionReady ? undefined : amethystGlow}
-            >
-              <LinearGradient
-                colors={loading || !sessionReady ? ["#50107D", "#86169E"] : ["#781BB6", "#C636E0"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0.9 }}
-                style={{ paddingVertical: 17, alignItems: "center" }}
-              >
-                {loading ? (
-                  <ActivityIndicator color="#FFFFFF" />
-                ) : (
-                  <Text className="text-white text-[15px]" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>
-                    Atualizar senha
-                  </Text>
-                )}
-              </LinearGradient>
-            </Pressable>
+            <View className="mt-6"><Button title="Salvar nova senha" onPress={handleSubmit} loading={loading} disabled={!sessionReady} size="lg" /></View>
           </Animated.View>
-        </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+
+
+    </AuthShell>
   );
 }

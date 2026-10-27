@@ -25,8 +25,8 @@ const MAP: Record<string, { icon: IconName; color: string }> = {
   bebidas: { icon: "water", color: "#7A6FB0" },
   acucares: { icon: "energy", color: "#D4607A" },
   doces: { icon: "energy", color: "#D46080" },
-  alimentos: { icon: "food", color: "#6E6382" },
-  produtos: { icon: "food", color: "#6E6382" },
+  alimentos: { icon: "food", color: "#71717A" },
+  produtos: { icon: "food", color: "#71717A" },
   sopas: { icon: "food", color: "#9A6040" },
   molhos: { icon: "food", color: "#9A7050" },
   preparacoes: { icon: "food", color: "#6E7382" },
@@ -39,5 +39,5 @@ const MAP: Record<string, { icon: IconName; color: string }> = {
 export function categoryVisual(category: string | null): { icon: IconName; color: string } {
   const key = (category ?? "").toLowerCase();
   const hit = Object.keys(MAP).find((k) => key.includes(k));
-  return hit ? MAP[hit] : { icon: "food", color: "#6E6382" };
+  return hit ? MAP[hit] : { icon: "food", color: "#71717A" };
 }

@@ -92,7 +92,7 @@ export default function GroupDetailScreen() {
         <View className="px-6 pt-6 pb-4 border-b border-surface-border">
           <View className="flex-row items-center gap-3 mb-3">
             <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5">
-              <AppIcon name="arrow-left" size={18} color="#9B40D8" strokeWidth={2} />
+              <AppIcon name="arrow-left" size={18} color="#3F3F46" strokeWidth={2} />
               <Text className="text-violet-400" style={{ fontFamily: font.medium }}>Voltar</Text>
             </Pressable>
           </View>
@@ -101,7 +101,7 @@ export default function GroupDetailScreen() {
             <Text className="text-xs text-text-muted mt-1" style={{ fontFamily: font.regular }}>{group.description}</Text>
           ) : null}
           <View className="flex-row items-center gap-1.5 mt-1.5">
-            <AppIcon name="social" size={14} color="#6E6382" strokeWidth={2} />
+            <AppIcon name="social" size={14} color="#71717A" strokeWidth={2} />
             <Text className="text-[10px] text-text-muted" style={{ fontFamily: font.regular }}>{group?.member_count ?? 0} membros</Text>
           </View>
 
@@ -127,7 +127,7 @@ export default function GroupDetailScreen() {
               <TextInput
                 className="flex-1 bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
                 placeholder="Escrever no grupo..."
-                placeholderTextColor="#6E6382"
+                placeholderTextColor="#71717A"
                 value={newPost}
                 onChangeText={setNewPost}
                 style={{ fontFamily: font.regular }}
@@ -144,7 +144,7 @@ export default function GroupDetailScreen() {
 
             {postsLoading ? (
               <View className="flex-1 items-center justify-center">
-                <ActivityIndicator size="large" color="#781BB6" />
+                <ActivityIndicator size="large" color="#27272A" />
               </View>
             ) : (
               <FlatList
@@ -166,7 +166,7 @@ export default function GroupDetailScreen() {
                 ListEmptyComponent={
                   <View className="items-center py-14 px-8">
                     <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
-                      <AppIcon name="chat" size={28} color="#9B40D8" strokeWidth={2} />
+                      <AppIcon name="chat" size={28} color="#3F3F46" strokeWidth={2} />
                     </View>
                     <Text className="text-xl text-text-primary mb-1.5" style={{ fontFamily: font.display }}>Sem publicações</Text>
                     <Text className="text-text-secondary text-sm text-center" style={{ fontFamily: font.regular }}>Seja o primeiro a escrever no grupo</Text>
@@ -189,14 +189,14 @@ export default function GroupDetailScreen() {
                     <Text className="text-sm text-text-primary" style={{ fontFamily: font.semibold }}>{profile?.full_name}</Text>
                     <Text className="text-[10px] text-text-muted capitalize" style={{ fontFamily: font.regular }}>{item.role}</Text>
                   </View>
-                  <AppIcon name="chevron-right" size={18} color="#6E6382" strokeWidth={2} />
+                  <AppIcon name="chevron-right" size={18} color="#71717A" strokeWidth={2} />
                 </View>
               );
             }}
             ListEmptyComponent={
               <View className="items-center py-14 px-8">
                 <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
-                  <AppIcon name="social" size={28} color="#9B40D8" strokeWidth={2} />
+                  <AppIcon name="social" size={28} color="#3F3F46" strokeWidth={2} />
                 </View>
                 <Text className="text-xl text-text-primary mb-1.5" style={{ fontFamily: font.display }}>Sem membros</Text>
                 <Text className="text-text-secondary text-sm text-center" style={{ fontFamily: font.regular }}>Este grupo ainda não tem participantes</Text>

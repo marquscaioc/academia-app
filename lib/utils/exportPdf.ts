@@ -76,16 +76,16 @@ export function generateProgressHtml(data: ProgressReportData): string {
   <meta charset="utf-8">
   <style>
     body { font-family: system-ui, sans-serif; padding: 40px; color: #1a1a1a; background: #fff; }
-    h1 { color: #781BB6; font-size: 24px; margin-bottom: 4px; }
+    h1 { color: #27272A; font-size: 24px; margin-bottom: 4px; }
     h2 { color: #555; font-size: 14px; font-weight: normal; margin-top: 0; }
-    h3 { color: #781BB6; font-size: 14px; margin-top: 28px; margin-bottom: 8px; }
-    .header { border-bottom: 2px solid #781BB6; padding-bottom: 16px; margin-bottom: 24px; }
+    h3 { color: #27272A; font-size: 14px; margin-top: 28px; margin-bottom: 8px; }
+    .header { border-bottom: 2px solid #27272A; padding-bottom: 16px; margin-bottom: 24px; }
     .stats { display: flex; gap: 16px; margin-bottom: 24px; }
     .stat { background: #f5f3ff; padding: 16px; border-radius: 12px; flex: 1; text-align: center; }
-    .stat-value { font-size: 28px; font-weight: 900; color: #781BB6; }
+    .stat-value { font-size: 28px; font-weight: 900; color: #27272A; }
     .stat-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
     table { width: 100%; border-collapse: collapse; margin-top: 8px; }
-    th { background: #781BB6; color: white; padding: 10px; text-align: left; font-size: 12px; }
+    th { background: #27272A; color: white; padding: 10px; text-align: left; font-size: 12px; }
     td { padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; }
     tr:nth-child(even) { background: #faf8fc; }
     .photo-grid { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
@@ -146,7 +146,7 @@ export function generateProgressHtml(data: ProgressReportData): string {
   <div class="photo-grid">${photoGrid}</div>` : ""}
 
   <div class="footer">
-    Gerado por Projeto Gaab em ${new Date().toLocaleDateString("pt-BR")}
+    Gerado por Projeto Academia em ${new Date().toLocaleDateString("pt-BR")}
   </div>
 </body>
 </html>`;

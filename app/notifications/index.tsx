@@ -87,13 +87,13 @@ export default function NotificationsScreen() {
     <SafeAreaView className="flex-1 bg-dark-400">
       <View className="flex-1">
         <WebContainer maxWidth={640}>
-        <View className="flex-row items-center justify-between px-6 pt-6 pb-4">
-          <View className="flex-row items-center gap-3">
+        <View className="flex-row flex-wrap items-center justify-between gap-x-3 gap-y-2 px-6 pt-6 pb-4">
+          <View className="flex-row items-center gap-3 shrink">
             <Pressable
               onPress={() => router.back()}
               className="w-10 h-10 rounded-2xl bg-surface-card border border-surface-border items-center justify-center"
             >
-              <AppIcon name="arrow-left" size={18} color="#6E6382" strokeWidth={2} />
+              <AppIcon name="arrow-left" size={18} color="#71717A" strokeWidth={2} />
             </Pressable>
             <DisplayHeading size="sm">Notificações.</DisplayHeading>
             {unreadCount > 0 ? (
@@ -107,9 +107,10 @@ export default function NotificationsScreen() {
           {unreadCount > 0 ? (
             <Pressable
               onPress={() => markAllRead.mutate()}
-              className="flex-row items-center gap-1.5"
+              accessibilityRole="button"
+              className="flex-row items-center gap-1.5 py-1"
             >
-              <AppIcon name="check-all" size={16} color="#9B40D8" strokeWidth={2} />
+              <AppIcon name="check-all" size={16} color="#3F3F46" strokeWidth={2} />
               <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>
                 Marcar todas como lidas
               </Text>
@@ -119,12 +120,12 @@ export default function NotificationsScreen() {
 
         {isLoading ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" color="#781BB6" />
+            <ActivityIndicator size="large" color="#27272A" />
           </View>
         ) : !notifications?.length ? (
           <View className="flex-1 items-center justify-center px-6">
             <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-5">
-              <AppIcon name="bell" size={28} color="#9B40D8" strokeWidth={2} />
+              <AppIcon name="bell" size={28} color="#3F3F46" strokeWidth={2} />
             </View>
             <DisplayHeading size="sm">Tudo em dia.</DisplayHeading>
             <Text className="text-text-secondary text-sm text-center mt-2" style={{ fontFamily: font.regular }}>
@@ -147,7 +148,7 @@ export default function NotificationsScreen() {
                   <AppIcon
                     name={typeIcons[item.type] ?? typeIcons.default}
                     size={18}
-                    color="#9B40D8"
+                    color="#3F3F46"
                     strokeWidth={2}
                   />
                 </View>

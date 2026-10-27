@@ -10,7 +10,7 @@ export function MostImprovedLeaderboard({ entries }: MostImprovedLeaderboardProp
   if (!entries.length) {
     return (
       <View className="items-center py-8">
-        <Text className="text-text-muted text-sm">Dados insuficientes para ranking de evolução.</Text>
+        <Text className="text-text-muted text-sm font-sans">Dados insuficientes para ranking de evolução.</Text>
       </View>
     );
   }
@@ -28,7 +28,7 @@ export function MostImprovedLeaderboard({ entries }: MostImprovedLeaderboardProp
           <Avatar uri={entry.avatarUrl} name={entry.name} size="sm" />
           <View className="flex-1">
             <Text className="text-sm font-bold text-text-primary">{entry.name}</Text>
-            <Text className="text-[10px] text-text-muted">
+            <Text className="text-[10px] text-text-muted font-sans">
               {entry.firstWeekScore} → {entry.lastWeekScore} pts/dia
             </Text>
           </View>

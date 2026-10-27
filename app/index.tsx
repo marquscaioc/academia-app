@@ -1,5 +1,5 @@
 import { Redirect } from "expo-router";
-import { ActivityIndicator, Text, View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import { useAuth } from "../lib/auth/provider";
 import { Logo } from "../components/ui";
 
@@ -22,7 +22,7 @@ export default function Index() {
     <View className="flex-1 items-center justify-center bg-dark-400">
       <Logo size="xl" />
       <View className="h-7" />
-      <ActivityIndicator size="small" color="#781BB6" />
+      <ActivityIndicator size="small" color="#27272A" />
     </View>
   );
 

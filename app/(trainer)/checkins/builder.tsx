@@ -15,7 +15,7 @@ import { useCreateTemplate, useAddQuestion } from "../../../hooks/mutations/useC
 import { AppIcon } from "../../../components/ui";
 import { DisplayHeading } from "../../../components/ui/DisplayHeading";
 import { SectionLabel } from "../../../components/ui/SectionLabel";
-import { amethystGlow, font } from "../../../lib/design/tokens";
+import { surfaceShadow, font } from "../../../lib/design/tokens";
 
 interface DraftQuestion {
   text: string;
@@ -100,7 +100,7 @@ export default function CheckinBuilderScreen() {
       <ScrollView className="flex-1 px-6 pt-6" keyboardShouldPersistTaps="handled">
         <View className="flex-row items-center justify-between mb-6">
           <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5">
-            <AppIcon name="arrow-left" size={18} color="#6E6382" strokeWidth={2} />
+            <AppIcon name="arrow-left" size={18} color="#71717A" strokeWidth={2} />
             <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>Cancelar</Text>
           </Pressable>
           <DisplayHeading size="sm">Novo questionário.</DisplayHeading>
@@ -113,7 +113,7 @@ export default function CheckinBuilderScreen() {
             <TextInput
               className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
               placeholder="Ex: Check-in semanal"
-              placeholderTextColor="#6E6382"
+              placeholderTextColor="#71717A"
               value={title}
               onChangeText={setTitle}
               style={{ fontFamily: font.regular }}
@@ -125,7 +125,7 @@ export default function CheckinBuilderScreen() {
             <TextInput
               className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
               placeholder="Instruções para o aluno"
-              placeholderTextColor="#6E6382"
+              placeholderTextColor="#71717A"
               value={description}
               onChangeText={setDescription}
               multiline
@@ -160,7 +160,7 @@ export default function CheckinBuilderScreen() {
             <View className="flex-row items-center justify-between mb-3">
               <SectionLabel>Perguntas ({questions.length})</SectionLabel>
               <Pressable onPress={addNewQuestion} className="flex-row items-center gap-1.5 bg-violet-500/10 px-3 py-1.5 rounded-lg">
-                <AppIcon name="plus" size={14} color="#9B40D8" strokeWidth={2} />
+                <AppIcon name="plus" size={14} color="#3F3F46" strokeWidth={2} />
                 <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>Adicionar</Text>
               </Pressable>
             </View>
@@ -176,7 +176,7 @@ export default function CheckinBuilderScreen() {
                       <Text className="text-xs text-text-muted" style={{ fontFamily: font.semibold }}>Pergunta {idx + 1}</Text>
                     </View>
                     <Pressable onPress={() => removeQuestion(idx)} className="flex-row items-center gap-1">
-                      <AppIcon name="trash" size={14} color="#FB7185" strokeWidth={2} />
+                      <AppIcon name="trash" size={14} color="#3F3F46" strokeWidth={2} />
                       <Text className="text-danger-500 text-xs" style={{ fontFamily: font.semibold }}>Remover</Text>
                     </Pressable>
                   </View>
@@ -184,7 +184,7 @@ export default function CheckinBuilderScreen() {
                   <TextInput
                     className="bg-dark-300 border border-surface-border rounded-2xl px-4 py-3 text-sm text-text-primary mb-3"
                     placeholder="Texto da pergunta"
-                    placeholderTextColor="#6E6382"
+                    placeholderTextColor="#71717A"
                     value={q.text}
                     onChangeText={(v) => updateQuestion(idx, "text", v)}
                     style={{ fontFamily: font.regular }}
@@ -202,7 +202,7 @@ export default function CheckinBuilderScreen() {
                         <AppIcon
                           name={t.icon}
                           size={14}
-                          color={q.type === t.value ? "#FFFFFF" : "#A99FBA"}
+                          color={q.type === t.value ? "#FFFFFF" : "#52525B"}
                           strokeWidth={2}
                         />
                         <Text
@@ -235,7 +235,7 @@ export default function CheckinBuilderScreen() {
                     <TextInput
                       className="bg-dark-300 border border-surface-border rounded-2xl px-4 py-2.5 text-xs text-text-primary"
                       placeholder="Opções separadas por vírgula: Ótimo, Bom, Regular, Ruim"
-                      placeholderTextColor="#6E6382"
+                      placeholderTextColor="#71717A"
                       value={q.options}
                       onChangeText={(v) => updateQuestion(idx, "options", v)}
                       style={{ fontFamily: font.regular }}
@@ -250,7 +250,7 @@ export default function CheckinBuilderScreen() {
                   className="border border-dashed border-surface-border rounded-3xl py-10 items-center"
                 >
                   <View className="w-16 h-16 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-3">
-                    <AppIcon name="clipboard" size={28} color="#9B40D8" strokeWidth={2} />
+                    <AppIcon name="clipboard" size={28} color="#3F3F46" strokeWidth={2} />
                   </View>
                   <Text className="text-text-muted text-sm" style={{ fontFamily: font.regular }}>Adicione a primeira pergunta</Text>
                 </Pressable>
@@ -262,13 +262,13 @@ export default function CheckinBuilderScreen() {
             onPress={handleSave}
             disabled={saving || !title.trim() || questions.length === 0}
             className="rounded-2xl overflow-hidden mt-4 mb-10"
-            style={title.trim() && questions.length > 0 ? amethystGlow : undefined}
+            style={title.trim() && questions.length > 0 ? surfaceShadow : undefined}
           >
             <LinearGradient
               colors={
                 title.trim() && questions.length > 0
-                  ? ["#781BB6", "#C636E0"]
-                  : ["#2E2740", "#2E2740"]
+                  ? ["#27272A", "#27272A"]
+                  : ["#E4E4E7", "#E4E4E7"]
               }
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0.9 }}

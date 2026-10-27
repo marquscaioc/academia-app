@@ -11,7 +11,7 @@ import { useGetOrCreateDM } from "../../../hooks/mutations/useChatMutations";
 import { Avatar } from "../../../components/ui/Avatar";
 import { DisplayHeading } from "../../../components/ui/DisplayHeading";
 import { AppIcon } from "../../../components/ui";
-import { font, amethystGlow } from "../../../lib/design/tokens";
+import { font, surfaceShadow } from "../../../lib/design/tokens";
 
 function timeAgo(dateStr: string | null): string {
   if (!dateStr) return "";
@@ -79,7 +79,7 @@ function NewConversationModal({ userId, onClose }: { userId: string; onClose: ()
           <View className="flex-row items-center justify-between mb-4">
             <DisplayHeading size="sm">Nova conversa</DisplayHeading>
             <Pressable onPress={onClose} className="w-9 h-9 rounded-2xl bg-surface-elevated border border-surface-border items-center justify-center active:bg-surface-hover">
-              <AppIcon name="close" size={18} color="#A99FBA" strokeWidth={2} />
+              <AppIcon name="close" size={18} color="#52525B" strokeWidth={2} />
             </Pressable>
           </View>
           {!connections?.length ? (
@@ -115,9 +115,9 @@ export default function TrainerChatListScreen() {
       <View className="flex-1">
         <View className="px-6 pt-6 pb-4 flex-row items-center justify-between">
           <DisplayHeading size="2xl">Mensagens</DisplayHeading>
-          <Pressable onPress={() => setShowNew(true)} style={amethystGlow} className="rounded-2xl overflow-hidden">
+          <Pressable onPress={() => setShowNew(true)} style={surfaceShadow} className="rounded-2xl overflow-hidden">
             <LinearGradient
-              colors={["#781BB6", "#C636E0"]}
+              colors={["#27272A", "#27272A"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0.9 }}
               className="px-4 py-2"
@@ -129,12 +129,12 @@ export default function TrainerChatListScreen() {
 
         {isLoading ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" color="#781BB6" />
+            <ActivityIndicator size="large" color="#27272A" />
           </View>
         ) : !conversations?.length ? (
           <View className="flex-1 items-center justify-center px-8 py-12">
             <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-6">
-              <AppIcon name="chat" size={28} color="#9B40D8" strokeWidth={2} />
+              <AppIcon name="chat" size={28} color="#3F3F46" strokeWidth={2} />
             </View>
             <Text className="text-3xl text-text-primary text-center" style={{ fontFamily: font.display, letterSpacing: -0.3 }}>
               Nenhuma conversa
@@ -142,9 +142,9 @@ export default function TrainerChatListScreen() {
             <Text className="text-sm text-text-secondary text-center mt-2.5 max-w-[300px] leading-5" style={{ fontFamily: font.regular }}>
               Converse diretamente com seus alunos. As conversas aparecerão aqui.
             </Text>
-            <Pressable onPress={() => setShowNew(true)} style={amethystGlow} className="mt-7 rounded-2xl overflow-hidden">
+            <Pressable onPress={() => setShowNew(true)} style={surfaceShadow} className="mt-7 rounded-2xl overflow-hidden">
               <LinearGradient
-                colors={["#781BB6", "#C636E0"]}
+                colors={["#27272A", "#27272A"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0.9 }}
                 style={{ paddingVertical: 13, paddingHorizontal: 26 }}
@@ -172,7 +172,7 @@ export default function TrainerChatListScreen() {
                 >
                   {isGroup ? (
                     <View className="w-12 h-12 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
-                      <AppIcon name="social" size={20} color="#9B40D8" strokeWidth={2} />
+                      <AppIcon name="social" size={20} color="#3F3F46" strokeWidth={2} />
                     </View>
                   ) : (
                     <Avatar uri={avatar} name={name} size="lg" />

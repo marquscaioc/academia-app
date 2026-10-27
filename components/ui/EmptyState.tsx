@@ -1,6 +1,6 @@
 import { Pressable, Text, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { amethystGradient, font } from "../../lib/design/tokens";
+import { primaryGradient, font } from "../../lib/design/tokens";
 import { AppIcon, type IconName } from "./Icon";
 
 interface EmptyStateProps {
@@ -19,9 +19,9 @@ export function EmptyState({ iconName, icon, title, description, actionLabel, on
     <View className="flex-1 items-center justify-center px-8 py-12">
       <View className="w-20 h-20 bg-surface-elevated border border-surface-border rounded-3xl items-center justify-center mb-6">
         {iconName ? (
-          <AppIcon name={iconName} size={28} color="#9B40D8" strokeWidth={2} />
+          <AppIcon name={iconName} size={28} color="#3F3F46" strokeWidth={2} />
         ) : (
-          <Text className="text-3xl">{icon}</Text>
+          <Text className="text-3xl font-sans">{icon}</Text>
         )}
       </View>
       <Text className="text-3xl text-text-primary text-center" style={{ fontFamily: font.display, letterSpacing: -0.3 }}>
@@ -36,7 +36,7 @@ export function EmptyState({ iconName, icon, title, description, actionLabel, on
       {actionLabel && onAction ? (
         <Pressable onPress={onAction} className="mt-7 rounded-2xl overflow-hidden">
           <LinearGradient
-            colors={amethystGradient}
+            colors={primaryGradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0.9 }}
             style={{ paddingVertical: 13, paddingHorizontal: 26 }}

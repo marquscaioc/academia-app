@@ -10,13 +10,13 @@ if (!existsSync(file)) {
   process.exit(0);
 }
 
-const TITLE = "Projeto Gaab — Treino e dieta com seu personal";
+const TITLE = "Projeto Academia — Treino e dieta com seu personal";
 const DESCRIPTION =
   "Plataforma para personal trainers e nutricionistas acompanharem alunos: treinos, dietas, check-ins, desafios e progresso em um só lugar.";
 
 const META = `
     <meta name="description" content="${DESCRIPTION}" />
-    <meta name="theme-color" content="#0B0811" />
+    <meta name="theme-color" content="#F7F7F8" />
     <meta property="og:title" content="${TITLE}" />
     <meta property="og:description" content="Treinos, dietas, check-ins e progresso com seu personal trainer." />
     <meta property="og:type" content="website" />

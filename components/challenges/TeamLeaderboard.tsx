@@ -11,7 +11,7 @@ export function TeamLeaderboard({ teams }: TeamLeaderboardProps) {
   if (!teams.length) {
     return (
       <View className="items-center py-8">
-        <Text className="text-text-muted text-sm">Nenhuma equipe formada ainda.</Text>
+        <Text className="text-text-muted text-sm font-sans">Nenhuma equipe formada ainda.</Text>
       </View>
     );
   }
@@ -25,12 +25,12 @@ export function TeamLeaderboard({ teams }: TeamLeaderboardProps) {
             idx < 3 ? "bg-violet-500/5 border border-violet-500/20" : "bg-surface-card border border-surface-border"
           }`}
         >
-          <Text className="text-lg w-8 text-center">
+          <Text className="text-lg w-8 text-center font-sans">
             {idx < 3 ? medals[idx] : `#${idx + 1}`}
           </Text>
           <View className="flex-1">
             <Text className="text-sm font-bold text-text-primary">{team.name}</Text>
-            <Text className="text-[10px] text-text-muted">{team.member_count} membros</Text>
+            <Text className="text-[10px] text-text-muted font-sans">{team.member_count} membros</Text>
           </View>
           <Text className="text-lg font-black text-violet-400">{team.total_score}</Text>
         </View>

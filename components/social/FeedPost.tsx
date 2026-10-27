@@ -57,13 +57,13 @@ export function FeedPost({
         <Avatar uri={authorAvatar} name={authorName} size="md" />
         <View className="flex-1">
           <Text className="text-sm font-bold text-text-primary">{authorName}</Text>
-          <Text className="text-xs text-text-muted">{timeAgo(createdAt)}</Text>
+          <Text className="text-xs text-text-muted font-sans">{timeAgo(createdAt)}</Text>
         </View>
       </Pressable>
 
       {/* Content */}
       {content ? (
-        <Text className="text-sm text-text-secondary leading-5 mb-3">{content}</Text>
+        <Text className="text-sm text-text-secondary leading-5 mb-3 font-sans">{content}</Text>
       ) : null}
 
       {/* Media */}
@@ -95,7 +95,7 @@ export function FeedPost({
             onPress={r.onPress}
             className={`px-3 py-1.5 rounded-full ${r.active ? "bg-violet-500/15" : "bg-surface-elevated"}`}
           >
-            <Text className="text-sm">{reactionEmojis[r.type] ?? "👍"}</Text>
+            <Text className="text-sm font-sans">{reactionEmojis[r.type] ?? "👍"}</Text>
           </Pressable>
         ))}
       </View>
@@ -103,10 +103,10 @@ export function FeedPost({
       {/* Stats */}
       <View className="flex-row items-center gap-4">
         {likesCount > 0 ? (
-          <Text className="text-xs text-text-muted">{likesCount} reacoes</Text>
+          <Text className="text-xs text-text-muted font-sans">{likesCount} reacoes</Text>
         ) : null}
         <Pressable onPress={onComment}>
-          <Text className="text-xs text-text-muted">
+          <Text className="text-xs text-text-muted font-sans">
             {commentsCount > 0 ? `${commentsCount} comentarios` : "Comentar"}
           </Text>
         </Pressable>

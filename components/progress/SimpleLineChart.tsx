@@ -26,7 +26,7 @@ const fmt = (v: number) => v.toFixed(1).replace(".", ",");
 export function SimpleLineChart({
   data,
   height = 160,
-  color = "#781BB6",
+  color = "#27272A",
   unit = "",
   title,
   trend = "neutral",
@@ -35,7 +35,7 @@ export function SimpleLineChart({
   if (!data.length) {
     return (
       <View className="bg-surface-card border border-surface-border rounded-2xl p-5 items-center py-10">
-        <Text className="text-text-muted text-sm">Dados insuficientes para o gráfico</Text>
+        <Text className="text-text-muted text-sm font-sans">Dados insuficientes para o gráfico</Text>
       </View>
     );
   }
@@ -105,7 +105,7 @@ export function SimpleLineChart({
 
               {/* Date label */}
               {idx % Math.ceil(data.length / 6) === 0 || isLast ? (
-                <Text className="text-[8px] text-text-muted mt-1">{point.label}</Text>
+                <Text className="text-[8px] text-text-muted mt-1 font-sans">{point.label}</Text>
               ) : (
                 <View className="h-3" />
               )}
@@ -117,8 +117,8 @@ export function SimpleLineChart({
       {/* Min/Max reference */}
       {data.length > 1 ? (
         <View className="flex-row justify-between mt-3">
-          <Text className="text-[10px] text-text-muted">Mín: {fmt(min)}{unit}</Text>
-          <Text className="text-[10px] text-text-muted">Máx: {fmt(max)}{unit}</Text>
+          <Text className="text-[10px] text-text-muted font-sans">Mín: {fmt(min)}{unit}</Text>
+          <Text className="text-[10px] text-text-muted font-sans">Máx: {fmt(max)}{unit}</Text>
         </View>
       ) : null}
     </View>

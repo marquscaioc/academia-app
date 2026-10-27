@@ -23,7 +23,7 @@ import { EmptyState } from "../../../components/ui/EmptyState";
 import { Avatar } from "../../../components/ui/Avatar";
 import { DisplayHeading } from "../../../components/ui/DisplayHeading";
 import { AppIcon } from "../../../components/ui";
-import { font, amethystGlow, palette } from "../../../lib/design/tokens";
+import { font, surfaceShadow } from "../../../lib/design/tokens";
 import { WebContainer } from "../../../components/layout/WebContainer";
 import { toast } from "../../../stores/useToastStore";
 
@@ -38,13 +38,13 @@ function CommentsSheet({ postId, userId, onClose }: { postId: string; userId?: s
           <View className="flex-row items-center justify-between mb-4">
             <DisplayHeading size="sm" className="text-text-primary">Comentários</DisplayHeading>
             <Pressable onPress={onClose} className="w-9 h-9 rounded-2xl bg-surface-card border border-surface-border items-center justify-center">
-              <AppIcon name="close" size={18} color="#6E6382" strokeWidth={2} />
+              <AppIcon name="close" size={18} color="#71717A" strokeWidth={2} />
             </Pressable>
           </View>
           <ScrollView keyboardShouldPersistTaps="handled">
             {isLoading ? (
               <View className="items-center py-5" accessibilityRole="progressbar" accessibilityLabel="Carregando comentários">
-                <ActivityIndicator color={palette.violet500} />
+                <ActivityIndicator color="#27272A" />
                 <Text className="text-text-muted text-xs mt-2" style={{ fontFamily: font.regular }}>Carregando comentários...</Text>
               </View>
             ) : isError ? (
@@ -136,11 +136,11 @@ export default function SocialFeedScreen() {
           <DisplayHeading size="md" className="text-text-primary">Feed</DisplayHeading>
           <View className="flex-row gap-2">
             <Pressable onPress={() => router.push("/groups")} className="flex-row items-center gap-1.5 bg-surface-card border border-surface-border px-3 py-1.5 rounded-full">
-              <AppIcon name="social" size={14} color="#A99FBA" strokeWidth={2} />
+              <AppIcon name="social" size={14} color="#52525B" strokeWidth={2} />
               <Text className="text-text-muted text-xs" style={{ fontFamily: font.semibold }}>Grupos</Text>
             </Pressable>
             <Pressable onPress={() => router.push("/challenges")} className="flex-row items-center gap-1.5 bg-violet-500/10 border border-violet-500/25 px-3 py-1.5 rounded-full">
-              <AppIcon name="trophy" size={14} color="#9B40D8" strokeWidth={2} />
+              <AppIcon name="trophy" size={14} color="#3F3F46" strokeWidth={2} />
               <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>Desafios</Text>
             </Pressable>
           </View>
@@ -182,7 +182,7 @@ export default function SocialFeedScreen() {
           <TextInput
             className="text-[15px] text-text-primary min-h-[60px]"
             placeholder="Compartilhe seu treino, progresso ou motivacao..."
-            placeholderTextColor="#6E6382"
+            placeholderTextColor="#71717A"
             value={newPostContent}
             onChangeText={setNewPostContent}
             multiline
@@ -200,14 +200,14 @@ export default function SocialFeedScreen() {
                 </View>
               ))}
               <Pressable disabled={isPublishing} onPress={() => setMediaUris([])} className="w-16 h-16 bg-dark-300 border border-surface-border rounded-xl items-center justify-center">
-                <AppIcon name="trash" size={18} color="#FB7185" strokeWidth={2} />
+                <AppIcon name="trash" size={18} color="#3F3F46" strokeWidth={2} />
               </Pressable>
             </View>
           ) : null}
 
           <View className="flex-row items-center justify-between mt-3">
             <Pressable disabled={isPublishing} onPress={pickMedia} className="flex-row items-center gap-2 bg-dark-300 border border-surface-border px-3 py-2 rounded-full">
-              <AppIcon name="camera" size={16} color="#A99FBA" strokeWidth={2} />
+              <AppIcon name="camera" size={16} color="#52525B" strokeWidth={2} />
               <Text className="text-text-muted text-xs" style={{ fontFamily: font.semibold }}>Foto</Text>
             </Pressable>
             <View className="flex-row gap-2 items-center">
@@ -217,13 +217,13 @@ export default function SocialFeedScreen() {
               <Pressable
                 onPress={handlePost}
                 disabled={(!newPostContent.trim() && !mediaUris.length) || isPublishing}
-                style={newPostContent.trim() || mediaUris.length ? amethystGlow : undefined}
+                style={newPostContent.trim() || mediaUris.length ? surfaceShadow : undefined}
                 className={`px-5 py-2 rounded-full ${
                   newPostContent.trim() || mediaUris.length ? "bg-violet-500" : "bg-surface-border"
                 }`}
               >
                 {isPublishing ? (
-                  <ActivityIndicator color="#0B080F" size="small" />
+                  <ActivityIndicator color="#F7F7F8" size="small" />
                 ) : (
                   <Text
                     className={`text-sm ${newPostContent.trim() || mediaUris.length ? "text-white" : "text-text-muted"}`}
@@ -241,7 +241,7 @@ export default function SocialFeedScreen() {
       {/* Feed */}
       {isLoading ? (
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#781BB6" />
+          <ActivityIndicator size="large" color="#27272A" />
         </View>
       ) : isError ? (
         <EmptyState

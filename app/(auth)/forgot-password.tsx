@@ -1,19 +1,10 @@
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { useState } from "react";
-import {
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { LinearGradient } from "expo-linear-gradient";
+import { Pressable, Text, TextInput, View } from "react-native";
+import { AuthShell } from "../../components/layout/AuthShell";
+import { AppIcon, Button, DisplayHeading } from "../../components/ui";
 import { supabase } from "../../lib/supabase/client";
-import { AppIcon, DisplayHeading, Logo } from "../../components/ui";
-import { amethystGlow, amethystGradient, font } from "../../lib/design/tokens";
+import { font, palette } from "../../lib/design/tokens";
 
 export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState("");
@@ -23,105 +14,64 @@ export default function ForgotPasswordScreen() {
   const [focused, setFocused] = useState(false);
 
   const handleReset = async () => {
-    if (!email) { setError("Informe seu email"); return; }
-    setError(""); setLoading(true);
-    const redirectTo =
-      typeof window !== "undefined"
-        ? `${window.location.origin}/reset-password`
-        : undefined;
-    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
-    setLoading(false);
-    if (resetError) { setError("Erro ao enviar email. Tente novamente."); return; }
-    setSent(true);
+    if (loading) return;
+    if (!email.trim()) { setError("Informe seu e-mail para continuar."); return; }
+    setError("");
+    setLoading(true);
+    const redirectTo = typeof window !== "undefined" ? `${window.location.origin}/reset-password` : undefined;
+    try {
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo });
+      if (resetError) { setError("Não foi possível enviar o e-mail. Tente novamente."); return; }
+      setSent(true);
+    } catch {
+      setError("Verifique sua conexão e tente novamente.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  if (sent) {
-    return (
-      <SafeAreaView className="flex-1 bg-dark-400">
-        <View className="flex-1 justify-center px-8 max-w-[440px] w-full self-center">
-          <View className="items-center">
-            <View className="w-20 h-20 bg-violet-500/15 border border-violet-500/25 rounded-3xl items-center justify-center mb-6">
-              <AppIcon name="mail" size={32} color="#9B40D8" strokeWidth={1.8} />
-            </View>
-            <DisplayHeading size="lg" tone="primary" className="text-center">
-              Email enviado.
-            </DisplayHeading>
-            <Text className="text-sm text-text-secondary text-center mt-3 leading-5" style={{ fontFamily: font.regular }}>
-              Verifique sua caixa de entrada e siga as instruções para redefinir sua senha.
-            </Text>
-          </View>
-          <Link href="/(auth)/login" asChild>
-            <Pressable className="rounded-2xl overflow-hidden mt-8" style={amethystGlow}>
-              <LinearGradient colors={amethystGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0.9 }} style={{ paddingVertical: 17, alignItems: "center" }}>
-                <Text className="text-white text-[15px]" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Voltar para login</Text>
-              </LinearGradient>
-            </Pressable>
-          </Link>
-        </View>
-      </SafeAreaView>
-    );
-  }
+  if (sent) return (
+    <AuthShell>
+      <View className="w-14 h-14 rounded-2xl bg-surface-elevated items-center justify-center mb-6">
+        <AppIcon name="mail" size={24} color={palette.textPrimary} strokeWidth={1.7} />
+      </View>
+      <DisplayHeading size="md">Confira seu e-mail</DisplayHeading>
+      <Text className="text-sm text-text-secondary leading-6 mt-3 mb-8" style={{ fontFamily: font.regular }}>
+        Se houver uma conta associada a esse endereço, você receberá as instruções para redefinir sua senha.
+      </Text>
+      <Button title="Voltar para entrar" onPress={() => router.replace("/(auth)/login")} size="lg" />
+    </AuthShell>
+  );
 
   return (
-    <SafeAreaView className="flex-1 bg-dark-400">
-      <LinearGradient
-        colors={["rgba(120,27,182,0.28)", "transparent"]}
-        start={{ x: 0.2, y: 0 }}
-        end={{ x: 0.8, y: 1 }}
-        style={{ position: "absolute", top: 0, left: 0, right: 0, height: 420 }}
-        pointerEvents="none"
+    <AuthShell>
+      <Link href="/(auth)/login" asChild>
+        <Pressable className="flex-row items-center gap-2 self-start mb-8 py-2" accessibilityRole="link">
+          <AppIcon name="arrow-left" size={16} color={palette.textSecondary} />
+          <Text className="text-sm text-text-secondary" style={{ fontFamily: font.medium }}>Voltar para entrar</Text>
+        </Pressable>
+      </Link>
+      <DisplayHeading size="md">Recupere seu acesso</DisplayHeading>
+      <Text className="text-sm text-text-secondary mt-3 mb-8 leading-6" style={{ fontFamily: font.regular }}>Informe seu e-mail e enviaremos um link para você definir uma nova senha.</Text>
+      {error ? <View accessibilityRole="alert" className="bg-surface-elevated border border-surface-border rounded-xl p-4 mb-5"><Text className="text-sm text-text-primary" style={{ fontFamily: font.regular }}>{error}</Text></View> : null}
+      <Text className="text-sm text-text-primary mb-2" style={{ fontFamily: font.medium }}>E-mail</Text>
+      <TextInput
+        accessibilityLabel="E-mail"
+        className={`rounded-xl border px-4 text-sm text-text-primary ${focused ? "border-primary-400" : "border-surface-border"}`}
+        style={{ fontFamily: font.regular, height: 50 }}
+        placeholder="seu@email.com"
+        placeholderTextColor={palette.textMuted}
+        value={email}
+        onChangeText={setEmail}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        autoCapitalize="none"
+        keyboardType="email-address"
+        autoComplete="email"
+        onSubmitEditing={handleReset}
+        returnKeyType="send"
       />
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} className="flex-1">
-        <View className="flex-1 justify-center px-8 max-w-[440px] w-full self-center">
-          <View className="flex-row items-center justify-between mb-10">
-            <Link href="/(auth)/login" asChild>
-              <Pressable className="flex-row items-center gap-2">
-                <Text className="text-text-muted text-lg">←</Text>
-                <Text className="text-text-muted text-[11px]" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>VOLTAR</Text>
-              </Pressable>
-            </Link>
-            <Logo size="sm" />
-          </View>
-          <View className="mb-10">
-            <DisplayHeading size="md" italic tone="muted">Recuperar</DisplayHeading>
-            <DisplayHeading size="2xl" tone="primary" className="mt-0.5">Senha.</DisplayHeading>
-            <Text className="text-sm text-text-secondary mt-3" style={{ fontFamily: font.regular }}>
-              Informe seu email para receber o link de recuperação.
-            </Text>
-          </View>
-          {error ? (
-            <View className="bg-danger-500/10 border border-danger-500/20 rounded-2xl p-4 mb-5">
-              <Text className="text-danger-500 text-center text-sm" style={{ fontFamily: font.medium }}>{error}</Text>
-            </View>
-          ) : null}
-          <View className="gap-4">
-            <View>
-              <Text className="text-[11px] text-text-muted mb-2 ml-0.5 uppercase" style={{ fontFamily: font.semibold, letterSpacing: 1.5 }}>Email</Text>
-              <TextInput
-                className={`rounded-2xl px-4 py-3.5 text-[15px] text-text-primary ${
-                  focused ? "bg-surface-elevated border border-violet-400/80" : "bg-surface-card/80 border border-surface-border"
-                }`}
-                style={{ fontFamily: font.regular }}
-                placeholder="seu@email.com"
-                placeholderTextColor="#6E6382"
-                value={email}
-                onChangeText={setEmail}
-                onFocus={() => setFocused(true)}
-                onBlur={() => setFocused(false)}
-                autoCapitalize="none"
-                keyboardType="email-address"
-              />
-            </View>
-            <Pressable onPress={handleReset} disabled={loading} className="rounded-2xl overflow-hidden mt-2" style={loading ? undefined : amethystGlow}>
-              <LinearGradient colors={loading ? ["#50107D", "#86169E"] : amethystGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0.9 }} style={{ paddingVertical: 17, alignItems: "center" }}>
-                {loading ? <ActivityIndicator color="#FFFFFF" /> : (
-                  <Text className="text-white text-[15px]" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Enviar link</Text>
-                )}
-              </LinearGradient>
-            </Pressable>
-          </View>
-        </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+      <View className="mt-6"><Button title="Enviar link de recuperação" onPress={handleReset} loading={loading} size="lg" /></View>
+    </AuthShell>
   );
 }

@@ -77,7 +77,7 @@ export default function StudentDetailScreen() {
       <View className="flex-1">
         <View className="px-6 pt-6 pb-4 border-b border-surface-border">
           <Pressable onPress={() => router.back()} className="mb-3 flex-row items-center gap-1.5">
-            <AppIcon name="arrow-left" size={18} color="#9B40D8" strokeWidth={2} />
+            <AppIcon name="arrow-left" size={18} color="#3F3F46" strokeWidth={2} />
             <Text className="text-violet-400" style={{ fontFamily: font.medium }}>Voltar</Text>
           </Pressable>
           <DisplayHeading size="md">{student?.full_name ?? "Aluno"}</DisplayHeading>
@@ -88,14 +88,14 @@ export default function StudentDetailScreen() {
               onPress={() => { setShowNote(!showNote); setShowCheckin(false); }}
               className="bg-violet-500/10 px-4 py-2 rounded-full border border-violet-400/30 flex-row items-center gap-1.5"
             >
-              <AppIcon name="plus" size={14} color="#9B40D8" strokeWidth={2} />
+              <AppIcon name="plus" size={14} color="#3F3F46" strokeWidth={2} />
               <Text className="text-violet-400 text-xs" style={{ fontFamily: font.bold }}>Nota</Text>
             </Pressable>
             <Pressable
               onPress={() => { setShowCheckin(!showCheckin); setShowNote(false); }}
               className="bg-violet-500/10 px-4 py-2 rounded-full border border-violet-400/30 flex-row items-center gap-1.5"
             >
-              <AppIcon name="clipboard-check" size={14} color="#9B40D8" strokeWidth={2} />
+              <AppIcon name="clipboard-check" size={14} color="#3F3F46" strokeWidth={2} />
               <Text className="text-violet-400 text-xs" style={{ fontFamily: font.bold }}>Check-in</Text>
             </Pressable>
             <Pressable
@@ -103,7 +103,7 @@ export default function StudentDetailScreen() {
               disabled={getOrCreateDM.isPending}
               className="bg-violet-500/10 px-4 py-2 rounded-full border border-violet-400/30 flex-row items-center gap-1.5"
             >
-              <AppIcon name="message" size={14} color="#9B40D8" strokeWidth={2} />
+              <AppIcon name="message" size={14} color="#3F3F46" strokeWidth={2} />
               <Text className="text-violet-400 text-xs" style={{ fontFamily: font.bold }}>Conversar</Text>
             </Pressable>
           </View>
@@ -134,7 +134,7 @@ export default function StudentDetailScreen() {
                       className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3 flex-row items-center justify-between active:bg-surface-hover"
                     >
                       <Text className="text-sm text-text-primary" style={{ fontFamily: font.semibold }}>{t.title}</Text>
-                      <AppIcon name="send" size={16} color="#9B40D8" strokeWidth={2} />
+                      <AppIcon name="send" size={16} color="#3F3F46" strokeWidth={2} />
                     </Pressable>
                   ))}
                 </>
@@ -147,7 +147,7 @@ export default function StudentDetailScreen() {
               <TextInput
                 className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary"
                 placeholder="Escrever nota sobre o aluno..."
-                placeholderTextColor="#6E6382"
+                placeholderTextColor="#71717A"
                 value={noteText}
                 onChangeText={setNoteText}
                 multiline
@@ -168,7 +168,7 @@ export default function StudentDetailScreen() {
 
         {isLoading ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" color="#781BB6" />
+            <ActivityIndicator size="large" color="#27272A" />
           </View>
         ) : (
           <FlatList

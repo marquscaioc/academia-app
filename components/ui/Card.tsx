@@ -7,7 +7,7 @@ interface CardProps {
   className?: string;
 }
 
-// Editorial Amethyst: hairline-defined surfaces, generous radius, quiet depth.
+// Quiet white surfaces and fine neutral borders.
 const variantStyles = {
   default: "bg-surface-card border border-surface-border/70 rounded-3xl p-5",
   elevated: "bg-surface-elevated border border-surface-border rounded-3xl p-5",

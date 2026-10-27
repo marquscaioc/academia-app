@@ -44,7 +44,7 @@ export default function RecipesScreen() {
         <View className="px-6 pt-6 pb-3">
           <View className="flex-row items-center justify-between mb-4">
             <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5">
-              <AppIcon name="arrow-left" size={18} color="#9B40D8" strokeWidth={2} />
+              <AppIcon name="arrow-left" size={18} color="#3F3F46" strokeWidth={2} />
               <Text className="text-violet-400" style={{ fontFamily: font.medium }}>Voltar</Text>
             </Pressable>
             <Text className="text-[28px] text-text-primary" style={{ fontFamily: font.display }}>Receitas.</Text>
@@ -53,13 +53,13 @@ export default function RecipesScreen() {
 
           <View className="mb-3">
             <View className="absolute left-4 top-0 bottom-0 z-10 justify-center">
-              <AppIcon name="search" size={18} color="#6E6382" strokeWidth={2} />
+              <AppIcon name="search" size={18} color="#71717A" strokeWidth={2} />
             </View>
             <TextInput
               className="bg-surface-card/80 border border-surface-border rounded-2xl pl-11 pr-4 py-3.5 text-[15px] text-text-primary"
               style={{ fontFamily: font.regular }}
               placeholder="Buscar receita..."
-              placeholderTextColor="#6E6382"
+              placeholderTextColor="#71717A"
               value={search}
               onChangeText={setSearch}
             />
@@ -89,7 +89,7 @@ export default function RecipesScreen() {
 
         {isLoading ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" color="#781BB6" />
+            <ActivityIndicator size="large" color="#27272A" />
           </View>
         ) : (
           <FlatList
@@ -114,7 +114,7 @@ export default function RecipesScreen() {
             ListEmptyComponent={
               <View className="items-center px-8 py-16">
                 <View className="w-16 h-16 rounded-3xl bg-surface-elevated border border-surface-border items-center justify-center mb-5">
-                  <AppIcon name="food" size={28} color="#9B40D8" strokeWidth={2} />
+                  <AppIcon name="food" size={28} color="#3F3F46" strokeWidth={2} />
                 </View>
                 <Text
                   className="text-2xl text-text-primary text-center"

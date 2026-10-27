@@ -44,11 +44,11 @@ export function MessageBubble({
               : "bg-surface-elevated rounded-bl-md"
           }`}
         >
-          <Text className={`text-sm leading-5 ${isOwn ? "text-white" : "text-text-primary"}`}>
+          <Text className={`text-sm leading-5 ${isOwn ? "text-white" : "text-text-primary"}`} style={{ fontFamily: "Geist_400Regular" }}>
             {content}
           </Text>
         </View>
-        <Text className={`text-[10px] mt-1 mx-2 ${isOwn ? "text-text-muted" : "text-text-muted"}`}>
+        <Text className={`text-[10px] mt-1 mx-2 ${isOwn ? "text-text-muted" : "text-text-muted"}`} style={{ fontFamily: "Geist_400Regular" }}>
           {formatTime(timestamp)}
         </Text>
       </View>

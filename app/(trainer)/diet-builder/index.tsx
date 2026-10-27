@@ -19,7 +19,7 @@ import { Avatar } from "../../../components/ui/Avatar";
 import { DisplayHeading } from "../../../components/ui/DisplayHeading";
 import { SectionLabel } from "../../../components/ui/SectionLabel";
 import { AppIcon } from "../../../components/ui";
-import { font, amethystGlow } from "../../../lib/design/tokens";
+import { font, surfaceShadow } from "../../../lib/design/tokens";
 import { FoodPicker } from "../../../components/diet/FoodPicker";
 import type { FoodPick } from "../../../components/diet/FoodPicker";
 import { toast } from "../../../stores/useToastStore";
@@ -201,7 +201,7 @@ export default function DietBuilderScreen() {
     <SafeAreaView className="flex-1 bg-dark-400">
       <View className="flex-row items-center justify-between px-6 pt-6 pb-4 border-b border-surface-border">
         <Pressable onPress={() => router.back()} className="flex-row items-center gap-1.5">
-          <AppIcon name="arrow-left" size={16} color="#6E6382" strokeWidth={2} />
+          <AppIcon name="arrow-left" size={16} color="#71717A" strokeWidth={2} />
           <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>Cancelar</Text>
         </Pressable>
         <DisplayHeading size="sm">
@@ -234,7 +234,7 @@ export default function DietBuilderScreen() {
               <Text className="text-[15px] text-text-primary flex-1" style={{ fontFamily: font.semibold }}>{item.student?.full_name}</Text>
               <View className="flex-row items-center gap-1">
                 <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>Selecionar</Text>
-                <AppIcon name="chevron-right" size={16} color="#9B40D8" strokeWidth={2} />
+                <AppIcon name="chevron-right" size={16} color="#3F3F46" strokeWidth={2} />
               </View>
             </Pressable>
           )}
@@ -246,7 +246,7 @@ export default function DietBuilderScreen() {
         <ScrollView className="flex-1 px-6 py-6" keyboardShouldPersistTaps="handled">
           <View className="bg-surface-card border border-surface-border rounded-3xl p-4 flex-row items-center gap-3 mb-6">
             <View className="w-10 h-10 rounded-2xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
-              <AppIcon name="user" size={18} color="#9B40D8" strokeWidth={2} />
+              <AppIcon name="user" size={18} color="#3F3F46" strokeWidth={2} />
             </View>
             <View className="flex-1">
               <Text className="text-[10px] text-text-muted" style={{ fontFamily: font.medium, letterSpacing: 1 }}>Aluno</Text>
@@ -257,26 +257,26 @@ export default function DietBuilderScreen() {
           <View className="gap-5">
             <View>
               <SectionLabel className="mb-2 ml-1">Nome do plano *</SectionLabel>
-              <TextInput className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary" placeholder="Ex: Cutting - Abril 2026" placeholderTextColor="#6E6382" value={planName} onChangeText={setPlanName} style={{ fontFamily: font.regular }} />
+              <TextInput className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary" placeholder="Ex: Cutting - Abril 2026" placeholderTextColor="#71717A" value={planName} onChangeText={setPlanName} style={{ fontFamily: font.regular }} />
             </View>
 
             <SectionLabel>Metas diarias (opcional)</SectionLabel>
             <View className="flex-row gap-3">
               <View className="flex-1">
                 <Text className="text-[10px] text-text-muted mb-1 text-center" style={{ fontFamily: font.medium }}>Calorias</Text>
-                <TextInput className="bg-surface-card/80 border border-surface-border rounded-2xl px-3 py-3 text-sm text-text-primary text-center" placeholder="2000" placeholderTextColor="#6E6382" value={targetCal} onChangeText={setTargetCal} keyboardType="number-pad" style={{ fontFamily: font.regular }} />
+                <TextInput className="bg-surface-card/80 border border-surface-border rounded-2xl px-3 py-3 text-sm text-text-primary text-center" placeholder="2000" placeholderTextColor="#71717A" value={targetCal} onChangeText={setTargetCal} keyboardType="number-pad" style={{ fontFamily: font.regular }} />
               </View>
               <View className="flex-1">
                 <Text className="text-[10px] text-violet-400 mb-1 text-center" style={{ fontFamily: font.medium }}>Prot (g)</Text>
-                <TextInput className="bg-surface-card/80 border border-surface-border rounded-2xl px-3 py-3 text-sm text-text-primary text-center" placeholder="150" placeholderTextColor="#6E6382" value={targetProt} onChangeText={setTargetProt} keyboardType="decimal-pad" style={{ fontFamily: font.regular }} />
+                <TextInput className="bg-surface-card/80 border border-surface-border rounded-2xl px-3 py-3 text-sm text-text-primary text-center" placeholder="150" placeholderTextColor="#71717A" value={targetProt} onChangeText={setTargetProt} keyboardType="decimal-pad" style={{ fontFamily: font.regular }} />
               </View>
               <View className="flex-1">
                 <Text className="text-[10px] text-fuchsia-400 mb-1 text-center" style={{ fontFamily: font.medium }}>Carb (g)</Text>
-                <TextInput className="bg-surface-card/80 border border-surface-border rounded-2xl px-3 py-3 text-sm text-text-primary text-center" placeholder="200" placeholderTextColor="#6E6382" value={targetCarb} onChangeText={setTargetCarb} keyboardType="decimal-pad" style={{ fontFamily: font.regular }} />
+                <TextInput className="bg-surface-card/80 border border-surface-border rounded-2xl px-3 py-3 text-sm text-text-primary text-center" placeholder="200" placeholderTextColor="#71717A" value={targetCarb} onChangeText={setTargetCarb} keyboardType="decimal-pad" style={{ fontFamily: font.regular }} />
               </View>
               <View className="flex-1">
                 <Text className="text-[10px] text-warning-500 mb-1 text-center" style={{ fontFamily: font.medium }}>Gord (g)</Text>
-                <TextInput className="bg-surface-card/80 border border-surface-border rounded-2xl px-3 py-3 text-sm text-text-primary text-center" placeholder="60" placeholderTextColor="#6E6382" value={targetFat} onChangeText={setTargetFat} keyboardType="decimal-pad" style={{ fontFamily: font.regular }} />
+                <TextInput className="bg-surface-card/80 border border-surface-border rounded-2xl px-3 py-3 text-sm text-text-primary text-center" placeholder="60" placeholderTextColor="#71717A" value={targetFat} onChangeText={setTargetFat} keyboardType="decimal-pad" style={{ fontFamily: font.regular }} />
               </View>
             </View>
 
@@ -284,17 +284,17 @@ export default function DietBuilderScreen() {
               onPress={() => planName.trim() && setStep("meals")}
               disabled={!planName.trim()}
               className="mt-6 rounded-2xl overflow-hidden"
-              style={planName.trim() ? amethystGlow : undefined}
+              style={planName.trim() ? surfaceShadow : undefined}
             >
               <LinearGradient
-                colors={planName.trim() ? ["#781BB6", "#C636E0"] : ["#2E2740", "#2E2740"]}
+                colors={planName.trim() ? ["#27272A", "#27272A"] : ["#E4E4E7", "#E4E4E7"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0.9 }}
                 style={{ paddingVertical: 18, alignItems: "center", flexDirection: "row", justifyContent: "center", gap: 8 }}
               >
-                <AppIcon name="food" size={18} color={planName.trim() ? "#FFFFFF" : "#6E6382"} strokeWidth={2} />
+                <AppIcon name="food" size={18} color={planName.trim() ? "#FFFFFF" : "#71717A"} strokeWidth={2} />
                 <Text className={planName.trim() ? "text-white" : "text-text-muted"} style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Próximo: Refeições</Text>
-                <AppIcon name="arrow-right" size={18} color={planName.trim() ? "#FFFFFF" : "#6E6382"} strokeWidth={2} />
+                <AppIcon name="arrow-right" size={18} color={planName.trim() ? "#FFFFFF" : "#71717A"} strokeWidth={2} />
               </LinearGradient>
             </Pressable>
           </View>
@@ -314,7 +314,7 @@ export default function DietBuilderScreen() {
                       value={meal.name}
                       onChangeText={(v) => { const u = [...meals]; u[mi].name = v; setMeals(u); }}
                       placeholder="Nome da refeição"
-                      placeholderTextColor="#6E6382"
+                      placeholderTextColor="#71717A"
                       style={{ fontFamily: font.semibold }}
                     />
                     <TextInput
@@ -322,12 +322,12 @@ export default function DietBuilderScreen() {
                       value={meal.targetTime}
                       onChangeText={(v) => { const u = [...meals]; u[mi].targetTime = v; setMeals(u); }}
                       placeholder="12:00"
-                      placeholderTextColor="#6E6382"
+                      placeholderTextColor="#71717A"
                       style={{ fontFamily: font.regular }}
                     />
                   </View>
                   <Pressable onPress={() => removeMeal(mi)} className="ml-2 w-8 h-8 rounded-xl bg-danger-500/10 items-center justify-center">
-                    <AppIcon name="trash" size={16} color="#FB7185" strokeWidth={2} />
+                    <AppIcon name="trash" size={16} color="#3F3F46" strokeWidth={2} />
                   </Pressable>
                 </View>
 
@@ -339,37 +339,37 @@ export default function DietBuilderScreen() {
                         value={item.food_name}
                         onChangeText={(v) => updateItem(mi, ii, "food_name", v)}
                         placeholder="Alimento (ex: Arroz integral)"
-                        placeholderTextColor="#6E6382"
+                        placeholderTextColor="#71717A"
                         style={{ fontFamily: font.regular }}
                       />
                       <Pressable onPress={() => removeItem(mi, ii)} className="w-7 h-7 items-center justify-center">
-                        <AppIcon name="close" size={15} color="#FB7185" strokeWidth={2} />
+                        <AppIcon name="close" size={15} color="#3F3F46" strokeWidth={2} />
                       </Pressable>
                     </View>
                     <View className="flex-row gap-2">
                       <View className="flex-1">
                         <Text className="text-[8px] text-text-muted mb-0.5 text-center" style={{ fontFamily: font.medium }}>Qtd</Text>
-                        <TextInput className="bg-surface-elevated rounded-xl px-2 py-1.5 text-xs text-text-primary text-center" value={item.quantity} onChangeText={(v) => updateItem(mi, ii, "quantity", v)} placeholder="100" placeholderTextColor="#6E6382" keyboardType="decimal-pad" style={{ fontFamily: font.regular }} />
+                        <TextInput className="bg-surface-elevated rounded-xl px-2 py-1.5 text-xs text-text-primary text-center" value={item.quantity} onChangeText={(v) => updateItem(mi, ii, "quantity", v)} placeholder="100" placeholderTextColor="#71717A" keyboardType="decimal-pad" style={{ fontFamily: font.regular }} />
                       </View>
                       <View className="w-12">
                         <Text className="text-[8px] text-text-muted mb-0.5 text-center" style={{ fontFamily: font.medium }}>Un.</Text>
-                        <TextInput className="bg-surface-elevated rounded-xl px-2 py-1.5 text-xs text-text-primary text-center" value={item.unit} onChangeText={(v) => updateItem(mi, ii, "unit", v)} placeholder="g" placeholderTextColor="#6E6382" style={{ fontFamily: font.regular }} />
+                        <TextInput className="bg-surface-elevated rounded-xl px-2 py-1.5 text-xs text-text-primary text-center" value={item.unit} onChangeText={(v) => updateItem(mi, ii, "unit", v)} placeholder="g" placeholderTextColor="#71717A" style={{ fontFamily: font.regular }} />
                       </View>
                       <View className="flex-1">
                         <Text className="text-[8px] text-text-muted mb-0.5 text-center" style={{ fontFamily: font.medium }}>kcal</Text>
-                        <TextInput className="bg-surface-elevated rounded-xl px-2 py-1.5 text-xs text-text-primary text-center" value={item.calories} onChangeText={(v) => updateItem(mi, ii, "calories", v)} placeholder="0" placeholderTextColor="#6E6382" keyboardType="decimal-pad" style={{ fontFamily: font.regular }} />
+                        <TextInput className="bg-surface-elevated rounded-xl px-2 py-1.5 text-xs text-text-primary text-center" value={item.calories} onChangeText={(v) => updateItem(mi, ii, "calories", v)} placeholder="0" placeholderTextColor="#71717A" keyboardType="decimal-pad" style={{ fontFamily: font.regular }} />
                       </View>
                       <View className="flex-1">
                         <Text className="text-[8px] text-violet-400 mb-0.5 text-center" style={{ fontFamily: font.medium }}>P</Text>
-                        <TextInput className="bg-surface-elevated rounded-xl px-2 py-1.5 text-xs text-text-primary text-center" value={item.protein_g} onChangeText={(v) => updateItem(mi, ii, "protein_g", v)} placeholder="0" placeholderTextColor="#6E6382" keyboardType="decimal-pad" style={{ fontFamily: font.regular }} />
+                        <TextInput className="bg-surface-elevated rounded-xl px-2 py-1.5 text-xs text-text-primary text-center" value={item.protein_g} onChangeText={(v) => updateItem(mi, ii, "protein_g", v)} placeholder="0" placeholderTextColor="#71717A" keyboardType="decimal-pad" style={{ fontFamily: font.regular }} />
                       </View>
                       <View className="flex-1">
                         <Text className="text-[8px] text-fuchsia-400 mb-0.5 text-center" style={{ fontFamily: font.medium }}>C</Text>
-                        <TextInput className="bg-surface-elevated rounded-xl px-2 py-1.5 text-xs text-text-primary text-center" value={item.carbs_g} onChangeText={(v) => updateItem(mi, ii, "carbs_g", v)} placeholder="0" placeholderTextColor="#6E6382" keyboardType="decimal-pad" style={{ fontFamily: font.regular }} />
+                        <TextInput className="bg-surface-elevated rounded-xl px-2 py-1.5 text-xs text-text-primary text-center" value={item.carbs_g} onChangeText={(v) => updateItem(mi, ii, "carbs_g", v)} placeholder="0" placeholderTextColor="#71717A" keyboardType="decimal-pad" style={{ fontFamily: font.regular }} />
                       </View>
                       <View className="flex-1">
                         <Text className="text-[8px] text-warning-500 mb-0.5 text-center" style={{ fontFamily: font.medium }}>G</Text>
-                        <TextInput className="bg-surface-elevated rounded-xl px-2 py-1.5 text-xs text-text-primary text-center" value={item.fat_g} onChangeText={(v) => updateItem(mi, ii, "fat_g", v)} placeholder="0" placeholderTextColor="#6E6382" keyboardType="decimal-pad" style={{ fontFamily: font.regular }} />
+                        <TextInput className="bg-surface-elevated rounded-xl px-2 py-1.5 text-xs text-text-primary text-center" value={item.fat_g} onChangeText={(v) => updateItem(mi, ii, "fat_g", v)} placeholder="0" placeholderTextColor="#71717A" keyboardType="decimal-pad" style={{ fontFamily: font.regular }} />
                       </View>
                     </View>
                   </View>
@@ -377,11 +377,11 @@ export default function DietBuilderScreen() {
 
                 <View className="flex-row gap-2 mt-1">
                   <Pressable onPress={() => setPickerMealIdx(mi)} className="flex-1 border border-dashed border-violet-500/40 rounded-xl py-2.5 flex-row items-center justify-center gap-1.5">
-                    <AppIcon name="plus" size={15} color="#9B40D8" strokeWidth={2} />
+                    <AppIcon name="plus" size={15} color="#3F3F46" strokeWidth={2} />
                     <Text className="text-violet-400 text-xs" style={{ fontFamily: font.semibold }}>Adicionar alimento</Text>
                   </Pressable>
                   <Pressable onPress={() => addItemToMeal(mi)} className="border border-dashed border-surface-border rounded-xl px-3 py-2.5 flex-row items-center justify-center gap-1">
-                    <AppIcon name="pencil" size={13} color="#6E6382" strokeWidth={2} />
+                    <AppIcon name="pencil" size={13} color="#71717A" strokeWidth={2} />
                     <Text className="text-text-muted text-xs" style={{ fontFamily: font.semibold }}>Manual</Text>
                   </Pressable>
                 </View>
@@ -389,7 +389,7 @@ export default function DietBuilderScreen() {
             ))}
 
             <Pressable onPress={addNewMeal} className="border border-dashed border-violet-500/30 rounded-2xl py-4 flex-row items-center justify-center gap-2">
-              <AppIcon name="food" size={18} color="#9B40D8" strokeWidth={2} />
+              <AppIcon name="food" size={18} color="#3F3F46" strokeWidth={2} />
               <Text className="text-violet-400 text-sm" style={{ fontFamily: font.semibold }}>Nova refeição</Text>
             </Pressable>
 
@@ -404,10 +404,10 @@ export default function DietBuilderScreen() {
             <Pressable
               onPress={() => setStep("review")}
               className="rounded-2xl overflow-hidden mb-6"
-              style={amethystGlow}
+              style={surfaceShadow}
             >
               <LinearGradient
-                colors={["#781BB6", "#C636E0"]}
+                colors={["#27272A", "#27272A"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0.9 }}
                 style={{ paddingVertical: 18, alignItems: "center", flexDirection: "row", justifyContent: "center", gap: 8 }}
@@ -443,12 +443,12 @@ export default function DietBuilderScreen() {
               <View className="flex-row items-center justify-between mb-2">
                 <View className="flex-row items-center gap-2 flex-1">
                   <View className="w-8 h-8 rounded-xl bg-violet-500/15 border border-violet-500/25 items-center justify-center">
-                    <AppIcon name="food" size={15} color="#9B40D8" strokeWidth={2} />
+                    <AppIcon name="food" size={15} color="#3F3F46" strokeWidth={2} />
                   </View>
                   <Text className="text-sm text-text-primary" style={{ fontFamily: font.semibold }}>{meal.name}</Text>
                 </View>
                 <View className="flex-row items-center gap-1">
-                  <AppIcon name="clock" size={13} color="#6E6382" strokeWidth={2} />
+                  <AppIcon name="clock" size={13} color="#71717A" strokeWidth={2} />
                   <Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>{meal.targetTime}</Text>
                 </View>
               </View>
@@ -463,17 +463,17 @@ export default function DietBuilderScreen() {
 
           <View className="flex-row gap-3 mt-4 mb-10">
             <Pressable onPress={() => setStep("meals")} className="flex-1 border border-surface-border rounded-2xl py-4 flex-row items-center justify-center gap-2">
-              <AppIcon name="pencil" size={16} color="#A99FBA" strokeWidth={2} />
+              <AppIcon name="pencil" size={16} color="#52525B" strokeWidth={2} />
               <Text className="text-text-secondary text-sm" style={{ fontFamily: font.semibold }}>Editar</Text>
             </Pressable>
             <Pressable
               onPress={handleSave}
               disabled={saving}
               className="flex-1 rounded-2xl overflow-hidden"
-              style={amethystGlow}
+              style={surfaceShadow}
             >
               <LinearGradient
-                colors={saving ? ["#50107D", "#86169E"] : ["#781BB6", "#C636E0"]}
+                colors={saving ? ["#18181B", "#3F3F46"] : ["#27272A", "#27272A"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0.9 }}
                 style={{ paddingVertical: 16, alignItems: "center", flexDirection: "row", justifyContent: "center", gap: 8 }}

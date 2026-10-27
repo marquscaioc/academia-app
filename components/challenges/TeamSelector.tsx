@@ -23,16 +23,16 @@ export function TeamSelector({ visible, teams, onJoinTeam, onCreateTeam, onClose
           <View className="flex-row items-center justify-between mb-5">
             <Text className="text-lg font-black text-text-primary">Escolher Equipe</Text>
             <Pressable onPress={onClose}>
-              <AppIcon name="close" size={20} color="#6E6382" strokeWidth={2} />
+              <AppIcon name="close" size={20} color="#71717A" strokeWidth={2} />
             </Pressable>
           </View>
 
           {showCreate ? (
             <View className="gap-4">
               <TextInput
-                className="bg-surface-card border border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary"
+                className="bg-surface-card border border-surface-border rounded-2xl px-5 py-4 text-base text-text-primary font-sans"
                 placeholder="Nome da equipe"
-                placeholderTextColor="#6E6580"
+                placeholderTextColor="#71717A"
                 value={newTeamName}
                 onChangeText={setNewTeamName}
               />
@@ -58,7 +58,7 @@ export function TeamSelector({ visible, teams, onJoinTeam, onCreateTeam, onClose
                 >
                   <View>
                     <Text className="text-sm font-bold text-text-primary">{team.name}</Text>
-                    <Text className="text-[10px] text-text-muted">{team.member_count} membros</Text>
+                    <Text className="text-[10px] text-text-muted font-sans">{team.member_count} membros</Text>
                   </View>
                   <Text className="text-violet-400 font-bold text-xs">Entrar</Text>
                 </Pressable>

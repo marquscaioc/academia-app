@@ -11,7 +11,7 @@ import { Avatar } from "../../components/ui/Avatar";
 import { LoadingScreen } from "../../components/ui/LoadingScreen";
 import { WebContainer } from "../../components/layout/WebContainer";
 import { AppIcon, BigStat, DisplayHeading, Logo, SectionLabel } from "../../components/ui";
-import { font, amethystGlow } from "../../lib/design/tokens";
+import { font, surfaceShadow } from "../../lib/design/tokens";
 
 export default function PublicProfileScreen() {
   const { userId } = useLocalSearchParams<{ userId: string }>();
@@ -47,13 +47,7 @@ export default function PublicProfileScreen() {
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
       {/* Full-height ambient gradient */}
-      <LinearGradient
-        colors={["rgba(120,27,182,0.28)", "rgba(198,54,224,0.08)", "transparent"]}
-        start={{ x: 0.2, y: 0 }}
-        end={{ x: 0.8, y: 0.8 }}
-        style={{ position: "absolute", top: 0, left: 0, right: 0, height: 520 }}
-        pointerEvents="none"
-      />
+
 
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         <WebContainer maxWidth={640}>
@@ -61,14 +55,14 @@ export default function PublicProfileScreen() {
           {/* Masthead */}
           <Animated.View entering={FadeIn.duration(400)} className="flex-row items-center justify-between mb-10">
             <Pressable onPress={() => router.back()} className="flex-row items-center gap-2">
-              <AppIcon name="arrow-left" size={18} color="#6E6382" strokeWidth={2} />
+              <AppIcon name="arrow-left" size={18} color="#71717A" strokeWidth={2} />
               <Text className="text-text-muted text-[11px]" style={{ fontFamily: font.semibold, letterSpacing: 2 }}>
                 VOLTAR
               </Text>
             </Pressable>
-            <View className="flex-row items-center gap-2.5">
+            <View className="items-end gap-1">
               <Logo size="sm" />
-              <Text className="text-[10px] text-fuchsia-400" style={{ fontFamily: font.semibold, letterSpacing: 3 }}>
+              <Text className="text-[10px] text-fuchsia-400" style={{ fontFamily: font.semibold, letterSpacing: 0.8 }}>
                 PERFIL · {profile.role?.toUpperCase() ?? "ALUNO"}
               </Text>
             </View>
@@ -109,7 +103,7 @@ export default function PublicProfileScreen() {
                 onPress={handleToggleFollow}
                 disabled={followUser.isPending || unfollowUser.isPending}
                 className="overflow-hidden rounded-2xl"
-                style={isFollowing ? undefined : amethystGlow}
+                style={isFollowing ? undefined : surfaceShadow}
               >
                 {isFollowing ? (
                   <View className="border border-surface-border py-4 items-center">
@@ -122,7 +116,7 @@ export default function PublicProfileScreen() {
                   </View>
                 ) : (
                   <LinearGradient
-                    colors={["#781BB6", "#C636E0"]}
+                    colors={["#27272A", "#27272A"]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
                     style={{ paddingVertical: 16, alignItems: "center" }}
@@ -187,17 +181,11 @@ export default function PublicProfileScreen() {
                   <Animated.View
                     key={a.id}
                     entering={FadeInDown.delay(460 + idx * 40).springify()}
-                    className="grow basis-[200px]"
+                    className="grow shrink basis-[200px]"
                   >
                     <View className="bg-surface-card border border-surface-border rounded-2xl p-4 items-center overflow-hidden">
-                      <LinearGradient
-                        colors={["rgba(198,54,224,0.1)", "transparent"]}
-                        start={{ x: 0.5, y: 0 }}
-                        end={{ x: 0.5, y: 1 }}
-                        style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
-                        pointerEvents="none"
-                      />
-                      <Text className="text-3xl mb-2">{a.achievement?.icon ?? "🏆"}</Text>
+
+                      <Text className="text-3xl mb-2 font-sans">{a.achievement?.icon ?? "🏆"}</Text>
                       <Text
                         className="text-[10px] text-text-primary text-center"
                         style={{ fontFamily: font.semibold, letterSpacing: 0.3 }}
@@ -211,15 +199,9 @@ export default function PublicProfileScreen() {
               </View>
             ) : (
               <View className="bg-surface-card border border-surface-border rounded-2xl p-8 items-center overflow-hidden">
-                <LinearGradient
-                  colors={["rgba(120,27,182,0.08)", "transparent"]}
-                  start={{ x: 0.5, y: 0 }}
-                  end={{ x: 0.5, y: 1 }}
-                  style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
-                  pointerEvents="none"
-                />
+
                 <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
-                  <AppIcon name="trophy" size={28} color="#9B40D8" strokeWidth={2} />
+                  <AppIcon name="trophy" size={28} color="#3F3F46" strokeWidth={2} />
                 </View>
                 <DisplayHeading size="sm" italic tone="muted">
                   Nenhuma conquista ainda

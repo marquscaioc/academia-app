@@ -109,12 +109,12 @@ export default function ExercisesScreen() {
 
         {/* Search */}
         <View className="flex-row items-center gap-2.5 bg-surface-card/80 border border-surface-border rounded-2xl px-4 mb-4">
-          <AppIcon name="search" size={18} color="#6E6382" strokeWidth={2} />
+          <AppIcon name="search" size={18} color="#71717A" strokeWidth={2} />
           <TextInput
             className="flex-1 py-3.5 text-[15px] text-text-primary"
             placeholder="Buscar por nome, músculo ou equipamento..."
             accessibilityLabel="Buscar exercício"
-            placeholderTextColor="#6E6382"
+            placeholderTextColor="#71717A"
             value={search}
             onChangeText={setSearch}
             style={{ fontFamily: font.regular }}
@@ -161,7 +161,7 @@ export default function ExercisesScreen() {
         {/* Exercises list */}
         {isLoading ? (
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" color="#781BB6" />
+            <ActivityIndicator size="large" color="#27272A" />
           </View>
         ) : error ? (
           <EmptyState

@@ -1,211 +1,122 @@
 import { Link, router } from "expo-router";
 import { useState } from "react";
-import {
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { LinearGradient } from "expo-linear-gradient";
-import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
+import { Pressable, Text, TextInput, View } from "react-native";
 import { useAuth } from "../../lib/auth/provider";
-import { DisplayHeading, Logo } from "../../components/ui";
-import { amethystGlow, font } from "../../lib/design/tokens";
+import { AppIcon, Button } from "../../components/ui";
+import { AuthShell } from "../../components/layout/AuthShell";
+import { font, palette } from "../../lib/design/tokens";
 
 export default function LoginScreen() {
   const { signIn } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const handleLogin = async () => {
-    if (!email || !password) {
-      setError("Preencha todos os campos");
+    if (loading) return;
+    if (!email.trim() || !password) {
+      setError("Preencha seu e-mail e sua senha para continuar.");
       return;
     }
     setError("");
     setLoading(true);
-    const { error: signInError } = await signIn(email, password);
-    if (signInError) {
-      setError("Email ou senha incorretos");
+    try {
+      const { error: signInError } = await signIn(email.trim(), password);
+      if (signInError) {
+        setError("E-mail ou senha incorretos. Confira seus dados e tente novamente.");
+        return;
+      }
+      router.replace("/");
+    } catch {
+      setError("Não foi possível entrar. Verifique sua conexão e tente novamente.");
+    } finally {
       setLoading(false);
-      return;
     }
-    router.replace("/");
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-dark-400">
-      {/* Ambient gradient */}
-      <LinearGradient
-        colors={["rgba(120,27,182,0.32)", "rgba(198,54,224,0.08)", "transparent"]}
-        start={{ x: 0.1, y: 0 }}
-        end={{ x: 0.9, y: 1 }}
-        style={{ position: "absolute", top: 0, left: 0, right: 0, height: 520 }}
-        pointerEvents="none"
-      />
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        className="flex-1"
-      >
-        <View className="flex-1 justify-center px-8 max-w-[440px] w-full self-center">
-          {/* Brand — logo + editorial wordmark */}
-          <Animated.View entering={FadeIn.duration(500)} className="mb-12 items-center">
-            <Logo size="xl" />
-          </Animated.View>
-          <Animated.View entering={FadeInDown.delay(120).springify()} className="items-center mb-2">
-            <DisplayHeading size="md" italic tone="muted" className="text-center">
-              Bem-vindo ao
-            </DisplayHeading>
-          </Animated.View>
-          <Animated.View entering={FadeInDown.delay(200).springify()} className="items-center mb-12">
-            <DisplayHeading size="2xl" tone="primary" className="text-center">
-              Projeto Gaab.
-            </DisplayHeading>
-          </Animated.View>
+    <AuthShell>
+      <Text className="text-xs text-text-muted mb-3" style={{ fontFamily: font.medium, letterSpacing: 1.4 }}>BEM-VINDO DE VOLTA</Text>
+      <Text accessibilityRole="header" className="text-text-primary" style={{ fontFamily: font.semibold, fontSize: 32, lineHeight: 40, letterSpacing: -1.1 }}>Acesse sua conta</Text>
+      <Text className="text-sm text-text-secondary mt-3 mb-9 leading-6" style={{ fontFamily: font.regular }}>Seu próximo passo começa aqui. Entre para acompanhar sua rotina.</Text>
 
-          {/* Error */}
-          {error ? (
-            <Animated.View
-              entering={FadeIn.duration(200)}
-              className="bg-danger-500/10 border border-danger-500/20 rounded-2xl p-4 mb-5"
-            >
-              <Text className="text-danger-500 text-center text-sm" style={{ fontFamily: font.medium }}>
-                {error}
-              </Text>
-            </Animated.View>
-          ) : null}
-
-          {/* Form */}
-          <Animated.View entering={FadeInDown.delay(280).springify()} className="gap-4">
-            <View>
-              <Text
-                className="text-[11px] text-text-muted mb-2 ml-0.5 uppercase"
-                style={{ fontFamily: font.semibold, letterSpacing: 1.5 }}
-              >
-                Email
-              </Text>
-              <TextInput
-                className={`rounded-2xl px-4 py-3.5 text-[15px] text-text-primary ${
-                  focusedField === "email"
-                    ? "bg-surface-elevated border border-violet-400/80"
-                    : "bg-surface-card/80 border border-surface-border"
-                }`}
-                style={{ fontFamily: font.regular }}
-                placeholder="seu@email.com"
-                placeholderTextColor="#6E6382"
-                value={email}
-                onChangeText={setEmail}
-                onFocus={() => setFocusedField("email")}
-                onBlur={() => setFocusedField(null)}
-                autoCapitalize="none"
-                keyboardType="email-address"
-                autoComplete="email"
-              />
-            </View>
-
-            <View>
-              <Text
-                className="text-[11px] text-text-muted mb-2 ml-0.5 uppercase"
-                style={{ fontFamily: font.semibold, letterSpacing: 1.5 }}
-              >
-                Senha
-              </Text>
-              <TextInput
-                className={`rounded-2xl px-4 py-3.5 text-[15px] text-text-primary ${
-                  focusedField === "password"
-                    ? "bg-surface-elevated border border-violet-400/80"
-                    : "bg-surface-card/80 border border-surface-border"
-                }`}
-                style={{ fontFamily: font.regular }}
-                placeholder="Sua senha"
-                placeholderTextColor="#6E6382"
-                value={password}
-                onChangeText={setPassword}
-                onFocus={() => setFocusedField("password")}
-                onBlur={() => setFocusedField(null)}
-                secureTextEntry
-                autoComplete="password"
-              />
-            </View>
-
-            <Link href="/(auth)/forgot-password" asChild>
-              <Pressable className="self-end py-1">
-                <Text className="text-text-muted text-xs" style={{ fontFamily: font.medium }}>
-                  Esqueceu a senha?
-                </Text>
-              </Pressable>
-            </Link>
-
-            {/* CTA Button — gradient */}
-            <Pressable
-              onPress={handleLogin}
-              disabled={loading}
-              className="rounded-2xl overflow-hidden mt-2"
-              style={loading ? undefined : amethystGlow}
-            >
-              <LinearGradient
-                colors={loading ? ["#50107D", "#86169E"] : ["#781BB6", "#C636E0"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0.9 }}
-                style={{ paddingVertical: 17, alignItems: "center" }}
-              >
-                {loading ? (
-                  <ActivityIndicator color="#FFFFFF" />
-                ) : (
-                  <Text className="text-white text-[15px]" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>
-                    Entrar
-                  </Text>
-                )}
-              </LinearGradient>
-            </Pressable>
-          </Animated.View>
-
-          {/* Divider + Register link — centered block */}
-          <Animated.View entering={FadeIn.delay(360)} className="items-center mt-8">
-            <View className="flex-row items-center w-full mb-6">
-              <View className="flex-1 h-px bg-surface-border" />
-              <Text
-                className="text-text-muted text-[10px] mx-4 uppercase"
-                style={{ fontFamily: font.semibold, letterSpacing: 2 }}
-              >
-                ou
-              </Text>
-              <View className="flex-1 h-px bg-surface-border" />
-            </View>
-            <Text className="text-text-muted text-sm text-center" style={{ fontFamily: font.regular }}>
-              Novo por aqui?
-            </Text>
-            <Link href="/(auth)/register" asChild>
-              <Pressable className="mt-2 py-1">
-                <Text className="text-fuchsia-400 text-sm text-center" style={{ fontFamily: font.semibold }}>
-                  Criar conta →
-                </Text>
-              </Pressable>
-            </Link>
-
-            <View className="flex-row items-center gap-2 mt-8">
-              <Link href="/termos" asChild>
-                <Pressable className="py-1">
-                  <Text className="text-text-muted text-[11px]">Termos</Text>
-                </Pressable>
-              </Link>
-              <Text className="text-surface-border text-[11px]">·</Text>
-              <Link href="/privacidade" asChild>
-                <Pressable className="py-1">
-                  <Text className="text-text-muted text-[11px]">Privacidade</Text>
-                </Pressable>
-              </Link>
-            </View>
-          </Animated.View>
+      {error ? (
+        <View accessibilityRole="alert" className="flex-row gap-3 bg-surface-elevated border border-surface-border rounded-xl p-4 mb-6">
+          <AppIcon name="alert" size={18} color={palette.textPrimary} />
+          <Text className="flex-1 text-sm text-text-primary leading-5" style={{ fontFamily: font.regular }}>{error}</Text>
         </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+      ) : null}
+
+      <View className="gap-5">
+        <View>
+          <Text nativeID="email-label" className="text-sm text-text-primary mb-2" style={{ fontFamily: font.medium }}>E-mail</Text>
+          <TextInput
+            accessibilityLabel="E-mail"
+            className={`border rounded-xl px-4 text-sm text-text-primary bg-white ${focusedField === "email" ? "border-primary-400" : "border-surface-border"}`}
+            style={{ fontFamily: font.regular, height: 50 }}
+            placeholder="seu@email.com"
+            placeholderTextColor={palette.textMuted}
+            value={email}
+            onChangeText={setEmail}
+            onFocus={() => setFocusedField("email")}
+            onBlur={() => setFocusedField(null)}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            autoComplete="email"
+            autoCorrect={false}
+          />
+        </View>
+        <View>
+          <View className="flex-row items-center justify-between mb-2">
+            <Text className="text-sm text-text-primary" style={{ fontFamily: font.medium }}>Senha</Text>
+            <Link href="/(auth)/forgot-password" asChild>
+              <Pressable accessibilityRole="link" className="py-1">
+                <Text className="text-xs text-text-secondary" style={{ fontFamily: font.medium }}>Esqueceu a senha?</Text>
+              </Pressable>
+            </Link>
+          </View>
+          <View className={`flex-row items-center border rounded-xl bg-white ${focusedField === "password" ? "border-primary-400" : "border-surface-border"}`}>
+            <TextInput
+              accessibilityLabel="Senha"
+              className="flex-1 px-4 text-sm text-text-primary"
+              style={{ fontFamily: font.regular, height: 50, minWidth: 0 }}
+              placeholder="Digite sua senha"
+              placeholderTextColor={palette.textMuted}
+              value={password}
+              onChangeText={setPassword}
+              onFocus={() => setFocusedField("password")}
+              onBlur={() => setFocusedField(null)}
+              secureTextEntry={!showPassword}
+              autoComplete="current-password"
+              onSubmitEditing={handleLogin}
+              returnKeyType="go"
+            />
+            <Pressable accessibilityRole="button" accessibilityLabel={showPassword ? "Ocultar senha" : "Mostrar senha"} onPress={() => setShowPassword(!showPassword)} className="px-4 h-12 justify-center">
+              <AppIcon name={showPassword ? "eye-off" : "eye"} size={18} color={palette.textMuted} strokeWidth={1.7} />
+            </Pressable>
+          </View>
+        </View>
+        <View className="mt-2">
+          <Button title="Entrar na plataforma" onPress={handleLogin} loading={loading} size="lg" icon={<AppIcon name="arrow-right" size={17} color="#FFFFFF" />} />
+        </View>
+      </View>
+
+      <View className="flex-row items-center justify-center gap-1.5 mt-7 flex-wrap">
+        <Text className="text-sm text-text-muted" style={{ fontFamily: font.regular }}>Ainda não tem uma conta?</Text>
+        <Link href="/(auth)/register" asChild>
+          <Pressable className="py-2" accessibilityRole="link">
+            <Text className="text-sm text-text-primary underline" style={{ fontFamily: font.semibold }}>Criar conta</Text>
+          </Pressable>
+        </Link>
+      </View>
+      <View className="border-t border-surface-border mt-10 pt-6 flex-row justify-center items-center gap-5">
+        <Link href="/termos" asChild><Pressable accessibilityRole="link" className="py-2"><Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>Termos de uso</Text></Pressable></Link>
+        <View className="w-1 h-1 rounded-full bg-surface-border" />
+        <Link href="/privacidade" asChild><Pressable accessibilityRole="link" className="py-2"><Text className="text-xs text-text-muted" style={{ fontFamily: font.regular }}>Privacidade</Text></Pressable></Link>
+      </View>
+    </AuthShell>
   );
 }

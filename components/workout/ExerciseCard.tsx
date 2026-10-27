@@ -66,9 +66,9 @@ export function ExerciseCard({
         ) : (
           <View className="w-14 h-14 bg-surface-elevated rounded-xl items-center justify-center">
             {isVideoMp4 ? (
-              <AppIcon name="play" size={20} color="#6E6382" strokeWidth={2} />
+              <AppIcon name="play" size={20} color="#71717A" strokeWidth={2} />
             ) : (
-              <AppIcon name="workout" size={20} color="#6E6382" strokeWidth={2} />
+              <AppIcon name="workout" size={20} color="#71717A" strokeWidth={2} />
             )}
           </View>
         )}
@@ -90,9 +90,9 @@ export function ExerciseCard({
         </View>
         {targetSets ? (
           <View className="flex-row gap-3 mt-2">
-            <Text className="text-xs text-text-muted">{targetSets} x {targetReps ?? "10-12"}</Text>
-            {targetWeightKg ? <Text className="text-xs text-text-muted">{targetWeightKg}kg</Text> : null}
-            {restSeconds ? <Text className="text-xs text-text-muted">{restSeconds}s desc.</Text> : null}
+            <Text className="text-xs text-text-muted font-sans">{targetSets} x {targetReps ?? "10-12"}</Text>
+            {targetWeightKg ? <Text className="text-xs text-text-muted font-sans">{targetWeightKg}kg</Text> : null}
+            {restSeconds ? <Text className="text-xs text-text-muted font-sans">{restSeconds}s desc.</Text> : null}
           </View>
         ) : null}
       </View>
