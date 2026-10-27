@@ -20,7 +20,7 @@ function routeFor(data: unknown): string | null {
   return SCREEN_ROUTES[screen] ?? null;
 }
 
-async function navigateForResponse(response: Notifications.NotificationResponse | null) {
+export async function navigateForResponse(response: Notifications.NotificationResponse | null) {
   if (!response) return;
   const route = routeFor(response.notification.request.content.data);
   if (!route) return;
@@ -28,6 +28,8 @@ async function navigateForResponse(response: Notifications.NotificationResponse 
   // evita empurrar um usuario deslogado para dentro do app.
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) return;
+  const data = response.notification.request.content.data;
+  if (data?.kind === "workout_rest" && data.userId !== session.user.id) return;
   router.push(route as never);
 }
 
@@ -41,12 +43,12 @@ export function useNotificationObserver() {
 
     Notifications.getLastNotificationResponseAsync()
       .then((response) => {
-        if (mounted) navigateForResponse(response);
+        if (mounted) navigateForResponse(response).catch(() => {});
       })
       .catch(() => {});
 
     const sub = Notifications.addNotificationResponseReceivedListener((response) => {
-      navigateForResponse(response);
+      navigateForResponse(response).catch(() => {});
     });
 
     return () => {

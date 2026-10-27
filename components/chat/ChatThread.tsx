@@ -27,17 +27,18 @@ export default function ChatThread() {
   const { user } = useAuth();
   const { data: messages, isLoading } = useMessages(conversationId ?? "");
   const sendMessage = useSendMessage();
-  const markRead = useMarkConversationRead();
+  const { mutate: markRead } = useMarkConversationRead();
+  const userId = user?.id;
   const flatListRef = useRef<FlatList>(null);
 
   useRealtimeMessages(conversationId ?? null);
 
   useEffect(() => {
-    if (conversationId && user) {
-      markRead.mutate({ conversation_id: conversationId, user_id: user.id });
+    if (conversationId && userId) {
+      markRead({ conversation_id: conversationId, user_id: userId });
     }
     // user?.id included so a late-resolving auth still marks the thread read.
-  }, [conversationId, messages?.length, user?.id]);
+  }, [conversationId, messages?.length, userId, markRead]);
 
   const handleSend = (content: string) => {
     if (!user || !conversationId) return;

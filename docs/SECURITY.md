@@ -1,74 +1,60 @@
 # Security
 
-## 1. Model
+## Authorization
 
-- The app ships only `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_ANON_KEY`. Both are public by design.
-- **RLS is the security boundary.** Client role checks (`RoleGuard`, role layouts) only shape navigation.
-- The service-role key exists only in edge-function secrets (`SUPABASE_SERVICE_ROLE_KEY`) and local test scripts that
-  refuse non-local URLs. It must never appear in the app, in `EXPO_PUBLIC_*` variables, or in the repo.
-- `.env`, `.env.local` are gitignored. `.env.example` lists the variables without values.
+The app contains only the public Supabase URL/anon key. RLS, checked database functions and verified JWT/service-role edge guards enforce access. Role navigation is a UI convenience. Secrets stay in edge/local environments; env files remain ignored.
 
-## 2. Tenancy
+`trainer_students` is the tenancy root. Active links grant student-data reads; ownership/relationship checks restrict trainer writes. Referrals require trainer ownership; active linked students see active cards. Explicit `trainer_profiles.contact_whatsapp` publication is separate from private phone fields and automation opt-in.
 
-`trainer_students` is the tenancy root. Links are created only by `accept_invite()` (no client INSERT); trainer/student
-ids are immutable. Trainer writes to student data require `has_trainer_link(student)` in WITH CHECK; trainer reads use
-`is_trainer_of(student)` (active links). Covered by DB tests (`supabase/tests/run-db-tests.mjs`) and API tests.
+## Controls and evidence
 
-## 3. Verified controls (tests that exist and pass)
-
-| Control | Where tested |
+| Control | Evidence |
 |---|---|
-| Cannot self-link as trainer of another user | DB + API |
-| Other trainer cannot read/prescribe/bill a student | DB + API |
-| Student cannot mark own payment paid | DB + API |
-| `accept_invite` cannot accept for someone else | DB |
-| Cannot add points to others' challenge score; cannot inflate streak; cannot self-promote to admin | DB |
-| Outsider cannot join a DM; member cannot self-promote | DB |
-| Other tenant's public challenge invisible; non-admin cannot publish global exercise | DB |
-| Cannot start a session on someone else's workout or write sets into others' sessions | DB + API |
-| Finished sessions immutable after 24 h | DB |
-| Check-in answers frozen after submit; only template questions | DB |
-| Storage: own-folder uploads, trainer reads linked student's photos only, chat media members only, brand assets trainers only | DB (policies) + API (real Storage) |
+| Tenant/role/counter protection, own-session sets, immutable finished history | DB + local API |
+| Atomic editor ownership, bound IDs, visible exercises, stale-version/active-session protection | 00040/00043, DB + API; parent locks coordinate session starts |
+| Challenge ledger owns score/count/team totals; arbitrary-increment RPCs revoked | 00041; DB + concurrent API |
+| UTC rule caps, one-use finished session, stable request ID and uploaded photo proof | 00041/00044; DB + API |
+| Private feed/group/challenge media; cross-author reference laundering denied | 00042; RLS + real Storage |
+| Private course video/PDF and progress; paid bodies closed pending verified entitlements | 00045/00046; RLS + API/Storage |
+| Referral tenancy, contact validation and explicit trainer contact | 00047; DB + API |
+| Identity change cancels/clears query cache; stale profile work discarded | Auth Jest |
+| Workout/rest owner binding; failed/offline logout preserves session with error | State/auth Jest |
+| Frozen check-ins, deletion FKs, own-folder media writes | 00036; DB + API |
 
-## 4. Edge functions
+## Media and revocation
 
-| Function | Auth |
-|---|---|
-| `push-notification` | service key, or JWT (self / admin / trainer → own active students) |
-| `social-notification` | JWT; actor from token; only after a session finished in the last 10 min |
-| `delete-account` | JWT; deletes only the caller |
-| `food-lookup` | JWT at gateway (low-risk proxy; rate limiting open) |
-| `auto-checkin`, `hydration-reminder`, `plan-expiring`, `smart-nudge`, `weekly-digest` | `requireServiceRole` (constant-time compare). Cron must send `Authorization: Bearer <service role key>` (see `00024_…sql.template`). |
+Feed objects are private. Owners or authorized readers of the referencing post/group/challenge can sign them. Existing public URL strings normalize to paths; anonymous public routes no longer serve the bucket.
 
-## 5. Payments (rules for Phase 6 — nothing is live)
+New course media uses `<trainer>/<course>/<file>` in private `course-media`. Lesson visibility and matching owner/course path are required. Signed URLs are temporary UI values, not persisted links.
 
-- Premium/paid state is **never** set from the client or from a "client says it paid" signal.
-- Only a webhook handler (edge function) may change payment/entitlement state, and only after:
-  1. signature/token verification (Mercado Pago HMAC manifest; Asaas `asaas-access-token`, constant-time),
-  2. timestamp tolerance / replay protection,
-  3. idempotency on the provider event id (unique table),
-  4. re-fetching the payment from the provider API.
-- Gateway secrets are edge-function secrets only. Test mocks live only in tests.
-- See `GITHUB_INTEGRATION_MATRIX.md` §3–4 for store rules (IAP vs. 1:1 coaching).
+Feed links expire after60 minutes and refresh at45 minutes; course links expire after15 minutes and refresh at10 minutes. Revoking a relationship/membership/publication prevents new signing. Issued bearer links remain valid until expiry; instantaneous revocation is not promised.
 
-## 6. Privacy / LGPD
+Legacy course URLs in public `exercise-videos` or external providers remain unchanged. Real paid files there need a separately reviewed private-storage copy/reference migration. No remote copy or automatic deletion occurred.
 
-- Account deletion removes files in all user buckets and the auth user; FKs no longer block it (00036).
-- Progress photos are private; trainers see them only while actively linked.
-- `weekly-digest` stores the student's email in notification data — unnecessary PII, **open**.
-- Clinical records / prescriptions: not implemented; must not be added without consent capture (master prompt rule).
-- Consent: `terms_accepted_at`, `terms_version`, `date_of_birth` captured at signup (00032).
+## Edge functions
 
-## 7. Known open risks
+- `push-notification`: service role or authorized JWT actor; per-caller30/min limit and input caps.
+- `food-lookup`: verified session, per-user30/min limit, validated input and escaped LIKE wildcards.
+- `social-notification`: actor from JWT, recently finished owned session.
+- `delete-account`: caller JWT, own files including nested course media, then auth user. Cleanup is best effort; recursive cleanup needs deployed-runtime verification.
+- Cron functions require the service-role bearer. `weekly-digest` no longer reads/stores email in notifications.
 
-| Risk | Plan |
-|---|---|
-| `feed-media` bucket public → media of non-public posts reachable by URL | Private bucket + signed URLs |
-| Challenge points still client-computed (bounded) | Server-side scoring trigger from `challenge_point_rules` |
-| `docker-compose.evolution.yml` uses `AUTHENTICATION_API_KEY: teste123` | Dev only; never deploy this file as-is; use a secret in any shared environment |
-| No rate limiting on push / food-lookup | Add per-user limits in edge functions |
-| Migrations 00034–00036 not yet on the remote project | Owner authorisation + backup required |
+00039 counters are service-role only. No production deployment occurred.
 
-## 8. Reporting
+## Payments and sensitive data
 
-Report suspected vulnerabilities privately to the project owner; do not open public issues with exploit details.
+Financial tables are internal bookkeeping; no gateway charge exists. Client statements or manually changed payment rows must not grant paid digital access. Paid course bodies fail closed pending verified entitlements.
+
+The eventual webhook must authenticate its provider, enforce replay/idempotency, re-fetch authoritative payment status and record entitlement transitions server-side. Provider choice/credentials remain outstanding.
+
+No clinical records, prescriptions, automatic transmission of measurements or referral messages were introduced. Contact actions open user-selected destinations. HealthKit/Health Connect is unavailable and reports no fabricated activity.
+
+## Release work
+
+- Remote migrations00034–00047 require owner authorization and backup; application here was local only.
+- Native OS/media behavior requires device QA.
+- Account cleanup is best effort; financial retention needs a business decision.
+- Signed-link lifetime and historical public course objects remain the limits above.
+- Policy/index performance, Sentry and store setup remain pending.
+
+Report vulnerabilities privately to the owner, without public exploit reports.

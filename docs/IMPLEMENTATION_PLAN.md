@@ -31,8 +31,8 @@ tests plus a browser check. ✅ = done and verified, ◐ = partly done, ☐ = no
 - ✅ Finish: duration, volume, planned vs done, PRs (explicit criteria: beats previous best weight / reps at weight /
   e1RM / set volume; first-ever is not a PR; warm-ups excluded).
 - ✅ History detail screen: sets per exercise, volume, comparison with previous session of the same workout.
-- ☐ Per-exercise evolution chart (load, e1RM) with gifted-charts.
-- ☐ Background rest notification (expo-notifications local schedule) on native.
+- ✅ Per-exercise evolution: load, volume and Epley e1RM; existing lightweight charts retained (no redundant chart dependency).
+- ✅ Native OS rest notification with ownership, cancellation and background-expiry tests; physical-device QA pending.
 - ☐ Exercise substitution during a session (trainer-approved alternatives).
 
 ## Phase 4 — Trainer panel ◐
@@ -40,13 +40,13 @@ tests plus a browser check. ✅ = done and verified, ◐ = partly done, ☐ = no
 - ✅ Dashboard from real data only: active students, trained in 7d, pending check-ins, plans/subscriptions expiring.
 - ◐ Student profile: timeline opens session detail (shared `SessionDetailScreen`). Measurements/photos views not reviewed.
 - ◐ Workout editor: ✅ atomic create (00038), multiple workouts + days, templates, duplicate to student/template.
-  ☐ edit an existing plan in place, reorder exercises.
-- ☐ Exercise library: muscle/equipment filters, favourites, duplicate detection.
+  ✅ edit existing plans atomically, preserve history/IDs, reorder exercises and coach notes (00040/00043).
+- ◐ Exercise library: origin/muscle/equipment filters done; favourites/duplicate detection pending.
 
-## Phase 5 — Content and ecosystem ☐
-- ☐ Challenges: server-side scoring from `challenge_point_rules` (trigger), web-safe confirmations.
-- ☐ Courses/e-books: access by trainer link; progress.
-- ☐ Partners and WhatsApp links (`wa.me` deep links from trainer profile; Evolution API stays optional/dev).
+## Phase 5 — Content and ecosystem ◐
+- ✅ Challenges: server-side rules/session scoring, UTC caps, atomic team totals, retry protection and web-safe confirmation (00041/00044).
+- ✅ Courses/e-books: linked free/preview access, private video/PDF, native player, idempotent progress (00045/00046); paid entitlements pending Phase6.
+- ✅ Trainer-scoped partner directory and explicitly published WhatsApp contact; validated wa.me/HTTPS links (00047); no clinical records.
 
 ## Phase 6 — Commercial ⛔ (needs business decision + credentials)
 - ☐ Decide model: RevenueCat IAP for app features vs. Asaas/Mercado Pago for 1:1 coaching fees.
@@ -56,7 +56,7 @@ tests plus a browser check. ✅ = done and verified, ◐ = partly done, ☐ = no
 
 ## Phase 7 — Hardening ◐
 - ✅ RLS/tenancy, storage, LGPD FKs, edge-function auth (with tests).
-- ☐ Private feed-media + signed URLs; rate limits on push/food-lookup; remove email from weekly-digest payload.
+- ✅ Private feed-media + scoped signing (00042); edge rate limits (00039); weekly-digest email removed. Auth/cache/session ownership hardened.
 - ☐ Policies → `(select auth.uid())`; drop duplicate indexes.
-- ☐ Sentry ~7.2.0; web bundle splitting (4.8 MB today); EAS preview build on device.
-- ⛔ Apply 00034–00038 to the remote project (owner authorisation + backup).
+- ☐ Sentry; web bundle splitting (4.91 MB main today, 32 assets); EAS preview build on device.
+- ⛔ Apply 00034–00047 to remote (owner authorization + backup); local migrations only here.

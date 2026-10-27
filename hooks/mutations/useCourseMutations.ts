@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "../../stores/useToastStore";
 import { supabase } from "../../lib/supabase/client";
 
 export function useCreateCourse() {
@@ -9,6 +10,7 @@ export function useCreateCourse() {
       if (error) throw error;
       return data;
     },
+    onError: (error) => toast.error("Não foi possível salvar", error.message),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["courses"] }),
   });
 }
@@ -20,6 +22,7 @@ export function useTogglePublishCourse() {
       const { error } = await supabase.from("courses").update({ is_published: input.is_published }).eq("id", input.id);
       if (error) throw error;
     },
+    onError: (error) => toast.error("Não foi possível salvar", error.message),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["courses"] }),
   });
 }
@@ -32,6 +35,7 @@ export function useAddLesson() {
       title: string;
       description?: string;
       video_url?: string;
+      document_url?: string;
       thumbnail_url?: string;
       duration_seconds?: number;
       sort_order: number;
@@ -41,6 +45,7 @@ export function useAddLesson() {
       if (error) throw error;
       return data;
     },
+    onError: (error) => toast.error("Não foi possível salvar", error.message),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["courses"] }),
   });
 }
@@ -55,9 +60,10 @@ export function useMarkLessonComplete() {
         watched_seconds: input.watched_seconds ?? 0,
         completed: true,
         completed_at: new Date().toISOString(),
-      });
+      }, { onConflict: "user_id,lesson_id" });
       if (error) throw error;
     },
+    onError: (error) => toast.error("Não foi possível salvar", error.message),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["courses"] }),
   });
 }

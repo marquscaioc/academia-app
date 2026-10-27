@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, FlatList, Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../../lib/auth/provider";
@@ -12,7 +12,7 @@ import { font } from "../../../lib/design/tokens";
 
 export default function TrainerCoursesScreen() {
   const { user } = useAuth();
-  const { data: courses, isLoading } = useCourses({ trainerId: user?.id });
+  const { data: courses, isLoading, error, refetch } = useCourses({ trainerId: user?.id });
   const create = useCreateCourse();
   const togglePublish = useTogglePublishCourse();
   const [showNew, setShowNew] = useState(false);
@@ -21,7 +21,8 @@ export default function TrainerCoursesScreen() {
 
   const handleCreate = async () => {
     if (!user || !title.trim()) return;
-    await create.mutateAsync({
+    try {
+      await create.mutateAsync({
       trainer_id: user.id,
       title: title.trim(),
       description: description.trim() || undefined,
@@ -29,6 +30,7 @@ export default function TrainerCoursesScreen() {
     setTitle("");
     setDescription("");
     setShowNew(false);
+    } catch { /* The mutation surfaces the error and preserves the form. */ }
   };
 
   return (
@@ -85,6 +87,11 @@ export default function TrainerCoursesScreen() {
 
         {isLoading ? (
           <View className="items-center py-10"><ActivityIndicator size="large" color="#781BB6" /></View>
+        ) : error ? (
+          <View className="items-center py-10 gap-3">
+            <Text className="text-text-muted font-sans">Não foi possível carregar os cursos.</Text>
+            <Pressable onPress={() => refetch()}><Text className="text-violet-400 font-sans">Tentar novamente</Text></Pressable>
+          </View>
         ) : !courses?.length ? (
           <EmptyState
             iconName="courses"

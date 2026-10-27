@@ -1,36 +1,30 @@
 # Next session prompt
 
-You are continuing work on **academia-app (Projeto Gaab)** at `C:\Users\Caio\Desktop\ACADEMIA PP\academia-app-master`.
-The governing instructions are in `C:\Users\Caio\Desktop\ACADEMIA PP\MASTER_PROMPT.md` — read §14–18 before acting.
-Stack: Expo SDK 54, Expo Router 6, RN Web, TypeScript, NativeWind 4, Supabase, TanStack Query 5, Zustand 5. Don't replace it.
+Continue MASTER_PROMPT.md at `C:\Users\Caio\Desktop\ACADEMIA PP\MASTER_PROMPT.md`, especially sections 14–18.
+Repo: `C:\Users\Caio\Desktop\ACADEMIA PP\academia-master-continuation`; read docs/IMPLEMENTATION_STATUS.md, IMPLEMENTATION_PLAN.md, SECURITY.md and TESTING.md first.
 
-## Read first
-1. `docs/IMPLEMENTATION_STATUS.md` — what is done, test results, blockers, next action.
-2. `docs/IMPLEMENTATION_PLAN.md` — phase checklist.
-3. `docs/ARCHITECTURE.md` (routing rule: every dynamic route needs a unique static segment), `docs/DATABASE.md`,
-   `docs/SECURITY.md`, `docs/TESTING.md`.
+## State
 
-## Environment facts
-- Git repo on `main`, local only. Commit trailer: `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`. Never push or
-  force-push without authorisation. Small commits per feature.
-- Mixed line endings in the baseline: preserve each file's existing EOL (check `git ls-files --eol <file>`). Python
-  `open(..., 'w')` on Windows writes CRLF — use `newline=''` or the Edit tool.
-- Local Supabase: `npx supabase start` (ports **554xx**; another project, `chuck-crm-staging`, uses 543xx — do not stop it).
-  `npx supabase migration up --local`, `npm run seed:demo` (aluno@demo.local / treinador@demo.local, `Demo-Treino-2026!`).
-- `.env.local` (gitignored) points the app to the local stack. Never commit env files.
-- Web dev server: `npx expo start --web --port 8099` (no `CI=1`). If the port is busy, an orphaned `node … expo start`
-  is holding it.
-- Verification commands: `npm run typecheck`, `npm run lint`, `npm test`, `npm run test:db`, `npm run test:api`,
-  `npm run build`. Report pass/fail/not-run honestly.
+- Branch feat/master-continuation started at main/8eff8f9; origin is https://github.com/marquscaioc/academia-app.git. GitHub master has the same original snapshot but separate Git ancestry. Never force-push or combine unrelated histories without a deliberate plan.
+- Editor, exercise reordering, rest notifications/session ownership, server challenge scoring, private feed, course video/PDF access, auth cache isolation and partner directory are now implemented locally. Filters/evolution and edge rate limits/email removal were already completed by Claude.
+- Migrations through 00047 exist. Never edit an applied migration; next number is 00048.
+- Concurrent external visual changes to Projeto Academia/light/Geist were detected. They remain in original academia-app-master; this branch retains the original design. Preserve both worktrees and review feature commits before combining them.
+- Read the final docs/test results and git log; do not trust the older pending lists from the baseline.
 
-## Next action
-Exercise library muscle/equipment filters (Phase 4); edit an existing plan in place (builder creates/duplicates only). Pure logic in `lib/` with Jest tests; verify in the browser as treinador@demo.local.
+## Environment
 
-Then: per-exercise evolution charts (react-native-gifted-charts); challenge server-side scoring trigger (Phase 5);
-private feed-media with signed URLs; rate limits on push/food-lookup; remove email PII from weekly-digest.
+- Local Supabase ports554xx, other project uses543xx: do not stop/reset either database.
+- `npx supabase@2 migration up --local`; `npm run seed:demo` (local only).
+- Demo users aluno@demo.local / treinador@demo.local, password Demo-Treino-2026!.
+- Original web uses8099; this isolated branch uses8100. Verify listeners before starting. Never kill other processes to free a port.
+- `.env.local` is ignored and local. Never commit secrets.
+- Mixed LF/CRLF: preserve per-file endings; `git -c core.whitespace=cr-at-eol diff --check` handles existing CRLF.
+- Checks: typecheck, lint, Jest, test:db, test:api, build.
 
-## Do not
-- Edit applied migrations; write new ones (next number: 00039) and add DB test scenarios.
-- Apply migrations to the remote project, deploy, or touch payment credentials without the owner's authorisation.
-- Show fictitious metrics or mock data in production flows; add buttons without real actions.
-- Copy code from AGPL (Stravio, wger) or unlicensed (expo-supabase-starter-kit) repos.
+## Next work
+
+Resolve visual-work integration, web tab URLs, remaining main-screen QA, exercise favourites and approved substitutions. Commercial model/credentials, Sentry DSN, EAS/store accounts and production authorization remain external blockers. Paid course bodies stay closed until server-verified entitlements exist.
+
+Native rest notifications/player/uploads compile and have unit/API coverage, but physical-device delivery/playback/upload is unverified. Legacy public course objects still need an authorized copy if present; issued signed links stay valid until expiry.
+
+No remote migrations, deploy, payment transaction or health-data integration was performed. No clinical records or automated sharing of body data should be introduced without explicit requirements.

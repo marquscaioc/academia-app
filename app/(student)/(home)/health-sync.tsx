@@ -36,9 +36,9 @@ export default function HealthSyncScreen() {
             <View className="w-16 h-16 rounded-3xl bg-violet-500/15 border border-violet-500/25 items-center justify-center mb-4">
               <AppIcon name="device" size={28} color="#9B40D8" strokeWidth={2} />
             </View>
-            <Text className="text-base text-text-primary mb-2" style={{ fontFamily: font.display }}>Disponível no celular</Text>
+            <Text className="text-base text-text-primary mb-2" style={{ fontFamily: font.display }}>Sincronização indisponível</Text>
             <Text className="text-xs text-text-muted text-center" style={{ fontFamily: font.regular }}>
-              A integracao com Apple Health / Google Fit esta disponivel apenas no app nativo (iOS/Android).
+              A integração com Apple Health e Health Connect ainda não está disponível.
             </Text>
           </Card>
         ) : (

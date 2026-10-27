@@ -48,12 +48,15 @@ type Dialog = null | "finish" | "finish-empty" | "discard" | "switch";
 export default function WorkoutExecutionScreen() {
   const { workoutId = "" } = useLocalSearchParams<{ workoutId: string }>();
   const { user } = useAuth();
+  const currentUserId = useRef(user?.id);
+  currentUserId.current = user?.id;
   const hydrated = useSessionHydrated();
   const workoutQ = useWorkoutDetail(workoutId);
   const openSessionQ = useOpenSession(workoutId, user?.id);
   const store = useWorkoutSessionStore(
     useShallow((s) => ({
       sessionId: s.sessionId,
+      ownerId: s.ownerId,
       workoutId: s.workoutId,
       workoutName: s.workoutName,
       startedAt: s.startedAt,
@@ -76,8 +79,9 @@ export default function WorkoutExecutionScreen() {
   const [extraSets, setExtraSets] = useState<Record<string, number>>({});
 
   const exercises = useMemo(() => workoutQ.data?.exercises ?? [], [workoutQ.data]);
-  const isActiveHere = !!store.sessionId && store.workoutId === workoutId;
-  const otherActive = !!store.sessionId && store.workoutId !== workoutId;
+  const isOwned = !!user && store.ownerId === user.id;
+  const isActiveHere = isOwned && !!store.sessionId && store.workoutId === workoutId;
+  const otherActive = isOwned && !!store.sessionId && store.workoutId !== workoutId;
   const idx = Math.min(store.currentExerciseIndex, Math.max(0, exercises.length - 1));
   const current: WorkoutExercise | undefined = isActiveHere ? exercises[idx] : undefined;
 
@@ -88,7 +92,8 @@ export default function WorkoutExecutionScreen() {
   const pushSet = useCallback(
     (s: SessionSet) => {
       const sessionId = actions().sessionId;
-      if (!sessionId) return Promise.resolve(false);
+      if (!sessionId || !user || actions().ownerId !== user.id) return Promise.resolve(false);
+      const stillCurrent = () => currentUserId.current === user.id && actions().sessionId === sessionId && actions().ownerId === user.id;
       actions().upsertSet({ ...s, syncStatus: "pending" });
       return syncM
         .mutateAsync({
@@ -102,15 +107,15 @@ export default function WorkoutExecutionScreen() {
           is_warmup: s.isWarmup,
         })
         .then(() => {
-          actions().patchSet(s.id, { syncStatus: "synced" });
-          return true;
+          if (stillCurrent()) actions().patchSet(s.id, { syncStatus: "synced" });
+          return stillCurrent();
         })
         .catch(() => {
-          actions().patchSet(s.id, { syncStatus: "error" });
+          if (stillCurrent()) actions().patchSet(s.id, { syncStatus: "error" });
           return false;
         });
     },
-    [actions, syncM],
+    [actions, syncM, user],
   );
 
   // Retry anything that was not confirmed by the server before the app closed.
@@ -134,6 +139,7 @@ export default function WorkoutExecutionScreen() {
       const open = openSessionQ.data;
       if (open) {
         actions().begin({
+          ownerId: user.id,
           sessionId: open.id,
           workoutId,
           workoutName: workoutQ.data.name,
@@ -153,7 +159,9 @@ export default function WorkoutExecutionScreen() {
         return;
       }
       const created = await startM.mutateAsync({ user_id: user.id, workout_id: workoutId });
+      if (currentUserId.current !== user.id) return;
       actions().begin({
+        ownerId: user.id,
         sessionId: created.id,
         workoutId,
         workoutName: workoutQ.data.name,
@@ -174,6 +182,7 @@ export default function WorkoutExecutionScreen() {
   };
 
   const handleComplete = (we: WorkoutExercise, setNumber: number, values: SetValues, existing?: SessionSet) => {
+    if (!user || actions().ownerId !== user.id || !isActiveHere) return;
     const set: SessionSet = {
       id: existing?.id ?? uuid(),
       workoutExerciseId: we.id,
@@ -190,14 +199,18 @@ export default function WorkoutExecutionScreen() {
     if (!existing) {
       const allDone = workingDone + (values.isWarmup ? 0 : 1) >= totalTargetSets;
       if (!allDone) actions().startRest(we.rest_seconds ?? 60);
+      else actions().clearRest();
     }
   };
 
   const handleUncomplete = async (s: SessionSet) => {
+    if (!user || actions().ownerId !== user.id) return;
+    const sessionId = actions().sessionId;
     actions().removeSet(s.id);
     try {
       await deleteM.mutateAsync(s.id);
     } catch {
+      if (actions().sessionId !== sessionId || actions().ownerId !== user.id) return;
       actions().upsertSet({ ...s, syncStatus: "synced" });
       setErrorMsg("Sem conexão: não foi possível desmarcar a série.");
     }
@@ -215,6 +228,7 @@ export default function WorkoutExecutionScreen() {
   };
 
   const discardSession = async () => {
+    if (!user || actions().ownerId !== user.id) return;
     const sessionId = store.sessionId;
     setDialog(null);
     actions().end();
@@ -227,12 +241,15 @@ export default function WorkoutExecutionScreen() {
 
   const finish = async () => {
     const st = actions();
-    if (!st.sessionId || !st.startedAt || st.finishing || !user) return;
+    if (!st.sessionId || !st.startedAt || st.finishing || !user || st.ownerId !== user.id) return;
+    const stillCurrent = () => currentUserId.current === user.id && actions().sessionId === st.sessionId && actions().ownerId === user.id;
     st.setFinishing(true);
+    st.clearRest();
     setErrorMsg(null);
     try {
       const unsynced = st.sets.filter((s) => s.syncStatus !== "synced");
       const results = await Promise.all(unsynced.map((s) => pushSet(s)));
+      if (!stillCurrent()) return;
       if (results.some((ok) => !ok)) {
         setErrorMsg("Algumas séries ainda não foram salvas. Verifique a conexão e tente finalizar novamente.");
         return;
@@ -256,7 +273,9 @@ export default function WorkoutExecutionScreen() {
         // Records are a bonus; never block finishing the session on them.
       }
 
+      if (!stillCurrent()) return;
       await finishM.mutateAsync({ session_id: sessionId, duration_seconds: durationSeconds });
+      if (!stillCurrent()) return;
 
       const working = sets.filter((s) => !s.isWarmup);
       const params = {
@@ -275,7 +294,7 @@ export default function WorkoutExecutionScreen() {
     } catch {
       setErrorMsg("Não foi possível finalizar o treino. Seus dados estão salvos — tente novamente.");
     } finally {
-      actions().setFinishing(false);
+      if (stillCurrent()) actions().setFinishing(false);
     }
   };
 

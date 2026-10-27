@@ -100,3 +100,19 @@ export function useCopyWorkoutPlan() {
     onSuccess: () => invalidatePlans(queryClient),
   });
 }
+
+/** Edits atomically, retaining IDs and rejecting a stale version (00040). */
+export function useUpdateWorkoutPlan() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: { plan_id: string; expected_updated_at: string; name: string; description: string | null; workouts: PlanWorkoutPayload[] }) => {
+      const { data, error } = await supabase.rpc("update_workout_plan", {
+        p_plan_id: input.plan_id, p_expected_updated_at: input.expected_updated_at,
+        p_name: input.name, p_description: input.description, p_workouts: input.workouts,
+      });
+      if (error) throw error;
+      return data as string;
+    },
+    onSuccess: () => invalidatePlans(queryClient),
+  });
+}

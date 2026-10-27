@@ -1,6 +1,7 @@
 // Workout builder draft → create_workout_plan() payload (migration 00038). Pure; tested in __tests__/planDraft.test.ts.
 
 export interface DraftExercise {
+  id?: string;
   exercise_id: string;
   name: string;
   sets: number;
@@ -9,20 +10,28 @@ export interface DraftExercise {
   rest: number;
   rpe: string;
   tempo: string;
+  notes: string;
   supersetGroup: number | null;
 }
 
 export interface DraftWorkout {
+  id?: string;
   name: string;
+  notes?: string | null;
+  estimatedDurationMinutes?: number | null;
   /** JS weekdays, 0 = Sunday (same convention as lib/workout/schedule.ts). */
   days: number[];
   exercises: DraftExercise[];
 }
 
 export interface PlanWorkoutPayload {
+  id?: string;
   name: string;
+  notes: string | null;
+  estimated_duration_minutes: number | null;
   day_of_week: number[] | null;
   exercises: {
+    id?: string;
     exercise_id: string;
     target_sets: number;
     target_reps: string;
@@ -30,6 +39,7 @@ export interface PlanWorkoutPayload {
     target_rpe: number | null;
     rest_seconds: number;
     tempo: string | null;
+    notes: string | null;
     superset_group: number | null;
   }[];
 }
@@ -44,7 +54,38 @@ export function parseDecimal(value: string): number | null {
 }
 
 export function newExercise(ex: { id: string; name: string }): DraftExercise {
-  return { exercise_id: ex.id, name: ex.name, sets: 3, reps: "10-12", weight: "", rest: 60, rpe: "", tempo: "", supersetGroup: null };
+  return { exercise_id: ex.id, name: ex.name, sets: 3, reps: "10-12", weight: "", rest: 60, rpe: "", tempo: "", notes: "", supersetGroup: null };
+}
+
+/** Preserve prescription IDs and metadata when opening a saved plan. */
+export function planToDraft(workouts: {
+  id: string; name: string; day_of_week: number[] | null; sort_order: number;
+  notes: string | null; estimated_duration_minutes: number | null;
+  exercises?: {
+    id: string; exercise_id: string; sort_order: number; target_sets: number; target_reps: string;
+    target_weight_kg: number | null; target_rpe: number | null; rest_seconds: number;
+    tempo: string | null; notes: string | null; superset_group: number | null;
+    exercise?: { name: string } | null;
+  }[];
+}[]): DraftWorkout[] {
+  return [...workouts].sort((a, b) => a.sort_order - b.sort_order).map((w) => ({
+    id: w.id, name: w.name, days: [...(w.day_of_week ?? [])], notes: w.notes,
+    estimatedDurationMinutes: w.estimated_duration_minutes,
+    exercises: [...(w.exercises ?? [])].sort((a, b) => a.sort_order - b.sort_order).map((e) => ({
+      id: e.id, exercise_id: e.exercise_id, name: e.exercise?.name ?? "Exercício",
+      sets: e.target_sets ?? 3, reps: e.target_reps ?? "10-12", weight: e.target_weight_kg == null ? "" : String(e.target_weight_kg),
+      rest: e.rest_seconds ?? 60, rpe: e.target_rpe == null ? "" : String(e.target_rpe),
+      tempo: e.tempo ?? "", notes: e.notes ?? "", supersetGroup: e.superset_group,
+    })),
+  }));
+}
+
+/** Moves one prescription without changing its ID, notes or superset assignment. */
+export function moveItem<T>(items: T[], from: number, to: number): T[] {
+  if (from < 0 || to < 0 || from >= items.length || to >= items.length || from === to) return items;
+  const result = [...items];
+  result.splice(to, 0, result.splice(from, 1)[0]);
+  return result;
 }
 
 /** "Treino A", "Treino B", … — first letter not already used. */
@@ -105,9 +146,13 @@ export function validateDraft(planName: string, workouts: DraftWorkout[]): strin
 /** Call only after validateDraft returned null. */
 export function buildPlanPayload(workouts: DraftWorkout[]): PlanWorkoutPayload[] {
   return workouts.map((w) => ({
+    ...(w.id ? { id: w.id } : {}),
     name: w.name.trim(),
+    notes: w.notes?.trim() || null,
+    estimated_duration_minutes: w.estimatedDurationMinutes ?? null,
     day_of_week: w.days.length ? [...w.days].sort((a, b) => a - b) : null,
     exercises: w.exercises.map((e) => ({
+      ...(e.id ? { id: e.id } : {}),
       exercise_id: e.exercise_id,
       target_sets: e.sets,
       target_reps: e.reps.trim(),
@@ -115,6 +160,7 @@ export function buildPlanPayload(workouts: DraftWorkout[]): PlanWorkoutPayload[]
       target_rpe: parseDecimal(e.rpe),
       rest_seconds: e.rest,
       tempo: e.tempo.trim() || null,
+      notes: e.notes.trim() || null,
       superset_group: e.supersetGroup,
     })),
   }));

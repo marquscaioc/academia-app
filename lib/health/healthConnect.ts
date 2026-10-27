@@ -1,7 +1,5 @@
-import { Platform } from "react-native";
-
-// Abstraction layer for Apple Health / Google Health Connect
-// Requires native build (expo-health-connect) — web returns empty data
+// No native HealthKit / Health Connect provider is installed or configured yet.
+// An unavailable integration must never appear to have measured zero activity.
 
 export interface HealthData {
   steps: number;
@@ -10,31 +8,13 @@ export interface HealthData {
 }
 
 export async function requestHealthPermissions(): Promise<boolean> {
-  if (Platform.OS === "web") return false;
-
-  try {
-    // This will need expo-health-connect installed for native builds
-    // For now, return false on web and handle gracefully
-    return false;
-  } catch {
-    return false;
-  }
+  return false;
 }
 
 export async function readHealthData(_date: Date): Promise<HealthData> {
-  if (Platform.OS === "web") {
-    return { steps: 0, calories: 0, workouts: [] };
-  }
-
-  try {
-    // Placeholder: actual implementation requires expo-health-connect
-    // which needs a native build (not available on web/Expo Go)
-    return { steps: 0, calories: 0, workouts: [] };
-  } catch {
-    return { steps: 0, calories: 0, workouts: [] };
-  }
+  throw new Error("A sincronização de saúde ainda não está disponível.");
 }
 
 export function isHealthAvailable(): boolean {
-  return Platform.OS !== "web";
+  return false;
 }

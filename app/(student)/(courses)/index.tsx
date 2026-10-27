@@ -11,7 +11,7 @@ import { WebContainer } from "../../../components/layout/WebContainer";
 
 export default function StudentCoursesScreen() {
   const { user } = useAuth();
-  const { data: courses, isLoading } = useCourses({ studentId: user?.id });
+  const { data: courses, isLoading, error, refetch } = useCourses({ studentId: user?.id });
 
   return (
     <SafeAreaView className="flex-1 bg-dark-400">
@@ -24,6 +24,11 @@ export default function StudentCoursesScreen() {
 
         {isLoading ? (
           <View className="items-center py-10"><ActivityIndicator size="large" color="#781BB6" /></View>
+        ) : error ? (
+          <View className="items-center py-10 gap-3">
+            <Text className="text-text-muted font-sans">Não foi possível carregar os cursos.</Text>
+            <Pressable onPress={() => refetch()}><Text className="text-violet-400 font-sans">Tentar novamente</Text></Pressable>
+          </View>
         ) : !courses?.length ? (
           <EmptyState
             iconName="courses"

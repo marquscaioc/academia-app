@@ -1,93 +1,61 @@
 # Implementation status
 
-_Last updated: 2026-10-26_
+_Last updated: 2026-10-26. Continuation of MASTER_PROMPT.md from Claude commit `8eff8f9`._
 
-## Current phase
+## Delivered locally
 
-Phase 1 complete; Phase 3 core + history detail complete; Phase 2 navigation/toast done; Phase 4 dashboard, overview RPC
-and session drill-down done; Phase 7 security items largely complete locally. Next: Phase 4 workout editor + library
-filters → Phase 3 evolution charts → Phase 5 challenge scoring.
+- Existing baseline preserved: Expo SDK 54 / Router 6 / NativeWind / Supabase / TanStack Query / Zustand.
+- Workout plan editor: open owned plans/templates, preserve prescription IDs, reorder exercises, edit coach notes/days/loads, add/remove workouts or exercises in one transaction. Removed prescriptions detach history; actual sets remain intact. Stale versions and active sessions reject edits. Parent row locks coordinate concurrent session starts (00040/00043).
+- Library origin/muscle/equipment filters and exercise evolution (load, volume, Epley e1RM) were already in the final Claude commits; they are no longer pending.
+- Native rest reminders: absolute OS notification scheduling; cancellation on skip, replacement, finish and logout; foreground/background expiry handling. Persisted session now has ownerId and cannot resume in another account. Web avoids native calls.
+- Challenges: points come from server rules or an owned finished session, not typed points. UTC daily caps, session reuse prevention, atomic individual/team scores, stable request IDs, uploaded-photo proof and legacy increment RPC revocation (00041/00044).
+- Feed media: private bucket; access follows visible posts, private groups and challenges. Legacy public-URL references are normalized for signing. Cross-author path laundering denied. Signed URLs are presentation data, not persisted links (00042).
+- Courses/e-books: trainer writes; linked-student free/preview reads; paid lesson bodies fail closed until verified entitlements exist. Private videos/PDFs, SDK 54 native player and document picker, idempotent progress, 15-minute signed course links (00045/00046).
+- Professional partners: trainer-owned directory, nutritionist/sports-doctor profile/specialty/registration, WhatsApp/HTTPS booking/content links, explicit trainer WhatsApp publication; active linked students read active referrals. No clinical data or automatic health-data sharing (00047).
+- Auth: cancel/clear query cache on identity changes; discard stale profile requests; wait for actual identity and storage hydration before clearing foreign sessions. Failed/offline logout retains the active session and shows an error.
+- UI failures distinguished from empty data in plan editor, progress, feed, comments and courses. Failed comments retain text; adherence query failures no longer become zero scores. Unsupported health synchronization reports unavailable rather than fabricated zero activity.
+- Native uploads use ArrayBuffer through Expo FileSystem; account deletion traverses nested course-media folders.
 
-## Done (verified)
+## Validation
 
-| Item | Evidence |
-|---|---|
-| Dependencies aligned to SDK 54; expo-av → expo-video; ESLint; Jest | `npm run typecheck`, `lint`, `test` pass |
-| Workout execution rebuilt (persisted session, resume, idempotent sets/finish, rest timer, PRs, summary) | 29 unit tests; API e2e; browser flow incl. reload-resume; DB rows checked |
-| Next-workout recommendation + statuses | `__tests__/workoutSchedule.test.ts` |
-| Route collisions fixed (`/treino`, `/conversa`, `/curso`); tab bar hidden in workout | browser reload test |
-| Web blank page, NativeWind error, notification observer | browser: 0 console errors |
-| Home invite card only for unlinked students | browser |
-| Button/ConfirmDialog accessibility; 113 accented strings | typecheck/lint; browser |
-| Migrations 00034, 00035, 00036 (tenancy, workout integrity, storage, LGPD FKs, check-ins) | `test:db` on PGlite; applied on local Postgres 17; `test:api` 19/19 |
-| Workout history detail: sets per exercise, volume, comparison with previous session of the same workout | `__tests__/workoutCompare.test.ts`; browser |
-| Student nav 7 → 5 tabs (Início, Treinos, Dieta, Progresso, Mais) with "Mais" hub + unread badge | browser |
-| Cross-platform toast replaces every `Alert.alert` | `__tests__/toastStore.test.ts`; browser |
-| Migration 00037 `trainer_student_overview()` replaces the adherence N+1; dashboard from real data, sorted by attention | `__tests__/trainerAdherence.test.ts`; `test:db` scenario; browser as trainer |
-| Trainer opens a student's session from the profile timeline (`/(trainer)/students/sessao/:id`, shared `SessionDetailScreen`) | browser as trainer (RLS via `is_trainer_of`) |
-| Migration 00038: atomic `create_workout_plan` / `copy_workout_plan`; builder with A/B/C workouts, training days, templates, duplicate, validation | `__tests__/planDraft.test.ts`; `test:db` + `test:api` scenarios; browser (copy → template, create 2 workouts, invalid RPE blocked, toast shown) |
-| Toast visually verified; a11y state via `aria-*` props (rendered on web) | browser |
-| Edge functions: service-role guard on cron functions, social-notification actor from JWT, hydration column, delete-account buckets | code review; not executed against a deployed runtime |
-| Web production build | `npm run build` OK (4.82 MB main bundle) |
-| Docs: AUDIT, IMPLEMENTATION_PLAN, GITHUB_INTEGRATION_MATRIX, ARCHITECTURE, DATABASE, SECURITY, TESTING, DEPLOYMENT, this file, `NEXT_SESSION_PROMPT.md` | — |
+Latest completed suite counts are recorded in TESTING.md. Checks cover unit/state races, real PostgreSQL RLS, local Supabase PostgREST and Storage. Native delivery/playback/upload is compiled and unit-tested, not device-verified.
 
-## Tests (last run 2026-10-26)
+Browser: student login/workout/reload-resume/finish/history verified (3 sets ×40 kg ×8 =960 kg). Trainer opened a saved demo template, reordered exercises, cancelled removal, saved, reopened and verified order/notes, then restored the demo order. API editor test separately verifies finished-history preservation, stale edits and tenant denial.
 
-| Suite | Result |
-|---|---|
-| typecheck | pass |
-| lint | pass (0 errors / 25 warnings) |
-| jest | 8 suites, 49 tests, pass |
-| test:db | 38 migrations, 40/40 scenarios, pass |
-| test:api (local stack) | 20/20 pass |
-| web build | pass |
-| Native builds | **not run** (needs EAS credentials) |
-| Edge functions runtime | **not run** |
+## Current integration state
 
-## Pending (see IMPLEMENTATION_PLAN.md)
+Branch `feat/master-continuation`, based on published `main` at `8eff8f9`. Feature commits are grouped by domain; consult git log for exact IDs. No production migration, deployment, payment credentials or real financial transaction has been performed.
 
-- Per-exercise evolution charts; background rest notification.
-- Empty/error state sweep; tab URLs on web (each group's index resolves to `/`, so reload returns to Início).
-- Edit an existing plan in place (builder only creates/duplicates); exercise library filters.
-- Challenge server-side scoring; private feed-media with signed URLs; rate limits; weekly-digest PII.
-- Sentry; bundle splitting.
+Concurrent external visual changes appeared during this session: Projeto Academia branding, light theme and Geist. They are preserved in the original academia-app-master worktree. This functional branch lives in sibling academia-master-continuation and retains the original design. Do not reset or overwrite the original worktree.
 
-## External blockers
+## Remaining work / limits
 
-| Blocker | Needed from owner |
-|---|---|
-| Apply 00034–00038 to the remote Supabase project | Authorisation, project access, backup |
-| Payment gateway (Phase 6) | Business decision (IAP vs 1:1 coaching), Asaas/Mercado Pago/RevenueCat credentials |
-| Store builds/submission | Apple/Google accounts, EAS project, real bundle ids (`eas.json` has `PREENCHER_*`) |
-| Sentry | DSN + auth token |
+- Phase 2: complete browser review of all main-screen empty/error/offline states and accessible navigation; tab index URLs still collide at `/` on web reload.
+- Phase 3: trainer-approved exercise substitution in a running session; physical-device QA of rest notifications, playback and media uploads.
+- Phase 4: exercise favourites/duplicate detection; trainer measurements/photo-view QA.
+- Phase 6: business choice and gateway credentials, signed/replay-safe/idempotent payment webhook, verified entitlements and reconciliation. Existing financial records are internal accounting, not charges. Paid content intentionally stays locked.
+- Phase 7: Sentry DSN/configuration, bundle profiling/splitting, policy performance pass and duplicate index review, native store IDs/EAS accounts and preview builds.
+- Apply pending 00034–00047 migrations to remote only after owner authorization and backup; all work here is local.
+- Historical course URLs pointing at public exercise-videos/external providers are unchanged. A separate storage copy/access migration is required if such paid content exists.
+- A previously issued signed URL remains usable until its expiration (feed up to 60 minutes, course 15 minutes). Revoking a relationship stops new signing; it does not invalidate issued bearer links.
+- HealthKit / Health Connect has no installed provider and remains unavailable.
 
 ## Next concrete action
 
-Exercise library muscle/equipment filters; editing an existing plan in place. Then per-exercise evolution charts.
+Fix web tab URLs and finish the remaining main-screen QA while the owner chooses the commercial model. Use `git log` for exact feature commit references.
 
-## Commits (local, branch `main`, not pushed)
+## Feature commits
 
-| Commit | Summary |
+| Commit | Change |
 |---|---|
-| e2f740d | baseline (repository as received) |
-| 499432d | deps, expo-video, lint and test tooling |
-| 040842a | workout execution rebuild |
-| 4f5f692 | migrations 00034/00035 + PGlite DB tests |
-| 37c9dd2 | edge function fixes |
-| 2f3b0f0 | workout list status/rotation, supabase config, API e2e tests |
-| 18f9008 | web: import.meta, notification observer, NativeWind dark mode |
-| e7d5786 | routing: unique student detail URLs; focus-mode workout; video helper |
-| c758bbc | home: invite card only for unlinked students |
-| 99438a8 | seed:demo script |
-| 7216e9d | a11y + pt-BR copy |
-| cffee61 | 00036 storage/LGPD/check-ins + tests |
-| 77c8326 | docs |
-| aa01974 | workout history detail + comparison |
-| 1c7e9b2 | student nav 5 tabs + "Mais" hub |
-| 0d69598 | pluralize helper |
-| 01e47ec | cross-platform toast |
-| a3b3500 | trainer dashboard + 00037 overview RPC |
-| 8f62d19 | trainer opens student sessions from timeline |
-| a143a4d | docs |
-| 8377ed0 | a11y: aria-* state props |
-| 185976b | 00038 + builder: templates, duplicate, A/B/C workouts |
+| 281a548 | Native binary upload bodies and SDK54 document support |
+| c22e1a9 | Atomic plan editor/history/version/session locking |
+| b002412 | Auth/cache/profile race guards and persisted session ownership |
+| 1fdd1dd | Private feed/group media and failed comment recovery |
+| 3e9e7f2 | Server ledger scoring and uploaded challenge proof |
+| 545a835 | Private course video/PDF and progress authorization |
+| d7a4b74 | Trainer-scoped professional directory and contact publication |
+| fdf95f4 | Native rest reminders and countdown restart correction |
+| 1055eb0 | Font asset imports limited to used weights |
+| 05e567c | Progress errors, chat effect and truthful health-unavailable state |
+| f23ab4e | Official DB/API integration scenarios |

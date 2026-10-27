@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "../../lib/supabase/client";
+import { FEED_MEDIA_REFRESH_MS, resolveFeedMedia } from "../../lib/supabase/feedMedia";
 
 export interface FeedPost {
   id: string;
@@ -31,10 +32,11 @@ export function useFeedPosts(mode: "public" | "following" = "public", userId?: s
       let data: FeedPost[] = [];
 
       if (mode === "following" && userId) {
-        const { data: follows } = await supabase
+        const { data: follows, error: followsError } = await supabase
           .from("user_follows")
           .select("following_id")
           .eq("follower_id", userId);
+        if (followsError) throw followsError;
         const followedIds = follows?.map((f) => f.following_id) ?? [];
         if (followedIds.length === 0) return [];
 
@@ -60,17 +62,20 @@ export function useFeedPosts(mode: "public" | "following" = "public", userId?: s
       // Enriquece com a reacao do usuario atual (para destacar o botao ativo)
       if (userId && data.length) {
         const postIds = data.map((p) => p.id);
-        const { data: myReactions } = await supabase
+        const { data: myReactions, error: reactionsError } = await supabase
           .from("feed_reactions")
           .select("post_id, reaction_type")
           .eq("user_id", userId)
           .in("post_id", postIds);
+        if (reactionsError) throw reactionsError;
         const map = new Map((myReactions ?? []).map((r) => [r.post_id, r.reaction_type as string]));
         data = data.map((p) => ({ ...p, my_reaction: map.get(p.id) ?? null }));
       }
 
-      return data;
+      return resolveFeedMedia(data);
     },
+    refetchInterval: FEED_MEDIA_REFRESH_MS,
+    enabled: !!userId,
   });
 }
 

@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -14,7 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import * as ImagePicker from "expo-image-picker";
 import { Image } from "expo-image";
 import { useAuth } from "../../../lib/auth/provider";
-import { supabase } from "../../../lib/supabase/client";
+import { removeUnpublishedFeedMedia, uploadFeedPhoto } from "../../../lib/supabase/feedMedia";
 import { useFeedPosts, usePostComments } from "../../../hooks/queries/useFeed";
 import { useCreatePost, useToggleReaction, useCreateComment } from "../../../hooks/mutations/useSocialMutations";
 import { FeedPost } from "../../../components/social/FeedPost";
@@ -23,11 +23,12 @@ import { EmptyState } from "../../../components/ui/EmptyState";
 import { Avatar } from "../../../components/ui/Avatar";
 import { DisplayHeading } from "../../../components/ui/DisplayHeading";
 import { AppIcon } from "../../../components/ui";
-import { font, amethystGlow } from "../../../lib/design/tokens";
+import { font, amethystGlow, palette } from "../../../lib/design/tokens";
 import { WebContainer } from "../../../components/layout/WebContainer";
+import { toast } from "../../../stores/useToastStore";
 
 function CommentsSheet({ postId, userId, onClose }: { postId: string; userId?: string; onClose: () => void }) {
-  const { data: comments } = usePostComments(postId);
+  const { data: comments, isLoading, isError, refetch } = usePostComments(postId);
   const createComment = useCreateComment();
   return (
     <Modal visible animationType="slide" transparent>
@@ -41,14 +42,30 @@ function CommentsSheet({ postId, userId, onClose }: { postId: string; userId?: s
             </Pressable>
           </View>
           <ScrollView keyboardShouldPersistTaps="handled">
+            {isLoading ? (
+              <View className="items-center py-5" accessibilityRole="progressbar" accessibilityLabel="Carregando comentários">
+                <ActivityIndicator color={palette.violet500} />
+                <Text className="text-text-muted text-xs mt-2" style={{ fontFamily: font.regular }}>Carregando comentários...</Text>
+              </View>
+            ) : isError ? (
+              <View className="bg-surface-card border border-surface-border rounded-2xl p-4 mb-4">
+                <Text accessibilityRole="alert" className="text-text-secondary text-sm" style={{ fontFamily: font.regular }}>
+                  Não foi possível carregar os comentários.
+                </Text>
+                <Pressable onPress={() => { void refetch(); }} accessibilityRole="button" className="self-start py-3">
+                  <Text className="text-violet-400 text-sm" style={{ fontFamily: font.semibold }}>Tentar novamente</Text>
+                </Pressable>
+              </View>
+            ) : !comments?.length ? (
+              <Text className="text-text-muted text-sm mb-4" style={{ fontFamily: font.regular }}>Nenhum comentário ainda. Inicie a conversa.</Text>
+            ) : null}
             <CommentThread
               comments={comments ?? []}
               postId={postId}
               currentUserId={userId}
-              onReply={(content, parentId) => {
-                if (userId) {
-                  createComment.mutate({ post_id: postId, author_id: userId, content, parent_comment_id: parentId });
-                }
+              onReply={async (content, parentId) => {
+                if (!userId) throw new Error("Entre na sua conta para comentar.");
+                await createComment.mutateAsync({ post_id: postId, author_id: userId, content, parent_comment_id: parentId });
               }}
               isPending={createComment.isPending}
             />
@@ -62,13 +79,15 @@ function CommentsSheet({ postId, userId, onClose }: { postId: string; userId?: s
 export default function SocialFeedScreen() {
   const { user, profile } = useAuth();
   const [feedMode, setFeedMode] = useState<"public" | "following">("public");
-  const { data: posts, isLoading } = useFeedPosts(feedMode, user?.id);
+  const { data: posts, isLoading, isError, refetch, isRefetching } = useFeedPosts(feedMode, user?.id);
   const createPost = useCreatePost();
   const toggleReaction = useToggleReaction();
   const [newPostContent, setNewPostContent] = useState("");
   const [showComposer, setShowComposer] = useState(false);
   const [mediaUris, setMediaUris] = useState<string[]>([]);
   const [commentsPostId, setCommentsPostId] = useState<string | null>(null);
+  const [isPublishing, setIsPublishing] = useState(false);
+  const publishing = useRef(false);
 
   const pickMedia = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -83,29 +102,29 @@ export default function SocialFeedScreen() {
   };
 
   const handlePost = async () => {
-    if ((!newPostContent.trim() && !mediaUris.length) || !user) return;
-
-    // Upload media if any
-    let uploadedUrls: string[] = [];
-    for (const uri of mediaUris) {
-      const fileName = `${user.id}/${Date.now()}_${Math.random().toString(36).slice(2)}.jpg`;
-      const response = await fetch(uri);
-      const blob = await response.blob();
-      const { error } = await supabase.storage.from("feed-media").upload(fileName, blob, { contentType: "image/jpeg" });
-      if (!error) {
-        const { data: { publicUrl } } = supabase.storage.from("feed-media").getPublicUrl(fileName);
-        uploadedUrls.push(publicUrl);
+    if ((!newPostContent.trim() && !mediaUris.length) || !user || publishing.current) return;
+    publishing.current = true;
+    setIsPublishing(true);
+    const uploadedPaths: string[] = [];
+    try {
+      for (const uri of mediaUris) {
+        uploadedPaths.push(await uploadFeedPhoto(user.id, uri));
       }
+      await createPost.mutateAsync({
+        author_id: user.id,
+        content: newPostContent.trim() || undefined,
+        media_urls: uploadedPaths.length ? uploadedPaths : undefined,
+      });
+      setNewPostContent("");
+      setMediaUris([]);
+      setShowComposer(false);
+    } catch {
+      await removeUnpublishedFeedMedia(user.id, uploadedPaths).catch(() => {});
+      toast.error("Não foi possível publicar", "Suas fotos e seu texto foram mantidos. Tente novamente.");
+    } finally {
+      publishing.current = false;
+      setIsPublishing(false);
     }
-
-    await createPost.mutateAsync({
-      author_id: user.id,
-      content: newPostContent.trim() || undefined,
-      media_urls: uploadedUrls.length ? uploadedUrls : undefined,
-    });
-    setNewPostContent("");
-    setMediaUris([]);
-    setShowComposer(false);
   };
 
   return (
@@ -150,6 +169,7 @@ export default function SocialFeedScreen() {
       {/* Composer toggle */}
       <Pressable
         onPress={() => setShowComposer(!showComposer)}
+        disabled={isPublishing}
         className="px-6 py-3 flex-row items-center gap-3 border-b border-surface-border"
       >
         <Avatar uri={profile?.avatar_url} name={profile?.full_name} size="sm" />
@@ -166,6 +186,7 @@ export default function SocialFeedScreen() {
             value={newPostContent}
             onChangeText={setNewPostContent}
             multiline
+            editable={!isPublishing}
             autoFocus
             style={{ textAlignVertical: "top", fontFamily: font.regular }}
           />
@@ -178,30 +199,30 @@ export default function SocialFeedScreen() {
                   <Image source={{ uri }} style={{ width: "100%", height: "100%" }} contentFit="cover" />
                 </View>
               ))}
-              <Pressable onPress={() => setMediaUris([])} className="w-16 h-16 bg-dark-300 border border-surface-border rounded-xl items-center justify-center">
+              <Pressable disabled={isPublishing} onPress={() => setMediaUris([])} className="w-16 h-16 bg-dark-300 border border-surface-border rounded-xl items-center justify-center">
                 <AppIcon name="trash" size={18} color="#FB7185" strokeWidth={2} />
               </Pressable>
             </View>
           ) : null}
 
           <View className="flex-row items-center justify-between mt-3">
-            <Pressable onPress={pickMedia} className="flex-row items-center gap-2 bg-dark-300 border border-surface-border px-3 py-2 rounded-full">
+            <Pressable disabled={isPublishing} onPress={pickMedia} className="flex-row items-center gap-2 bg-dark-300 border border-surface-border px-3 py-2 rounded-full">
               <AppIcon name="camera" size={16} color="#A99FBA" strokeWidth={2} />
               <Text className="text-text-muted text-xs" style={{ fontFamily: font.semibold }}>Foto</Text>
             </Pressable>
             <View className="flex-row gap-2 items-center">
-              <Pressable onPress={() => { setShowComposer(false); setMediaUris([]); setNewPostContent(""); }} className="px-4 py-2">
+              <Pressable disabled={isPublishing} onPress={() => { setShowComposer(false); setMediaUris([]); setNewPostContent(""); }} className="px-4 py-2">
                 <Text className="text-text-muted text-sm" style={{ fontFamily: font.medium }}>Cancelar</Text>
               </Pressable>
               <Pressable
                 onPress={handlePost}
-                disabled={(!newPostContent.trim() && !mediaUris.length) || createPost.isPending}
+                disabled={(!newPostContent.trim() && !mediaUris.length) || isPublishing}
                 style={newPostContent.trim() || mediaUris.length ? amethystGlow : undefined}
                 className={`px-5 py-2 rounded-full ${
                   newPostContent.trim() || mediaUris.length ? "bg-violet-500" : "bg-surface-border"
                 }`}
               >
-                {createPost.isPending ? (
+                {isPublishing ? (
                   <ActivityIndicator color="#0B080F" size="small" />
                 ) : (
                   <Text
@@ -222,17 +243,27 @@ export default function SocialFeedScreen() {
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color="#781BB6" />
         </View>
+      ) : isError ? (
+        <EmptyState
+          iconName="warning"
+          title="Feed indisponível"
+          description="Não foi possível carregar as publicações. Verifique sua conexão e tente novamente."
+          actionLabel="Tentar novamente"
+          onAction={() => { void refetch(); }}
+        />
       ) : !posts?.length ? (
         <EmptyState
           iconName="social"
           title="Nenhuma publicação"
-          description="Seja o primeiro a compartilhar algo! Publique seu treino ou conquista."
+          description={feedMode === "following" ? "Siga pessoas para acompanhar as publicações delas aqui." : "Seja o primeiro a compartilhar algo! Publique seu treino ou conquista."}
         />
       ) : (
         <FlatList
           data={posts}
           keyExtractor={(item) => item.id}
           showsVerticalScrollIndicator={false}
+          refreshing={isRefetching}
+          onRefresh={() => { void refetch(); }}
           renderItem={({ item }) => (
             <FeedPost
               authorName={item.author?.display_name ?? item.author?.full_name ?? "Usuario"}

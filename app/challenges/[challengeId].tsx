@@ -1,11 +1,11 @@
 import { useLocalSearchParams, router } from "expo-router";
-import { ActivityIndicator, FlatList, Modal, Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Modal, Pressable, ScrollView, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../../lib/auth/provider";
-import { useChallengeDetail, useLeaderboard, useChallengeEntries, useMyParticipation } from "../../hooks/queries/useChallenges";
-import { useChallengePointRules } from "../../hooks/queries/useChallengePointRules";
+import { useChallengeDetail, useLeaderboard, useChallengeEntries, useMyParticipation, useChallengeSessions } from "../../hooks/queries/useChallenges";
+import { useChallengePointRules, PointRule } from "../../hooks/queries/useChallengePointRules";
 import { useChallengeTeams } from "../../hooks/queries/useChallengeTeams";
 import { useDailyPose } from "../../hooks/queries/useDailyPose";
 import { useMostImproved } from "../../hooks/queries/useMostImproved";
@@ -27,22 +27,23 @@ import { Card } from "../../components/ui/Card";
 import { DisplayHeading } from "../../components/ui/DisplayHeading";
 import { LoadingScreen } from "../../components/ui/LoadingScreen";
 import { shareLeaderboardCard } from "../../lib/utils/generateLeaderboardCard";
+import { readUploadBody } from "../../lib/supabase/uploadBody";
 import { supabase } from "../../lib/supabase/client";
 import { font, amethystGlow } from "../../lib/design/tokens";
 import { useState } from "react";
-import { PointRule } from "../../hooks/queries/useChallengePointRules";
 import { toast } from "../../stores/useToastStore";
 
 export default function ChallengeDetailScreen() {
   const { challengeId } = useLocalSearchParams<{ challengeId: string }>();
   const { user } = useAuth();
-  const { data: challenge, isLoading } = useChallengeDetail(challengeId ?? "");
+  const { data: challenge, isLoading, error: challengeError, refetch } = useChallengeDetail(challengeId ?? "");
   const { data: leaderboard } = useLeaderboard(challengeId ?? "");
   const { data: entries } = useChallengeEntries(challengeId ?? "");
   const { data: participation } = useMyParticipation(challengeId ?? "", user?.id);
   const { data: pointRules } = useChallengePointRules(challengeId ?? "");
   const { data: teams } = useChallengeTeams(challenge?.team_mode ? challengeId : undefined);
   const { data: dailyPose } = useDailyPose();
+  const { data: sessions, isLoading: sessionsLoading, error: sessionsError } = useChallengeSessions(challengeId ?? "", challenge?.starts_at, challenge?.ends_at);
   const { data: improved } = useMostImproved(challengeId ?? "");
   const joinChallenge = useJoinChallenge();
   const submitEntry = useSubmitChallengeEntry();
@@ -57,12 +58,18 @@ export default function ChallengeDetailScreen() {
   const [selectedRule, setSelectedRule] = useState<PointRule | null>(null);
   const [showPointSelector, setShowPointSelector] = useState(false);
   const [showMetric, setShowMetric] = useState(false);
-  const [metricValue, setMetricValue] = useState("");
-  const [pendingPoints, setPendingPoints] = useState(1);
+  const [pendingSessionId, setPendingSessionId] = useState<string>();
+  const [pendingRuleId, setPendingRuleId] = useState<string>();
+  const [uploading, setUploading] = useState(false);
   const [pendingCaption, setPendingCaption] = useState("Check-in!");
 
-  if (isLoading || !challenge) {
-    return <LoadingScreen />;
+  if (isLoading) return <LoadingScreen />;
+  if (challengeError || !challenge) {
+    return <SafeAreaView className="flex-1 bg-dark-400 items-center justify-center px-6">
+      <Text className="text-text-primary text-center mb-4 font-sans">Não foi possível carregar este desafio.</Text>
+      <Pressable onPress={() => refetch()}><Text className="text-violet-400 font-sans">Tentar novamente</Text></Pressable>
+      <Pressable onPress={() => router.back()} className="mt-4"><Text className="text-text-muted font-sans">Voltar</Text></Pressable>
+    </SafeAreaView>;
   }
 
   const isJoined = !!participation;
@@ -83,89 +90,60 @@ export default function ChallengeDetailScreen() {
     }
   };
 
-  // Submete com `points`/`caption` ja decididos — pede foto antes se exigido.
-  const submitOrPhoto = (points: number, caption: string) => {
-    setPendingPoints(points);
+  const submitOrPhoto = (caption: string, ruleId?: string, sessionId?: string) => {
+    setPendingRuleId(ruleId);
+    setPendingSessionId(sessionId);
     setPendingCaption(caption);
     if (challenge.require_photo_proof) {
       setShowCamera(true);
     } else if (user) {
-      submitEntry.mutate({ challenge_id: challenge.id, user_id: user.id, caption, points });
+      submitEntry.mutate({ challenge_id: challenge.id, user_id: user.id, caption,
+        point_rule_id: ruleId, workout_session_id: sessionId });
     }
   };
 
-  const handleCheckIn = async () => {
+  const handleCheckIn = () => {
     if (!user) return;
-    if (hasCustomPoints) {
+    if (challenge.scoring_mode === "custom_points") {
+      if (!hasCustomPoints) {
+        toast.info("Atividades indisponíveis", "O treinador precisa configurar as regras deste desafio.");
+        return;
+      }
       setShowPointSelector(true);
       return;
     }
-    const mode = challenge.scoring_mode;
-    // Modos quantitativos: coleta o numero (vira o score)
-    if (mode === "total_volume" || mode === "active_minutes") {
-      setMetricValue("");
+    if (["total_volume", "active_minutes", "workouts_completed"].includes(challenge.scoring_mode)) {
       setShowMetric(true);
       return;
     }
-    // Dias ativos: 1 ponto por DIA (dedup) — multiplos check-ins no mesmo dia nao contam de novo
-    if (mode === "days_active") {
-      const start = new Date();
-      start.setHours(0, 0, 0, 0);
-      const { data: today } = await supabase
-        .from("challenge_entries")
-        .select("id")
-        .eq("challenge_id", challenge.id)
-        .eq("user_id", user.id)
-        .gte("created_at", start.toISOString())
-        .limit(1);
-      if (today && today.length) {
-        toast.info("Já registrado", "Você já fez seu check-in de hoje neste desafio.");
-        return;
-      }
-      submitOrPhoto(1, "Dia ativo");
-      return;
-    }
-    // check_in_count, workouts_completed: 1 ponto por check-in
-    submitOrPhoto(1, "Check-in!");
-  };
-
-  const confirmMetric = () => {
-    const v = parseFloat(metricValue.replace(",", "."));
-    if (isNaN(v) || v <= 0) return;
-    setShowMetric(false);
-    const unit = challenge.scoring_mode === "active_minutes" ? "min" : "kg";
-    submitOrPhoto(v, `${v} ${unit}`);
+    submitOrPhoto(challenge.scoring_mode === "days_active" ? "Dia ativo" : "Check-in!");
   };
 
   const handlePhotoCapture = async (uri: string) => {
-    if (!user) return;
+    if (!user || uploading) return;
     setShowCamera(false);
-
-    // Upload photo
-    const fileName = `${user.id}/${Date.now()}.jpg`;
-    const response = await fetch(uri);
-    const blob = await response.blob();
-    const { error } = await supabase.storage.from("feed-media").upload(fileName, blob, { contentType: "image/jpeg" });
-
-    let photoUrl: string | undefined;
-    if (!error) {
-      const { data: { publicUrl } } = supabase.storage.from("feed-media").getPublicUrl(fileName);
-      photoUrl = publicUrl;
+    setUploading(true);
+    try {
+      const fileName = `${user.id}/${Date.now()}.jpg`;
+      const body = await readUploadBody(uri);
+      const { error } = await supabase.storage.from("feed-media").upload(fileName, body, { contentType: "image/jpeg" });
+      if (error) throw error;
+      // Store the private object path; readers request a short-lived signed URL.
+      await submitEntry.mutateAsync({
+        challenge_id: challenge.id, user_id: user.id, photo_url: fileName,
+        caption: pendingCaption, point_rule_id: pendingRuleId, workout_session_id: pendingSessionId,
+      });
+    } catch (error) {
+      toast.error("Não foi possível registrar a foto", error instanceof Error ? error.message : "Tente novamente.");
+    } finally {
+      setUploading(false);
     }
-
-    submitEntry.mutate({
-      challenge_id: challenge.id,
-      user_id: user.id,
-      photo_url: photoUrl,
-      caption: pendingCaption,
-      points: pendingPoints,
-    });
   };
 
   const handlePointRuleSelect = (rule: PointRule) => {
     setSelectedRule(rule);
     setShowPointSelector(false);
-    submitOrPhoto(rule.points, rule.label);
+    submitOrPhoto(rule.label, rule.id);
   };
 
   const handleShareLeaderboard = () => {
@@ -188,21 +166,16 @@ export default function ChallengeDetailScreen() {
     convertToGroup.mutate({ challengeId: challenge.id, userId: user.id });
   };
 
-  const handleBulkSubmit = (selectedRules: PointRule[]) => {
+  const handleBulkSubmit = async (selectedRules: PointRule[]) => {
     if (!user) return;
     setShowBulk(false);
     for (const rule of selectedRules) {
-      submitEntry.mutate({
-        challenge_id: challenge.id,
-        user_id: user.id,
-        caption: rule.label,
-        points: rule.points,
-      });
+      try {
+        await submitEntry.mutateAsync({ challenge_id: challenge.id, user_id: user.id,
+          caption: rule.label, point_rule_id: rule.id });
+      } catch { break; }
     }
   };
-
-  const formatDate = (d: string) =>
-    new Date(d).toLocaleDateString("pt-BR", { day: "2-digit", month: "long" });
 
   const daysLeft = Math.max(
     0,
@@ -283,10 +256,10 @@ export default function ChallengeDetailScreen() {
           ) : isJoined && isActive ? (
             <Pressable
               onPress={handleCheckIn}
-              disabled={submitEntry.isPending}
+              disabled={submitEntry.isPending || uploading}
               className="bg-success-500 rounded-2xl py-4 items-center mb-4 active:bg-success-600"
             >
-              {submitEntry.isPending ? <ActivityIndicator color="#fff" /> : (
+              {submitEntry.isPending || uploading ? <ActivityIndicator color="#fff" /> : (
                 <Text className="text-white text-base" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>
                   {hasCustomPoints ? "Registrar atividade" : "Fazer check-in"}
                 </Text>
@@ -295,9 +268,10 @@ export default function ChallengeDetailScreen() {
           ) : null}
 
           {/* Registro em lote (so quando ha Hustle Points) */}
-          {isJoined && isActive && hasCustomPoints ? (
+          {isJoined && isActive && hasCustomPoints && !challenge.require_photo_proof ? (
             <Pressable
               onPress={() => setShowBulk(true)}
+              disabled={submitEntry.isPending}
               className="bg-surface-card border border-violet-500/30 rounded-2xl py-3 items-center mb-4 active:bg-surface-hover"
             >
               <Text className="text-violet-400 text-sm" style={{ fontFamily: font.semibold }}>Registrar várias atividades</Text>
@@ -481,44 +455,26 @@ export default function ChallengeDetailScreen() {
         <View className="flex-1 justify-end">
           <Pressable className="flex-1" onPress={() => setShowMetric(false)} />
           <View className="bg-dark-200 border-t border-surface-border rounded-t-3xl px-6 pt-6 pb-10">
-            <DisplayHeading size="sm" className="mb-1">Registrar atividade</DisplayHeading>
+            <DisplayHeading size="sm" className="mb-1">Selecionar treino concluído</DisplayHeading>
             <Text className="text-xs text-text-muted mb-4" style={{ fontFamily: font.regular }}>
-              {challenge.scoring_mode === "active_minutes" ? "Quantos minutos de atividade?" : "Qual o volume total (kg)?"}
+              A pontuação usa os registros da sessão. Cada treino conta uma vez neste desafio.
             </Text>
-            <TextInput
-              className="bg-surface-card/80 border border-surface-border rounded-2xl px-4 py-3.5 text-[15px] text-text-primary mb-4"
-              style={{ fontFamily: font.regular }}
-              placeholder={challenge.scoring_mode === "active_minutes" ? "Ex: 45" : "Ex: 5000"}
-              placeholderTextColor="#6E6382"
-              keyboardType="numeric"
-              value={metricValue}
-              onChangeText={setMetricValue}
-              autoFocus
-            />
-            {metricValue.trim() ? (
-              <Pressable
-                onPress={confirmMetric}
-                className="rounded-2xl overflow-hidden"
-                style={amethystGlow}
-              >
-                <LinearGradient
-                  colors={["#781BB6", "#C636E0"]}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0.9 }}
-                  style={{ paddingVertical: 16, alignItems: "center" }}
-                >
-                  <Text className="text-white" style={{ fontFamily: font.semibold, letterSpacing: 0.5 }}>Confirmar</Text>
-                </LinearGradient>
-              </Pressable>
-            ) : (
-              <Pressable
-                onPress={confirmMetric}
-                disabled
-                className="rounded-2xl py-4 items-center bg-surface-border"
-              >
-                <Text className="text-text-muted" style={{ fontFamily: font.semibold }}>Confirmar</Text>
-              </Pressable>
-            )}
+            <ScrollView style={{ maxHeight: 320 }}>
+              {sessionsLoading ? <ActivityIndicator /> : sessionsError ? (
+                <Text className="text-error-400 font-sans">Não foi possível carregar as sessões. Tente novamente.</Text>
+              ) : sessions?.length ? sessions.map((session) => (
+                <Pressable key={session.id} className="bg-surface-card rounded-2xl px-4 py-4 mb-2"
+                  onPress={() => {
+                    setShowMetric(false);
+                    submitOrPhoto(`Treino de ${new Date(session.finished_at!).toLocaleDateString("pt-BR")}`, undefined, session.id);
+                  }}>
+                  <Text className="text-text-primary" style={{ fontFamily: font.semibold }}>
+                    {new Date(session.finished_at!).toLocaleString("pt-BR")}
+                  </Text>
+                </Pressable>
+              )) : <Text className="text-text-muted font-sans">Nenhum treino concluído disponível neste período.</Text>}
+            </ScrollView>
+
           </View>
         </View>
       </Modal>

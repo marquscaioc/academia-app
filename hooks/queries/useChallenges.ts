@@ -1,4 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "../../lib/auth/provider";
+import { getSignedUrls } from "../../lib/supabase/media";
 import { supabase } from "../../lib/supabase/client";
 
 export interface Challenge {
@@ -141,8 +143,10 @@ export function useLeaderboard(challengeId: string) {
 }
 
 export function useChallengeEntries(challengeId: string) {
+  const { user } = useAuth();
   return useQuery({
-    queryKey: ["challenges", "entries", challengeId],
+    queryKey: ["challenges", "entries", challengeId, user?.id],
+    refetchInterval: 45 * 60 * 1000,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("challenge_entries")
@@ -151,7 +155,10 @@ export function useChallengeEntries(challengeId: string) {
         .order("created_at", { ascending: false })
         .limit(50);
       if (error) throw error;
-      return data as ChallengeEntry[];
+      const signed = await getSignedUrls("feed-media", (data ?? []).map((entry) => entry.photo_url));
+      return (data ?? []).map((entry) => ({
+        ...entry, photo_url: entry.photo_url ? signed[entry.photo_url] ?? null : null,
+      })) as ChallengeEntry[];
     },
     enabled: !!challengeId,
   });
@@ -171,5 +178,27 @@ export function useMyParticipation(challengeId: string, userId?: string) {
       return data;
     },
     enabled: !!challengeId && !!userId,
+  });
+}
+
+// Only completed, unsubmitted sessions from the challenge window are offered.
+// Ownership and window are checked again by the scoring trigger.
+export function useChallengeSessions(challengeId: string, startsAt?: string, endsAt?: string) {
+  const { user } = useAuth();
+  return useQuery({
+    queryKey: ["challenges", "sessions", challengeId, user?.id, startsAt, endsAt],
+    enabled: !!user && !!startsAt && !!endsAt,
+    queryFn: async () => {
+      const { data, error } = await supabase.from("workout_sessions")
+        .select("id, started_at, finished_at, workout:workouts(name)")
+        .eq("user_id", user!.id).gte("finished_at", startsAt!).lte("finished_at", endsAt!)
+        .order("finished_at", { ascending: false });
+      if (error) throw error;
+      const { data: entries, error: entriesError } = await supabase.from("challenge_entries")
+        .select("workout_session_id").eq("challenge_id", challengeId).eq("user_id", user!.id);
+      if (entriesError) throw entriesError;
+      const used = new Set((entries ?? []).map((entry) => entry.workout_session_id));
+      return (data ?? []).filter((session) => !used.has(session.id));
+    },
   });
 }

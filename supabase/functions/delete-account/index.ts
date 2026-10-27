@@ -17,7 +17,7 @@ const json = (body: unknown, status = 200) =>
   });
 
 // Buckets whose object paths are prefixed with the owner's user id.
-const USER_BUCKETS = ["avatars", "feed-media", "exercise-videos", "brand-assets", "progress-photos", "chat-media"];
+const USER_BUCKETS = ["avatars", "feed-media", "exercise-videos", "brand-assets", "progress-photos", "chat-media", "course-media"];
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
@@ -38,9 +38,25 @@ Deno.serve(async (req) => {
     // Best-effort storage cleanup (paths are "<userId>/<file>").
     for (const bucket of USER_BUCKETS) {
       try {
-        const { data: files } = await admin.storage.from(bucket).list(user.id, { limit: 1000 });
-        if (files?.length) {
-          await admin.storage.from(bucket).remove(files.map((f) => `${user.id}/${f.name}`));
+        // Course media nests files under <user>/<course>; walk prefixes and
+        // paginate before deletion so folder depth and >1000 files are covered.
+        const pending = [user.id];
+        const paths: string[] = [];
+        while (pending.length) {
+          const prefix = pending.pop()!;
+          for (let offset = 0; ; offset += 1000) {
+            const { data: files, error: listError } = await admin.storage.from(bucket).list(prefix, { limit: 1000, offset });
+            if (listError) throw listError;
+            for (const file of files ?? []) {
+              const path = `${prefix}/${file.name}`;
+              if (file.id) paths.push(path); else pending.push(path);
+            }
+            if (!files || files.length < 1000) break;
+          }
+        }
+        for (let i = 0; i < paths.length; i += 100) {
+          const { error: removeError } = await admin.storage.from(bucket).remove(paths.slice(i, i + 100));
+          if (removeError) throw removeError;
         }
       } catch (_) {
         // ignore per-bucket failures — DB cascade is the source of truth
